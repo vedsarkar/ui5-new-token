@@ -5,7 +5,11 @@ const config = {
 		"../stories/**/*.mdx",
 		"../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
 	],
-	addons: ["@chromatic-com/storybook", "@storybook/addon-docs"],
+	addons: [
+        "@chromatic-com/storybook",
+        "@storybook/addon-docs",
+        "@storybook/addon-a11y"
+    ],
 	framework: {
 		name: "@storybook/react-vite",
 		options: {},
