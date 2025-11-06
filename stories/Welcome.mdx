@@ -1,0 +1,48 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Welcome" />
+
+<style>{`
+	/* Override Storybook's default container constraints */
+
+	.sbdocs-wrapper,
+	.sbdocs-content,
+	.sbdocs-preview {
+		padding: 0 !important;
+		max-width: none !important;
+		margin: 0 !important;
+	}
+
+	.sbdocs-preview {
+		overflow: visible !important;
+	}
+
+	.welcome-container {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		padding: 40px;
+		background-image: url('/design-bg.png');
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		overflow: hidden;
+		box-sizing: border-box;
+		margin: 0;
+	}
+
+  .welcome-description {
+    width: 30%;
+    min-width: 300px;
+    margin: 0;
+  }
+
+`}</style>
+
+<div className="welcome-container">
+  <h1 className="welcome-title">Reltio Design System</h1>
+	<p className="welcome-description">
+    The Reltio Design System enables you to build applications with new mapping patterns and established best practices used in Reltio. This library covers the base styles, components, and layouts.
+  </p>
+</div>
+
