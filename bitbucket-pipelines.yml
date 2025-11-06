@@ -1,0 +1,19 @@
+image: node:jod
+
+definitions:
+  caches:
+    npm: $HOME/.npm
+
+pipelines:
+  default:
+    - stage:
+        name: "Deploy"
+        steps:
+          - step:
+              name: "Deploy to Chromatic"
+              caches:
+                - npm
+                - node
+              script:
+                - npm ci
+                - npm run deploy

@@ -25,12 +25,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "storybook dev -p 6006",
-    "build": "storybook build"
+    "build": "storybook build",
+    "deploy": "chromatic --exit-zero-on-changes --exit-once-uploaded --build-script-name=build"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.2",
     "@storybook/addon-docs": "^10.0.5",
     "@storybook/react-vite": "^10.0.5",
+    "chromatic": "^13.3.3",
     "prop-types": "^15.8.1",
     "storybook": "^10.0.5"
   }
