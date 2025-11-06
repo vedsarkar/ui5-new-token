@@ -1,39 +1,48 @@
 {
-  "name": "reltio-design",
-  "version": "1.0.0",
-  "description": "Reltio design system and tools",
-  "keywords": [
-    "Reltio",
-    "design",
-    "ui",
-    "kit",
-    "library",
-    "tools",
-    "system"
-  ],
-  "homepage": "https://bitbucket.org/reltio-ondemand/reltio-design#readme",
-  "bugs": {
-    "url": "https://bitbucket.org/reltio-ondemand/reltio-design/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@bitbucket.org/reltio-ondemand/reltio-design.git"
-  },
-  "license": "ISC",
-  "author": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "storybook dev -p 6006",
-    "build": "storybook build",
-    "deploy": "chromatic --exit-zero-on-changes --exit-once-uploaded --build-script-name=build"
-  },
-  "devDependencies": {
-    "@chromatic-com/storybook": "^4.1.2",
-    "@storybook/addon-docs": "^10.0.5",
-    "@storybook/react-vite": "^10.0.5",
-    "chromatic": "^13.3.3",
-    "prop-types": "^15.8.1",
-    "storybook": "^10.0.5"
-  }
+	"name": "@reltio/design",
+	"version": "1.0.0",
+	"description": "Reltio design system and tools",
+	"type": "module",
+	"keywords": [
+		"Reltio",
+		"design",
+		"ui",
+		"kit",
+		"library",
+		"tools",
+		"system"
+	],
+	"homepage": "https://bitbucket.org/reltio-ondemand/reltio-design#readme",
+	"bugs": {
+		"url": "https://bitbucket.org/reltio-ondemand/reltio-design/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@bitbucket.org/reltio-ondemand/reltio-design.git"
+	},
+	"license": "ISC",
+	"author": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "storybook dev -p 6006",
+		"build-storybook": "storybook build",
+		"deploy": "chromatic --exit-zero-on-changes --exit-once-uploaded",
+		"lint": "biome check .",
+		"format": "biome format . --write"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.4",
+		"@chromatic-com/storybook": "^4.1.2",
+		"@storybook/addon-docs": "^10.0.5",
+		"@storybook/react-vite": "^10.0.5",
+		"chromatic": "^13.3.3",
+		"prop-types": "^15.8.1",
+		"react-markdown": "^10.1.0",
+		"storybook": "^10.0.5"
+	},
+	"dependencies": {
+		"react": "^19.2.0",
+		"react-dom": "^19.2.0"
+	}
 }
