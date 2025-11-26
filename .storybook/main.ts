@@ -3,15 +3,15 @@ export default {
 	stories: [
 		"../docs/Welcome.mdx",
 		"../docs/Constitution.mdx",
-		"../**/*.stories.@(ts|tsx)",
 		"../**/*.story.mdx",
+		"../**/*.stories.@(ts|tsx)",
 	],
 	addons: [
-        "@chromatic-com/storybook",
-        "@storybook/addon-docs",
-        "@storybook/addon-a11y",
-        "@storybook/addon-vitest"
-    ],
+		"@chromatic-com/storybook",
+		"@storybook/addon-docs",
+		"@storybook/addon-a11y",
+		"@storybook/addon-vitest",
+	],
 	staticDirs: ["../public"],
 	typescript: {
 		reactDocgen: "react-docgen-typescript",
