@@ -1,5 +1,5 @@
 export default {
-	framework: "@storybook/nextjs",
+	framework: "@storybook/nextjs-vite",
 	stories: [
 		"../docs/Welcome.mdx",
 		"../docs/Constitution.mdx",
@@ -7,10 +7,11 @@ export default {
 		"../**/*.story.mdx",
 	],
 	addons: [
-		"@chromatic-com/storybook",
-		"@storybook/addon-docs",
-		"@storybook/addon-a11y",
-	],
+        "@chromatic-com/storybook",
+        "@storybook/addon-docs",
+        "@storybook/addon-a11y",
+        "@storybook/addon-vitest"
+    ],
 	staticDirs: ["../public"],
 	typescript: {
 		reactDocgen: "react-docgen-typescript",
