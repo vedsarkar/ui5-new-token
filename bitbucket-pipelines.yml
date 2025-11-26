@@ -1,19 +1,30 @@
-image: node:jod
+image: node:lts
 
 definitions:
   caches:
-    npm: $HOME/.npm
+    node: node_modules
+    nextcache: .next/cache
 
+build: &build
+  - parallel:
+      - step:
+          name: Run Tests with Coverage
+          caches:
+            - npm
+            - node
+          script:
+            - npm ci
+            - npm run coverage
+      - step:
+          name: Deploy to Chromatic
+          caches:
+            - npm
+            - node
+          script:
+            - npm ci
+            - npm run deploy
 pipelines:
-  default:
-    - stage:
-        name: "Deploy"
-        steps:
-          - step:
-              name: "Deploy to Chromatic"
-              caches:
-                - npm
-                - node
-              script:
-                - npm ci
-                - npm run deploy
+  branches:
+    main: *build
+  pull-requests:
+    '**': *build
