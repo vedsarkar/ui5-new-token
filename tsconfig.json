@@ -15,7 +15,10 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
-		"types": []
+		"types": [],
+		"paths": {
+			"@/*": ["./*"]
+		}
 	},
 	"include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
 	"exclude": ["node_modules"]

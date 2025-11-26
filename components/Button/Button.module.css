@@ -1,8 +1,189 @@
+/* CSS Custom Properties - All defined on .root (Principle IX) */
 .root {
-	padding: 10px 20px;
-	border-radius: 5px;
-	background-color: #000;
-	color: #fff;
-	border: none;
+	/* Font tokens */
+	--reltio-button-font-family: var(
+		--reltio-font-family-body,
+		"Roboto",
+		sans-serif
+	);
+	--reltio-button-font-size: var(--reltio-font-size-body, 16px);
+	--reltio-button-font-weight: var(--reltio-font-weight-body, 500);
+	--reltio-button-line-height: var(--reltio-line-height-body, 1.5);
+	--reltio-button-letter-spacing: var(--reltio-letter-spacing-body, 0.15px);
+
+	/* Color tokens */
+	--reltio-button-color-background: #f5f5fa;
+	--reltio-button-color-primary: var(--reltio-color-primary, #0000cc);
+	--reltio-button-color-primary-text: var(--reltio-color-on-primary, #ffffff);
+	--reltio-button-color-text: var(--reltio-color-text, #0e0e25);
+
+	/* Spacing tokens */
+	--reltio-button-padding-x-small: var(--reltio-spacing-sm, 16px);
+	--reltio-button-padding-y-small: var(--reltio-spacing-xs, 8px);
+	--reltio-button-padding-x-medium: var(--reltio-spacing-md, 20px);
+	--reltio-button-padding-y-medium: var(--reltio-spacing-sm, 12px);
+	--reltio-button-padding-x-large: var(--reltio-spacing-lg, 32px);
+	--reltio-button-padding-y-large: var(--reltio-spacing-md, 16px);
+	--reltio-button-gap-x: var(--reltio-spacing-xs, 8px);
+
+	/* Size tokens */
+	--reltio-button-height-small: var(--reltio-spacing-xl, 32px);
+	--reltio-button-height-medium: var(--reltio-spacing-2xl, 40px);
+	--reltio-button-height-large: var(--reltio-spacing-3xl, 48px);
+
+	/* Border and shape */
+	--reltio-button-border-radius: 9999px; /* Fully rounded corners (pill shape) - Material Design 3 */
+	--reltio-button-border-width: 0;
+
+	/* Transitions */
+	--reltio-button-transition-duration: 200ms;
+	--reltio-button-transition-timing: ease;
+
+	/* Disabled state */
+	--reltio-button-disabled-opacity: 0.38;
+	--reltio-button-disabled-cursor: not-allowed;
+
+	/* Base styles */
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--reltio-button-gap-x);
+	border: var(--reltio-button-border-width) solid transparent;
+	border-radius: var(--reltio-button-border-radius);
 	cursor: pointer;
+	font-family: var(--reltio-button-font-family);
+	font-size: var(--reltio-button-font-size);
+	font-weight: var(--reltio-button-font-weight);
+	line-height: var(--reltio-button-line-height);
+	letter-spacing: var(--reltio-button-letter-spacing);
+	text-align: center;
+	text-decoration: none;
+	white-space: nowrap;
+	user-select: none;
+	transition: all var(--reltio-button-transition-duration)
+		var(--reltio-button-transition-timing);
+	box-sizing: border-box;
+	/* Remove default button styles */
+	background: none;
+	margin: 0;
+	padding: 0;
+
+	/* Focus visible state */
+	&:focus-visible {
+		outline: 2px solid var(--reltio-button-color-primary);
+		outline-offset: 2px;
+	}
+
+	/* Disabled state */
+	&:disabled,
+	&[aria-disabled="true"] {
+		opacity: var(--reltio-button-disabled-opacity);
+		cursor: var(--reltio-button-disabled-cursor);
+		pointer-events: none;
+	}
+}
+
+/* Style: Filled - base structure */
+.filled {
+	border: none;
+}
+
+/* Style: Outlined - base structure */
+.outlined {
+	background-color: transparent;
+	border: 1px solid;
+}
+
+/* Style: Text - base structure */
+.text {
+	background-color: transparent;
+	border: none;
+}
+
+/* Filled + Primary */
+.filled.primary {
+	background-color: var(--reltio-button-color-primary);
+	color: #fff;
+
+	&:hover {
+		background-color: #006;
+	}
+}
+
+/* Filled + Inherited */
+.filled.inherited {
+	background-color: var(--reltio-button-color-background);
+	color: var(--reltio-button-color-text);
+}
+
+/* Outlined + Primary */
+.outlined.primary {
+	border-color: var(--reltio-button-color-primary);
+	color: var(--reltio-button-color-primary);
+
+	&:hover {
+		background-color: var(--reltio-button-color-background);
+	}
+}
+
+/* Outlined + Inherited */
+.outlined.inherited {
+	/* Border and text color inherit from parent */
+	border-color: currentColor;
+	color: inherit;
+
+	&:hover {
+		background-color: var(--reltio-button-color-background);
+	}
+}
+
+/* Text + Primary */
+.text.primary {
+	color: var(--reltio-button-color-primary);
+
+	&:hover {
+		background-color: var(--reltio-button-color-background);
+	}
+}
+
+/* Text + Inherited */
+.text.inherited {
+	color: inherit;
+
+	&:hover {
+		background-color: var(--reltio-button-color-background);
+	}
+}
+
+/* Size: Small */
+.small {
+	min-height: var(--reltio-button-height-small);
+	padding: var(--reltio-button-padding-y-small)
+		var(--reltio-button-padding-x-small);
+	font-size: 0.875rem;
+}
+
+/* Size: Medium */
+.medium {
+	min-height: var(--reltio-button-height-medium);
+	padding: var(--reltio-button-padding-y-medium)
+		var(--reltio-button-padding-x-medium);
+}
+
+/* Size: Large */
+.large {
+	min-height: var(--reltio-button-height-large);
+	padding: var(--reltio-button-padding-y-large)
+		var(--reltio-button-padding-x-large);
+}
+
+/* State: Disabled */
+.disabled {
+	opacity: var(--reltio-button-disabled-opacity);
+	cursor: var(--reltio-button-disabled-cursor);
+}
+
+/* Full Width */
+.fullWidth {
+	width: 100%;
 }
