@@ -3,7 +3,7 @@ image: node:lts
 definitions:
   caches:
     node: node_modules
-    nextcache: .next/cache
+    npm: $HOME/.npm
 
 build: &build
   - parallel:
@@ -11,7 +11,7 @@ build: &build
           name: Run Tests with Coverage
           caches:
             - npm
-            - node_modules
+            - node
           script:
             - npm ci
             - npm run coverage
@@ -19,7 +19,7 @@ build: &build
           name: Deploy to Chromatic
           caches:
             - npm
-            - node_modules
+            - node
           script:
             - npm ci
             - npm run deploy
