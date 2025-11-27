@@ -25,4 +25,7 @@ export default {
 			},
 		},
 	},
+	docs: {
+		defaultName: "Props",
+	},
 };
