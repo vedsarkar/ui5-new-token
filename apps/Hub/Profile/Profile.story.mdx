@@ -1,0 +1,28 @@
+# Profile Overview
+
+The Profile screen is the single pane of glass where data governance, analytics, and business operations converge. It serves as the central workspace for understanding a single, unified data entity in its entirety. This is where all known information about an entity—its attributes, connections, source history, and transactional interactions—is consolidated into a comprehensive 360-degree perspective, enabling both business analysis and data stewardship at the individual record level.
+
+### 5.1 Understanding Profiles vs. Entities
+
+While often used interchangeably, the terms "entity" and "profile" have a subtle distinction in Reltio. An entity refers to the core data record itself—a node in the data graph with a collection of attributes. A profile is a broader concept; it is the complete 360-degree expression of that entity, which includes not only its own attributes but also all the other entities directly connected to it via relationships, as well as its interaction data.
+
+### 5.2 Profile Perspective Tabs: Deconstructing the 360-Degree View
+
+The Profile screen is organized into a series of tabs, each offering a different "perspective" on the entity's data. This modular approach allows users to focus on the specific information they need.
+
+* Profile: This is the default and primary view, displaying the entity's core attributes, which are typically organized into logical groups called facets (e.g., Contact Attributes, Address Information) for clarity.
+* Relationships: This tab provides a tabular perspective of all the entity's connections to other entities. Users can view and filter these connections by relationship type and inspect the attributes of each relationship.
+* Graph: For a more intuitive understanding of connections, the Graph tab offers a graphical visualization of the entity and its direct relationships, representing the data as an interactive network of nodes and edges.
+* Potential Matches: This is the primary data stewardship interface for managing data quality at the record level. Here, stewards review a list of potential duplicates identified through Rules-based, AI-powered, or manual methods. They can compare records side-by-side, leveraging a Relevance score to guide their decision to either merge them or mark them as "Not a Match."
+* Sources: A critical tab for data governance, Sources provides a detailed grid view of data provenance. It allows users to visually audit the outcome of survivorship rules, showing exactly which Winner Source System contributed which attribute values based on the applied Rule Type. This makes abstract governance concepts tangible and transparent.
+* Interactions: This tab displays a chronological timeline of transactional events associated with the entity, such as product purchases or service calls, providing a behavioral view. (This feature is applicable only for Reltio Intelligent 360. From release 2024.3.0.0, this feature is no longer available on MDM tenants.)
+* Activity Log: This tab serves as a complete audit trail for the profile. It provides a historical log of all user activities (e.g., updates, merges) and system events that have occurred on the profile, ensuring full traceability of changes.
+* Members: For entities that are defined as groups (e.g., a household or a merchant group), this tab provides a comprehensive list of all the individual member entities that belong to that group.
+
+Together, the Sources, Activity Log, and History panel provide a comprehensive, 360-degree audit and governance view. They answer not just "what is the data?" but also "where did it come from, who decided it was the truth, and what has happened to it over time?"
+
+### 5.3 Integrated Stewardship Panels
+
+To further streamline data management tasks, the Profile screen includes expandable side panels on the right. These panels provide direct access to integrated stewardship functions, allowing users to manage Workflow tasks, engage in team Collaboration via comments, and view the profile's History without leaving the main profile view.
+
+While the Profile screen is ideal for managing matches for a single entity, addressing data duplication across an entire dataset requires a more scalable solution.

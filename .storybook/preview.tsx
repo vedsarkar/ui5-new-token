@@ -17,6 +17,7 @@ const preview = {
 					<Title />
 					<Subtitle />
 					<Description />
+					<h3>Props</h3>
 					<ArgTypes />
 					<Stories />
 				</>
@@ -28,6 +29,12 @@ const preview = {
 			// 'error' - fail CI on a11y violations
 			// 'off' - skip a11y checks entirely
 			test: "todo",
+		},
+
+		options: {
+			storySort: {
+				method: "configure",
+			},
 		},
 	},
 };
