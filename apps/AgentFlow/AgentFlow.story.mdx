@@ -1,1 +1,37 @@
 # AgentFlow Overview
+
+AgentFlow is Reltio's conversational interface for working with your master data. Built on the Model Context Protocol (MCP) server, it allows you to explore, validate, and manage entity records through chat-based interactions with AI agents. These agents operate on live production data while honoring your organization’s role-based access control (RBAC), data masking, and audit policies.
+
+AgentFlow is designed for the following business and technical users who need to manage and govern master data in real time:
+
+* Data Steward
+* Solution Architect
+* System Administrator
+* Data Product Owner
+
+### Core concepts
+
+AgentFlow relies on a few key concepts that shape how you interact with your data:
+
+* Conversation: A chat session between you and one agent, scoped to a specific task. The conversation retains context as you continue interacting.
+* Agent: A software entity with agency: it can perceive context, reason about goals, and take actions on behalf of a user or system. Each agent uses approved tools to read, compare, or update data — depending on your permissions.
+* Tool: A secure, governed capability the agent uses behind the scenes to complete an operation (for example: search, match, merge). Every call is logged and access-controlled.
+
+### Built-in safety and compliance
+
+Every action an agent performs is routed through the MCP server. This ensures:
+
+* All actions respect your RBAC policies and attribute-level masking
+* Write operations (e.g., merges) are logged with timestamps and user attribution
+* Agents can only use allowlisted tools and cannot access raw databases
+* Agent behavior is constrained to your tenant's policies and data residency zones
+
+### When to use it
+
+Use AgentFlow when you need to:
+
+* Search and review profiles using natural language
+* Investigate possible duplicates and match history
+* Make confident decisions about merges with explainable AI input
+* Enrich profiles with validated external data (optional)
+* Maintain governance traceability while working faster
