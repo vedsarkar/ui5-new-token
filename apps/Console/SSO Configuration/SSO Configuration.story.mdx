@@ -1,1 +1,142 @@
 # SSO Configuration Overview
+
+SSO Configuration is a Console application that enables tenant administrators to configure Single Sign-On (SSO) authentication for their tenants using either Security Assertion Markup Language (SAML) or OpenID Connect (OIDC) protocols. SSO allows users to access multiple applications and websites using one set of credentials.
+
+**Note:** By default, the SSO Configuration application requires the ROLE_ADMIN_TENANT role. You must be a Tenant Administrator to perform SSO configuration. However, you may also create a custom role with access to SSO resources and grant this role to your security administrator.
+
+**Important:** If your users need roles and groups that don't exist and aren't being copied from your IdP, create them before configuring SSO.
+
+## SSO Configuration Main Page
+
+<img src="/sso-configuration/screen-1.png" alt="SSO Configuration - Main page with SAML and OIDC options" />
+
+When you log into the SSO Configuration application for the first time, you can choose to configure either SAML or OIDC:
+
+1. **CONFIGURE SAML** - Click to configure SAML-based Single Sign-On
+2. **CONFIGURE OIDC** - Click to configure OIDC-based Single Sign-On
+
+**Protocol Overview:**
+* **SAML** - An open standard for authentication and authorization that transfers data between your Identity Provider (IdP) and Service Provider (SP)
+* **OIDC** - A simple identity layer on top of the OAuth 2.0 protocol that enables verification of end user identity based on authentication performed by an Authorization Server
+
+## OIDC Configuration
+
+### OIDC Configuration Overview
+
+<img src="/sso-configuration/screen-2.png" alt="SSO Configuration - OIDC configuration page" />
+
+The OIDC Configuration page is divided into the following sections:
+
+1. **Default Settings** - Basic configuration settings
+2. **Role Settings** - Configuration for role mapping and management
+3. **Groups Settings** - Configuration for group mapping and management
+4. **JSON Web Token Settings** - JWT token configuration
+5. **Endpoint Settings** - OAuth endpoint configuration
+
+### OIDC Default and Role Settings
+
+<img src="/sso-configuration/screen-3.png" alt="SSO Configuration - OIDC default and role settings" />
+
+**Default Settings:**
+* Configure basic OIDC settings as required by your Identity Provider
+
+**Role Settings:**
+* **Default Roles** - Specify the default roles that each new user will receive on logging into the tenant. Click the arrow to view and select roles
+* **Manage Roles in IdP** - Checkbox to denote whether roles are to be managed in IdP or in Reltio
+  * If selected: Roles are copied from IdP and Reltio roles are ignored
+  * If cleared: IdP roles will not be copied into Reltio and only Reltio roles will be used
+* **Role OIDC attribute** - Enter the OIDC attribute that will be mapped to user roles in Reltio (mandatory if "Manage Roles in IdP" is selected)
+* **Role regular expression** - Select the regular expression to extract roles from the OIDC attribute. Select .csv for comma-separated values or enter a custom regular expression
+
+### OIDC Groups and JWT Settings
+
+<img src="/sso-configuration/screen-4.png" alt="SSO Configuration - OIDC groups and JWT settings" />
+
+**Groups Settings:**
+* **Default Groups** - Select the default groups that the user will be part of as soon as they log in to the tenant
+* **Manage Groups in IdP** - Checkbox to denote whether groups are to be managed in IdP or in Reltio
+  * If selected: Groups are copied from IdP and Reltio groups are ignored
+  * If cleared: IdP groups will not be copied into Reltio and only Reltio groups will be used
+* **Group OIDC attribute** - Enter the OIDC attribute that will be mapped to groups in Reltio (mandatory if "Manage Groups in IdP" is selected)
+* **Group regular expression** - Enter the regular expression to extract groups from the OIDC attribute. Select .csv for comma-separated values or enter a custom regular expression
+
+**JSON Web Token Settings:**
+* **Manage JWT** - Select this checkbox to specify settings for signing JSON Web Tokens
+* **Algorithm** - Reltio supports only RSA256 algorithm (most widely recommended)
+* **Issuer** - Enter the URL of the SSO provider, added as part of the token
+* **jwksURL** - Enter URL to download the public keys JSON of the SSO server, needed for verifying the Id token
+
+### OIDC Endpoint Settings
+
+<img src="/sso-configuration/screen-5.png" alt="SSO Configuration - OIDC endpoint settings" />
+
+**Endpoint Settings:**
+* **Callback endpoint** - Enter the OAuth callback endpoint URI. Click the Copy icon to copy this endpoint URI and configure it in your Identity Provider settings
+* **Login endpoint** - Enter the OAuth login endpoint URI provided by your Identity Provider
+* **Revoke endpoint** - Enter the OAuth revoke token endpoint URI provided by your Identity Provider
+* **Token endpoint** - Enter the OAuth token endpoint URI provided by your Identity Provider
+* **User info endpoint** - Enter the external OAuth user info endpoint URI
+
+After configuring all OIDC settings, click **CONFIGURE** at the top of the page to complete the OIDC SSO configuration.
+
+## SAML Configuration
+
+### SAML Configuration Overview
+
+The SAML Configuration page is divided into the following sections:
+
+1. **Default Settings** - Basic configuration including email mapping
+2. **Roles settings** - Configuration for role mapping and management
+3. **Groups settings** - Configuration for group mapping and management
+4. **Identity provider (IdP) configuration** - Upload and configure IdP metadata
+
+**SAML Configuration Steps:**
+
+1. **Email ID SAML attribute** - Enter the SAML attribute that must be mapped to the email ID in Reltio
+
+2. **Role Settings:**
+   * **Default Roles** - The default roles that each new user will receive on logging into the tenant
+   * **Manage Roles in IdP** - Denotes whether roles are to be managed in IdP or in Reltio
+   * **Roles SAML attribute** - The SAML attribute that will be mapped to user roles in Reltio (displayed only if "Manage Roles in IdP" is selected)
+   * **Role regular expression** - The regular expression to extract roles from the SAML attribute. Select .csv for comma-separated values or enter a custom regular expression
+
+3. **Group Settings:**
+   * **Default Groups** - The default groups that the user will be part of as soon as they log in to the tenant
+   * **Manage Groups in IdP** - Denotes whether groups are to be managed in IdP or in Reltio
+   * **Group SAML attribute** - The SAML attribute that will be mapped to groups in Reltio (displayed only if "Manage Groups in IdP" is selected)
+   * **Group regular expression** - The regular expression to extract groups from the SAML attribute. Select .csv for comma-separated values or enter a custom regular expression
+
+4. **Identity Provider Configuration:**
+   * Drag and drop your IdP SAML Metadata file or browse for it
+   * Click **CONFIGURE** at the top of the page
+   * The system will validate the SAML XML file and provide you with:
+     * **Entity ID**
+     * **Assertion Consumer Service (ACS) URL**
+
+**Additional SAML Features:**
+* **Download SP-METADATA.XML** - After entering details and selecting Configure, you can download a file with the information to upload to your IdP
+* **Update Configuration** - When SAML is configured, you can update the configuration by clicking Update
+* **Delete Configuration** - You can delete the SAML configuration by selecting Delete Configuration
+* **Single Logout (SLO)** - If your tenant is configured for SAML SSO, you must also configure logout in both Amazon Cognito and your IdP
+
+## Key Features
+
+* **Dual Protocol Support** - Configure SSO using either SAML or OIDC protocols
+* **Flexible Role Management** - Manage roles in IdP or Reltio with configurable attribute mapping
+* **Flexible Group Management** - Manage groups in IdP or Reltio with configurable attribute mapping
+* **JWT Support** - Configure JSON Web Token settings for OIDC (RSA256 algorithm)
+* **Regular Expression Support** - Extract roles and groups using regular expressions or CSV format
+* **IdP Metadata Upload** - Easy configuration via SAML metadata file upload
+* **SP Metadata Download** - Download Service Provider metadata for IdP configuration
+* **Configuration Management** - Update or delete existing SSO configurations
+* **Single Logout Support** - Enable Single Logout for SAML with AWS Cognito
+
+## Use Cases
+
+* **Enterprise SSO Integration** - Integrate Reltio with enterprise identity providers (Active Directory, Okta, Azure AD, etc.)
+* **Centralized Authentication** - Enable users to access Reltio using their existing corporate credentials
+* **Role-Based Access Control** - Automatically assign roles to users based on IdP attributes
+* **Group-Based Access Control** - Automatically assign users to groups based on IdP attributes
+* **Multi-Tenant Security** - Configure different SSO providers for different tenants
+* **Compliance Requirements** - Meet organizational security and compliance requirements for authentication
+* **User Experience Improvement** - Eliminate the need for users to remember separate Reltio credentials

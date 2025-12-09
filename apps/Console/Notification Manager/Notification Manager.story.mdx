@@ -1,1 +1,88 @@
 # Notification Manager Overview
+
+Notification Management is a Console application that provides a means to deliver messages to a set of recipients for various Reltio notification types. The application enables tenant administrators to configure notification services and assign users as recipients for different types of system events and alerts.
+
+**Note:** You must be a tenant administrator to access the Notification Management application.
+
+## Notification Management Page
+
+<img src="/notification-management/screen-1.png" alt="Notification Management - Configure notification services" />
+
+The Notification Management page allows you to view and manage notifications for various Reltio services:
+
+1. **Notification Services Table** - Displays all available notification services in your tenant, including:
+   * **Match** - Match rule needs review notifications
+   * **Data loader** - Data load job completed notifications
+   * **RIH Data Blocks Integration** - Daily report for not enriched Entities
+   * Additional services as configured in your tenant
+
+2. **Edit Notification Configuration** - Click the **Edit** icon next to a service to configure its notification settings
+
+3. **Assign Recipients** - Use the **Who will receive the notification** dropdown to assign one or more users as recipients for each notification service
+
+4. **User Assignment** - Selected users will receive:
+   * Email notifications with information about the service
+   * In-app notifications in Reltio, accessible via the **Bell** icon in the top-right corner
+
+**Key Features:**
+* Configure notifications for multiple Reltio services
+* Assign multiple users as recipients for each service
+* Manage notification preferences centrally
+* Edit notification settings for individual services
+
+## Notifications Page
+
+<img src="/notification-management/screen-2.png" alt="Notification Management - View notifications" />
+
+The Notifications page displays all notifications you have subscribed to, providing a centralized view of account-related activity:
+
+1. **Access Notifications** - Access the Notifications page in two ways:
+   * Click the **Bell** icon in the top-right corner of any Reltio Console page. The bell icon displays the number of unread events
+   * Navigate from Applications menu: Console > Configuration > Notification management
+
+2. **Notification Display** - The page shows:
+   * Total number of notifications
+   * Individual notification cards with details about each event
+   * Navigation buttons to browse through notifications
+
+3. **Notification Actions** - Click on a notification to:
+   * View detailed information about the event
+   * Navigate directly to related pages (e.g., clicking a match rule notification takes you to the MATCH RULES tab in Data Modeler)
+
+**Notification Types:**
+* **Match Rule Notifications** - Alerts about match rules that have been bypassed by the Proactive Monitoring System
+* **Data Load Job Notifications** - Information about completed data load jobs
+* **Integration Notifications** - Updates about integration processes and data enrichment
+* **System Event Notifications** - Various system-level alerts and updates
+
+## Proactive Monitoring System
+
+The Proactive Monitoring System continuously monitors match rules processing and automatically skips over rules that are hindering performance:
+
+1. **Automatic Monitoring** - The system monitors match rule performance in real-time
+2. **Rule Bypassing** - Automatically bypasses rules that are causing performance issues
+3. **Notification Delivery** - If you are subscribed to notifications, the system lists details of any bypassed match rules in the Notifications page
+4. **Direct Navigation** - Click a notification for a bypassed match rule to navigate directly to the MATCH RULES tab in Data Modeler, where you can update the match rule to resolve the reported problem
+
+**Important Notes:**
+* Currently, the Proactive Monitoring System is the only service that leverages the Notification service
+* Other services like Export Job, Data Load Job, External Match Job, Reindex Job, and Rebuild Match Job continue to use email notifications directly
+* Email notifications for these services are configured separately from the Notification Management application
+
+## Key Features
+
+* **Centralized Configuration** - Manage all notification services from a single interface
+* **Multi-User Assignment** - Assign multiple users as recipients for each notification type
+* **Dual Delivery Channels** - Notifications delivered via both email and in-app notifications
+* **Direct Navigation** - Click notifications to navigate directly to related pages for quick action
+* **Proactive Monitoring Integration** - Automatic notifications for match rule performance issues
+* **Notification History** - View all notifications with navigation controls to browse through events
+* **Real-time Updates** - Bell icon displays the count of unread notifications in real-time
+
+## Use Cases
+
+* **Match Rule Management** - Receive notifications when match rules need review or are bypassed due to performance issues
+* **Data Load Monitoring** - Get notified when data load jobs complete successfully or encounter errors
+* **Integration Status** - Monitor integration processes and receive alerts about data enrichment status
+* **System Health** - Stay informed about system events and performance issues that require attention
+* **Team Coordination** - Ensure team members are notified about important events and can take appropriate action

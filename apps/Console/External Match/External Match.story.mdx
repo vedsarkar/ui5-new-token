@@ -1,1 +1,85 @@
 # External Match Overview
+
+External Match is a Console application that enables you to match records stored in external files with entities in the Reltio platform. The application provides a guided workflow to upload files, map file columns to Reltio entity attributes, select match rules, and review match results.
+
+## External Match Workflow
+
+The External Match process consists of four main steps:
+
+### Step 1: Create New Job and Select File
+
+<img src="/external-match/screen-2.png" alt="External Match - Create new job and file selection" />
+
+To start a new external match job:
+
+1. **Job Name** - Enter a unique name for the match job (e.g., "Newjob1")
+2. **Entity Type** - Select the target entity type from the dropdown (e.g., HCP, HCO, GPO)
+3. **File Source** - Choose the source location for your data file:
+   * **Local file system** - Upload a CSV or JSON file from your computer (max 50 MB for CSV, 50 MB for JSON)
+   * **Amazon S3** - Connect to S3 bucket with credentials (Bucket Name, AWS Key, AWS Secret, S3 file path, S3 file mask, Region)
+   * **SFTP** - Connect to SFTP server (SFTP username, password, host, file path, file mask)
+   * **GCS** - Connect to Google Cloud Storage (Bucket name, File path, File mask, Project-ID, Project Key, Project Key ID, Client ID, Client Email)
+4. **Browse File** - Select the file to use for matching
+
+### Step 2: Map File Columns to Attributes
+
+<img src="/external-match/screen-3.png" alt="External Match - Column mapping interface" />
+
+After selecting a file, map the file columns to Reltio entity attributes:
+
+1. **Mapping Table** - View all columns from your file and their corresponding Reltio attribute mappings
+2. **Record Identifier** - Select a unique column that will be used to identify input records in match results. By default, the first column is selected as the Record Identifier
+3. **Attribute Mapping** - Map each file column to the corresponding Reltio entity attribute
+4. **Mapping Management** - Save mappings for reuse in future jobs, or select an existing saved mapping
+
+**Important considerations for Record Identifier:**
+* Only one column can be set as the record identifier
+* The column must contain unique values across your dataset
+* A mapped column cannot be set as a record identifier (unmap it first)
+* If a column with record identifier is chosen for mapping, the record identifier moves back to the default column
+
+### Step 3: Select Match Rule and Define Output
+
+<img src="/external-match/screen-4.png" alt="External Match - Match rule selection" />
+
+Configure the matching process:
+
+1. **Match Rule Selection** - Choose an appropriate match rule to run the match:
+   * **Rule-based match rules** - Use predefined matching criteria
+   * **Relevance-based match rules** - Use AI-powered matching with relevance scores
+   * **MatchIQ** - Advanced matching engine
+2. **Cleansing Option** - Optionally enable data cleansing before matching
+3. **Output Configuration** - Define how match results should be processed and exported
+
+### Step 4: View Match Results
+
+<img src="/external-match/screen-1.png" alt="External Match - Match results view" />
+
+Review and export match results:
+
+1. **Job History** - View all external match jobs with their status, execution time, and results
+2. **Match Results Table** - Review detailed match results showing:
+   * **key** - Concatenated value of record identifier and entity ID
+   * **source** - "File" (input record) or "Reltio" (matched entity)
+   * **ext_id** - Value from the record identifier column
+   * **reltio_id** - Entity ID of the matched record in Reltio
+   * **matchRuleName** - Name of the match rule used
+   * **matchRuleType** - Type of match rule (rule_based, relevance_based)
+   * **Match Action** - Action taken (AUTO_MERGE, POTENTIAL_MATCH, etc.)
+   * **Match Method** - Indicates if matching used customer-defined rules or MatchIQ
+   * **Number of matched entities** - Count of matches found for each record
+   * **Relevance Score** - Applicable for relevance-based rules and MatchIQ
+   * **Match Action Label** - Label from the match action
+   * **crosswalk_type** - Source system of the matched record (e.g., Reltio, Facebook)
+   * **crosswalk_value** - Unique identifier of the matched record
+3. **Export Results** - Download match results as CSV file for further analysis
+4. **Job Management** - Sort and filter jobs by various criteria, view job history, and manage job definitions
+
+## Key Features
+
+* **Multiple File Sources** - Support for local files, Amazon S3, SFTP, and Google Cloud Storage
+* **Flexible Mapping** - Map file columns to Reltio attributes with support for nested attributes
+* **Record Identification** - Customizable record identifier for tracking matches in results
+* **Multiple Match Methods** - Rule-based, relevance-based, and MatchIQ matching engines
+* **Comprehensive Results** - Detailed match results with relevance scores, match actions, and crosswalk information
+* **Job Management** - Save, reuse, and track match job definitions and their execution history

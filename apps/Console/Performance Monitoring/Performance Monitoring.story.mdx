@@ -1,1 +1,163 @@
 # Performance Monitoring Overview
+
+Performance Monitoring is a Console application that enables tenant administrators to monitor and analyze the performance of Reltio APIs across all tenants. The application provides comprehensive dashboards with detailed metrics, charts, and filters to help understand API usage patterns, identify performance bottlenecks, and make informed business decisions.
+
+**Note:** You must be a tenant administrator to access the Performance Monitoring application.
+
+## Accessing Performance Monitoring
+
+To access the Performance Monitoring application:
+
+1. In the App Selector icon, select **Console**
+2. In the Console home page, under the **Tenant Management** section, select **Performance Monitoring**
+3. At the top of the page, from the **Select tenant** dropdown menu, select the tenant you want to work with
+
+## API Performance Summary Dashboard
+
+<img src="/performance-monitoring/screen-1.png" alt="Performance Monitoring - API performance summary dashboard" />
+
+The API Performance Summary dashboard provides a high-level overview of API performance metrics:
+
+1. **Usage Chart** - Click the **Usage** chart title to drill down to the API usage dashboard. The chart shows:
+   * **Total requests** - Total number of API requests sent with percentage increase (↑) or decrease (↓) over the past 90 days
+   * **Success rate** - Percentage of successful requests out of the total number sent
+   * **Failed requests** - Number of sent requests that failed
+   * **Trend line** - Color-coded graph indicating API request status (Green = pass, Red = fail)
+
+2. **Latency Chart** - Two trend lines show:
+   * Average latency value
+   * Median API latency value
+   * Percentage increase or decrease over the past 90 days
+
+3. **Daily Success Rate** - A bar graph showing the daily success rate of API requests
+
+**Data Analysis Scenarios:**
+* Find out the number of API requests sent over a period of time
+* View information about failed requests and API success rate
+* Look for unexpected rises or drops in API latency values
+* Identify high-level anomalies in API usage patterns
+
+## API Usage Dashboard
+
+<img src="/performance-monitoring/screen-4.png" alt="Performance Monitoring - API usage dashboard" />
+
+The API Usage dashboard provides detailed information about API usage patterns:
+
+1. **API Usage by Date** - Daily breakdown showing:
+   * **Date** - Each row represents a new day
+   * **API Usage** - Total calls made on that day
+   * Summary row showing the grand total of API calls across all dates
+
+2. **API Usage by Tenant** - Detailed breakdown by tenant showing:
+   * **Date** - The day of usage
+   * **Tenant Id** - Identifies the tenant
+   * **Tenant Purpose** - Type of tenant (dev, prod, or test)
+   * **API Usage** - Number of calls made
+
+3. **Detailed API Usage** - Granular details of API calls grouped by:
+   * Date
+   * Tenant Id and Tenant Purpose
+   * Source System
+   * HTTP Method (GET, POST, DELETE, PUT, etc.)
+   * API Endpoint
+   * API Usage count
+
+**Data Analysis Scenarios:**
+* Identify which APIs showed peaks or troughs in number of requests
+* Determine which APIs are used the most and by whom
+* Check the number of units consumed by an API to find impact on data load times
+* Identify the most frequently used API and its resource consumption
+* Look for anomalies like unexpected API requests
+
+## API Latency Dashboard
+
+<img src="/performance-monitoring/screen-3.png" alt="Performance Monitoring - API latency dashboard" />
+
+The API Latency dashboard helps identify performance bottlenecks:
+
+1. **API Latency Trend** - A line graph showing:
+   * Average latency value of all API requests
+   * Median API latency value
+   * Optional percentile views (90th, 95th, 99th) accessible via the Gear icon
+
+2. **Filter Components** - HTTP method and API endpoint filters to narrow down analysis
+
+**Data Analysis Scenarios:**
+* Find the slowest API by identifying peaks in latency values
+* Use HTTP method and API filters to determine the exact API that created a peak
+* Use percentiles to know if an API that created a peak is regularly used or not
+* Analyze the impact of authorization service latency on overall API latency
+
+## Filters and Date Range Selection
+
+Performance Monitoring provides comprehensive filtering capabilities:
+
+1. **Available Filters:**
+   * **Tenant Id** - Filter by specific tenant (default: all)
+   * **Purpose** - Filter by tenant purpose (default: all)
+   * **HTTP Method** - Filter by request method: All, GET, POST, DELETE, PUT (default: all)
+   * **API Endpoint** - Filter by specific API endpoint (default: all)
+   * **API Source** - Filter by source system (default: all)
+   * **Date Range** - Select time period for analysis
+
+2. **Selecting Filters:**
+   * Click a filter chip in the dashboard area
+   * In the Filter by pane, select one or more options
+   * Use the Search bar for API endpoint filter to find specific APIs
+   * Click **APPLY** to apply filters
+   * Click **RESET FILTERS** to return to default settings
+
+3. **Date Range Selection:**
+   * Click the Date Picker dropdown in the Title bar
+   * Select a predefined range:
+     * This week
+     * Last week
+     * Last 7 days
+     * Last 30 days
+     * Last 90 days
+     * Last 12 months
+     * This year (Jan - Today)
+   * Or pick custom dates in the From and To fields
+   * Click **UPDATE** to apply the date range
+
+**Note:** By default, the application shows data for the previous week. If no data is available for the selected period, you'll see messages indicating no data found.
+
+## API Auth Performance Dashboard
+
+<img src="/performance-monitoring/screen-2.png" alt="Performance Monitoring - API auth performance dashboard" />
+
+The Authentication API Performance dashboard monitors the performance of Reltio's authentication service:
+
+1. **Authentication API Usage** - A bar graph showing:
+   * Total number of requests sent for a specified date range
+   * Number of requests sent during a specific day
+
+2. **Authentication API Latency** - Two line graphs showing latency values for:
+   * Get token API
+   * Check token API
+
+**Data Analysis Scenarios:**
+* Understand the authorization service impact on API latency
+* View the speed of token generation
+* Monitor authentication service performance
+
+## Key Features
+
+* **Comprehensive Dashboards** - Multiple specialized dashboards for different aspects of API performance
+* **Detailed Metrics** - Total requests, success rates, latency values, failed requests, and more
+* **Advanced Filtering** - Filter by tenant, HTTP method, API endpoint, source system, and date range
+* **Interactive Charts** - Hover over metrics to view detailed tooltips
+* **Percentile Analysis** - View 90th, 95th, and 99th percentile latency values
+* **Trend Analysis** - Compare current performance with historical data (90-day comparisons)
+* **Drill-down Capabilities** - Click chart titles to navigate to detailed dashboards
+* **Multi-tenant Support** - Monitor performance across all tenants from a single interface
+
+## Use Cases
+
+* **Performance Optimization** - Identify slow APIs and optimize resource consumption
+* **Capacity Planning** - Understand API usage patterns to plan for capacity needs
+* **Anomaly Detection** - Detect unexpected API usage or performance issues
+* **Resource Management** - Monitor resource consumption and identify APIs that consume excessive resources
+* **Success Rate Monitoring** - Track API success rates and identify failing requests
+* **Authentication Monitoring** - Monitor authentication service performance and token generation speed
+* **Business Decision Making** - Use performance data to make informed decisions about API usage and optimization
