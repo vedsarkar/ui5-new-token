@@ -1,0 +1,32 @@
+# reltio-design Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2025-11-20
+
+## Active Technologies
+- TypeScript 5.x, React 18.x + React, Storybook, CSS Modules, Biome (001-treelist-component)
+- N/A (UI component, no persistence) (001-treelist-component)
+
+- React 19, Storybook 10, Biome; virtualization via `react-window` (Phase 1 decision) (001-treelist-component)
+
+## Project Structure
+
+```text
+src/
+tests/
+```
+
+## Commands
+
+# Add commands for 
+
+## Code Style
+
+: Follow standard conventions
+
+## Recent Changes
+- 001-treelist-component: Added TypeScript 5.x, React 18.x + React, Storybook, CSS Modules, Biome
+
+- 001-treelist-component: Added React 19, Storybook 10, Biome; virtualization via `react-window` (Phase 1 decision)
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->

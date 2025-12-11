@@ -51,6 +51,8 @@
 		"vitest": "^4.0.14"
 	},
 	"dependencies": {
+		"classnames": "^2.5.1",
+		"rc-tree": "^5.13.1",
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0"
 	}

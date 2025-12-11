@@ -1,0 +1,49 @@
+.wrapper {
+	display: flex;
+	align-items: center;
+	line-height: var(--reltio-tree-list-line-height, 1.5);
+	padding: var(--reltio-tree-list-row-padding-block, 2px)
+		var(--reltio-tree-list-row-padding-inline, 4px);
+	position: relative;
+	z-index: 1;
+}
+
+.indent {
+	display: inline-block;
+	width: calc(var(--depth, 1) * var(--reltio-tree-list-indent-size, 16px));
+	flex: 0 0 auto;
+}
+
+.toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--reltio-tree-list-toggle-size, 28px);
+	height: var(--reltio-tree-list-toggle-size, 28px);
+	border: none;
+	background: none;
+	color: var(--reltio-tree-list-toggle-color, #5f6368);
+	cursor: pointer;
+	margin-right: 4px;
+}
+
+.label {
+	flex: 1 1 auto;
+	cursor: pointer;
+	border: none;
+	background: none;
+	padding: 0;
+	text-align: left;
+	font: inherit;
+	color: var(--reltio-tree-list-label-color, inherit);
+}
+
+.actions {
+	margin-left: auto;
+	opacity: 0;
+	transition: opacity 0.12s ease;
+}
+
+.wrapper:hover .actions {
+	opacity: 1;
+}
