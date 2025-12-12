@@ -26,5 +26,4 @@ export type RcTreeNodeData<T> = {
 export type TreeListProps = {
 	data: TreeItem[];
 	onItemClick: (item: TreeItem) => void;
-	defaultExpandedKeys?: TreeKey[];
 };
