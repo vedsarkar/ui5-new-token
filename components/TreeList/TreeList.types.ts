@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 export type TreeKey = string | number;
 
 export type TreeItem = {
@@ -26,4 +27,7 @@ export type RcTreeNodeData<T> = {
 export type TreeListProps = {
 	data: TreeItem[];
 	onItemClick: (item: TreeItem) => void;
+	renderLabel?: (item: TreeItem) => ReactNode;
+	expandedKeys?: TreeKey[];
+	onExpandedKeysChange?: (keys: TreeKey[]) => void;
 };

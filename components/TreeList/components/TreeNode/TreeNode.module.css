@@ -24,7 +24,6 @@
 	background: none;
 	color: var(--reltio-tree-list-toggle-color, #5f6368);
 	cursor: pointer;
-	margin-right: 4px;
 }
 
 .label {

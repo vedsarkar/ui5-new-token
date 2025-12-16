@@ -1,21 +1,44 @@
 import Tree from "rc-tree";
-import type { Key } from "rc-tree/lib/interface";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { classNames } from "@/utils/classNames";
 import { TreeNode } from "./components/TreeNode/TreeNode";
-import { getLevelLinesData, transformTreeData } from "./helpers";
+import {
+	getLevelLinesData,
+	transformTreeData,
+	validateUniqueKeys,
+} from "./helpers";
 import styles from "./TreeList.module.css";
-import type { RcTreeNodeData, TreeItem, TreeKey } from "./TreeList.types";
-
-export type TreeListProps = {
-	data: TreeItem[];
-	onItemClick: (item: TreeItem) => void;
-};
+import type {
+	RcTreeNodeData,
+	TreeItem,
+	TreeKey,
+	TreeListProps,
+} from "./TreeList.types";
 
 const INDENT_SIZE = 16;
 
-export function TreeList({ data, onItemClick }: TreeListProps) {
+export function TreeList({
+	data,
+	onItemClick,
+	renderLabel,
+	expandedKeys: expandedKeysProp,
+	onExpandedKeysChange,
+}: TreeListProps) {
+	if (process.env.NODE_ENV !== "production") {
+		validateUniqueKeys(data);
+	}
+
+	const topLevelKeys = useMemo(() => data.map((item) => item.id), [data]);
+	const isControlled = expandedKeysProp !== undefined;
 	const [expandedKeys, setExpandedKeys] = useState<Set<TreeKey>>(new Set());
+
+	useEffect(() => {
+		if (isControlled) {
+			return;
+		}
+
+		setExpandedKeys(new Set(topLevelKeys));
+	}, [isControlled, topLevelKeys]);
 
 	const rcData = useMemo<RcTreeNodeData<TreeItem>[]>(
 		() => transformTreeData(data),
@@ -24,22 +47,31 @@ export function TreeList({ data, onItemClick }: TreeListProps) {
 
 	const levelLinesMap = useMemo(() => getLevelLinesData(rcData), [rcData]);
 
-	const expandedArray = useMemo(() => Array.from(expandedKeys), [expandedKeys]);
+	const expandedSet = useMemo(
+		() =>
+			isControlled ? new Set<TreeKey>(expandedKeysProp ?? []) : expandedKeys,
+		[expandedKeysProp, expandedKeys, isControlled],
+	);
 
-	const handleExpand = (keys: Key[]) => {
-		const next = new Set<TreeKey>();
-		keys.forEach((key) => {
-			if (typeof key === "string" || typeof key === "number") {
-				next.add(key);
-			}
-		});
-		setExpandedKeys(next);
+	const expandedArray = useMemo(() => Array.from(expandedSet), [expandedSet]);
+
+	const updateExpandedKeys = (keys: TreeKey[]) => {
+		if (isControlled) {
+			onExpandedKeysChange?.(keys);
+			return;
+		}
+		setExpandedKeys(new Set(keys));
+		onExpandedKeysChange?.(keys);
+	};
+
+	const handleExpand = (keys: TreeKey[]) => {
+		updateExpandedKeys(keys);
 	};
 
 	const renderTitle = (node: RcTreeNodeData<TreeItem>) => {
 		const raw = node.data.raw;
 		const isLeafNode = !!node.isLeaf;
-		const isExpanded = expandedKeys.has(node.key);
+		const isExpanded = expandedSet.has(node.key);
 		const [levelLines, isLast] = levelLinesMap[node.key] ?? [[], false];
 
 		return (
@@ -56,13 +88,12 @@ export function TreeList({ data, onItemClick }: TreeListProps) {
 				isLast={isLast}
 				indentSize={INDENT_SIZE}
 				onToggle={() => {
-					setExpandedKeys((prev) => {
-						const next = new Set(prev);
-						isExpanded ? next.delete(node.key) : next.add(node.key);
-						return next;
-					});
+					const next = new Set(expandedSet);
+					isExpanded ? next.delete(node.key) : next.add(node.key);
+					updateExpandedKeys(Array.from(next));
 				}}
 				onItemClick={onItemClick}
+				renderLabel={renderLabel}
 			/>
 		);
 	};
@@ -72,10 +103,10 @@ export function TreeList({ data, onItemClick }: TreeListProps) {
 			<Tree
 				treeData={rcData}
 				expandAction={false}
-				virtual={true}
+				virtual={false}
 				selectable={false}
 				expandedKeys={expandedArray}
-				onExpand={handleExpand}
+				onExpand={(keys) => handleExpand(keys as TreeKey[])}
 				showIcon={false}
 				switcherIcon={() => <span style={{ display: "none" }} />}
 				titleRender={renderTitle}

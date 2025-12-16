@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, MouseEvent } from "react";
 import { classNames } from "@/utils/classNames";
 import { ChevronIcon } from "../ChevronIcon";
 import { TreeLevelLines } from "../TreeLevelLines/TreeLevelLines";
@@ -12,8 +12,14 @@ export function TreeNode({
 	indentSize,
 	onToggle,
 	onItemClick,
+	renderLabel,
 }: TreeNodeProps) {
 	const { node, depth, isLeaf, isExpanded } = row;
+
+	const handleLabelClick = (event: MouseEvent) => {
+		event.stopPropagation();
+		onItemClick(node);
+	};
 
 	return (
 		<div
@@ -43,15 +49,8 @@ export function TreeNode({
 					<ChevronIcon expanded={isExpanded} />
 				</button>
 			)}
-			<button
-				type="button"
-				className={styles.label}
-				onClick={(event) => {
-					event.stopPropagation();
-					onItemClick(node);
-				}}
-			>
-				{node.label}
+			<button type="button" className={styles.label} onClick={handleLabelClick}>
+				{renderLabel ? renderLabel(node) : node.label}
 			</button>
 		</div>
 	);
