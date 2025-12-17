@@ -1,4 +1,8 @@
-export const ChevronIcon = ({ expanded }: { expanded: boolean }) => {
+type Props = {
+	expanded: boolean;
+};
+
+export const ChevronIcon = ({ expanded }: Props) => {
 	return (
 		<svg
 			viewBox="0 0 24 24"

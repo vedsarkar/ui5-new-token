@@ -1,30 +1,30 @@
-import type React from "react";
+import { memo } from "react";
 import { classNames } from "@/utils/classNames";
 import styles from "./TreeLevelLines.module.css";
 import type { TreeLevelLinesProps } from "./TreeLevelLines.types";
 
-const LevelLine = ({
-	needDrawLine = false,
-	isLastLevelLine = false,
-	drawHorizontalLine = false,
-}: {
-	needDrawLine?: boolean;
-	isLastLevelLine?: boolean;
-	drawHorizontalLine?: boolean;
-}) => (
-	<div
-		className={classNames(
-			styles.levelLine,
-			needDrawLine && styles.showLine,
-			isLastLevelLine && styles.lastLevelLine,
-			drawHorizontalLine && styles.horizontalLine,
-		)}
-	/>
+const LevelLine = memo(
+	({
+		needDrawLine = false,
+		isLastLevelLine = false,
+		drawHorizontalLine = false,
+	}: {
+		needDrawLine?: boolean;
+		isLastLevelLine?: boolean;
+		drawHorizontalLine?: boolean;
+	}) => (
+		<div
+			className={classNames(
+				styles.levelLine,
+				needDrawLine && styles.showLine,
+				isLastLevelLine && styles.lastLevelLine,
+				drawHorizontalLine && styles.horizontalLine,
+			)}
+		/>
+	),
 );
 
-export const TreeLevelLines: React.FC<TreeLevelLinesProps> = ({
-	levelLine,
-}) => {
+const TreeLevelLinesComponent = ({ levelLine }: TreeLevelLinesProps) => {
 	const [needDrawLines = [], isLast = false] = levelLine || [];
 	const isRoot = needDrawLines.length === 0;
 	const level = needDrawLines.length + 2;
@@ -50,3 +50,5 @@ export const TreeLevelLines: React.FC<TreeLevelLinesProps> = ({
 		</div>
 	);
 };
+
+export const TreeLevelLines = memo(TreeLevelLinesComponent);
