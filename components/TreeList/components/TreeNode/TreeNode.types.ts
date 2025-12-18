@@ -1,12 +1,16 @@
 import type { ComponentType } from "react";
-import type { FlattenRow, TreeItem } from "../../TreeList.types";
+import type { TreeItem, TreeKey } from "../../TreeList.types";
 
 export type TreeNodeProps = {
-	row: FlattenRow;
+	id: TreeKey;
+	node: TreeItem;
+	depth: number;
+	isLeaf: boolean;
+	isExpanded: boolean;
 	levelLines: boolean[];
 	isLast: boolean;
 	indentSize: number;
-	onToggle: () => void;
+	onToggle: (id: TreeKey, expanded: boolean) => void;
 	onItemClick: (item: TreeItem) => void;
 	LabelComponent?: ComponentType<{ data: TreeItem }>;
 };

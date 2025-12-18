@@ -24,8 +24,11 @@ const LevelLine = memo(
 	),
 );
 
-const TreeLevelLinesComponent = ({ levelLine }: TreeLevelLinesProps) => {
-	const [needDrawLines = [], isLast = false] = levelLine || [];
+const TreeLevelLinesComponent = ({
+	levelLines,
+	isLast = false,
+}: TreeLevelLinesProps) => {
+	const needDrawLines = levelLines;
 	const isRoot = needDrawLines.length === 0;
 	const level = needDrawLines.length + 2;
 
@@ -52,3 +55,4 @@ const TreeLevelLinesComponent = ({ levelLine }: TreeLevelLinesProps) => {
 };
 
 export const TreeLevelLines = memo(TreeLevelLinesComponent);
+TreeLevelLines.displayName = "TreeLevelLines";

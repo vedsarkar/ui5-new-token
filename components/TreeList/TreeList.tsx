@@ -1,5 +1,5 @@
 import Tree from "rc-tree";
-import { useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { TreeNode } from "./components/TreeNode/TreeNode";
 import {
 	getLevelLinesData,
@@ -16,13 +16,13 @@ import type {
 
 const INDENT_SIZE = 16;
 
-export function TreeList({
+const TreeListComponent = ({
 	data,
 	onItemClick,
 	LabelComponent,
 	expandedKeys: expandedKeysProp,
 	onExpandedKeysChange,
-}: TreeListProps) {
+}: TreeListProps) => {
 	if (process.env.NODE_ENV !== "production") {
 		validateUniqueKeys(data);
 	}
@@ -61,9 +61,9 @@ export function TreeList({
 	);
 
 	const handleToggle = useCallback(
-		(node: RcTreeNodeData<TreeItem>, isExpanded: boolean) => {
+		(id: TreeKey, isExpanded: boolean) => {
 			const next = new Set(expandedSet);
-			isExpanded ? next.delete(node.key) : next.add(node.key);
+			isExpanded ? next.delete(id) : next.add(id);
 			updateExpandedKeys(Array.from(next));
 		},
 		[expandedSet, updateExpandedKeys],
@@ -78,18 +78,15 @@ export function TreeList({
 
 			return (
 				<TreeNode
-					row={{
-						id: node.key,
-						node: raw,
-						depth: node.data.depth,
-						isLeaf: isLeafNode,
-						isExpanded,
-						parentId: node.data.parentId,
-					}}
+					id={node.key}
+					node={raw}
+					depth={node.data.depth}
+					isLeaf={isLeafNode}
+					isExpanded={isExpanded}
 					levelLines={levelLines}
 					isLast={isLast}
 					indentSize={INDENT_SIZE}
-					onToggle={() => handleToggle(node, isExpanded)}
+					onToggle={handleToggle}
 					onItemClick={onItemClick}
 					LabelComponent={LabelComponent}
 				/>
@@ -112,6 +109,7 @@ export function TreeList({
 			/>
 		</div>
 	);
-}
+};
 
-export default TreeList;
+export const TreeList = memo(TreeListComponent);
+TreeList.displayName = "TreeList";

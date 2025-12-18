@@ -1,6 +1,6 @@
 import type { RcTreeNodeData, TreeItem, TreeKey } from "./TreeList.types";
 
-export function validateUniqueKeys(items: TreeItem[]) {
+export const validateUniqueKeys = (items: TreeItem[]) => {
 	const existingKeys = new Set<TreeKey>();
 
 	const walk = (nodes: TreeItem[]) => {
@@ -19,11 +19,11 @@ export function validateUniqueKeys(items: TreeItem[]) {
 	};
 
 	walk(items);
-}
+};
 
-export function getLevelLinesData<T>(
+export const getLevelLinesData = <T>(
 	treeData: ReadonlyArray<RcTreeNodeData<T>>,
-): Record<TreeKey, [boolean[], boolean]> {
+): Record<TreeKey, [boolean[], boolean]> => {
 	const acc: Record<TreeKey, [boolean[], boolean]> = {};
 
 	const traverse = (
@@ -45,13 +45,13 @@ export function getLevelLinesData<T>(
 
 	traverse(treeData);
 	return acc;
-}
+};
 
-export function transformTreeData(
+export const transformTreeData = (
 	data: TreeItem[],
 	depth = 1,
 	parentId?: TreeKey,
-): RcTreeNodeData<TreeItem>[] {
+): RcTreeNodeData<TreeItem>[] => {
 	return data.map((item) => ({
 		key: item.id,
 		title: null,
@@ -61,4 +61,4 @@ export function transformTreeData(
 			? transformTreeData(item.children, depth + 1, item.id)
 			: undefined,
 	}));
-}
+};

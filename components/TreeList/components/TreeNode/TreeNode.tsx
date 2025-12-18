@@ -1,17 +1,16 @@
-import {
-	type CSSProperties,
-	type MouseEvent,
-	useCallback,
-	useMemo,
-} from "react";
+import { type CSSProperties, type MouseEvent, memo, useCallback } from "react";
 import { classNames } from "@/utils/classNames";
 import { ChevronIcon } from "../ChevronIcon";
 import { TreeLevelLines } from "../TreeLevelLines/TreeLevelLines";
 import styles from "./TreeNode.module.css";
 import type { TreeNodeProps } from "./TreeNode.types";
 
-export const TreeNode = ({
-	row,
+const TreeNodeComponent = ({
+	id,
+	node,
+	depth,
+	isLeaf,
+	isExpanded,
 	levelLines,
 	isLast,
 	indentSize,
@@ -19,8 +18,6 @@ export const TreeNode = ({
 	onItemClick,
 	LabelComponent,
 }: TreeNodeProps) => {
-	const { node, depth, isLeaf, isExpanded } = row;
-
 	const handleLabelClick = useCallback(
 		(event: MouseEvent) => {
 			event.stopPropagation();
@@ -32,14 +29,9 @@ export const TreeNode = ({
 	const handleToggleClick = useCallback(
 		(event: MouseEvent) => {
 			event.stopPropagation();
-			onToggle();
+			onToggle(id, isExpanded);
 		},
-		[onToggle],
-	);
-
-	const levelLine = useMemo<[boolean[], boolean]>(
-		() => [levelLines, isLast],
-		[levelLines, isLast],
+		[onToggle, id, isExpanded],
 	);
 
 	return (
@@ -50,7 +42,7 @@ export const TreeNode = ({
 				["--reltio-tree-list-indent-size" as keyof CSSProperties]: `${indentSize}px`,
 			}}
 		>
-			<TreeLevelLines levelLine={levelLine} />
+			<TreeLevelLines levelLines={levelLines} isLast={isLast} />
 			<span
 				className={styles.indent}
 				style={{ ["--depth" as keyof CSSProperties]: `${depth}` }}
@@ -73,3 +65,6 @@ export const TreeNode = ({
 		</div>
 	);
 };
+
+export const TreeNode = memo(TreeNodeComponent);
+TreeNode.displayName = "TreeNode";

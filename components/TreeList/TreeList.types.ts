@@ -7,15 +7,6 @@ export type TreeItem = {
 	children?: TreeItem[];
 };
 
-export type FlattenRow = {
-	id: TreeKey;
-	node: TreeItem;
-	depth: number;
-	isLeaf: boolean;
-	isExpanded: boolean;
-	parentId?: TreeKey;
-};
-
 export type RcTreeNodeData<T> = {
 	key: TreeKey;
 	title: null;
