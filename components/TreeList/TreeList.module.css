@@ -1,11 +1,11 @@
 .root {
-	--reltio-tree-list-font-family: system-ui, sans-serif;
-	--reltio-tree-list-font-size: 14px;
-	--reltio-tree-list-text-color: #1a1a1a;
-	--reltio-tree-list-background: #fff;
-	--reltio-tree-list-border-color: #ddd;
-	--reltio-tree-list-border-radius: 6px;
-	--reltio-tree-list-padding: 4px;
+	--reltio-tree-list-font-family: inherit;
+	--reltio-tree-list-font-size: inherit;
+	--reltio-tree-list-text-color: inherit;
+	--reltio-tree-list-background: inherit;
+	--reltio-tree-list-border-color: transparent;
+	--reltio-tree-list-border-radius: 0;
+	--reltio-tree-list-padding: 0;
 	--reltio-tree-list-hover-background: rgba(0, 0, 0, 0.04);
 	--reltio-tree-list-indent-size: 16px;
 	--reltio-tree-list-toggle-size: 28px;
@@ -13,19 +13,17 @@
 	--reltio-tree-list-line-color: rgba(0, 0, 0, 0.08);
 	--reltio-tree-list-row-padding-block: 2px;
 	--reltio-tree-list-row-padding-inline: 4px;
-	--reltio-tree-list-line-height: 1.5;
+	--reltio-tree-list-line-height: inherit;
 	--reltio-tree-list-horizontal-line-width: 5px;
 	--reltio-tree-list-label-color: inherit;
 	display: block;
-	width: 100%;
-	height: 100%;
 	overflow: auto;
 	font-family: var(--reltio-tree-list-font-family, system-ui, sans-serif);
 	font-size: var(--reltio-tree-list-font-size, 14px);
 	color: var(--reltio-tree-list-text-color, #1a1a1a);
-	background: var(--reltio-tree-list-background, #fff);
-	border: 1px solid var(--reltio-tree-list-border-color, #ddd);
-	border-radius: var(--reltio-tree-list-border-radius, 6px);
+	background: var(--reltio-tree-list-background, transparent);
+	border: none;
+	border-radius: var(--reltio-tree-list-border-radius, 0);
 }
 
 .rc-tree-treenode {

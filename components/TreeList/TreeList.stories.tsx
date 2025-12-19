@@ -195,7 +195,7 @@ const multiRootData: TreeItem[] = [
 const meta: Meta<typeof TreeList> = {
 	component: TreeList,
 	parameters: {
-		layout: "centered",
+		layout: "padded",
 		docs: {
 			description: {
 				component: componentDescription,
@@ -266,22 +266,14 @@ type CustomLabelArgs = ComponentProps<typeof TreeList> & {
 };
 
 export const Default: Story = {
-	render: (args) => (
-		<div style={{ width: 400, height: 300 }}>
-			<TreeList {...args} />
-		</div>
-	),
+	render: (args) => <TreeList {...args} />,
 };
 
 export const MultipleRoots: Story = {
 	args: {
 		data: multiRootData,
 	},
-	render: (args) => (
-		<div style={{ width: 400, height: 300 }}>
-			<TreeList {...args} />
-		</div>
-	),
+	render: (args) => <TreeList {...args} />,
 };
 
 type RenderLabelVariant =
@@ -401,11 +393,7 @@ export const CustomLabel: StoryObj<CustomLabelArgs> = {
 
 		const Label = LabelMap[labelVariant] ?? LabelMap.default;
 
-		return (
-			<div style={{ width: 400, height: 320 }}>
-				<TreeList {...treeListArgs} LabelComponent={Label} />
-			</div>
-		);
+		return <TreeList {...treeListArgs} LabelComponent={Label} />;
 	},
 };
 
@@ -454,7 +442,15 @@ export const ControlledExpanded: Story = {
 					<strong>onExpandedKeysChange:</strong>
 					<div id="expanded-keys"></div>
 				</div>
-				<div style={{ width: 400, height: 320 }}>
+				<div
+					style={{
+						width: "100%",
+						height: 300,
+						overflow: "auto",
+						border: "1px solid #e0e0e0",
+						borderRadius: 6,
+					}}
+				>
 					<TreeList
 						{...args}
 						expandedKeys={expanded}

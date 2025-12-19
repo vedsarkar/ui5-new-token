@@ -24,35 +24,34 @@ const LevelLine = memo(
 	),
 );
 
-const TreeLevelLinesComponent = ({
-	levelLines,
-	isLast = false,
-}: TreeLevelLinesProps) => {
-	const needDrawLines = levelLines;
-	const isRoot = needDrawLines.length === 0;
-	const level = needDrawLines.length + 2;
+export const TreeLevelLines = memo(
+	({ levelLines, isLast = false }: TreeLevelLinesProps) => {
+		const needDrawLines = levelLines;
+		const isRoot = needDrawLines.length === 0;
+		const level = needDrawLines.length + 2;
 
-	if (isRoot) {
-		return null;
-	}
+		if (isRoot) {
+			return null;
+		}
 
-	return (
-		<div className={classNames(styles.levelLines)}>
-			{needDrawLines.map((needDrawLine, index) => (
+		return (
+			<div className={classNames(styles.levelLines)}>
+				{needDrawLines.map((needDrawLine, index) => (
+					<LevelLine
+						key={`${index}-${needDrawLine}`}
+						needDrawLine={needDrawLine}
+					/>
+				))}
 				<LevelLine
-					key={`${index}-${needDrawLine}`}
-					needDrawLine={needDrawLine}
+					key={level}
+					needDrawLine
+					drawHorizontalLine
+					isLastLevelLine={isLast}
 				/>
-			))}
-			<LevelLine
-				key={level}
-				needDrawLine
-				drawHorizontalLine
-				isLastLevelLine={isLast}
-			/>
-		</div>
-	);
-};
+			</div>
+		);
+	},
+);
 
-export const TreeLevelLines = memo(TreeLevelLinesComponent);
+LevelLine.displayName = "LevelLine";
 TreeLevelLines.displayName = "TreeLevelLines";
