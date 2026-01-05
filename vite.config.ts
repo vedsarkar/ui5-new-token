@@ -35,9 +35,19 @@ export default defineConfig({
 		copyPublicDir: false,
 		cssCodeSplit: false,
 		rollupOptions: {
-			external: ["react", "react-dom", "rc-tree"],
+			external: [
+				"react",
+				"react-dom",
+				"react/jsx-runtime",
+				"react/jsx-dev-runtime",
+				"rc-tree",
+			],
 			output: {
 				exports: "named",
+				globals: {
+					react: "React",
+					"react-dom": "ReactDOM",
+				},
 			},
 		},
 	},

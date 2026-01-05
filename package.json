@@ -86,8 +86,7 @@
 		"storybook": "^10.1.0",
 		"vitest": "^4.0.14"
 	},
-	"dependencies": {},
-	"peerDependencies": {
+	"dependencies": {
 		"rc-tree": "^5.13.1",
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0"
