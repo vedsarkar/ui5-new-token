@@ -33,15 +33,10 @@
 			"require": "./dist/index.cjs"
 		},
 		"./style.css": "./dist/index.css",
-		"./TreeList": {
-			"types": "./dist/types/components/TreeList/index.d.ts",
-			"import": "./dist/index.js",
-			"require": "./dist/index.cjs"
-		},
-		"./Button": {
-			"types": "./dist/types/components/Button/index.d.ts",
-			"import": "./dist/index.js",
-			"require": "./dist/index.cjs"
+		"./*": {
+			"types": "./dist/types/components/*/index.d.ts",
+			"import": "./dist/*.js",
+			"require": "./dist/*.cjs"
 		}
 	},
 	"sideEffects": [
@@ -74,7 +69,6 @@
 		"@vitest/browser-playwright": "^4.0.14",
 		"@vitest/coverage-v8": "^4.0.14",
 		"chromatic": "^13.3.4",
-		"rc-tree": "^5.13.1",
 		"playwright": "^1.57.0",
 		"prop-types": "^15.8.1",
 		"react-markdown": "^10.1.0",
@@ -86,9 +80,11 @@
 		"storybook": "^10.1.0",
 		"vitest": "^4.0.14"
 	},
+	"peerDependencies": {
+		"react": ">=18 <20",
+		"react-dom": ">=18 <20"
+	},
 	"dependencies": {
-		"rc-tree": "^5.13.1",
-		"react": "^19.2.0",
-		"react-dom": "^19.2.0"
+		"rc-tree": "^5.13.1"
 	}
 }
