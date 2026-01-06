@@ -103,10 +103,6 @@ export default defineConfig({
 					}
 					return "[name]-[hash][extname]";
 				},
-				globals: {
-					react: "React",
-					"react-dom": "ReactDOM",
-				},
 			},
 		},
 	},
