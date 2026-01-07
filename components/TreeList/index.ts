@@ -1,7 +1,2 @@
-export { TreeList } from "./TreeList";
-export type {
-	RcTreeNodeData,
-	TreeItem,
-	TreeKey,
-	TreeListProps,
-} from "./TreeList.types";
+export * from "./TreeList";
+export type * from "./TreeList.types";
