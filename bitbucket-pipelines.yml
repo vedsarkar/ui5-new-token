@@ -28,3 +28,17 @@ pipelines:
     main: *build
   pull-requests:
     '**': *build
+  custom:
+    publish @reltio/design:
+      - step:
+          name: Publish @reltio/design package to NPM
+          script:
+            - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+            - cd packages/design
+            - npm ci
+            - cp -r node_modules ../../
+            - npm run build
+            - cd dist
+            - if [ "${BITBUCKET_BRANCH}" != "main" ]; then npm version 0.0.0-${BITBUCKET_BUILD_NUMBER}; fi
+            - if [ "${BITBUCKET_BRANCH}" != "main" ]; then npm publish --access public --tag ${BITBUCKET_BRANCH}; fi
+            - if [ "${BITBUCKET_BRANCH}" == "main" ]; then npm publish --access public; fi
