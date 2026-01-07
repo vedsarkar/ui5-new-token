@@ -4,102 +4,8 @@ import { useEffect, useState } from "react";
 import { TreeList } from "./TreeList";
 import type { TreeItem, TreeKey } from "./TreeList.types";
 
-const componentDescription = `
-
-TreeList renders hierarchical data with expand/collapse behavior and customizable node labels.
-
-### Data structure
-- Accepts an array of top-level \`TreeItem[]\` nodes.
-- Each \`TreeItem\` has \`id: TreeKey\`, \`label: string\`, and optional \`children\`.
-
-\`\`\`tsx
-const data: TreeItem[] = [
-  { id: "root", label: "Root", children: [{ id: "child", label: "Child" }] },
-];
-
-<TreeList data={data} onItemClick={(item) => console.log(item.id)} />;
-\`\`\`
-
-### Controlled vs uncontrolled expanded state
-- Uncontrolled: omit \`expandedKeys\` and \`onExpandedKeysChange\`; TreeList manages expansion internally.
-- In uncontrolled mode, TreeList expands all top-level nodes by default.
-- Controlled: pass both props and store expanded keys externally (state, store, URL).
-
-\`\`\`tsx
-const [expanded, setExpanded] = useState<TreeKey[]>(["root"]);
-
-<TreeList
-  data={data}
-  expandedKeys={expanded}
-  onExpandedKeysChange={setExpanded}
-/>;
-\`\`\`
-
-### Props
-
-#### data
-- Array of top-level tree nodes. Children create nested levels.
-- Requires stable \`TreeKey\` values for correct expansion control and actions.
-- Use when you have a prepared hierarchy to render.
-
-\`\`\`tsx
-<TreeList data={data} />
-\`\`\`
-
-#### onItemClick
-- Callback fired when a node is clicked; receives \`TreeItem\`.
-- Use for navigation, loading details, or triggering actions per node.
-- Pairs well with controlled expansion if clicks should toggle \`expandedKeys\`.
-
-\`\`\`tsx
-<TreeList data={data} onItemClick={(item) => openNode(item.id)} />
-\`\`\`
-
-#### LabelComponent
-- React component that renders the node label; receives \`{ data: TreeItem }\`.
-- Use for badges, icons, statuses, or extra metadata next to the label.
-- Affects visuals only; does not change the data structure; does not affect expand/collapse behavior.
-
-\`\`\`tsx
-const Label = ({ data }: { data: TreeItem }) => (
-  <span style={{ display: "inline-flex", gap: 4 }}>
-    <span>{data.label}</span>
-    <span style={{ fontSize: 12, color: "#6b7280" }}>({data.id})</span>
-  </span>
-);
-
-<TreeList data={data} LabelComponent={Label} />
-\`\`\`
-
-#### expandedKeys
-- List of expanded node keys in controlled mode.
-- Use to sync expansion with external state, URL, or analytics.
-- Works together with \`onExpandedKeysChange\`.
-
-\`\`\`tsx
-<TreeList data={data} expandedKeys={expanded} onExpandedKeysChange={setExpanded} />
-\`\`\`
-
-#### onExpandedKeysChange
-- Callback fired when the expanded keys change.
-- Required in controlled mode to update \`expandedKeys\`.
-- Not needed in uncontrolled mode.
-
-\`\`\`tsx
-<TreeList
-  data={data}
-  expandedKeys={expanded}
-  onExpandedKeysChange={(keys) => {
-    setExpanded(keys);
-    track("tree_expanded_keys", keys);
-  }}
-/>
-\`\`\`
-### Visual structure
-TreeList draws vertical and horizontal connector lines between nodes,
-providing a visual hierarchy similar to classic file explorers.
-These guidelines are generated automatically based on tree depth and parent-child relationships.
-`;
+const componentDescription =
+	"TreeList renders hierarchical data with expand/collapse controls, optional custom labels, and controlled expansion via onExpand.";
 
 const singleRootData: TreeItem[] = [
 	{
@@ -202,57 +108,54 @@ const meta: Meta<typeof TreeList> = {
 			},
 		},
 	},
-	argTypes: {
-		data: {
-			description:
-				"Array of top-level tree nodes. Provide stable TreeKey ids and nested children to form the hierarchy `type TreeItem = {id: TreeKey; label: string; children?: TreeItem[]}` `type TreeKey = string | number`",
-			control: { type: "object" },
-			table: {
-				type: {
-					summary: "TreeItem[]",
-				},
-			},
-		},
-		onItemClick: {
-			description:
-				"Called when a node is clicked. Use for navigation, loading details, or triggering actions.",
-			action: "itemClick",
-			table: {
-				type: {
-					summary: "(item: TreeItem) => void",
-				},
-			},
-		},
-		LabelComponent: {
-			description:
-				"React component to render node labels. Receives `{ data: TreeItem }` and should return ReactNode. Use for badges, icons, or metadata.",
-			control: false,
-			table: {
-				type: {
-					summary: "React.ComponentType<{ data: TreeItem }>",
-				},
-			},
-		},
-		expandedKeys: {
-			description:
-				"List of expanded node keys in controlled mode. Omit to let TreeList manage expansion internally. `type TreeKey = string | number`",
-			table: {
-				type: {
-					summary: "TreeKey[]",
-				},
-			},
-		},
-		onExpandedKeysChange: {
-			description:
-				"Callback fired when expanded node keys change. Required when using controlled expansion.",
-			action: "expandedKeysChange",
-			table: {
-				type: {
-					summary: "(keys: TreeKey[]) => void",
-				},
-			},
-		},
-	},
+	// argTypes: {
+	// 	data: {
+	// 		description:
+	// 			"Array of top-level tree nodes. Provide stable TreeKey ids and nested children to form the hierarchy `type TreeItem = {id: TreeKey; label: string; children?: TreeItem[]}` `type TreeKey = string | number`",
+	// 		control: { type: "object" },
+	// 		table: {
+	// 			type: {
+	// 				summary: "TreeItem[]",
+	// 			},
+	// 		},
+	// 	},
+	// 	LabelComponent: {
+	// 		description:
+	// 			"React component to render node labels. Receives `{ data: TreeItem }` and should return ReactNode. Use for badges, icons, or metadata.",
+	// 		control: false,
+	// 		table: {
+	// 			type: {
+	// 				summary: "React.ComponentType<{ data: TreeItem }>",
+	// 			},
+	// 		},
+	// 	},
+	// 	expandedKeys: {
+	// 		description:
+	// 			"List of expanded node ids in controlled mode. Omit to allow uncontrolled expansion.",
+	// 		table: {
+	// 			type: {
+	// 				summary: "TreeKey[]",
+	// 			},
+	// 		},
+	// 		control: { type: "object" },
+	// 	},
+	// 	onExpand: {
+	// 		description:
+	// 			"Called when a node expands or collapses. Provides the toggled item and the resulting expanded keys list.",
+	// 		action: "expand",
+	// 		table: {
+	// 			type: {
+	// 				summary: "(change: TreeExpandChange) => void",
+	// 			},
+	// 		},
+	// 	},
+	// 	style: {
+	// 		description:
+	// 			"Inline styles including CSS variables to theme TreeList (e.g. `--reltio-tree-list-background`).",
+	// 		control: { type: "object" },
+	// 		table: { type: { summary: "TreeListCssVariables" } },
+	// 	}
+	// },
 	args: {
 		data: singleRootData,
 	},
@@ -397,15 +300,39 @@ export const CustomLabel: StoryObj<CustomLabelArgs> = {
 	},
 };
 
+export const WithCustomCssVariables: Story = {
+	argTypes: {
+		style: { control: { type: "object" } },
+	},
+	args: {
+		data: singleRootData,
+		style: {
+			"--reltio-tree-list-background": "#f8fafc",
+			"--reltio-tree-list-line-color": "rgba(15, 23, 42, 0.16)",
+			"--reltio-tree-list-text-color": "#0f172a",
+			"--reltio-tree-list-font-size": "12px",
+			"--reltio-tree-list-toggle-color": "#0f172a",
+			"--reltio-tree-list-toggle-size": "26px",
+			"--reltio-tree-list-indent-size": "16px",
+			"--reltio-tree-list-line-height": "1.5",
+			"--reltio-tree-list-font-family": "monospace",
+			"--reltio-tree-list-border-radius": "6px",
+			"--reltio-tree-list-row-padding-block": "12px",
+			"--reltio-tree-list-row-padding-inline": "12px",
+		},
+	},
+	render: (args) => <TreeList {...args} />,
+};
+
 export const ControlledExpanded: Story = {
 	argTypes: {
 		expandedKeys: { control: { type: "object" } },
-		onExpandedKeysChange: { action: "expandedKeysChange" },
+		onExpand: { action: "expand" },
 	},
 	args: {
 		data: multiRootData,
 		expandedKeys: ["root 1", "node 1a", "root 2", "node 2a"],
-		onExpandedKeysChange: (keys) => {
+		onExpand: (keys) => {
 			const expandedKeysElement = document.getElementById("expanded-keys");
 			if (expandedKeysElement) {
 				expandedKeysElement.innerHTML = JSON.stringify(keys);
@@ -421,9 +348,9 @@ export const ControlledExpanded: Story = {
 			setExpanded((args.expandedKeys as TreeKey[]) ?? []);
 		}, [args.expandedKeys]);
 
-		const handleExpandedKeysChange = (keys: TreeKey[]) => {
+		const handleExpand = (keys: TreeKey[]) => {
 			setExpanded(keys);
-			args.onExpandedKeysChange?.(keys);
+			args.onExpand?.(keys);
 		};
 
 		return (
@@ -439,7 +366,7 @@ export const ControlledExpanded: Story = {
 						width: 400,
 					}}
 				>
-					<strong>onExpandedKeysChange:</strong>
+					<strong>onExpand:</strong>
 					<div id="expanded-keys"></div>
 				</div>
 				<div
@@ -451,11 +378,7 @@ export const ControlledExpanded: Story = {
 						borderRadius: 6,
 					}}
 				>
-					<TreeList
-						{...args}
-						expandedKeys={expanded}
-						onExpandedKeysChange={handleExpandedKeysChange}
-					/>
+					<TreeList {...args} expandedKeys={expanded} onExpand={handleExpand} />
 				</div>
 			</>
 		);

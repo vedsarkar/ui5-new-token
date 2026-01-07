@@ -14,19 +14,9 @@ export const TreeNode = memo(
 		isExpanded,
 		levelLines,
 		isLast,
-		indentSize,
 		onToggle,
-		onItemClick,
 		LabelComponent,
 	}: TreeNodeProps) => {
-		const handleLabelClick = useCallback(
-			(event: MouseEvent) => {
-				event.stopPropagation();
-				onItemClick(node);
-			},
-			[onItemClick, node],
-		);
-
 		const handleToggleClick = useCallback(
 			(event: MouseEvent) => {
 				event.stopPropagation();
@@ -36,13 +26,7 @@ export const TreeNode = memo(
 		);
 
 		return (
-			<div
-				className={classNames(styles.wrapper)}
-				data-depth={depth}
-				style={{
-					["--reltio-tree-list-indent-size" as keyof CSSProperties]: `${indentSize}px`,
-				}}
-			>
+			<div className={classNames(styles.wrapper)} data-depth={depth}>
 				<TreeLevelLines levelLines={levelLines} isLast={isLast} />
 				<span
 					className={styles.indent}
@@ -60,13 +44,7 @@ export const TreeNode = memo(
 						<ChevronIcon expanded={isExpanded} />
 					</button>
 				)}
-				<button
-					type="button"
-					className={styles.label}
-					onClick={handleLabelClick}
-				>
-					{LabelComponent ? <LabelComponent data={node} /> : node.label}
-				</button>
+				{LabelComponent ? <LabelComponent data={node} /> : node.label}
 			</div>
 		);
 	},

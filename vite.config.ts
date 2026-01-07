@@ -1,109 +1,43 @@
-import { existsSync, readdirSync } from "node:fs";
-import { createRequire } from "node:module";
-import path from "node:path";
+import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
+import { playwright } from "@vitest/browser-playwright";
+import { defineConfig } from "vitest/config";
 
-import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
-import dts from "vite-plugin-dts";
-import tsconfigPaths from "vite-tsconfig-paths";
-
-type PackageJson = {
-	peerDependencies?: Record<string, string>;
-};
-
-const require = createRequire(import.meta.url);
-const packageJson = require("./package.json") as PackageJson;
-
-const componentsDir = path.resolve(__dirname, "components");
-const componentEntries = Object.fromEntries(
-	readdirSync(componentsDir, { withFileTypes: true })
-		.filter((dirent) => dirent.isDirectory())
-		.map((dirent) => {
-			const entryPath = path.resolve(componentsDir, dirent.name, "index.ts");
-			return [dirent.name, entryPath] as const;
-		})
-		.filter(([, entryPath]) => existsSync(entryPath))
-		.sort(([a], [b]) => a.localeCompare(b)),
-) satisfies Record<string, string>;
-
-const externalPackages = new Set([
-	...Object.keys(packageJson.peerDependencies ?? {}),
-]);
-
-const requiredPeerDeps = ["react", "react-dom"] as const;
-for (const peerDep of requiredPeerDeps) {
-	if (!externalPackages.has(peerDep)) {
-		throw new Error(
-			`[vite.config] Missing peerDependency "${peerDep}" in package.json`,
-		);
-	}
-}
-
-const isExternal = (source: string) => {
-	if (externalPackages.has(source)) {
-		return true;
-	}
-
-	for (const packageName of externalPackages) {
-		if (source.startsWith(`${packageName}/`)) {
-			return true;
-		}
-	}
-
-	return false;
-};
-
+// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
-	plugins: [
-		react(),
-		tsconfigPaths(),
-		dts({
-			entryRoot: ".",
-			outDir: "dist/types",
-			insertTypesEntry: true,
-			exclude: [
-				"**/*.stories.*",
-				"**/*.story.mdx",
-				"apps",
-				"docs",
-				"openspec",
-				".storybook",
-				"build-storybook.log",
-			],
-		}),
-	],
-	build: {
-		lib: {
-			entry: {
-				index: path.resolve(__dirname, "index.ts"),
-				...componentEntries,
-			},
-			name: "ReltioDesign",
-			fileName: (format, entryName) =>
-				format === "cjs" ? `${entryName}.cjs` : `${entryName}.js`,
-			formats: ["es", "cjs"],
-		},
-		emptyOutDir: true,
-		copyPublicDir: false,
-		cssCodeSplit: false,
-		rollupOptions: {
-			external: isExternal,
-			output: {
-				exports: "named",
-				assetFileNames: (assetInfo) => {
-					const isCssAsset =
-						assetInfo.names?.some((name) => name.endsWith(".css")) ??
-						assetInfo.originalFileNames?.some((name) =>
-							name.endsWith(".css"),
-						) ??
-						false;
-
-					if (isCssAsset) {
-						return "index.css";
-					}
-					return "[name]-[hash][extname]";
+	test: {
+		projects: [
+			{
+				extends: true,
+				plugins: [
+					// The plugin will run tests for the stories defined in your Storybook config
+					// See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
+					storybookTest(),
+				],
+				test: {
+					name: "storybook",
+					browser: {
+						enabled: true,
+						headless: true,
+						provider: playwright({}),
+						instances: [{ browser: "chromium" }],
+					},
+					setupFiles: [".storybook/vitest.setup.ts"],
+					// Exclude Storybook template files from tests
+					exclude: ["**/node_modules/**"],
 				},
 			},
+		],
+		coverage: {
+			exclude: ["**/node_modules/**", ".storybook/**", "**/*.module.css"],
+			// thresholds: {
+			// 	statements: 80,
+			// 	branches: 80,
+			// 	functions: 80,
+			// 	lines: 80,
+			// },
 		},
+	},
+	resolve: {
+		conditions: ["import", "module", "browser", "default"],
 	},
 });

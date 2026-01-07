@@ -22,39 +22,15 @@
 	},
 	"license": "ISC",
 	"author": "",
-	"main": "dist/index.cjs",
-	"module": "dist/index.js",
-	"types": "dist/types/index.d.ts",
-	"style": "dist/index.css",
-	"exports": {
-		".": {
-			"types": "./dist/types/index.d.ts",
-			"import": "./dist/index.js",
-			"require": "./dist/index.cjs"
-		},
-		"./style.css": "./dist/index.css",
-		"./*": {
-			"types": "./dist/types/components/*/index.d.ts",
-			"import": "./dist/*.js",
-			"require": "./dist/*.cjs"
-		}
-	},
-	"sideEffects": [
-		"*.css"
-	],
-	"files": [
-		"dist"
-	],
+	"main": "index.js",
 	"scripts": {
 		"test": "vitest run",
 		"coverage": "vitest run --coverage",
 		"dev": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
-		"build": "vite build",
 		"deploy": "chromatic --exit-zero-on-changes --exit-once-uploaded",
 		"lint": "biome check .",
-		"format": "biome format . --write",
-		"prepare": "npm run build"
+		"format": "biome format . --write"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.4",

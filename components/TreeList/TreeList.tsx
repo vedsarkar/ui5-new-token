@@ -14,15 +14,13 @@ import type {
 	TreeListProps,
 } from "./TreeList.types";
 
-const INDENT_SIZE = 16;
-
 export const TreeList = memo(
 	({
 		data,
-		onItemClick,
 		LabelComponent,
 		expandedKeys: expandedKeysProp,
-		onExpandedKeysChange,
+		onExpand,
+		style,
 	}: TreeListProps) => {
 		if (process.env.NODE_ENV !== "production") {
 			validateUniqueKeys(data);
@@ -52,13 +50,13 @@ export const TreeList = memo(
 		const updateExpandedKeys = useCallback(
 			(keys: TreeKey[]) => {
 				if (isControlled) {
-					onExpandedKeysChange?.(keys);
+					onExpand?.(keys);
 					return;
 				}
 				setExpandedKeys(new Set(keys));
-				onExpandedKeysChange?.(keys);
+				onExpand?.(keys);
 			},
-			[isControlled, onExpandedKeysChange],
+			[isControlled, onExpand],
 		);
 
 		const handleToggle = useCallback(
@@ -86,18 +84,16 @@ export const TreeList = memo(
 						isExpanded={isExpanded}
 						levelLines={levelLines}
 						isLast={isLast}
-						indentSize={INDENT_SIZE}
 						onToggle={handleToggle}
-						onItemClick={onItemClick}
 						LabelComponent={LabelComponent}
 					/>
 				);
 			},
-			[expandedSet, levelLinesMap, onItemClick, LabelComponent, handleToggle],
+			[expandedSet, levelLinesMap, LabelComponent, handleToggle],
 		);
 
 		return (
-			<div className={styles.root}>
+			<div className={styles.root} style={style}>
 				<Tree
 					treeData={rcData}
 					expandAction={false}
