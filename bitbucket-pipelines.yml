@@ -28,7 +28,6 @@ definitions:
           - node
         script:
           - npm ci
-          - npm run build-storybook
           - npm install -g vercel
           - vercel link --project=reltio-design --scope=reltio --token=${VERCEL_TOKEN} --yes
           - vercel build --scope=reltio --token=${VERCEL_TOKEN} --prod --yes
