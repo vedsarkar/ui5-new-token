@@ -1,0 +1,19 @@
+.root {
+	--reltio-tree-list-font-family: inherit;
+	--reltio-tree-list-font-size: inherit;
+	--reltio-tree-list-text-color: inherit;
+	--reltio-tree-list-background: inherit;
+	--reltio-tree-list-line-height: inherit;
+	display: block;
+	overflow: auto;
+	font-family: var(--reltio-tree-list-font-family, system-ui, sans-serif);
+	font-size: var(--reltio-tree-list-font-size, 14px);
+	color: var(--reltio-tree-list-text-color, #1a1a1a);
+	background: var(--reltio-tree-list-background, transparent);
+	border: none;
+	border-radius: var(--reltio-tree-list-border-radius, 0);
+}
+
+.rc-tree-treenode {
+	list-style: none;
+}
