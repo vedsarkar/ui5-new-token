@@ -1,26 +1,5 @@
 import type { RcTreeNodeData, TreeItem, TreeKey } from "./TreeList.types";
 
-export const validateUniqueKeys = (items: TreeItem[]) => {
-	const existingKeys = new Set<TreeKey>();
-
-	const walk = (nodes: TreeItem[]) => {
-		for (const node of nodes) {
-			if (existingKeys.has(node.id)) {
-				throw new Error(
-					`[TreeList] Duplicate key detected: "${node.id}". Keys must be unique.`,
-				);
-			}
-			existingKeys.add(node.id);
-
-			if (node.children) {
-				walk(node.children);
-			}
-		}
-	};
-
-	walk(items);
-};
-
 export const getLevelLinesData = <T>(
 	treeData: ReadonlyArray<RcTreeNodeData<T>>,
 ): Record<TreeKey, [boolean[], boolean]> => {

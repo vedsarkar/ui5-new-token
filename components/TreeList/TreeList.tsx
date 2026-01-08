@@ -1,11 +1,7 @@
 import Tree from "rc-tree";
 import { memo, useCallback, useMemo, useState } from "react";
 import { TreeNode } from "./components/TreeNode/TreeNode";
-import {
-	getLevelLinesData,
-	transformTreeData,
-	validateUniqueKeys,
-} from "./helpers";
+import { getLevelLinesData, transformTreeData } from "./helpers";
 import styles from "./TreeList.module.css";
 import type {
 	RcTreeNodeData,
@@ -21,10 +17,6 @@ export const TreeList = memo(
 		expandedKeys: expandedKeysProp,
 		onExpand,
 	}: TreeListProps) => {
-		if (process.env.NODE_ENV !== "production") {
-			validateUniqueKeys(data);
-		}
-
 		const topLevelKeys = useMemo(() => data.map((item) => item.id), [data]);
 		const isControlled = expandedKeysProp !== undefined;
 		const [expandedKeys, setExpandedKeys] = useState<Set<TreeKey>>(() =>
