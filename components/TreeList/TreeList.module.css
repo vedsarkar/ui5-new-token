@@ -3,13 +3,6 @@
 	--reltio-tree-list-font-size: inherit;
 	--reltio-tree-list-text-color: inherit;
 	--reltio-tree-list-background: inherit;
-	--reltio-tree-list-border-radius: 0;
-	--reltio-tree-list-indent-size: 16px;
-	--reltio-tree-list-toggle-size: 26px;
-	--reltio-tree-list-toggle-color: #5f6368;
-	--reltio-tree-list-line-color: rgba(0, 0, 0, 0.08);
-	--reltio-tree-list-row-padding-block: 2px;
-	--reltio-tree-list-row-padding-inline: 4px;
 	--reltio-tree-list-line-height: inherit;
 	display: block;
 	overflow: auto;
