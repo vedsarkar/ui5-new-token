@@ -4,41 +4,60 @@ definitions:
   caches:
     node: node_modules
     npm: $HOME/.npm
+  steps:
+    - step: &test
+        name: Run Tests with Coverage
+        caches:
+          - npm
+          - node
+        script:
+          - npm ci
+          - npm run coverage
+    - step: &chromatic
+        name: Deploy to Chromatic
+        caches:
+          - npm
+          - node
+        script:
+          - npm ci
+          - npm run deploy
+    - step: &vercel
+        name: Deploy to Vercel
+        caches:
+          - npm
+          - node
+        script:
+          - npm ci
+          - npm run build-storybook
+          - npm install -g vercel
+          - vercel link --project=reltio-design --scope=reltio --token=${VERCEL_TOKEN} --yes
+          - vercel build --prod
+          - vercel deploy --prod --prebuilt
+    - step: &publish-reltio-design
+        name: Publish @reltio/design package to NPM
+        script:
+          - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          - cd packages/design
+          - npm ci
+          - cp -r node_modules ../../
+          - npm run build
+          - cd dist
+          - if [ "${BITBUCKET_BRANCH}" != "main" ]; then npm version 0.0.0-${BITBUCKET_BUILD_NUMBER}; fi
+          - if [ "${BITBUCKET_BRANCH}" != "main" ]; then npm publish --access public --tag ${BITBUCKET_BRANCH}; fi
+          - if [ "${BITBUCKET_BRANCH}" == "main" ]; then npm publish --access public; fi
 
-build: &build
-  - parallel:
-      - step:
-          name: Run Tests with Coverage
-          caches:
-            - npm
-            - node
-          script:
-            - npm ci
-            - npm run coverage
-      - step:
-          name: Deploy to Chromatic
-          caches:
-            - npm
-            - node
-          script:
-            - npm ci
-            - npm run deploy
 pipelines:
   branches:
-    main: *build
+    main:
+      - parallel:
+          - step: *test
+          - step: *chromatic
+          - step: *vercel
   pull-requests:
-    '**': *build
+    '**':
+      - parallel:
+          - step: *test
+          - step: *chromatic
   custom:
     publish @reltio/design:
-      - step:
-          name: Publish @reltio/design package to NPM
-          script:
-            - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-            - cd packages/design
-            - npm ci
-            - cp -r node_modules ../../
-            - npm run build
-            - cd dist
-            - if [ "${BITBUCKET_BRANCH}" != "main" ]; then npm version 0.0.0-${BITBUCKET_BUILD_NUMBER}; fi
-            - if [ "${BITBUCKET_BRANCH}" != "main" ]; then npm publish --access public --tag ${BITBUCKET_BRANCH}; fi
-            - if [ "${BITBUCKET_BRANCH}" == "main" ]; then npm publish --access public; fi
+      - step: *publish-reltio-design
