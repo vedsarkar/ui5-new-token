@@ -1,4 +1,4 @@
-import type { ComponentType, CSSProperties } from "react";
+import type { ComponentType } from "react";
 
 /**
  * Unique identifier that keeps tree nodes stable across renders.
@@ -15,25 +15,6 @@ export type TreeItem = {
 	label: string;
 	/** Optional nested children. */
 	children?: TreeItem[];
-};
-
-/**
- * CSS variables supported by `TreeList` for runtime theming.
- * Pass them through the `style` prop.
- */
-export type TreeListCssVariables = CSSProperties & {
-	"--reltio-tree-list-font-family"?: string;
-	"--reltio-tree-list-font-size"?: string;
-	"--reltio-tree-list-text-color"?: string;
-	"--reltio-tree-list-background"?: string;
-	"--reltio-tree-list-border-radius"?: string;
-	"--reltio-tree-list-indent-size"?: string;
-	"--reltio-tree-list-toggle-size"?: string;
-	"--reltio-tree-list-toggle-color"?: string;
-	"--reltio-tree-list-line-color"?: string;
-	"--reltio-tree-list-row-padding-block"?: string;
-	"--reltio-tree-list-row-padding-inline"?: string;
-	"--reltio-tree-list-line-height"?: string;
 };
 
 /**
@@ -74,6 +55,4 @@ export type TreeListProps = {
 	 * Provides the resulting expanded keys list.
 	 */
 	onExpand?: (keys: TreeKey[]) => void;
-	/** Inline styles including CSS variables for theming. */
-	style?: TreeListCssVariables;
 };

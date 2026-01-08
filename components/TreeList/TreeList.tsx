@@ -20,7 +20,6 @@ export const TreeList = memo(
 		LabelComponent,
 		expandedKeys: expandedKeysProp,
 		onExpand,
-		style,
 	}: TreeListProps) => {
 		if (process.env.NODE_ENV !== "production") {
 			validateUniqueKeys(data);
@@ -93,7 +92,7 @@ export const TreeList = memo(
 		);
 
 		return (
-			<div className={styles.root} style={style}>
+			<div className={styles.root}>
 				<Tree
 					treeData={rcData}
 					expandAction={false}

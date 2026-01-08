@@ -1,11 +1,74 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import type { ComponentProps } from "react";
+import type { ComponentProps, CSSProperties } from "react";
 import { useEffect, useState } from "react";
 import { TreeList } from "./TreeList";
 import type { TreeItem, TreeKey } from "./TreeList.types";
 
 const componentDescription =
 	"TreeList renders hierarchical data with expand/collapse controls, optional custom labels, and controlled expansion via onExpand.";
+
+const cssVariables = [
+	{
+		name: "--reltio-tree-list-font-family",
+		description: "Font family for all rows.",
+		defaultValue: "inherit (fallback system-ui, sans-serif)",
+	},
+	{
+		name: "--reltio-tree-list-font-size",
+		description: "Base font size.",
+		defaultValue: "inherit (fallback 14px)",
+	},
+	{
+		name: "--reltio-tree-list-text-color",
+		description: "Text color for labels.",
+		defaultValue: "inherit (fallback #1a1a1a)",
+	},
+	{
+		name: "--reltio-tree-list-background",
+		description: "Background of the list container.",
+		defaultValue: "inherit (fallback transparent)",
+	},
+	{
+		name: "--reltio-tree-list-border-radius",
+		description: "Border radius of the container.",
+		defaultValue: "0",
+	},
+	{
+		name: "--reltio-tree-list-indent-size",
+		description: "Indent per depth level.",
+		defaultValue: "16px",
+	},
+	{
+		name: "--reltio-tree-list-toggle-size",
+		description: "Hit area size of the toggle icon.",
+		defaultValue: "26px",
+	},
+	{
+		name: "--reltio-tree-list-toggle-color",
+		description: "Color of the toggle caret.",
+		defaultValue: "#5f6368",
+	},
+	{
+		name: "--reltio-tree-list-line-color",
+		description: "Guideline color connecting nodes.",
+		defaultValue: "rgba(0, 0, 0, 0.08)",
+	},
+	{
+		name: "--reltio-tree-list-row-padding-block",
+		description: "Vertical padding for each row.",
+		defaultValue: "2px",
+	},
+	{
+		name: "--reltio-tree-list-row-padding-inline",
+		description: "Horizontal padding for each row.",
+		defaultValue: "4px",
+	},
+	{
+		name: "--reltio-tree-list-line-height",
+		description: "Line height for row content.",
+		defaultValue: "inherit",
+	},
+];
 
 const singleRootData: TreeItem[] = [
 	{
@@ -108,54 +171,6 @@ const meta: Meta<typeof TreeList> = {
 			},
 		},
 	},
-	// argTypes: {
-	// 	data: {
-	// 		description:
-	// 			"Array of top-level tree nodes. Provide stable TreeKey ids and nested children to form the hierarchy `type TreeItem = {id: TreeKey; label: string; children?: TreeItem[]}` `type TreeKey = string | number`",
-	// 		control: { type: "object" },
-	// 		table: {
-	// 			type: {
-	// 				summary: "TreeItem[]",
-	// 			},
-	// 		},
-	// 	},
-	// 	LabelComponent: {
-	// 		description:
-	// 			"React component to render node labels. Receives `{ data: TreeItem }` and should return ReactNode. Use for badges, icons, or metadata.",
-	// 		control: false,
-	// 		table: {
-	// 			type: {
-	// 				summary: "React.ComponentType<{ data: TreeItem }>",
-	// 			},
-	// 		},
-	// 	},
-	// 	expandedKeys: {
-	// 		description:
-	// 			"List of expanded node ids in controlled mode. Omit to allow uncontrolled expansion.",
-	// 		table: {
-	// 			type: {
-	// 				summary: "TreeKey[]",
-	// 			},
-	// 		},
-	// 		control: { type: "object" },
-	// 	},
-	// 	onExpand: {
-	// 		description:
-	// 			"Called when a node expands or collapses. Provides the toggled item and the resulting expanded keys list.",
-	// 		action: "expand",
-	// 		table: {
-	// 			type: {
-	// 				summary: "(change: TreeExpandChange) => void",
-	// 			},
-	// 		},
-	// 	},
-	// 	style: {
-	// 		description:
-	// 			"Inline styles including CSS variables to theme TreeList (e.g. `--reltio-tree-list-background`).",
-	// 		control: { type: "object" },
-	// 		table: { type: { summary: "TreeListCssVariables" } },
-	// 	}
-	// },
 	args: {
 		data: singleRootData,
 	},
@@ -166,6 +181,9 @@ export default meta;
 type Story = StoryObj<typeof TreeList>;
 type CustomLabelArgs = ComponentProps<typeof TreeList> & {
 	labelVariant: RenderLabelVariant;
+};
+type WithCustomArgs = ComponentProps<typeof TreeList> & {
+	style: CSSProperties;
 };
 
 export const Default: Story = {
@@ -300,9 +318,12 @@ export const CustomLabel: StoryObj<CustomLabelArgs> = {
 	},
 };
 
-export const WithCustomCssVariables: Story = {
+export const WithCustomCssVariables: StoryObj<WithCustomArgs> = {
 	argTypes: {
-		style: { control: { type: "object" } },
+		style: {
+			control: "object",
+			description: "CSS variables applied to the parent wrapper",
+		},
 	},
 	args: {
 		data: singleRootData,
@@ -319,9 +340,67 @@ export const WithCustomCssVariables: Story = {
 			"--reltio-tree-list-border-radius": "6px",
 			"--reltio-tree-list-row-padding-block": "12px",
 			"--reltio-tree-list-row-padding-inline": "12px",
-		},
+		} as CSSProperties,
 	},
-	render: (args) => <TreeList {...args} />,
+	render: ({ style, ...treeArgs }) => {
+		return (
+			<div style={{ display: "grid", gap: 16 }}>
+				<div
+					style={{
+						background: "#0f172a",
+						color: "#f8fafc",
+						padding: "10px 12px",
+						borderRadius: 8,
+						fontSize: 12,
+						display: "grid",
+						gap: 6,
+					}}
+				>
+					<div style={{ fontWeight: 600 }}>CSS variables</div>
+					<div style={{ color: "#e2e8f0" }}>
+						Override variables on any parent element (for example a theme
+						wrapper). Below is the full list of supported variables with
+						defaults.
+					</div>
+					<ul style={{ margin: 0, paddingLeft: 16, display: "grid", gap: 6 }}>
+						{cssVariables.map((variable) => (
+							<li key={variable.name} style={{ lineHeight: 1.4 }}>
+								<code style={{ color: "#cbd5f5" }}>{variable.name}</code>
+								<span style={{ marginLeft: 6, color: "#cbd5e1" }}>
+									{variable.description}
+								</span>
+								<span style={{ marginLeft: 6, color: "#94a3b8" }}>
+									default: <code>{variable.defaultValue}</code>
+								</span>
+							</li>
+						))}
+					</ul>
+				</div>
+
+				<div
+					style={{
+						width: "80%",
+						height: 320,
+						overflow: "auto",
+						border: "2px dashed #94a3b8",
+						borderRadius: 10,
+						padding: 16,
+						background: "#f8fafc",
+						display: "flex",
+						flexDirection: "column",
+						gap: 12,
+					}}
+				>
+					<div style={{ color: "#475569", fontSize: 13 }}>
+						Parent wrapper (variables apply here)
+					</div>
+					<div style={style}>
+						<TreeList {...treeArgs} />
+					</div>
+				</div>
+			</div>
+		);
+	},
 };
 
 export const ControlledExpanded: Story = {
