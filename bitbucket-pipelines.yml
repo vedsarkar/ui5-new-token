@@ -31,7 +31,8 @@ definitions:
           - npm run build-storybook
           - npm install -g vercel
           - vercel link --project=reltio-design --scope=reltio --token=${VERCEL_TOKEN} --yes
-          - vercel build --prod
+          - vercel pull --yes
+          - vercel build --prod --yes
           - vercel deploy --prod --prebuilt
     - step: &publish-reltio-design
         name: Publish @reltio/design package to NPM
