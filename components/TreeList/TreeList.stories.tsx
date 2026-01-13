@@ -161,6 +161,21 @@ const multiRootData: TreeItem[] = [
 	},
 ];
 
+const loadingData: TreeItem[] = [
+	{
+		id: "async-root",
+		label: "Async root",
+		children: [
+			{
+				id: "loading-branch",
+				label: "Branch fetching children",
+				children: [],
+				isLoading: true,
+			},
+		],
+	},
+];
+
 const meta: Meta<typeof TreeList> = {
 	component: TreeList,
 	parameters: {
@@ -411,10 +426,14 @@ export const ControlledExpanded: Story = {
 	args: {
 		data: multiRootData,
 		expandedKeys: ["root 1", "node 1a", "root 2", "node 2a"],
-		onExpand: (keys) => {
+		onExpand: (keys, node) => {
 			const expandedKeysElement = document.getElementById("expanded-keys");
 			if (expandedKeysElement) {
 				expandedKeysElement.innerHTML = JSON.stringify(keys);
+			}
+			const toggledNodeElement = document.getElementById("toggled-node");
+			if (toggledNodeElement) {
+				toggledNodeElement.innerHTML = node ? JSON.stringify(node) : "";
 			}
 		},
 	},
@@ -427,9 +446,9 @@ export const ControlledExpanded: Story = {
 			setExpanded((args.expandedKeys as TreeKey[]) ?? []);
 		}, [args.expandedKeys]);
 
-		const handleExpand = (keys: TreeKey[]) => {
+		const handleExpand = (keys: TreeKey[], node: TreeItem) => {
 			setExpanded(keys);
-			args.onExpand?.(keys);
+			args.onExpand?.(keys, node);
 		};
 
 		return (
@@ -442,11 +461,23 @@ export const ControlledExpanded: Story = {
 						borderRadius: 6,
 						marginBottom: 12,
 						fontSize: 12,
-						width: 400,
+						width: 480,
+						display: "grid",
+						gap: 6,
 					}}
 				>
-					<strong>onExpand:</strong>
-					<div id="expanded-keys"></div>
+					<div>
+						<span>
+							<strong>Expanded keys:</strong>{" "}
+						</span>{" "}
+						<span id="expanded-keys"></span>
+					</div>
+					<div>
+						<span>
+							<strong>Toggled node:</strong>{" "}
+						</span>{" "}
+						<span id="toggled-node"></span>
+					</div>
 				</div>
 				<div
 					style={{
@@ -460,6 +491,102 @@ export const ControlledExpanded: Story = {
 					<TreeList {...args} expandedKeys={expanded} onExpand={handleExpand} />
 				</div>
 			</>
+		);
+	},
+};
+
+export const LoadingState: Story = {
+	args: {
+		data: loadingData,
+	},
+	render: (args) => {
+		const clearLoading = (items: TreeItem[]): TreeItem[] =>
+			items.map((item) => ({
+				...item,
+				isLoading: false,
+				children: item.children ? clearLoading(item.children) : item.children,
+			}));
+
+		const [data, setData] = useState<TreeItem[]>(() => clearLoading(args.data));
+		const [isFetching, setIsFetching] = useState(false);
+
+		const LoadingLabel = ({ data: node }: { data: TreeItem }) => (
+			<span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+				<span>{node.label}</span>
+				{node.isLoading ? (
+					<span
+						style={{
+							fontSize: 12,
+							color: "#0f172a",
+							background: "#e2e8f0",
+							borderRadius: 10,
+							padding: "2px 8px",
+						}}
+					>
+						Loading...
+					</span>
+				) : null}
+			</span>
+		);
+
+		const markLoading = (items: TreeItem[], targetId: TreeKey): TreeItem[] =>
+			items.map((item) => {
+				if (item.id === targetId) {
+					if (item.children && item.children.length > 0) {
+						return item;
+					}
+					return {
+						...item,
+						isLoading: true,
+					};
+				}
+				return {
+					...item,
+					children: item.children
+						? markLoading(item.children, targetId)
+						: item.children,
+				};
+			});
+
+		const injectChildren = (items: TreeItem[], targetId: TreeKey): TreeItem[] =>
+			items.map((item) => {
+				if (item.id === targetId) {
+					return {
+						...item,
+						isLoading: false,
+						children: [
+							{ id: `${item.id}-1`, label: "Loaded child 1" },
+							{ id: `${item.id}-2`, label: "Loaded child 2" },
+						],
+					};
+				}
+				return {
+					...item,
+					children: item.children
+						? injectChildren(item.children, targetId)
+						: item.children,
+				};
+			});
+
+		const handleExpand = (_keys: TreeKey[], node: TreeItem) => {
+			if (isFetching || (node.children && node.children.length > 0)) {
+				return;
+			}
+			setData((prev) => markLoading(prev, node.id));
+			setIsFetching(true);
+			setTimeout(() => {
+				setData((prev) => injectChildren(prev, node.id));
+				setIsFetching(false);
+			}, 800);
+		};
+
+		return (
+			<TreeList
+				{...args}
+				data={data}
+				onExpand={handleExpand}
+				LabelComponent={LoadingLabel}
+			/>
 		);
 	},
 };

@@ -15,6 +15,8 @@ export type TreeItem = {
 	label: string;
 	/** Optional nested children. */
 	children?: TreeItem[];
+	/** Optional loading flag for async child fetching. */
+	isLoading?: boolean;
 };
 
 /**
@@ -52,7 +54,7 @@ export type TreeListProps = {
 	expandedKeys?: TreeKey[];
 	/**
 	 * Called when the expanded state changes (controlled mode).
-	 * Provides the resulting expanded keys list.
+	 * Provides the resulting expanded keys list and the toggled node.
 	 */
-	onExpand?: (keys: TreeKey[]) => void;
+	onExpand?: (keys: TreeKey[], node: TreeItem) => void;
 };

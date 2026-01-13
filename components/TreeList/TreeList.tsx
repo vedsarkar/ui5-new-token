@@ -39,22 +39,22 @@ export const TreeList = memo(
 		const expandedArray = useMemo(() => Array.from(expandedSet), [expandedSet]);
 
 		const updateExpandedKeys = useCallback(
-			(keys: TreeKey[]) => {
+			(keys: TreeKey[], treeItem: TreeItem) => {
 				if (isControlled) {
-					onExpand?.(keys);
+					onExpand?.(keys, treeItem);
 					return;
 				}
 				setExpandedKeys(new Set(keys));
-				onExpand?.(keys);
+				onExpand?.(keys, treeItem);
 			},
 			[isControlled, onExpand],
 		);
 
 		const handleToggle = useCallback(
-			(id: TreeKey, isExpanded: boolean) => {
+			(id: TreeKey, isExpanded: boolean, treeItem: TreeItem) => {
 				const next = new Set(expandedSet);
 				isExpanded ? next.delete(id) : next.add(id);
-				updateExpandedKeys(Array.from(next));
+				updateExpandedKeys(Array.from(next), treeItem);
 			},
 			[expandedSet, updateExpandedKeys],
 		);
@@ -91,7 +91,9 @@ export const TreeList = memo(
 					virtual={false}
 					selectable={false}
 					expandedKeys={expandedArray}
-					onExpand={(keys) => updateExpandedKeys(keys as TreeKey[])}
+					onExpand={(keys, info) =>
+						updateExpandedKeys(keys as TreeKey[], info.node?.data.raw)
+					}
 					showIcon={false}
 					titleRender={renderTitle}
 				/>

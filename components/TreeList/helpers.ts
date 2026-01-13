@@ -34,7 +34,7 @@ export const transformTreeData = (
 	return data.map((item) => ({
 		key: item.id,
 		title: null,
-		isLeaf: !item.children?.length,
+		isLeaf: !item.children,
 		data: { raw: item, depth, parentId },
 		children: item.children
 			? transformTreeData(item.children, depth + 1, item.id)

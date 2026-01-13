@@ -20,9 +20,9 @@ export const TreeNode = memo(
 		const handleToggleClick = useCallback(
 			(event: MouseEvent) => {
 				event.stopPropagation();
-				onToggle(id, isExpanded);
+				onToggle(id, isExpanded, node);
 			},
-			[onToggle, id, isExpanded],
+			[onToggle, id, isExpanded, node],
 		);
 
 		return (
