@@ -199,4 +199,19 @@ Interactive documentation page with:
 
 1. ~~Should we support icon sprites for performance?~~ **Decided: No, standalone icons for simplicity**
 2. Should illustrations have different component interface (e.g., illustration-specific props)?
-3. What is the minimum set of icons to include in initial release?
+3. ~~What is the minimum set of icons to include in initial release?~~ **Decided: Material Design 3 icons from Google Fonts**
+
+## Icon Source
+
+The initial icon set uses [Material Design 3 icons](https://fonts.google.com/icons) (Material Symbols) with the following configuration:
+- **Style:** Outlined
+- **Weight:** 400 (regular)
+- **Grade:** 0 (default)
+- **Optical size:** 24
+- **Fill:** 0 (outlined)
+
+This ensures:
+- Professional, consistent visual language
+- Comprehensive coverage of common UI patterns
+- Accessibility-tested iconography
+- Apache 2.0 license compatibility

@@ -18,6 +18,7 @@ The design system currently lacks a centralized icon and graphics library. Compo
 - **ADDED** Individual Storybook stories for each icon with size/color variations
 - **ADDED** Type definitions for icon components following project conventions
 - **ADDED** Package exports for `@reltio/design/icons/IconName` import pattern
+- **ADDED** Initial icon set based on [Material Design 3 icons](https://fonts.google.com/icons) (Outlined style)
 
 ## Impact
 

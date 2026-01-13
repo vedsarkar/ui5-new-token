@@ -4,7 +4,15 @@
 
 - [ ] 1.1 Create `public/icons/` folder structure for source SVG files
 - [ ] 1.2 Create `icons/` folder structure for generated React components
-- [ ] 1.3 Add sample SVG icons for testing (e.g., chevron, close, search, info, warning, error)
+- [ ] 1.3 Download initial icon set from Material Design 3 (https://fonts.google.com/icons):
+  - Navigation: arrow-back, arrow-forward, chevron-left, chevron-right, chevron-down, chevron-up, menu, close, expand-more, expand-less
+  - Actions: search, add, remove, edit, delete, save, refresh, download, upload, share
+  - Status: check, check-circle, error, warning, info, help
+  - Content: content-copy, content-paste, filter-list, sort, visibility, visibility-off
+  - Communication: email, notifications, chat, comment
+  - File: folder, file-present, description, attachment
+  - User: person, people, account-circle, settings, logout
+- [ ] 1.4 Configure icon download settings: Outlined style, weight 400, grade 0, optical size 24, fill 0
 
 ## 2. Icon Generation Script
 

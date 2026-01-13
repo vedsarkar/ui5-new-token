@@ -25,6 +25,40 @@ The system SHALL provide a dedicated folder for source SVG files that are manual
 - **THEN** use kebab-case (e.g., `chevron-down.svg`, `arrow-right.svg`)
 - **AND** name should be descriptive of the icon's purpose
 
+### Requirement: Initial Icon Set
+
+The system SHALL use Material Design 3 icons from [Google Fonts](https://fonts.google.com/icons) as the initial icon set to ensure consistency, quality, and comprehensive coverage.
+
+#### Scenario: Material Design 3 icons as source
+- **WHEN** selecting icons for the initial set
+- **THEN** icons MUST be downloaded from Material Symbols (https://fonts.google.com/icons)
+- **AND** icons MUST use the "Outlined" style for visual consistency
+- **AND** icons MUST be downloaded as SVG files
+
+#### Scenario: Icon download configuration
+- **WHEN** downloading icons from Material Design 3
+- **THEN** use weight 400 (regular)
+- **AND** use optical size 24 (default)
+- **AND** use grade 0 (default)
+- **AND** ensure fill is set to 0 (outlined style)
+
+#### Scenario: Core icon categories included
+- **WHEN** building the initial icon set
+- **THEN** include icons from essential categories:
+  - Navigation: `arrow-back`, `arrow-forward`, `chevron-left`, `chevron-right`, `chevron-down`, `chevron-up`, `menu`, `close`, `expand-more`, `expand-less`
+  - Actions: `search`, `add`, `remove`, `edit`, `delete`, `save`, `refresh`, `download`, `upload`, `share`
+  - Status: `check`, `check-circle`, `error`, `warning`, `info`, `help`
+  - Content: `content-copy`, `content-paste`, `filter-list`, `sort`, `visibility`, `visibility-off`
+  - Communication: `email`, `notifications`, `chat`, `comment`
+  - File: `folder`, `file-present`, `description`, `attachment`
+  - User: `person`, `people`, `account-circle`, `settings`, `logout`
+
+#### Scenario: Custom icons supplement Material Design
+- **WHEN** a required icon is not available in Material Design 3
+- **THEN** custom icons MAY be created following Material Design 3 guidelines
+- **AND** custom icons MUST maintain visual consistency with Material Design 3 style
+- **AND** custom icons MUST use 24x24 viewBox
+
 ### Requirement: React Component Generation
 
 The system SHALL automatically convert SVG files to React components via an npm script, following all project conventions.
