@@ -34,6 +34,10 @@ export const TreeNode = memo(
 				/>
 				{isLeaf ? (
 					<span className={styles.toggle} aria-hidden="true" />
+				) : node.isLoading ? (
+					<span className={styles.toggle} aria-hidden="true">
+						<span className={styles.spinner} />
+					</span>
 				) : (
 					<button
 						type="button"

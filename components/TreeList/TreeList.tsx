@@ -40,12 +40,10 @@ export const TreeList = memo(
 
 		const updateExpandedKeys = useCallback(
 			(keys: TreeKey[], treeItem: TreeItem) => {
-				if (isControlled) {
-					onExpand?.(keys, treeItem);
-					return;
-				}
-				setExpandedKeys(new Set(keys));
 				onExpand?.(keys, treeItem);
+				if (!isControlled) {
+					setExpandedKeys(new Set(keys));
+				}
 			},
 			[isControlled, onExpand],
 		);

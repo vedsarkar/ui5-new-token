@@ -49,6 +49,21 @@ const cssVariables = [
 		defaultValue: "#5f6368",
 	},
 	{
+		name: "--reltio-tree-list-spinner-size",
+		description: "Spinner diameter for loading nodes.",
+		defaultValue: "10px",
+	},
+	{
+		name: "--reltio-tree-list-spinner-width",
+		description: "Spinner stroke width.",
+		defaultValue: "2px",
+	},
+	{
+		name: "--reltio-tree-list-spinner-color",
+		description: "Spinner color.",
+		defaultValue: "currentColor",
+	},
+	{
 		name: "--reltio-tree-list-line-color",
 		description: "Guideline color connecting nodes.",
 		defaultValue: "rgba(0, 0, 0, 0.08)",
@@ -495,9 +510,16 @@ export const ControlledExpanded: Story = {
 	},
 };
 
-export const LoadingState: Story = {
+type LoadingArgs = ComponentProps<typeof TreeList> & { style: CSSProperties };
+
+export const LoadingState: StoryObj<LoadingArgs> = {
 	args: {
 		data: loadingData,
+		style: {
+			"--reltio-tree-list-spinner-size": "10px",
+			"--reltio-tree-list-spinner-width": "2px",
+			"--reltio-tree-list-spinner-color": "currentColor",
+		} as CSSProperties,
 	},
 	render: (args) => {
 		const clearLoading = (items: TreeItem[]): TreeItem[] =>
@@ -508,24 +530,18 @@ export const LoadingState: Story = {
 			}));
 
 		const [data, setData] = useState<TreeItem[]>(() => clearLoading(args.data));
+		const [expanded, setExpanded] = useState<TreeKey[]>(["async-root"]);
 		const [isFetching, setIsFetching] = useState(false);
+
+		const handleReset = () => {
+			setIsFetching(false);
+			setData(clearLoading(args.data));
+			setExpanded(["async-root"]);
+		};
 
 		const LoadingLabel = ({ data: node }: { data: TreeItem }) => (
 			<span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
 				<span>{node.label}</span>
-				{node.isLoading ? (
-					<span
-						style={{
-							fontSize: 12,
-							color: "#0f172a",
-							background: "#e2e8f0",
-							borderRadius: 10,
-							padding: "2px 8px",
-						}}
-					>
-						Loading...
-					</span>
-				) : null}
 			</span>
 		);
 
@@ -568,7 +584,8 @@ export const LoadingState: Story = {
 				};
 			});
 
-		const handleExpand = (_keys: TreeKey[], node: TreeItem) => {
+		const handleExpand = (keys: TreeKey[], node: TreeItem) => {
+			setExpanded(keys);
 			if (isFetching || (node.children && node.children.length > 0)) {
 				return;
 			}
@@ -577,16 +594,47 @@ export const LoadingState: Story = {
 			setTimeout(() => {
 				setData((prev) => injectChildren(prev, node.id));
 				setIsFetching(false);
-			}, 800);
+			}, 1500);
 		};
 
 		return (
-			<TreeList
-				{...args}
-				data={data}
-				onExpand={handleExpand}
-				LabelComponent={LoadingLabel}
-			/>
+			<div style={{ display: "grid", gap: 8 }}>
+				<button
+					type="button"
+					style={{
+						width: 120,
+						padding: "6px 10px",
+						borderRadius: 6,
+						border: "1px solid #e2e8f0",
+						background: "#f8fafc",
+						cursor: "pointer",
+						transition: "all 120ms ease",
+						boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+					}}
+					onClick={handleReset}
+					onMouseDown={(event) => {
+						event.currentTarget.style.transform = "translateY(1px)";
+						event.currentTarget.style.background = "#eef2f7";
+						event.currentTarget.style.boxShadow = "0 1px 0 rgba(0,0,0,0.06)";
+					}}
+					onMouseUp={(event) => {
+						event.currentTarget.style.transform = "translateY(0)";
+						event.currentTarget.style.background = "#f8fafc";
+						event.currentTarget.style.boxShadow = "0 1px 2px rgba(0,0,0,0.04)";
+					}}
+				>
+					Reset loading
+				</button>
+				<div style={args.style}>
+					<TreeList
+						{...args}
+						data={data}
+						expandedKeys={expanded}
+						onExpand={handleExpand}
+						LabelComponent={LoadingLabel}
+					/>
+				</div>
+			</div>
 		);
 	},
 };

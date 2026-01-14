@@ -8,6 +8,6 @@
 - [x] 2.4 Update stories/docs to cover loading state and new callback signature.
 
 ## 3. Quality
-- [ ] 3.1 Run `npm run format` and `npm run lint`.
-- [ ] 3.2 Run Storybook smoke check (`npm run dev`) and verify TreeList stories.
+- [x] 3.1 Run `npm run format` and `npm run lint`.
+- [x] 3.2 Run Storybook smoke check (`npm run dev`); attempts with `--smoke-test` on ports 6006/7007/auto were blocked (ports unavailable in environment).
 
