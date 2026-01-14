@@ -539,12 +539,6 @@ export const LoadingState: StoryObj<LoadingArgs> = {
 			setExpanded(["async-root"]);
 		};
 
-		const LoadingLabel = ({ data: node }: { data: TreeItem }) => (
-			<span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-				<span>{node.label}</span>
-			</span>
-		);
-
 		const markLoading = (items: TreeItem[], targetId: TreeKey): TreeItem[] =>
 			items.map((item) => {
 				if (item.id === targetId) {
@@ -631,7 +625,6 @@ export const LoadingState: StoryObj<LoadingArgs> = {
 						data={data}
 						expandedKeys={expanded}
 						onExpand={handleExpand}
-						LabelComponent={LoadingLabel}
 					/>
 				</div>
 			</div>
