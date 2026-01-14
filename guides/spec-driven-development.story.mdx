@@ -1,0 +1,495 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/Spec-Driven Development" />
+
+# Spec-Driven Development Guide
+
+Welcome to the Reltio Design System's spec-driven development workflow. This guide explains how we use **OpenSpec** integrated with **Cursor IDE** to ensure predictable, high-quality component development.
+
+> **🎯 Key Principle:** We specify before we build. Every change starts as a proposal, gets reviewed, and only then gets implemented. This reduces rework, improves quality, and creates a living changelog.
+
+## Business Value
+
+Why does spec-driven development matter? Here's what stakeholders and team leads should know:
+
+<table>
+	<thead>
+		<tr>
+			<th>Benefit</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>🛡️ <strong>Risk Reduction</strong></td>
+			<td>Catch issues in design phase, not after implementation</td>
+		</tr>
+		<tr>
+			<td>📊 <strong>Predictability</strong></td>
+			<td>Clear scope and tasks make estimation accurate</td>
+		</tr>
+		<tr>
+			<td>✨ <strong>Quality</strong></td>
+			<td>Requirements are verified before and after coding</td>
+		</tr>
+		<tr>
+			<td>📝 <strong>Documentation</strong></td>
+			<td>Specs become living documentation automatically</td>
+		</tr>
+		<tr>
+			<td>🤖 <strong>AI Efficiency</strong></td>
+			<td>AI assistants work better with clear specifications</td>
+		</tr>
+		<tr>
+			<td>📜 <strong>Changelog</strong></td>
+			<td>Archived changes form complete project history</td>
+		</tr>
+	</tbody>
+</table>
+
+> **ROI Insight:** Teams using spec-driven development report 40-60% reduction in rework and significantly fewer "that's not what I meant" moments. The upfront investment in specification pays dividends throughout the project lifecycle.
+
+## Three-Stage Workflow
+
+Every change follows three stages:
+
+### 1. Propose
+
+Create a proposal that describes what will change and why. The proposal includes requirements, scenarios, and implementation tasks. *No code is written at this stage.*
+
+### 2. Implement
+
+After the proposal is reviewed and approved, implement the changes following the task list. Each task is verified as complete before moving on.
+
+### 3. Archive
+
+After deployment, archive the completed change. The archive serves as the project changelog, preserving the history of what changed and why.
+
+### When to Create a Proposal
+
+<table>
+	<thead>
+		<tr>
+			<th>Create Proposal ✅</th>
+			<th>Skip Proposal ❌</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>New features or components</td>
+			<td>Bug fixes (restoring spec behavior)</td>
+		</tr>
+		<tr>
+			<td>Breaking API changes</td>
+			<td>Typos, formatting, comments</td>
+		</tr>
+		<tr>
+			<td>Architecture changes</td>
+			<td>Non-breaking dependency updates</td>
+		</tr>
+		<tr>
+			<td>Performance optimizations</td>
+			<td>Configuration changes</td>
+		</tr>
+		<tr>
+			<td>New patterns or conventions</td>
+			<td>Tests for existing behavior</td>
+		</tr>
+	</tbody>
+</table>
+
+> **Rule of Thumb:** If you're unsure whether to create a proposal, create one. It's safer to over-specify than to discover scope issues during implementation.
+
+## The Inductive Approach: From Specific to General
+
+One of the most important principles in spec-driven development is **decomposition** — breaking large features into small, focused proposals. We call this the **inductive approach**: build specific pieces first, then compose them into larger features.
+
+> **🧩 Core Principle:** Ten simple proposals are better than one complex proposal. Each small change is easier to specify, implement, review, and verify.
+
+### Why Small Proposals Win
+
+<table>
+	<thead>
+		<tr>
+			<th>Aspect</th>
+			<th>Large Proposal ❌</th>
+			<th>Small Proposals ✅</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><strong>AI Accuracy</strong></td>
+			<td>AI struggles with complex scope, makes mistakes</td>
+			<td>AI excels at focused, well-defined tasks</td>
+		</tr>
+		<tr>
+			<td><strong>Review Time</strong></td>
+			<td>Hours to review, easy to miss issues</td>
+			<td>Minutes to review, issues are obvious</td>
+		</tr>
+		<tr>
+			<td><strong>Risk</strong></td>
+			<td>One mistake affects everything</td>
+			<td>Mistakes are isolated and fixable</td>
+		</tr>
+		<tr>
+			<td><strong>Estimation</strong></td>
+			<td>Hard to estimate, often wrong</td>
+			<td>Easy to estimate, usually accurate</td>
+		</tr>
+		<tr>
+			<td><strong>Progress Visibility</strong></td>
+			<td>"In progress" for weeks</td>
+			<td>Daily completions, visible momentum</td>
+		</tr>
+		<tr>
+			<td><strong>Rollback</strong></td>
+			<td>All-or-nothing deployment</td>
+			<td>Can deploy incrementally</td>
+		</tr>
+		<tr>
+			<td><strong>Reusability</strong></td>
+			<td>Tightly coupled, hard to reuse</td>
+			<td>Components are reusable by design</td>
+		</tr>
+	</tbody>
+</table>
+
+### Real Example: Building a Product Page
+
+**❌ Bad approach — one large proposal:**
+
+```
+/openspec-proposal create a Product Page with header, image gallery, 
+price section, add-to-cart button, reviews section, and related products
+```
+
+This creates a massive proposal that:
+- Is hard for AI to implement correctly
+- Takes days to review
+- Has dozens of interconnected tasks
+- Is impossible to estimate accurately
+- Cannot be deployed incrementally
+
+**✅ Good approach — decomposed into focused proposals:**
+
+First, ask AI to help decompose:
+
+```
+Help me decompose a Product Page into individual component proposals. 
+I need: header, image gallery, price, cart button, reviews, related products.
+```
+
+Then create proposals in order, from specific to general:
+
+```
+# Phase 1: Foundation components (can run in parallel)
+/openspec-proposal create ProductImage component for displaying product photos
+/openspec-proposal create PriceDisplay component with sale/regular price support
+/openspec-proposal create AddToCartButton component with quantity selector
+/openspec-proposal create StarRating component for product reviews
+
+# Phase 2: Composite components (after Phase 1)
+/openspec-proposal create ImageGallery using ProductImage with thumbnails
+/openspec-proposal create ReviewCard component using StarRating
+/openspec-proposal create ReviewsList using ReviewCard with pagination
+
+# Phase 3: Page assembly (after Phase 2)
+/openspec-proposal create ProductPage composing all product components
+```
+
+**Result:** 8 simple proposals instead of 1 complex one. Each can be:
+- Implemented in hours, not days
+- Reviewed in minutes
+- Tested independently
+- Deployed incrementally
+- Reused in other pages
+
+### Benefits for Developers
+
+1. **Faster implementation** — AI completes small tasks with higher accuracy
+2. **Easier debugging** — When something breaks, you know exactly where
+3. **Better testing** — Each component has isolated, focused tests
+4. **Cleaner code** — Small scope naturally leads to clean architecture
+5. **Learning opportunity** — New developers can start with simple proposals
+
+### Benefits for Managers
+
+1. **Accurate estimates** — Small tasks are predictable
+2. **Visible progress** — See completions daily, not weekly
+3. **Lower risk** — Problems are caught early and isolated
+4. **Flexible prioritization** — Can reorder or pause without losing work
+5. **Better resource allocation** — Parallel work on independent proposals
+
+### How to Decompose Effectively
+
+Use AI to help with decomposition:
+
+```
+I want to build [feature]. Help me break it down into the smallest 
+possible independent components that I can create as separate proposals.
+Order them from most fundamental (no dependencies) to most composite.
+```
+
+**Signs your proposal is too big:**
+- More than 10 tasks in `tasks.md`
+- Touches more than 3-4 files
+- Takes more than 1 day to implement
+- Hard to describe in one sentence
+- Contains the word "and" multiple times in the title
+
+**Signs your proposal is right-sized:**
+- 3-7 focused tasks
+- Single responsibility
+- Can be implemented and verified in hours
+- Easy to explain in one sentence
+- Creates one reusable artifact
+
+> **Remember:** The goal is not to create more work, but to create *manageable* work. Ten simple changes are less total effort than one complex change that requires multiple rewrites.
+
+## Cursor IDE Integration
+
+Cursor is our corporate IDE for UI development. We use three custom commands to work with OpenSpec:
+
+### `/openspec-proposal` — Create a Proposal
+
+Use this command when starting a new feature or significant change.
+
+```
+/openspec-proposal
+# Scaffold a new OpenSpec change and validate strictly
+```
+
+**What happens:**
+1. AI reviews existing specs and codebase
+2. Creates `proposal.md` — why and what changes
+3. Creates `tasks.md` — implementation checklist
+4. Creates spec deltas with requirements and scenarios
+5. Validates the proposal structure
+
+**Example prompt:**
+
+```
+/openspec-proposal add a new IconButton component that extends Button 
+with icon support, including left and right icon positions
+```
+
+**Output structure:**
+
+```
+openspec/changes/add-icon-button-component/
+├── proposal.md        # Why and what changes
+├── tasks.md           # Implementation checklist
+└── specs/
+    └── icon-button/
+        └── spec.md    # Requirements and scenarios
+```
+
+### `/openspec-apply` — Implement Changes
+
+Use this command after a proposal is reviewed and approved.
+
+```
+/openspec-apply
+# Implement an approved OpenSpec change and keep tasks in sync
+```
+
+**What happens:**
+1. AI reads proposal, design (if present), and tasks
+2. Implements tasks sequentially
+3. Updates task checkboxes as work completes
+4. Runs validation (format, lint)
+
+**Example prompt:**
+
+```
+/openspec-apply implement the add-icon-button-component proposal
+```
+
+> **Important:** Always review the proposal before running apply. The AI will implement exactly what's specified — make sure the specification is correct!
+
+### `/openspec-archive` — Archive Completed Changes
+
+Use this command after the change is deployed and verified.
+
+```
+/openspec-archive
+# Archive a completed change to the project changelog
+```
+
+**What happens:**
+1. Moves the change to `openspec/changes/archive/YYYY-MM-DD-[name]/`
+2. Updates specs if capabilities changed
+3. Creates a permanent record in the project changelog
+
+**Example prompt:**
+
+```
+/openspec-archive archive the add-icon-button-component change
+```
+
+### Project Changelog
+
+The archive directory (`openspec/changes/archive/`) serves as the project changelog. Each archived change contains:
+
+- **proposal.md** — The original motivation and scope
+- **tasks.md** — What was implemented
+- **specs/** — The requirements that were added or modified
+
+Browse the archive to understand project history:
+
+```
+openspec/changes/archive/
+├── 2025-12-15-add-button-component/
+├── 2025-12-20-add-treelist-component/
+└── 2026-01-10-update-button-variants/
+```
+
+## AI-Assisted Development Workflow
+
+Working with AI in Cursor follows a collaborative pattern:
+
+### 1. Describe Intent Clearly
+
+Be specific about what you want. Good prompts include:
+
+- **Context** — What component or feature area
+- **Goal** — What you want to achieve
+- **Constraints** — Any limitations or requirements
+
+**Good example:**
+> "Add a loading state to Button component that shows a spinner and disables interaction"
+
+**Vague example:**
+> "Make the button better"
+
+### 2. Review Before Approving
+
+Always review AI-generated proposals before implementing:
+
+- Check requirements match your intent
+- Verify scenarios cover edge cases
+- Ensure tasks are complete and ordered correctly
+
+### 3. Iterate on Proposals
+
+Don't hesitate to ask for changes:
+
+```
+The proposal looks good, but please also add a scenario 
+for the loading state with custom spinner
+```
+
+### 4. Verify Implementation
+
+After `/openspec-apply`, verify the changes:
+
+- Run Storybook to see the component
+- Check all task checkboxes are marked
+- Run format and lint
+
+## Best Practices
+
+### For New Developers
+
+1. **Start with small changes** — Get familiar with the workflow on simple tasks
+2. **Read existing specs** — Look at `openspec/specs/` to understand the format
+3. **Ask questions in proposals** — If unclear, the AI will ask for clarification
+4. **Don't skip review** — Always read the proposal before applying
+
+### For Experienced Developers
+
+1. **Use proposals for complex refactors** — Even if you know what to do, the spec helps verify scope
+2. **Reference existing patterns** — Point the AI to similar components
+3. **Break large changes** — Multiple smaller proposals are better than one huge one
+4. **Archive promptly** — Don't let completed changes linger
+
+### For Stakeholders
+
+1. **Review proposal.md** — Understand what's changing and why
+2. **Check tasks.md** — See the implementation scope
+3. **Browse the archive** — Understand project history and decisions
+
+## Troubleshooting
+
+### "The AI doesn't understand my request"
+
+- Be more specific about the component and behavior
+- Reference existing components: "Similar to how Button handles disabled state"
+- Break the request into smaller parts
+
+### "The proposal is missing something"
+
+- Ask for modifications: "Please also add [missing requirement]"
+- Point to existing specs: "Include scenarios like in button-component spec"
+
+### "Implementation doesn't match the spec"
+
+- Review the spec — maybe it needs clarification
+- Re-run apply with more specific instructions
+- Manually adjust and update the spec to match
+
+### "I'm not sure if this needs a proposal"
+
+When in doubt, create a proposal. It's quick to create and provides:
+- Clear documentation of what's changing
+- A review checkpoint before coding
+- A record in the changelog
+
+## Quick Reference
+
+### Commands
+
+<table>
+	<thead>
+		<tr>
+			<th>Command</th>
+			<th>When to Use</th>
+			<th>Creates</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>/openspec-proposal</code></td>
+			<td>Starting new work</td>
+			<td>proposal.md, tasks.md, specs</td>
+		</tr>
+		<tr>
+			<td><code>/openspec-apply</code></td>
+			<td>After proposal approval</td>
+			<td>Implementation code</td>
+		</tr>
+		<tr>
+			<td><code>/openspec-archive</code></td>
+			<td>After deployment</td>
+			<td>Changelog entry</td>
+		</tr>
+	</tbody>
+</table>
+
+### Directories
+
+<table>
+	<thead>
+		<tr>
+			<th>Directory</th>
+			<th>Purpose</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>openspec/specs/</code></td>
+			<td>Current truth — what IS built</td>
+		</tr>
+		<tr>
+			<td><code>openspec/changes/</code></td>
+			<td>Active proposals — what SHOULD change</td>
+		</tr>
+		<tr>
+			<td><code>openspec/changes/archive/</code></td>
+			<td>Completed changes — project changelog</td>
+		</tr>
+	</tbody>
+</table>
+
+> **Remember:** Specs are truth. Changes are proposals. The archive is history. Keep them in sync for a healthy codebase.
