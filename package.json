@@ -30,7 +30,8 @@
 		"build-storybook": "storybook build",
 		"deploy": "chromatic --exit-zero-on-changes --exit-once-uploaded",
 		"lint": "biome check .",
-		"format": "biome format . --write"
+		"format": "biome format . --write",
+		"generate-icons": "node scripts/generate-icons.mjs"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.4",

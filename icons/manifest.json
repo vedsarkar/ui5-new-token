@@ -1,0 +1,268 @@
+{
+	"icons": [
+		{
+			"name": "AccountCircle",
+			"kebabName": "account-circle",
+			"path": "/icons/account-circle.svg",
+			"import": "import { AccountCircle } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Add",
+			"kebabName": "add",
+			"path": "/icons/add.svg",
+			"import": "import { Add } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "ArrowBack",
+			"kebabName": "arrow-back",
+			"path": "/icons/arrow-back.svg",
+			"import": "import { ArrowBack } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "ArrowForward",
+			"kebabName": "arrow-forward",
+			"path": "/icons/arrow-forward.svg",
+			"import": "import { ArrowForward } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Attachment",
+			"kebabName": "attachment",
+			"path": "/icons/attachment.svg",
+			"import": "import { Attachment } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Chat",
+			"kebabName": "chat",
+			"path": "/icons/chat.svg",
+			"import": "import { Chat } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "CheckCircle",
+			"kebabName": "check-circle",
+			"path": "/icons/check-circle.svg",
+			"import": "import { CheckCircle } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Check",
+			"kebabName": "check",
+			"path": "/icons/check.svg",
+			"import": "import { Check } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "ChevronLeft",
+			"kebabName": "chevron-left",
+			"path": "/icons/chevron-left.svg",
+			"import": "import { ChevronLeft } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "ChevronRight",
+			"kebabName": "chevron-right",
+			"path": "/icons/chevron-right.svg",
+			"import": "import { ChevronRight } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Close",
+			"kebabName": "close",
+			"path": "/icons/close.svg",
+			"import": "import { Close } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Comment",
+			"kebabName": "comment",
+			"path": "/icons/comment.svg",
+			"import": "import { Comment } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "ContentCopy",
+			"kebabName": "content-copy",
+			"path": "/icons/content-copy.svg",
+			"import": "import { ContentCopy } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "ContentPaste",
+			"kebabName": "content-paste",
+			"path": "/icons/content-paste.svg",
+			"import": "import { ContentPaste } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Delete",
+			"kebabName": "delete",
+			"path": "/icons/delete.svg",
+			"import": "import { Delete } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Description",
+			"kebabName": "description",
+			"path": "/icons/description.svg",
+			"import": "import { Description } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Download",
+			"kebabName": "download",
+			"path": "/icons/download.svg",
+			"import": "import { Download } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Edit",
+			"kebabName": "edit",
+			"path": "/icons/edit.svg",
+			"import": "import { Edit } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Email",
+			"kebabName": "email",
+			"path": "/icons/email.svg",
+			"import": "import { Email } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "ErrorCircle",
+			"kebabName": "error-circle",
+			"path": "/icons/error-circle.svg",
+			"import": "import { ErrorCircle } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "ExpandLess",
+			"kebabName": "expand-less",
+			"path": "/icons/expand-less.svg",
+			"import": "import { ExpandLess } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "ExpandMore",
+			"kebabName": "expand-more",
+			"path": "/icons/expand-more.svg",
+			"import": "import { ExpandMore } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "FilterList",
+			"kebabName": "filter-list",
+			"path": "/icons/filter-list.svg",
+			"import": "import { FilterList } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Folder",
+			"kebabName": "folder",
+			"path": "/icons/folder.svg",
+			"import": "import { Folder } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Help",
+			"kebabName": "help",
+			"path": "/icons/help.svg",
+			"import": "import { Help } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Info",
+			"kebabName": "info",
+			"path": "/icons/info.svg",
+			"import": "import { Info } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "KeyboardArrowDown",
+			"kebabName": "keyboard-arrow-down",
+			"path": "/icons/keyboard-arrow-down.svg",
+			"import": "import { KeyboardArrowDown } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "KeyboardArrowUp",
+			"kebabName": "keyboard-arrow-up",
+			"path": "/icons/keyboard-arrow-up.svg",
+			"import": "import { KeyboardArrowUp } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Logout",
+			"kebabName": "logout",
+			"path": "/icons/logout.svg",
+			"import": "import { Logout } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Menu",
+			"kebabName": "menu",
+			"path": "/icons/menu.svg",
+			"import": "import { Menu } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Notifications",
+			"kebabName": "notifications",
+			"path": "/icons/notifications.svg",
+			"import": "import { Notifications } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "People",
+			"kebabName": "people",
+			"path": "/icons/people.svg",
+			"import": "import { People } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Person",
+			"kebabName": "person",
+			"path": "/icons/person.svg",
+			"import": "import { Person } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Refresh",
+			"kebabName": "refresh",
+			"path": "/icons/refresh.svg",
+			"import": "import { Refresh } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Remove",
+			"kebabName": "remove",
+			"path": "/icons/remove.svg",
+			"import": "import { Remove } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Save",
+			"kebabName": "save",
+			"path": "/icons/save.svg",
+			"import": "import { Save } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Search",
+			"kebabName": "search",
+			"path": "/icons/search.svg",
+			"import": "import { Search } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Settings",
+			"kebabName": "settings",
+			"path": "/icons/settings.svg",
+			"import": "import { Settings } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Share",
+			"kebabName": "share",
+			"path": "/icons/share.svg",
+			"import": "import { Share } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Sort",
+			"kebabName": "sort",
+			"path": "/icons/sort.svg",
+			"import": "import { Sort } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Upload",
+			"kebabName": "upload",
+			"path": "/icons/upload.svg",
+			"import": "import { Upload } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "VisibilityOff",
+			"kebabName": "visibility-off",
+			"path": "/icons/visibility-off.svg",
+			"import": "import { VisibilityOff } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Visibility",
+			"kebabName": "visibility",
+			"path": "/icons/visibility.svg",
+			"import": "import { Visibility } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "Warning",
+			"kebabName": "warning",
+			"path": "/icons/warning.svg",
+			"import": "import { Warning } from \"@reltio/design/icons\""
+		}
+	]
+}
