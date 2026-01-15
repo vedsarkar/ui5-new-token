@@ -9,6 +9,6 @@ export type TreeNodeProps = {
 	isExpanded: boolean;
 	levelLines: boolean[];
 	isLast: boolean;
-	onToggle: (id: TreeKey, expanded: boolean) => void;
+	onToggle: (id: TreeKey, expanded: boolean, node: TreeItem) => void;
 	LabelComponent?: ComponentType<{ data: TreeItem }>;
 };
