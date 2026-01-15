@@ -2,3 +2,12 @@
 	/* biome-ignore lint: This rule needs !important for global font reset */
 	font-family: "Inter", sans-serif !important;
 }
+
+/* Storybook MDX documentation table styles */
+#storybook-docs table {
+	width: 100%;
+}
+
+#storybook-docs th {
+	text-align: left;
+}

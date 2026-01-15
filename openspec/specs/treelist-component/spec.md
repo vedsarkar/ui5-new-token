@@ -1,6 +1,6 @@
 # TreeList Component Specification
 
-## Overview
+## Purpose
 
 The TreeList component renders hierarchical data with expand/collapse controls, visual tree lines connecting nodes, and optional custom label rendering. It supports both controlled and uncontrolled expansion modes, allowing developers to manage expanded state externally or let the component handle it internally. The component follows all Reltio Design System constitution principles including CSS Modules, CSS custom properties, TypeScript strict typing, and accessibility standards.
 
