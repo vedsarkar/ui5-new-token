@@ -1,5 +1,6 @@
 import Tree from "rc-tree";
 import { memo, useCallback, useMemo, useState } from "react";
+import { classNames } from "@/utils/classNames";
 import { TreeNode } from "./components/TreeNode/TreeNode";
 import { getLevelLinesData, transformTreeData } from "./helpers";
 import styles from "./TreeList.module.css";
@@ -82,16 +83,13 @@ export const TreeList = memo(
 		);
 
 		return (
-			<div className={styles.root}>
+			<div className={classNames(styles.root)}>
 				<Tree
 					treeData={rcData}
 					expandAction={false}
 					virtual={false}
 					selectable={false}
 					expandedKeys={expandedArray}
-					onExpand={(keys, info) =>
-						updateExpandedKeys(keys as TreeKey[], info.node?.data.raw)
-					}
 					showIcon={false}
 					titleRender={renderTitle}
 				/>

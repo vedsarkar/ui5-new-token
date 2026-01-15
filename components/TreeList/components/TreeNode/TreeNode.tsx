@@ -29,19 +29,19 @@ export const TreeNode = memo(
 			<div className={classNames(styles.wrapper)} data-depth={depth}>
 				<TreeLevelLines levelLines={levelLines} isLast={isLast} />
 				<span
-					className={styles.indent}
+					className={classNames(styles.indent)}
 					style={{ ["--depth" as keyof CSSProperties]: `${depth}` }}
 				/>
 				{isLeaf ? (
-					<span className={styles.toggle} aria-hidden="true" />
+					<span className={classNames(styles.toggle)} aria-hidden="true" />
 				) : node.isLoading ? (
-					<span className={styles.toggle} aria-hidden="true">
-						<span className={styles.spinner} />
+					<span className={classNames(styles.toggle)} aria-hidden="true">
+						<span className={classNames(styles.spinner)} />
 					</span>
 				) : (
 					<button
 						type="button"
-						className={styles.toggle}
+						className={classNames(styles.toggle)}
 						aria-label={isExpanded ? "Collapse" : "Expand"}
 						onClick={handleToggleClick}
 					>
