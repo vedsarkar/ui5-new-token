@@ -8,9 +8,8 @@
 	--reltio-icon-library-button-hover: #e0e0e0;
 
 	font-family: var(--reltio-font-family-body, "Roboto", sans-serif);
-  display: grid;
-  gap: 16px;
-
+	display: grid;
+	gap: 16px;
 }
 
 .searchContainer {
@@ -55,11 +54,19 @@
 	border-radius: 8px;
 	background: var(--reltio-icon-library-bg);
 	transition: background-color 0.2s;
-  gap: 8px;
+	gap: 8px;
 
 	&:hover {
 		background: var(--reltio-icon-library-hover);
 	}
+}
+
+.iconLink {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-decoration: none;
+	color: inherit;
 }
 
 .iconPreview {

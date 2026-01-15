@@ -3,6 +3,11 @@
 	"version": "1.0.0",
 	"description": "Reltio design system and tools",
 	"type": "module",
+	"exports": {
+		".": "./index.ts",
+		"./icons": "./icons/index.ts",
+		"./icons/*": "./icons/*.tsx"
+	},
 	"keywords": [
 		"Reltio",
 		"design",

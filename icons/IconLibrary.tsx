@@ -41,30 +41,37 @@ export const IconLibrary = () => {
 			</div>
 
 			<div className={styles.grid}>
-				{filteredIcons.map((icon) => (
-					<div key={icon.name} className={styles.iconCard}>
-						<div className={styles.iconPreview}>{renderIcon(icon)}</div>
-						<div className={styles.iconName}>{icon.name}</div>
-						<div className={styles.actions}>
-							<button
-								type="button"
-								className={styles.copyButton}
-								onClick={() => copyToClipboard(icon.path, `url-${icon.name}`)}
-							>
-								{copiedId === `url-${icon.name}` ? "Copied!" : "Copy URL"}
-							</button>
-							<button
-								type="button"
-								className={styles.copyButton}
-								onClick={() =>
-									copyToClipboard(icon.import, `import-${icon.name}`)
-								}
-							>
-								{copiedId === `import-${icon.name}` ? "Copied!" : "Copy Import"}
-							</button>
+				{filteredIcons.map((icon) => {
+					const storyPath = `/?path=/docs/icons-${icon.name.toLowerCase()}--overview`;
+					return (
+						<div key={icon.name} className={styles.iconCard}>
+							<a href={storyPath} className={styles.iconLink}>
+								<div className={styles.iconPreview}>{renderIcon(icon)}</div>
+								<div className={styles.iconName}>{icon.name}</div>
+							</a>
+							<div className={styles.actions}>
+								<button
+									type="button"
+									className={styles.copyButton}
+									onClick={() => copyToClipboard(icon.path, `url-${icon.name}`)}
+								>
+									{copiedId === `url-${icon.name}` ? "Copied!" : "Copy URL"}
+								</button>
+								<button
+									type="button"
+									className={styles.copyButton}
+									onClick={() =>
+										copyToClipboard(icon.import, `import-${icon.name}`)
+									}
+								>
+									{copiedId === `import-${icon.name}`
+										? "Copied!"
+										: "Copy Import"}
+								</button>
+							</div>
 						</div>
-					</div>
-				))}
+					);
+				})}
 			</div>
 
 			{filteredIcons.length === 0 && (

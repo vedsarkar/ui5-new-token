@@ -33,7 +33,7 @@
 
 ## 4. Package Exports
 
-- [ ] 4.1 Configure package.json exports for `@reltio/design/icons/*` pattern
+- [x] 4.1 Configure package.json exports for `@reltio/design/icons/*` pattern
 - [x] 4.2 Verify icons are accessible via direct public URL (`/icons/icon-name.svg`)
 - [x] 4.3 Verify icons are importable as React components
 
@@ -44,7 +44,7 @@
 - [x] 5.3 Add search/filter functionality by icon name
 - [x] 5.4 Add "Copy URL" button for each icon (copies public SVG URL)
 - [x] 5.5 Add "Copy Import" button for each icon (copies React import statement)
-- [ ] 5.6 Make each icon a link to its individual Storybook story
+- [x] 5.6 Make each icon a link to its individual Storybook story
 
 ## 6. Individual Icon Stories
 
@@ -58,13 +58,13 @@
 - [x] 7.1 Run `npm run format` and fix any formatting issues
 - [x] 7.2 Run `npm run lint` and fix any linting errors
 - [x] 7.3 Verify icon generation script works correctly
-- [ ] 7.4 Verify Storybook displays Icon Library page correctly
-- [ ] 7.5 Verify search functionality works
-- [ ] 7.6 Verify copy URL/import functionality works
-- [ ] 7.7 Test icon components for accessibility (a11y addon)
+- [x] 7.4 Verify Storybook displays Icon Library page correctly
+- [x] 7.5 Verify search functionality works
+- [x] 7.6 Verify copy URL/import functionality works
+- [x] 7.7 Test icon components for accessibility (a11y addon)
 
 ## 8. Documentation
 
-- [ ] 8.1 Add icon contribution guidelines to AGENTS.md or README
-- [ ] 8.2 Document icon naming conventions
-- [ ] 8.3 Document how to add new icons (upload SVG → run script)
+- [x] 8.1 Add icon contribution guidelines to AGENTS.md or README
+- [x] 8.2 Document icon naming conventions
+- [x] 8.3 Document how to add new icons (upload SVG → run script)
