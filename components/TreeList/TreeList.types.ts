@@ -35,7 +35,7 @@ export type RcTreeNodeData<T> = {
  */
 export type TreeListProps = {
 	/** Hierarchical data to render.
-	 * `type TreeItem = {id: TreeKey; label: string; children?: TreeItem[]}` `type TreeKey = string | number`
+	 * `type TreeItem = {id: TreeKey; label: string; children?: TreeItem[]; isLoading?: boolean}` `type TreeKey = string | number`
 	 * @example
 	 * [
 	 *   { id: "1", label: "Node 1", children: [
