@@ -3,6 +3,7 @@ export default {
 	stories: [
 		"../docs/Welcome.mdx",
 		"../docs/Constitution.mdx",
+		"../guides/**/*.story.mdx",
 		"../**/Spec.story.mdx",
 		"../**/*.story.mdx",
 		"../**/*.stories.@(ts|tsx)",
