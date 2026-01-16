@@ -26,6 +26,26 @@
 	cursor: pointer;
 }
 
+.spinner {
+	display: inline-block;
+	width: var(--reltio-tree-list-spinner-size, 10px);
+	height: var(--reltio-tree-list-spinner-size, 10px);
+	border-radius: 50%;
+	border: var(--reltio-tree-list-spinner-width, 2px) solid
+		var(--reltio-tree-list-spinner-color, currentColor);
+	border-top-color: transparent;
+	animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
 .actions {
 	margin-left: auto;
 	opacity: 0;

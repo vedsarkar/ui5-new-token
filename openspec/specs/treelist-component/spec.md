@@ -3,9 +3,7 @@
 ## Purpose
 
 The TreeList component renders hierarchical data with expand/collapse controls, visual tree lines connecting nodes, and optional custom label rendering. It supports both controlled and uncontrolled expansion modes, allowing developers to manage expanded state externally or let the component handle it internally. The component follows all Reltio Design System constitution principles including CSS Modules, CSS custom properties, TypeScript strict typing, and accessibility standards.
-
 ## Requirements
-
 ### Requirement: Hierarchical Data Rendering
 
 The TreeList component SHALL render hierarchical data structures with nested children, supporting unlimited depth levels.
@@ -21,12 +19,12 @@ The TreeList component SHALL render hierarchical data structures with nested chi
 - **AND** each root tree is visually independent
 
 #### Scenario: Leaf nodes render without expand control
-- **WHEN** a node has no children
+- **WHEN** a node has no children prop (undefined or null)
 - **THEN** node renders as a leaf (no toggle button)
 - **AND** empty space is shown where toggle button would be
 
 #### Scenario: Parent nodes render with expand control
-- **WHEN** a node has children
+- **WHEN** a node has a children prop defined (including an empty array while loading or awaiting data)
 - **THEN** node renders with a toggle button (chevron icon)
 - **AND** toggle button indicates current expand/collapse state
 
@@ -57,8 +55,8 @@ The TreeList component SHALL provide expand/collapse functionality for parent no
 
 #### Scenario: onExpand callback fires on state change
 - **WHEN** user toggles a node's expanded state
-- **THEN** onExpand callback is called with updated keys array
-- **AND** array contains all currently expanded node keys
+- **THEN** onExpand callback is called with updated keys array and the toggled TreeItem
+- **AND** arguments include all currently expanded node keys and the node that triggered the change
 
 ### Requirement: Visual Tree Lines
 
@@ -198,7 +196,7 @@ The TreeList component SHALL be fully typed with TypeScript using strict mode, w
 
 #### Scenario: TreeItem type defines node structure
 - **WHEN** developer uses TreeList component
-- **THEN** TreeItem type specifies id, label, and optional children
+- **THEN** TreeItem type specifies id, label, optional children, and optional isLoading flag
 - **AND** TypeScript validates data structure
 
 #### Scenario: TreeKey type supports string and number

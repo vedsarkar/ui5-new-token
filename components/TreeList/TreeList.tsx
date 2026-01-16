@@ -1,5 +1,6 @@
 import Tree from "rc-tree";
 import { memo, useCallback, useMemo, useState } from "react";
+import { classNames } from "@/utils/classNames";
 import { TreeNode } from "./components/TreeNode/TreeNode";
 import { getLevelLinesData, transformTreeData } from "./helpers";
 import styles from "./TreeList.module.css";
@@ -39,22 +40,20 @@ export const TreeList = memo(
 		const expandedArray = useMemo(() => Array.from(expandedSet), [expandedSet]);
 
 		const updateExpandedKeys = useCallback(
-			(keys: TreeKey[]) => {
-				if (isControlled) {
-					onExpand?.(keys);
-					return;
+			(keys: TreeKey[], treeItem: TreeItem) => {
+				onExpand?.(keys, treeItem);
+				if (!isControlled) {
+					setExpandedKeys(new Set(keys));
 				}
-				setExpandedKeys(new Set(keys));
-				onExpand?.(keys);
 			},
 			[isControlled, onExpand],
 		);
 
 		const handleToggle = useCallback(
-			(id: TreeKey, isExpanded: boolean) => {
+			(id: TreeKey, isExpanded: boolean, treeItem: TreeItem) => {
 				const next = new Set(expandedSet);
 				isExpanded ? next.delete(id) : next.add(id);
-				updateExpandedKeys(Array.from(next));
+				updateExpandedKeys(Array.from(next), treeItem);
 			},
 			[expandedSet, updateExpandedKeys],
 		);
@@ -84,14 +83,13 @@ export const TreeList = memo(
 		);
 
 		return (
-			<div className={styles.root}>
+			<div className={classNames(styles.root)}>
 				<Tree
 					treeData={rcData}
 					expandAction={false}
 					virtual={false}
 					selectable={false}
 					expandedKeys={expandedArray}
-					onExpand={(keys) => updateExpandedKeys(keys as TreeKey[])}
 					showIcon={false}
 					titleRender={renderTitle}
 				/>

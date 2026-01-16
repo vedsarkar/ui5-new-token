@@ -49,6 +49,21 @@ const cssVariables = [
 		defaultValue: "#5f6368",
 	},
 	{
+		name: "--reltio-tree-list-spinner-size",
+		description: "Spinner diameter for loading nodes.",
+		defaultValue: "10px",
+	},
+	{
+		name: "--reltio-tree-list-spinner-width",
+		description: "Spinner stroke width.",
+		defaultValue: "2px",
+	},
+	{
+		name: "--reltio-tree-list-spinner-color",
+		description: "Spinner color.",
+		defaultValue: "currentColor",
+	},
+	{
 		name: "--reltio-tree-list-line-color",
 		description: "Guideline color connecting nodes.",
 		defaultValue: "rgba(0, 0, 0, 0.08)",
@@ -156,6 +171,21 @@ const multiRootData: TreeItem[] = [
 					},
 					{ id: "node 2a2", label: "Node 2A2" },
 				],
+			},
+		],
+	},
+];
+
+const loadingData: TreeItem[] = [
+	{
+		id: "async-root",
+		label: "Async root",
+		children: [
+			{
+				id: "loading-branch",
+				label: "Branch fetching children",
+				children: [],
+				isLoading: true,
 			},
 		],
 	},
@@ -411,10 +441,14 @@ export const ControlledExpanded: Story = {
 	args: {
 		data: multiRootData,
 		expandedKeys: ["root 1", "node 1a", "root 2", "node 2a"],
-		onExpand: (keys) => {
+		onExpand: (keys, node) => {
 			const expandedKeysElement = document.getElementById("expanded-keys");
 			if (expandedKeysElement) {
 				expandedKeysElement.innerHTML = JSON.stringify(keys);
+			}
+			const toggledNodeElement = document.getElementById("toggled-node");
+			if (toggledNodeElement) {
+				toggledNodeElement.innerHTML = node ? JSON.stringify(node) : "";
 			}
 		},
 	},
@@ -427,9 +461,9 @@ export const ControlledExpanded: Story = {
 			setExpanded((args.expandedKeys as TreeKey[]) ?? []);
 		}, [args.expandedKeys]);
 
-		const handleExpand = (keys: TreeKey[]) => {
+		const handleExpand = (keys: TreeKey[], node: TreeItem) => {
 			setExpanded(keys);
-			args.onExpand?.(keys);
+			args.onExpand?.(keys, node);
 		};
 
 		return (
@@ -442,11 +476,23 @@ export const ControlledExpanded: Story = {
 						borderRadius: 6,
 						marginBottom: 12,
 						fontSize: 12,
-						width: 400,
+						width: 480,
+						display: "grid",
+						gap: 6,
 					}}
 				>
-					<strong>onExpand:</strong>
-					<div id="expanded-keys"></div>
+					<div>
+						<span>
+							<strong>Expanded keys:</strong>{" "}
+						</span>{" "}
+						<span id="expanded-keys"></span>
+					</div>
+					<div>
+						<span>
+							<strong>Toggled node:</strong>{" "}
+						</span>{" "}
+						<span id="toggled-node"></span>
+					</div>
 				</div>
 				<div
 					style={{
@@ -460,6 +506,128 @@ export const ControlledExpanded: Story = {
 					<TreeList {...args} expandedKeys={expanded} onExpand={handleExpand} />
 				</div>
 			</>
+		);
+	},
+};
+
+type LoadingArgs = ComponentProps<typeof TreeList> & { style: CSSProperties };
+
+export const LoadingState: StoryObj<LoadingArgs> = {
+	args: {
+		data: loadingData,
+		style: {
+			"--reltio-tree-list-spinner-size": "10px",
+			"--reltio-tree-list-spinner-width": "2px",
+			"--reltio-tree-list-spinner-color": "currentColor",
+		} as CSSProperties,
+	},
+	render: (args) => {
+		const clearLoading = (items: TreeItem[]): TreeItem[] =>
+			items.map((item) => ({
+				...item,
+				isLoading: false,
+				children: item.children ? clearLoading(item.children) : item.children,
+			}));
+
+		const [data, setData] = useState<TreeItem[]>(() => clearLoading(args.data));
+		const [expanded, setExpanded] = useState<TreeKey[]>(["async-root"]);
+		const [isFetching, setIsFetching] = useState(false);
+
+		const handleReset = () => {
+			setIsFetching(false);
+			setData(clearLoading(args.data));
+			setExpanded(["async-root"]);
+		};
+
+		const markLoading = (items: TreeItem[], targetId: TreeKey): TreeItem[] =>
+			items.map((item) => {
+				if (item.id === targetId) {
+					if (item.children && item.children.length > 0) {
+						return item;
+					}
+					return {
+						...item,
+						isLoading: true,
+					};
+				}
+				return {
+					...item,
+					children: item.children
+						? markLoading(item.children, targetId)
+						: item.children,
+				};
+			});
+
+		const injectChildren = (items: TreeItem[], targetId: TreeKey): TreeItem[] =>
+			items.map((item) => {
+				if (item.id === targetId) {
+					return {
+						...item,
+						isLoading: false,
+						children: [
+							{ id: `${item.id}-1`, label: "Loaded child 1" },
+							{ id: `${item.id}-2`, label: "Loaded child 2" },
+						],
+					};
+				}
+				return {
+					...item,
+					children: item.children
+						? injectChildren(item.children, targetId)
+						: item.children,
+				};
+			});
+
+		const handleExpand = (keys: TreeKey[], node: TreeItem) => {
+			setExpanded(keys);
+			if (isFetching || (node.children && node.children.length > 0)) {
+				return;
+			}
+			setData((prev) => markLoading(prev, node.id));
+			setIsFetching(true);
+			setTimeout(() => {
+				setData((prev) => injectChildren(prev, node.id));
+				setIsFetching(false);
+			}, 1500);
+		};
+
+		return (
+			<div style={{ display: "grid", gap: 8 }}>
+				<button
+					type="button"
+					style={{
+						width: 120,
+						padding: "6px 10px",
+						borderRadius: 6,
+						border: "1px solid #e2e8f0",
+						background: "#f8fafc",
+						cursor: "pointer",
+						transition: "all 120ms ease",
+						boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+					}}
+					onClick={handleReset}
+					onMouseDown={(event) => {
+						event.currentTarget.style.transform = "translateY(1px)";
+						event.currentTarget.style.background = "#eef2f7";
+						event.currentTarget.style.boxShadow = "0 1px 0 rgba(0,0,0,0.06)";
+					}}
+					onMouseUp={(event) => {
+						event.currentTarget.style.transform = "translateY(0)";
+						event.currentTarget.style.background = "#f8fafc";
+						event.currentTarget.style.boxShadow = "0 1px 2px rgba(0,0,0,0.04)";
+					}}
+				>
+					Reset loading
+				</button>
+				<div style={args.style}>
+					<TreeList
+						{...args}
+						data={data}
+						expandedKeys={expanded}
+						onExpand={handleExpand}
+					/>
+				</div>
+			</div>
 		);
 	},
 };

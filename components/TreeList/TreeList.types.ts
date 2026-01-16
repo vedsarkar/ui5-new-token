@@ -15,6 +15,8 @@ export type TreeItem = {
 	label: string;
 	/** Optional nested children. */
 	children?: TreeItem[];
+	/** Optional loading flag for async child fetching. */
+	isLoading?: boolean;
 };
 
 /**
@@ -33,7 +35,7 @@ export type RcTreeNodeData<T> = {
  */
 export type TreeListProps = {
 	/** Hierarchical data to render.
-	 * `type TreeItem = {id: TreeKey; label: string; children?: TreeItem[]}` `type TreeKey = string | number`
+	 * `type TreeItem = {id: TreeKey; label: string; children?: TreeItem[]; isLoading?: boolean}` `type TreeKey = string | number`
 	 * @example
 	 * [
 	 *   { id: "1", label: "Node 1", children: [
@@ -52,7 +54,7 @@ export type TreeListProps = {
 	expandedKeys?: TreeKey[];
 	/**
 	 * Called when the expanded state changes (controlled mode).
-	 * Provides the resulting expanded keys list.
+	 * Provides the resulting expanded keys list and the toggled node.
 	 */
-	onExpand?: (keys: TreeKey[]) => void;
+	onExpand?: (keys: TreeKey[], node: TreeItem) => void;
 };
