@@ -1,25 +1,21 @@
-<!-- OPENSPEC:START -->
-# OpenSpec Instructions
-
-These instructions are for AI assistants working in this project.
-
-Always open `@/openspec/AGENTS.md` when the request:
-- Mentions planning or proposals (words like proposal, spec, change, plan)
-- Introduces new capabilities, breaking changes, architecture shifts, or big performance/security work
-- Sounds ambiguous and you need the authoritative spec before coding
-
-Use `@/openspec/AGENTS.md` to learn:
-- How to create and apply change proposals
-- Spec format and conventions
-- Project structure and guidelines
-
-Keep this managed block so 'openspec update' can refresh the instructions.
-
-<!-- OPENSPEC:END -->
-
 ## Project Overview
 
-Reltio Design System is a React component library with TypeScript, providing reusable UI components documented in Storybook. The project emphasizes type safety, accessibility, and visual regression testing with Chromatic.
+**Reltio Design Platform** is a comprehensive UI development, testing, and documentation ecosystem for the Reltio product suite. It serves as a unified platform enabling multiple teams to build, test, document, and distribute UI components and applications while maintaining consistency, quality, and embeddability.
+
+**Key capabilities:**
+- React component library with strict TypeScript
+- Application-specific component testing and documentation
+- Client SDK with business domain utilities and data hooks
+- Visual regression testing (Chromatic)
+- Spec-driven development (OpenSpec)
+- AI-assisted development
+- CSS custom properties for theming and customer embedding
+
+**Target users:** Component maintainers, product developers, designers, QA engineers, product managers, enterprise customers (future), and AI agents (future via MCP-UI/A2UI).
+
+**Vision:** Single source of truth for all UI development at Reltio, enabling rapid product development, consistent experiences, seamless customer embedding, and AI-powered UI generation.
+
+See @Overview.mdx for complete platform vision and architecture.
 
 ## Essential Commands
 
