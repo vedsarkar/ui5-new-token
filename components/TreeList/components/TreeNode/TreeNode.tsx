@@ -1,6 +1,6 @@
 import { type CSSProperties, type MouseEvent, memo, useCallback } from "react";
 import { classNames } from "@/utils/classNames";
-import { ChevronIcon } from "../ChevronIcon";
+import { ChevronRight } from "@/icons/ChevronRight";
 import { TreeLevelLines } from "../TreeLevelLines/TreeLevelLines";
 import styles from "./TreeNode.module.css";
 import type { TreeNodeProps } from "./TreeNode.types";
@@ -45,7 +45,13 @@ export const TreeNode = memo(
 						aria-label={isExpanded ? "Collapse" : "Expand"}
 						onClick={handleToggleClick}
 					>
-						<ChevronIcon expanded={isExpanded} />
+						<ChevronRight
+							size="small"
+							className={classNames(
+								styles.chevron,
+								isExpanded && styles.expanded,
+							)}
+						/>
 					</button>
 				)}
 				{LabelComponent ? <LabelComponent data={node} /> : node.label}
