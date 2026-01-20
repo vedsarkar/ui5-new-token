@@ -2,9 +2,6 @@ export default {
 	framework: "@storybook/nextjs-vite",
 	stories: [
 		"../Welcome.mdx",
-		"../Overview.mdx",
-		"../Constitution.mdx",
-		"../guides/**/*.story.mdx",
 		"../**/Spec.story.mdx",
 		"../**/*.story.mdx",
 		"../**/*.stories.@(ts|tsx)",
