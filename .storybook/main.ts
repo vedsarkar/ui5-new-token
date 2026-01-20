@@ -1,34 +1,26 @@
-export default {
+import { defineMain } from "@storybook/nextjs-vite/node";
+export default defineMain({
 	framework: "@storybook/nextjs-vite",
+
 	stories: [
-		"../Welcome.mdx",
-		"../Overview.mdx",
-		"../Constitution.mdx",
-		"../guides/**/*.story.mdx",
-		"../**/Spec.story.mdx",
+		"../Welcome.story.mdx",
 		"../**/*.story.mdx",
 		"../**/*.stories.@(ts|tsx)",
 	],
+
 	addons: [
 		"@chromatic-com/storybook",
 		"@storybook/addon-docs",
 		"@storybook/addon-a11y",
 		"@storybook/addon-vitest",
 	],
+
 	staticDirs: ["../public"],
+
 	typescript: {
 		reactDocgen: "react-docgen-typescript",
 		reactDocgenTypescriptOptions: {
 			shouldExtractLiteralValuesFromEnum: true,
-			propFilter: (prop) => {
-				if (prop.parent) {
-					return !prop.parent.fileName.includes("node_modules");
-				}
-				return true;
-			},
 		},
 	},
-	docs: {
-		defaultName: "Overview",
-	},
-};
+});

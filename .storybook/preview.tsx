@@ -1,3 +1,5 @@
+import addonA11y from "@storybook/addon-a11y";
+import addonDocs from "@storybook/addon-docs";
 import {
 	ArgTypes,
 	Description,
@@ -5,11 +7,11 @@ import {
 	Subtitle,
 	Title,
 } from "@storybook/addon-docs/blocks";
-// biome-ignore lint/correctness/noUnusedImports: Required for TypeScript JSX types
-import React from "react";
+import { definePreview } from "@storybook/nextjs-vite";
 
-const preview = {
+export default definePreview({
 	tags: ["autodocs"],
+
 	parameters: {
 		docs: {
 			page: () => (
@@ -37,6 +39,6 @@ const preview = {
 			},
 		},
 	},
-};
 
-export default preview;
+	addons: [addonDocs(), addonA11y()],
+});
