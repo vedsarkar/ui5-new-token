@@ -1,18 +1,23 @@
-export default {
+import { defineMain } from "@storybook/nextjs-vite/node";
+export default defineMain({
 	framework: "@storybook/nextjs-vite",
+
 	stories: [
 		"../Welcome.mdx",
 		"../**/Spec.story.mdx",
 		"../**/*.story.mdx",
 		"../**/*.stories.@(ts|tsx)",
 	],
+
 	addons: [
 		"@chromatic-com/storybook",
 		"@storybook/addon-docs",
 		"@storybook/addon-a11y",
 		"@storybook/addon-vitest",
 	],
+
 	staticDirs: ["../public"],
+
 	typescript: {
 		reactDocgen: "react-docgen-typescript",
 		reactDocgenTypescriptOptions: {
@@ -25,7 +30,8 @@ export default {
 			},
 		},
 	},
+
 	docs: {
 		defaultName: "Overview",
 	},
-};
+});

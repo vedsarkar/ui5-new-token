@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "storybook/test";
+import preview from "../../.storybook/preview";
 import { Button } from "./Button";
 
-const meta: Meta<typeof Button> = {
+const meta = preview.meta({
 	component: Button,
 	parameters: {
 		layout: "centered",
@@ -10,132 +10,129 @@ const meta: Meta<typeof Button> = {
 	args: {
 		onClick: fn(),
 	},
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof Button>;
-
-export const Default = {
+export const Default = meta.story({
 	args: {
 		children: "Button",
 	},
-};
+});
 
 // Variants
-export const Filled: Story = {
+export const Filled = meta.story({
 	args: {
 		variant: "filled",
 		children: "Filled Button",
 	},
-};
+});
 
-export const Outlined: Story = {
+export const Outlined = meta.story({
 	args: {
 		variant: "outlined",
 		children: "Outlined Button",
 	},
-};
+});
 
-export const Text: Story = {
+export const Text = meta.story({
 	args: {
 		variant: "text",
 		children: "Text Button",
 	},
-};
+});
 
 // Color Variants - Filled
-export const FilledPrimary: Story = {
+export const FilledPrimary = meta.story({
 	args: {
 		variant: "filled",
 		color: "primary",
 		children: "Filled Primary",
 	},
-};
+});
 
 // Color Variants - Outlined
-export const OutlinedPrimary: Story = {
+export const OutlinedPrimary = meta.story({
 	args: {
 		variant: "outlined",
 		color: "primary",
 		children: "Outlined Primary",
 	},
-};
+});
 
 // Color Variants - Text
-export const TextPrimary: Story = {
+export const TextPrimary = meta.story({
 	args: {
 		variant: "text",
 		color: "primary",
 		children: "Text Primary",
 	},
-};
+});
 
-export const Small: Story = {
+export const Small = meta.story({
 	args: {
 		size: "small",
 		children: "Small Button",
 	},
-};
+});
 
-export const Medium: Story = {
+export const Medium = meta.story({
 	args: {
 		size: "medium",
 		children: "Medium Button",
 	},
-};
+});
 
-export const Large: Story = {
+export const Large = meta.story({
 	args: {
 		size: "large",
 		children: "Large Button",
 	},
-};
+});
 
 // User Story 3: Disabled State
-export const Disabled: Story = {
+export const Disabled = meta.story({
 	args: {
 		disabled: true,
 		children: "Disabled Button",
 	},
-};
+});
 
-export const DisabledFilledPrimary: Story = {
+export const DisabledFilledPrimary = meta.story({
 	args: {
 		variant: "filled",
 		color: "primary",
 		disabled: true,
 		children: "Disabled Filled Primary",
 	},
-};
+});
 
-export const DisabledOutlinedPrimary: Story = {
+export const DisabledOutlinedPrimary = meta.story({
 	args: {
 		variant: "outlined",
 		color: "primary",
 		disabled: true,
 		children: "Disabled Outlined Primary",
 	},
-};
+});
 
-export const DisabledTextPrimary: Story = {
+export const DisabledTextPrimary = meta.story({
 	args: {
 		variant: "text",
 		color: "primary",
 		disabled: true,
 		children: "Disabled Text Primary",
 	},
-};
+});
 
-export const AccessibleDisabled: Story = {
+export const AccessibleDisabled = meta.story({
 	args: {
 		disabled: true,
 		"aria-label": "Save changes (disabled)",
 		children: "Save",
 	},
-};
+});
 
 // User Story 5: Custom Styling and Content
-export const WithCustomClassName: Story = {
+export const WithCustomClassName = meta.story({
 	args: {
 		className: "custom-button-class",
 		children: "Custom Styled",
@@ -151,9 +148,9 @@ export const WithCustomClassName: Story = {
 			`}</style>
 		</>
 	),
-};
+});
 
-export const WithCustomCssVariables: Story = {
+export const WithCustomCssVariables = meta.story({
 	args: {
 		style: {
 			"--reltio-button-color-background": "red",
@@ -166,9 +163,9 @@ export const WithCustomCssVariables: Story = {
 			<Button {...args} />
 		</>
 	),
-};
+});
 
-export const FullWidth: Story = {
+export const FullWidth = meta.story({
 	args: {
 		fullWidth: true,
 		children: "Full Width Button",
@@ -178,28 +175,28 @@ export const FullWidth: Story = {
 			<Button {...args} />
 		</div>
 	),
-};
+});
 
-export const AsLink: Story = {
+export const AsLink = meta.story({
 	args: {
 		href: "/about",
 		children: "Go to About",
 	},
-};
+});
 
-export const AsExternalLink: Story = {
+export const AsExternalLink = meta.story({
 	args: {
 		href: "https://example.com",
 		target: "_blank",
 		rel: "noopener noreferrer",
 		children: "External Link",
 	},
-};
+});
 
-export const DisabledLink: Story = {
+export const DisabledLink = meta.story({
 	args: {
 		href: "/disabled",
 		disabled: true,
 		children: "Disabled Link",
 	},
-};
+});

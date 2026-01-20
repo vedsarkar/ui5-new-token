@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import preview from "../../.storybook/preview";
 import type { ComponentProps, CSSProperties } from "react";
 import { useEffect, useState } from "react";
 import { TreeList } from "./TreeList";
@@ -191,7 +191,7 @@ const loadingData: TreeItem[] = [
 	},
 ];
 
-const meta: Meta<typeof TreeList> = {
+const meta = preview.meta({
 	component: TreeList,
 	parameters: {
 		layout: "padded",
@@ -204,11 +204,8 @@ const meta: Meta<typeof TreeList> = {
 	args: {
 		data: singleRootData,
 	},
-};
+});
 
-export default meta;
-
-type Story = StoryObj<typeof TreeList>;
 type CustomLabelArgs = ComponentProps<typeof TreeList> & {
 	labelVariant: RenderLabelVariant;
 };
@@ -216,16 +213,16 @@ type WithCustomArgs = ComponentProps<typeof TreeList> & {
 	style: CSSProperties;
 };
 
-export const Default: Story = {
+export const Default = meta.story({
 	render: (args) => <TreeList {...args} />,
-};
+});
 
-export const MultipleRoots: Story = {
+export const MultipleRoots = meta.story({
 	args: {
 		data: multiRootData,
 	},
 	render: (args) => <TreeList {...args} />,
-};
+});
 
 type RenderLabelVariant =
 	| "default"
@@ -234,7 +231,7 @@ type RenderLabelVariant =
 	| "tag + info"
 	| "info + tag";
 
-export const CustomLabel: StoryObj<CustomLabelArgs> = {
+export const CustomLabel = meta.story({
 	argTypes: {
 		labelVariant: {
 			control: { type: "inline-radio" },
@@ -346,9 +343,9 @@ export const CustomLabel: StoryObj<CustomLabelArgs> = {
 
 		return <TreeList {...treeListArgs} LabelComponent={Label} />;
 	},
-};
+});
 
-export const WithCustomCssVariables: StoryObj<WithCustomArgs> = {
+export const WithCustomCssVariables = meta.story({
 	argTypes: {
 		style: {
 			control: "object",
@@ -431,9 +428,9 @@ export const WithCustomCssVariables: StoryObj<WithCustomArgs> = {
 			</div>
 		);
 	},
-};
+});
 
-export const ControlledExpanded: Story = {
+export const ControlledExpanded = meta.story({
 	argTypes: {
 		expandedKeys: { control: { type: "object" } },
 		onExpand: { action: "expand" },
@@ -508,11 +505,11 @@ export const ControlledExpanded: Story = {
 			</>
 		);
 	},
-};
+});
 
 type LoadingArgs = ComponentProps<typeof TreeList> & { style: CSSProperties };
 
-export const LoadingState: StoryObj<LoadingArgs> = {
+export const LoadingState = meta.story({
 	args: {
 		data: loadingData,
 		style: {
@@ -630,4 +627,4 @@ export const LoadingState: StoryObj<LoadingArgs> = {
 			</div>
 		);
 	},
-};
+});
