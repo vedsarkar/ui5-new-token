@@ -2,7 +2,11 @@ import { defineMain } from "@storybook/nextjs-vite/node";
 export default defineMain({
 	framework: "@storybook/nextjs-vite",
 
-	stories: ["../**/*.story.mdx", "../**/*.stories.@(ts|tsx)"],
+	stories: [
+		"../Welcome.story.mdx",
+		"../**/*.story.mdx",
+		"../**/*.stories.@(ts|tsx)",
+	],
 
 	addons: [
 		"@chromatic-com/storybook",
