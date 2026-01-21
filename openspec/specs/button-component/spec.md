@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The Button component is a universal, accessible button that supports multiple visual variants, colors, sizes, states, and can render as either a `<button>` or `<a>` element based on the presence of an `href` prop. It follows all Reltio Design System constitution principles including CSS Modules, CSS custom properties, TypeScript strict typing, and accessibility standards.
+The Button component is a universal, accessible button that supports multiple visual variants, colors, sizes, states, and can render as either a `<button>` or `<a>` element based on the presence of an `href` prop. It follows all Reltio Design Platform constitution principles including CSS Modules, CSS custom properties, TypeScript strict typing, and accessibility standards.
 
 ## Requirements
 

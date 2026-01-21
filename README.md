@@ -1,6 +1,6 @@
-# Reltio Design System
+# Reltio Design Platform
 
-Reltio Design System is a library of components and tools for building consistent user interfaces.
+Reltio Design Platform is a library of components and tools for building consistent user interfaces.
 
 ## 📋 Table of Contents
 
@@ -18,7 +18,7 @@ Reltio Design System is a library of components and tools for building consisten
 
 ## About the Project
 
-Reltio Design System provides:
+Reltio Design Platform provides:
 
 - 🎨 **Reusable Components** — ready-to-use React components with TypeScript
 - 📚 **Documentation** — interactive component documentation in Storybook

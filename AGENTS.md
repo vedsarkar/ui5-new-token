@@ -53,7 +53,7 @@ This project uses OpenSpec for spec-driven development: **specify before buildin
 - Non-breaking dependency updates
 - Configuration changes
 
-> Full workflow guide: [@guides/spec-driven-development.story.mdx](/?path=/docs/guides-spec-driven-development--overview)
+> Full workflow guide: [@guides/spec-driven-development.story.mdx](/docs/guides-spec-driven-development)
 
 ## Essential Commands
 
