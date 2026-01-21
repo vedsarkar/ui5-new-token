@@ -22,30 +22,29 @@ The TextArea component SHALL follow Material Design 3 (M3) guidelines for text f
 - **AND** does not depend on MUI, Ant Design, or similar libraries
 - **AND** React and React DOM are the only peer dependencies
 
-### Requirement: Controlled Value Management
+### Requirement: Native Props Passthrough
 
-The TextArea component SHALL support a controlled value pattern with value and onChange props, allowing consuming applications to manage state externally.
+The TextArea component SHALL pass all props except component-specific ones (label, error, supportingText, toolbar) to the underlying textarea element.
 
-#### Scenario: Value prop sets textarea content
-- **WHEN** value prop is provided
-- **THEN** textarea displays the provided value
-- **AND** textarea content updates when value prop changes
+#### Scenario: Native attributes passed to textarea
+- **WHEN** developer provides native textarea attributes (value, onChange, disabled, name, placeholder, rows, etc.)
+- **THEN** attributes are spread to the native textarea element
+- **AND** textarea behaves as expected with those attributes
 
-#### Scenario: onChange callback fires on input
+#### Scenario: Event handlers passed to textarea
+- **WHEN** developer provides event handlers (onKeyDown, onKeyPress, onFocus, onBlur, etc.)
+- **THEN** handlers are attached to the native textarea element
+- **AND** events fire with the full event object
+
+#### Scenario: Data attributes and aria attributes passed through
+- **WHEN** developer provides data-testid or aria-* attributes
+- **THEN** attributes are spread to the native textarea element
+- **AND** testing and accessibility tools can access them
+
+#### Scenario: onChange receives full event
 - **WHEN** user types in the textarea
-- **THEN** onChange callback is called with the new value string
-- **AND** consuming application can update state accordingly
-
-#### Scenario: Uncontrolled mode with defaultValue
-- **WHEN** value prop is not provided
-- **AND** defaultValue prop is provided
-- **THEN** textarea initializes with defaultValue
-- **AND** textarea manages its own state internally
-
-#### Scenario: Name prop for form submission
-- **WHEN** name prop is provided
-- **THEN** textarea element has name attribute set
-- **AND** value is included in native form submission
+- **THEN** onChange callback is called with the full React.ChangeEvent
+- **AND** developer can access event.target.value and other event properties
 
 ### Requirement: Ref Forwarding
 
@@ -62,11 +61,13 @@ The TextArea component SHALL support a floating label that animates from placeho
 
 #### Scenario: Label displays as placeholder when empty
 - **WHEN** textarea is empty and not focused
+- **AND** label prop is provided
 - **THEN** label displays inside textarea at placeholder position
 - **AND** label uses placeholder color
 
 #### Scenario: Label floats on focus
 - **WHEN** textarea receives focus
+- **AND** label prop is provided
 - **THEN** label animates to position above textarea
 - **AND** label uses primary color
 - **AND** label font size reduces
@@ -77,25 +78,10 @@ The TextArea component SHALL support a floating label that animates from placeho
 - **THEN** label remains in floated position above textarea
 - **AND** label color returns to default
 
-#### Scenario: Placeholder fallback
+#### Scenario: Native placeholder when no label
 - **WHEN** label prop is not provided
 - **AND** placeholder prop is provided
-- **THEN** native placeholder attribute is used instead
-
-### Requirement: Icon Slots
-
-The TextArea component SHALL support leading and trailing icon slots for visual affordances and actions.
-
-#### Scenario: Leading icon renders before textarea
-- **WHEN** leadingIcon prop is provided with a React node
-- **THEN** icon renders to the left of the textarea
-- **AND** icon aligns to the top of the input area
-
-#### Scenario: Trailing icon renders after textarea
-- **WHEN** trailingIcon prop is provided with a React node
-- **THEN** icon renders to the right of the textarea
-- **AND** icon aligns to the top of the input area
-- **AND** icon is always visible regardless of textarea content
+- **THEN** native placeholder attribute is used on textarea element
 
 ### Requirement: Toolbar Slot
 
@@ -113,22 +99,18 @@ The TextArea component SHALL support a toolbar slot below the textarea for actio
 
 ### Requirement: Error State
 
-The TextArea component SHALL support an error state with visual feedback and error message display.
+The TextArea component SHALL support a boolean error state with visual feedback.
 
 #### Scenario: Error changes border color
-- **WHEN** error prop is provided with a string message
+- **WHEN** error prop is true
 - **THEN** border color changes to error color
 - **AND** label color changes to error color
 
-#### Scenario: Error message displays
-- **WHEN** error prop is provided
-- **THEN** error message displays below the textarea
-- **AND** error message uses error color
-
-#### Scenario: Error takes precedence over supporting text
-- **WHEN** both error and supportingText props are provided
-- **THEN** error message displays
-- **AND** supporting text is hidden
+#### Scenario: Supporting text shows in error styling
+- **WHEN** error prop is true
+- **AND** supportingText prop is provided
+- **THEN** supporting text displays below the textarea
+- **AND** supporting text uses error color
 
 ### Requirement: Supporting Text
 
@@ -136,7 +118,7 @@ The TextArea component SHALL support helper text that displays below the textare
 
 #### Scenario: Supporting text displays
 - **WHEN** supportingText prop is provided
-- **AND** error prop is not provided
+- **AND** error prop is false or not provided
 - **THEN** supporting text displays below the textarea
 - **AND** supporting text uses secondary text color
 
@@ -154,37 +136,9 @@ The TextArea component SHALL support a disabled state that prevents interaction 
 - **THEN** component opacity is reduced
 - **AND** cursor shows not-allowed state
 
-#### Scenario: Disabled sets native attribute
+#### Scenario: Disabled passed to native element
 - **WHEN** disabled prop is true
 - **THEN** native disabled attribute is set on textarea element
-
-### Requirement: Submit on Enter
-
-The TextArea component SHALL support an optional submitOnEnter behavior for chat-style inputs where Enter submits the form.
-
-#### Scenario: Enter submits form when enabled
-- **WHEN** submitOnEnter prop is true
-- **AND** user presses Enter key without Shift
-- **AND** textarea has content
-- **THEN** form requestSubmit is called
-- **AND** default Enter behavior is prevented
-
-#### Scenario: Shift+Enter inserts newline
-- **WHEN** submitOnEnter prop is true
-- **AND** user presses Shift+Enter
-- **THEN** newline is inserted in textarea
-- **AND** form is not submitted
-
-#### Scenario: Enter on empty prevents submission
-- **WHEN** submitOnEnter prop is true
-- **AND** textarea is empty or whitespace only
-- **AND** user presses Enter
-- **THEN** default behavior is prevented
-- **AND** form is not submitted
-
-#### Scenario: Normal behavior when disabled
-- **WHEN** submitOnEnter prop is false or not provided
-- **THEN** Enter key inserts newline as normal
 
 ### Requirement: Auto-resize
 
@@ -196,7 +150,7 @@ The TextArea component SHALL automatically resize based on content using CSS fie
 - **AND** scrollbar does not appear until max height
 
 #### Scenario: Textarea respects max height
-- **WHEN** content exceeds maximum height
+- **WHEN** content exceeds maximum height (defined by CSS variable)
 - **THEN** textarea stops growing
 - **AND** scrollbar appears for overflow content
 
@@ -204,15 +158,16 @@ The TextArea component SHALL automatically resize based on content using CSS fie
 - **WHEN** user deletes content
 - **THEN** textarea height decreases accordingly
 
-### Requirement: CSS Custom Properties Customization
+### Requirement: CSS Custom Properties
 
-The TextArea component SHALL define all design tokens as CSS custom properties on the root element, enabling external customization via inline styles or CSS overrides.
+The TextArea component SHALL define all design tokens as CSS custom properties on the root element with no hardcoded values, enabling external customization via inline styles or CSS overrides.
 
 #### Scenario: All CSS variables defined on root
 - **WHEN** TextArea component is rendered
 - **THEN** all CSS custom properties are defined on .root class
 - **AND** variables use --reltio-textarea- prefix
 - **AND** all variables include fallback values
+- **AND** no design tokens are hardcoded in the CSS
 
 #### Scenario: External customization via inline styles
 - **WHEN** developer provides style prop with CSS variables
@@ -223,18 +178,23 @@ The TextArea component SHALL define all design tokens as CSS custom properties o
 - **WHEN** TextArea is rendered
 - **THEN** font-family defined as --reltio-textarea-font-family
 - **AND** font-size defined as --reltio-textarea-font-size
+- **AND** line-height defined as --reltio-textarea-line-height
 - **AND** text-color defined as --reltio-textarea-color-text
 
-#### Scenario: CSS variables for appearance
+#### Scenario: CSS variables for colors
 - **WHEN** TextArea is rendered
-- **THEN** border-radius defined as --reltio-textarea-border-radius
-- **AND** border-color defined as --reltio-textarea-color-border
+- **THEN** border-color defined as --reltio-textarea-color-border
+- **AND** focus border color defined as --reltio-textarea-color-border-focus
 - **AND** background defined as --reltio-textarea-color-background
 - **AND** error-color defined as --reltio-textarea-color-error
+- **AND** label color defined as --reltio-textarea-color-label
+- **AND** supporting text color defined as --reltio-textarea-color-supporting-text
 
-#### Scenario: CSS variables for spacing
+#### Scenario: CSS variables for sizing
 - **WHEN** TextArea is rendered
-- **THEN** padding defined as --reltio-textarea-padding
+- **THEN** border-radius defined as --reltio-textarea-border-radius
+- **AND** padding defined as --reltio-textarea-padding
+- **AND** min-height defined as --reltio-textarea-min-height
 - **AND** max-height defined as --reltio-textarea-max-height
 
 ### Requirement: className Utility Usage
@@ -275,9 +235,9 @@ The TextArea component SHALL provide proper ARIA attributes and semantic HTML fo
 - **AND** screen readers announce the label
 
 #### Scenario: Error state announced
-- **WHEN** error prop is provided
+- **WHEN** error prop is true
 - **THEN** aria-invalid="true" is set on textarea
-- **AND** error message has aria-live or is associated via aria-describedby
+- **AND** supporting text is associated via aria-describedby
 
 #### Scenario: Supporting text associated
 - **WHEN** supportingText prop is provided
@@ -288,9 +248,14 @@ The TextArea component SHALL provide proper ARIA attributes and semantic HTML fo
 
 The TextArea component SHALL be fully typed with TypeScript using strict mode, with all types defined in a separate TextArea.types.ts file using the `type` keyword (not `interface`).
 
-#### Scenario: Component props fully typed
+#### Scenario: Component props extend textarea attributes
 - **WHEN** developer uses TextArea component
-- **THEN** all props have proper TypeScript types
+- **THEN** TextAreaProps extends React.TextareaHTMLAttributes
+- **AND** TypeScript provides autocomplete for all native textarea attributes
+
+#### Scenario: Custom props typed
+- **WHEN** developer uses TextArea component
+- **THEN** label, error, supportingText, toolbar props have proper types
 - **AND** TypeScript provides autocomplete
 
 #### Scenario: Types exported alongside component
@@ -310,12 +275,7 @@ The TextArea component SHALL have comprehensive Storybook stories demonstrating 
 #### Scenario: Stories for label patterns
 - **WHEN** viewing Storybook
 - **THEN** WithLabel story demonstrates floating label
-- **AND** WithPlaceholder story shows placeholder fallback
-
-#### Scenario: Stories for icon slots
-- **WHEN** viewing Storybook
-- **THEN** WithLeadingIcon story shows leading icon
-- **AND** WithTrailingIcon story shows trailing icon
+- **AND** WithPlaceholder story shows native placeholder fallback
 
 #### Scenario: Stories for toolbar
 - **WHEN** viewing Storybook
@@ -323,13 +283,9 @@ The TextArea component SHALL have comprehensive Storybook stories demonstrating 
 
 #### Scenario: Stories for states
 - **WHEN** viewing Storybook
-- **THEN** WithError story shows error state
+- **THEN** WithError story shows error state with supportingText
 - **AND** Disabled story shows disabled state
 - **AND** WithSupportingText story shows helper text
-
-#### Scenario: Stories for keyboard behavior
-- **WHEN** viewing Storybook
-- **THEN** SubmitOnEnter story demonstrates chat-style behavior
 
 #### Scenario: Stories for auto-resize
 - **WHEN** viewing Storybook

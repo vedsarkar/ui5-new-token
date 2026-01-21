@@ -11,20 +11,35 @@ This component follows **Material Design 3 (M3)** guidelines for text field styl
 - Full control over styling via CSS custom properties
 - Consistency with Reltio Design System patterns
 
+### Minimal Props API
+
+The component exposes only a few custom props while passing all other attributes through to the native `<textarea>` element:
+
+**Custom props:**
+- `label` - Floating label text
+- `error` - Boolean for error state
+- `supportingText` - Helper text below textarea (shown in error styling when `error=true`)
+- `toolbar` - React node for toolbar slot
+
+**Native props (passed through):**
+- `value`, `onChange`, `disabled`, `readOnly`, `name`, `placeholder`
+- `onKeyDown`, `onKeyPress`, `onFocus`, `onBlur`
+- `data-testid`, `aria-*` attributes
+- `rows`, `cols`, `maxLength`, `minLength`
+- `className`, `style`, `ref`
+
 ## What Changes
 
 - **ADDED**: New `TextArea` component with the following features:
   - Material Design 3 styling (outlined text field variant)
-  - Form-agnostic controlled component (value/onChange pattern)
+  - Minimal custom props (label, error, supportingText, toolbar)
+  - Native textarea attributes passed through via spread
   - Floating label with M3-style animation
-  - Leading and trailing icon slots
   - Toolbar slot for action buttons (attachments, formatting, etc.)
-  - Submit-on-Enter behavior for chat/feedback use cases
-  - Error state with supporting text
+  - Error state (boolean) with supportingText display
   - Disabled state
-  - Auto-resize based on content (field-sizing: content)
-  - Responsive padding adjustments
-  - Full CSS custom property support for theming
+  - Pure CSS auto-resize (field-sizing: content)
+  - Full CSS custom property support for theming (no hardcoded tokens)
   - Keyboard accessibility
   - Screen reader support
 
