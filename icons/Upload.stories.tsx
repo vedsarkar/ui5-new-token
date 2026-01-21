@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Upload } from "./Upload";
+import styles from "./IconStories.module.css";
 
 const meta: Meta<typeof Upload> = {
 	component: Upload,
@@ -16,113 +17,50 @@ export const Default: Story = {};
 
 export const Sizes: Story = {
 	render: () => (
-		<div style={{ display: "flex", alignItems: "flex-start", gap: "24px" }}>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					gap: "8px",
-				}}
-			>
+		<div className={`${styles.grid} ${styles.sizes}`}>
+			<span className={styles.icon}>
 				<Upload size="small" />
-				<span style={{ fontSize: "12px", color: "#666" }}>small</span>
-			</div>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					gap: "8px",
-				}}
-			>
+			</span>
+			<span className={styles.label}>small</span>
+			<span className={styles.icon}>
 				<Upload size="medium" />
-				<span style={{ fontSize: "12px", color: "#666" }}>medium</span>
-			</div>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					gap: "8px",
-				}}
-			>
+			</span>
+			<span className={styles.label}>medium</span>
+			<span className={styles.icon}>
 				<Upload size="large" />
-				<span style={{ fontSize: "12px", color: "#666" }}>large</span>
-			</div>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					gap: "8px",
-				}}
-			>
+			</span>
+			<span className={styles.label}>large</span>
+			<span className={styles.icon}>
 				<Upload size="xlarge" />
-				<span style={{ fontSize: "12px", color: "#666" }}>xlarge</span>
-			</div>
+			</span>
+			<span className={styles.label}>xlarge</span>
 		</div>
 	),
 };
 
 export const Colors: Story = {
 	render: () => (
-		<div style={{ display: "flex", alignItems: "flex-start", gap: "24px" }}>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					gap: "8px",
-				}}
-			>
+		<div className={`${styles.grid} ${styles.colors}`}>
+			<span className={styles.icon}>
 				<Upload color="inherited" />
-				<span style={{ fontSize: "12px", color: "#666" }}>inherited</span>
-			</div>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					gap: "8px",
-				}}
-			>
+			</span>
+			<span className={styles.label}>inherited</span>
+			<span className={styles.icon}>
 				<Upload color="primary" />
-				<span style={{ fontSize: "12px", color: "#666" }}>primary</span>
-			</div>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					gap: "8px",
-				}}
-			>
+			</span>
+			<span className={styles.label}>primary</span>
+			<span className={styles.icon}>
 				<Upload color="success" />
-				<span style={{ fontSize: "12px", color: "#666" }}>success</span>
-			</div>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					gap: "8px",
-				}}
-			>
+			</span>
+			<span className={styles.label}>success</span>
+			<span className={styles.icon}>
 				<Upload color="warning" />
-				<span style={{ fontSize: "12px", color: "#666" }}>warning</span>
-			</div>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					gap: "8px",
-				}}
-			>
+			</span>
+			<span className={styles.label}>warning</span>
+			<span className={styles.icon}>
 				<Upload color="error" />
-				<span style={{ fontSize: "12px", color: "#666" }}>error</span>
-			</div>
+			</span>
+			<span className={styles.label}>error</span>
 		</div>
 	),
 };
