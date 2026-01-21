@@ -1,3 +1,4 @@
+import { execSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
@@ -220,6 +221,9 @@ async function main() {
 	console.log("Generated: manifest.json");
 
 	console.log(`\nSuccessfully generated ${icons.length} icon components`);
+
+	console.log("\nFormatting generated files...");
+	execSync("npm run format", { stdio: "inherit" });
 }
 
 main().catch(console.error);
