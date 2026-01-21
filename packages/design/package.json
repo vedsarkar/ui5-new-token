@@ -2,7 +2,7 @@
 	"name": "@reltio/design",
 	"version": "0.0.3",
 	"main": "packages/design/index.js",
-	"description": "Reltio Design System",
+	"description": "Reltio Design Platform",
 	"peerDependencies": {
 		"react": ">=17 <20",
 		"react-dom": ">=17 <20"
