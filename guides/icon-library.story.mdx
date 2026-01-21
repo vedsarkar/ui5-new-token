@@ -82,12 +82,32 @@ All icon components accept the following props:
 
 Controls the icon dimensions.
 
-| Value | Dimensions |
-|-------|-----------|
-| `"small"` | 16×16px |
-| `"medium"` | 24×24px (default) |
-| `"large"` | 32×32px |
-| `"xlarge"` | 48×48px |
+<table>
+	<thead>
+		<tr>
+			<th>Value</th>
+			<th>Dimensions</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>"small"</code></td>
+			<td>16×16px</td>
+		</tr>
+		<tr>
+			<td><code>"medium"</code></td>
+			<td>24×24px (default)</td>
+		</tr>
+		<tr>
+			<td><code>"large"</code></td>
+			<td>32×32px</td>
+		</tr>
+		<tr>
+			<td><code>"xlarge"</code></td>
+			<td>48×48px</td>
+		</tr>
+	</tbody>
+</table>
 
 ```tsx
 <Search size="small" />
@@ -100,14 +120,40 @@ Controls the icon dimensions.
 
 Controls the icon fill color.
 
-| Value | Description |
-|-------|-------------|
-| `"inherited"` | Uses `currentColor` (default) |
-| `"primary"` | Design system primary color |
-| `"secondary"` | Design system secondary color |
-| `"success"` | Green semantic color |
-| `"warning"` | Yellow/orange semantic color |
-| `"error"` | Red semantic color |
+<table>
+	<thead>
+		<tr>
+			<th>Value</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>"inherited"</code></td>
+			<td>Uses <code>currentColor</code> (default)</td>
+		</tr>
+		<tr>
+			<td><code>"primary"</code></td>
+			<td>Design system primary color</td>
+		</tr>
+		<tr>
+			<td><code>"secondary"</code></td>
+			<td>Design system secondary color</td>
+		</tr>
+		<tr>
+			<td><code>"success"</code></td>
+			<td>Green semantic color</td>
+		</tr>
+		<tr>
+			<td><code>"warning"</code></td>
+			<td>Yellow/orange semantic color</td>
+		</tr>
+		<tr>
+			<td><code>"error"</code></td>
+			<td>Red semantic color</td>
+		</tr>
+	</tbody>
+</table>
 
 ```tsx
 <Check color="success" />
@@ -152,14 +198,47 @@ Icons use CSS custom properties defined on the root element. Override these for 
 
 Available CSS variables:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `--reltio-icon-size` | Custom size override | (based on size prop) |
-| `--reltio-icon-color` | Custom color override | (based on color prop) |
-| `--reltio-icon-size-small` | Small size value | 16px |
-| `--reltio-icon-size-medium` | Medium size value | 24px |
-| `--reltio-icon-size-large` | Large size value | 32px |
-| `--reltio-icon-size-xlarge` | XLarge size value | 48px |
+<table>
+	<thead>
+		<tr>
+			<th>Variable</th>
+			<th>Description</th>
+			<th>Default</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>--reltio-icon-size</code></td>
+			<td>Custom size override</td>
+			<td>(based on size prop)</td>
+		</tr>
+		<tr>
+			<td><code>--reltio-icon-color</code></td>
+			<td>Custom color override</td>
+			<td>(based on color prop)</td>
+		</tr>
+		<tr>
+			<td><code>--reltio-icon-size-small</code></td>
+			<td>Small size value</td>
+			<td>16px</td>
+		</tr>
+		<tr>
+			<td><code>--reltio-icon-size-medium</code></td>
+			<td>Medium size value</td>
+			<td>24px</td>
+		</tr>
+		<tr>
+			<td><code>--reltio-icon-size-large</code></td>
+			<td>Large size value</td>
+			<td>32px</td>
+		</tr>
+		<tr>
+			<td><code>--reltio-icon-size-xlarge</code></td>
+			<td>XLarge size value</td>
+			<td>48px</td>
+		</tr>
+	</tbody>
+</table>
 
 ## Accessibility
 
