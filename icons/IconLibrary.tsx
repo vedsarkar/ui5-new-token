@@ -42,7 +42,7 @@ export const IconLibrary = () => {
 
 			<div className={styles.grid}>
 				{filteredIcons.map((icon) => {
-					const storyPath = `/?path=/docs/icons-${icon.name.toLowerCase()}--overview`;
+					const storyPath = `/?path=/docs/icons-${icon.name.toLowerCase()}--docs`;
 					return (
 						<div key={icon.name} className={styles.iconCard}>
 							<a href={storyPath} className={styles.iconLink}>
