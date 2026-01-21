@@ -53,7 +53,12 @@ export const IconLibrary = () => {
 								<button
 									type="button"
 									className={styles.copyButton}
-									onClick={() => copyToClipboard(icon.path, `url-${icon.name}`)}
+									onClick={() =>
+										copyToClipboard(
+											`https://reltio.design${icon.path}`,
+											`url-${icon.name}`,
+										)
+									}
 								>
 									{copiedId === `url-${icon.name}` ? "Copied!" : "Copy URL"}
 								</button>
