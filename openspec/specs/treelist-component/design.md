@@ -2,10 +2,10 @@
 
 ## Context
 
-The TreeList component is a fundamental UI element for displaying hierarchical data structures. It is commonly used for navigation menus, file explorers, data model viewers, and organizational charts within the Reltio Design System.
+The TreeList component is a fundamental UI element for displaying hierarchical data structures. It is commonly used for navigation menus, file explorers, data model viewers, and organizational charts within the Reltio Design Platform.
 
 **Key Constraints:**
-- Must follow Reltio Design System constitution principles (non-negotiable)
+- Must follow Reltio Design Platform constitution principles (non-negotiable)
 - Must support deep nesting (unlimited depth levels)
 - Must support both controlled and uncontrolled expansion states
 - Must allow custom label rendering for flexibility

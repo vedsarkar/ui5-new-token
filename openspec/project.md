@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Reltio Design System provides a library of reusable React components and tools for building consistent user interfaces across Reltio products. The system emphasizes:
+Reltio Design Platform provides a library of reusable React components and tools for building consistent user interfaces across Reltio products. The system emphasizes:
 - **Reusability** - Self-contained, independently testable components
 - **Type Safety** - Full TypeScript coverage with strict mode
 - **Accessibility** - WCAG-compliant, keyboard-navigable components
@@ -127,7 +127,7 @@ components/ComponentName/
 ## Domain Context
 
 **Design System Philosophy:**
-The Reltio Design System follows a constitutional governance model with strict, non-negotiable principles documented in `docs/Constitution.mdx`. These principles supersede all other guidelines and must be followed without exception. The constitution covers:
+The Reltio Design Platform follows a constitutional governance model with strict, non-negotiable principles documented in `docs/Constitution.mdx`. These principles supersede all other guidelines and must be followed without exception. The constitution covers:
 - Component-first architecture
 - TypeScript strict mode (using `type`, not `interface`)
 - Mandatory Storybook documentation

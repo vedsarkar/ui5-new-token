@@ -4,7 +4,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Spec-Driven Development Guide
 
-Welcome to the Reltio Design System's spec-driven development workflow. This guide explains how we use **OpenSpec** integrated with **Cursor IDE** to ensure predictable, high-quality component development.
+Welcome to the Reltio Design Platform's spec-driven development workflow. This guide explains how we use **OpenSpec** integrated with **Cursor IDE** to ensure predictable, high-quality component development.
 
 > **🎯 Key Principle:** We specify before we build. Every change starts as a proposal, gets reviewed, and only then gets implemented. This reduces rework, improves quality, and creates a living changelog.
 
@@ -157,21 +157,16 @@ One of the most important principles in spec-driven development is **decompositi
 
 ### Real Example: Building a Product Page
 
-**❌ Bad approach — one large proposal:**
+**❌ Don't:** Create one massive proposal
 
 ```
-/openspec-proposal create a Product Page with header, image gallery, 
+/openspec-proposal create a Product Page with header, image gallery,
 price section, add-to-cart button, reviews section, and related products
 ```
 
-This creates a massive proposal that:
-- Is hard for AI to implement correctly
-- Takes days to review
-- Has dozens of interconnected tasks
-- Is impossible to estimate accurately
-- Cannot be deployed incrementally
+This creates a massive proposal that is hard for AI to implement correctly, takes days to review, has dozens of interconnected tasks, is impossible to estimate accurately, and cannot be deployed incrementally.
 
-**✅ Good approach — decomposed into focused proposals:**
+**✅ Do:** Decompose into focused proposals
 
 First, ask AI to help decompose:
 
@@ -357,11 +352,29 @@ Be specific about what you want. Good prompts include:
 - **Goal** — What you want to achieve
 - **Constraints** — Any limitations or requirements
 
-**Good example:**
-> "Add a loading state to Button component that shows a spinner and disables interaction"
+**✅ Do:** Write focused, specific prompts
 
-**Vague example:**
-> "Make the button better"
+```
+/openspec-proposal add IconButton with left/right icon positions
+```
+
+**❌ Don't:** Write vague, broad prompts
+
+```
+/openspec-proposal make the button better
+```
+
+**✅ Do:** Reference existing patterns
+
+```
+"Add loading state to Button, similar to how disabled state is handled"
+```
+
+**❌ Don't:** Start from scratch every time
+
+```
+"Create a disabled state" (without context)
+```
 
 ### 2. Review Before Approving
 
@@ -370,6 +383,18 @@ Always review AI-generated proposals before implementing:
 - Check requirements match your intent
 - Verify scenarios cover edge cases
 - Ensure tasks are complete and ordered correctly
+
+**✅ Do:** Review proposal before applying
+
+```
+Read proposal.md → Check tasks.md → Run /openspec-apply
+```
+
+**❌ Don't:** Apply without review
+
+```
+Run /openspec-apply immediately after proposal
+```
 
 ### 3. Iterate on Proposals
 
@@ -493,3 +518,14 @@ When in doubt, create a proposal. It's quick to create and provides:
 </table>
 
 > **Remember:** Specs are truth. Changes are proposals. The archive is history. Keep them in sync for a healthy codebase.
+
+## Sources and References
+
+This guide is informed by industry practices in specification-driven and AI-assisted development:
+
+- [Spec-Driven Development: Unpacking 2025's Key Engineering Practice](https://www.thoughtworks.com/en-us/insights/blog/agile-engineering-practices/spec-driven-development-unpacking-2025-new-engineering-practices) — Thoughtworks overview of SDD methodology
+- [Exploring Spec-Driven Development Tools](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) — Martin Fowler's analysis of Kiro, spec-kit, and other SDD tools
+- [RFCs and Design Docs at Big Tech Companies](https://blog.pragmaticengineer.com/rfcs-and-design-docs/) — How Google, Uber, and others use design documents
+- [Scaling Engineering Teams via Writing Things Down](https://blog.pragmaticengineer.com/scaling-engineering-teams-via-writing-things-down-rfcs/) — Pragmatic Engineer on RFC processes
+- [My LLM Coding Workflow Going Into 2026](https://addyosmani.com/blog/ai-coding-workflow/) — Addy Osmani's practical AI development workflow
+- [AI-Driven Development Lifecycle](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/) — AWS approach to AI-assisted development

@@ -1,6 +1,6 @@
-import preview from "../../.storybook/preview";
 import type { ComponentProps, CSSProperties } from "react";
 import { useEffect, useState } from "react";
+import preview from "@/.storybook/preview";
 import { TreeList } from "./TreeList";
 import type { TreeItem, TreeKey } from "./TreeList.types";
 

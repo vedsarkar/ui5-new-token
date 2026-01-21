@@ -2,10 +2,10 @@
 
 ## Context
 
-The Button component is a foundational UI element used throughout the Reltio Design System. It must be flexible enough to support various use cases while maintaining consistency, accessibility, and adherence to the design system constitution.
+The Button component is a foundational UI element used throughout the Reltio Design Platform. It must be flexible enough to support various use cases while maintaining consistency, accessibility, and adherence to the design system constitution.
 
 **Key Constraints:**
-- Must follow Reltio Design System constitution principles (non-negotiable)
+- Must follow Reltio Design Platform constitution principles (non-negotiable)
 - Must support both button and link semantics
 - Must be fully accessible (WCAG 2.1 Level AA)
 - Must support external customization without breaking encapsulation
