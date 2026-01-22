@@ -1,0 +1,377 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/Icon Library" />
+
+# Icon Library Guide
+
+The Reltio Design System provides a comprehensive icon library with 44+ Material Design 3 icons. Icons are available through two access patterns: direct URL access for raw SVG files and npm imports for React components.
+
+## Overview
+
+The icon library is built on these principles:
+
+<table>
+	<thead>
+		<tr>
+			<th>Principle</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>🎨 <strong>Consistent Style</strong></td>
+			<td>All icons follow Material Design 3 outlined style at weight 400</td>
+		</tr>
+		<tr>
+			<td>📦 <strong>Dual Access</strong></td>
+			<td>Use icons via URL (CDN) or npm package (React components)</td>
+		</tr>
+		<tr>
+			<td>🔧 <strong>Customizable</strong></td>
+			<td>Size, color, and custom CSS properties supported</td>
+		</tr>
+		<tr>
+			<td>♿ <strong>Accessible</strong></td>
+			<td>Built-in aria support for decorative and meaningful icons</td>
+		</tr>
+		<tr>
+			<td>🌳 <strong>Tree-shakeable</strong></td>
+			<td>Import only what you need for optimal bundle size</td>
+		</tr>
+	</tbody>
+</table>
+
+## Access Patterns
+
+### 1. Direct URL Access (CDN)
+
+Raw SVG files are served from the public folder and accessible via URL:
+
+```
+https://reltio.design/icons/chevron-down.svg
+https://reltio.design/icons/account-circle.svg
+```
+
+Use this pattern when you need:
+- Raw SVG files for non-React applications
+- Embedding icons in external tools or documentation
+- Using icons in CSS as background images
+
+### 2. NPM Package Import (React)
+
+Import React components for full functionality:
+
+```tsx
+import { ChevronDown, AccountCircle } from "@reltio/design/icons";
+
+function MyComponent() {
+  return (
+    <div>
+      <ChevronDown size="medium" />
+      <AccountCircle color="primary" />
+    </div>
+  );
+}
+```
+
+## Available Props
+
+All icon components accept the following props:
+
+### `size`
+
+Controls the icon dimensions.
+
+<table>
+	<thead>
+		<tr>
+			<th>Value</th>
+			<th>Dimensions</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>"small"</code></td>
+			<td>16×16px</td>
+		</tr>
+		<tr>
+			<td><code>"medium"</code></td>
+			<td>24×24px (default)</td>
+		</tr>
+		<tr>
+			<td><code>"large"</code></td>
+			<td>32×32px</td>
+		</tr>
+		<tr>
+			<td><code>"xlarge"</code></td>
+			<td>48×48px</td>
+		</tr>
+	</tbody>
+</table>
+
+```tsx
+<Search size="small" />
+<Search size="medium" />
+<Search size="large" />
+<Search size="xlarge" />
+```
+
+### `color`
+
+Controls the icon fill color.
+
+<table>
+	<thead>
+		<tr>
+			<th>Value</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>"inherited"</code></td>
+			<td>Uses <code>currentColor</code> (default)</td>
+		</tr>
+		<tr>
+			<td><code>"primary"</code></td>
+			<td>Design system primary color</td>
+		</tr>
+		<tr>
+			<td><code>"secondary"</code></td>
+			<td>Design system secondary color</td>
+		</tr>
+		<tr>
+			<td><code>"success"</code></td>
+			<td>Green semantic color</td>
+		</tr>
+		<tr>
+			<td><code>"warning"</code></td>
+			<td>Yellow/orange semantic color</td>
+		</tr>
+		<tr>
+			<td><code>"error"</code></td>
+			<td>Red semantic color</td>
+		</tr>
+	</tbody>
+</table>
+
+```tsx
+<Check color="success" />
+<Warning color="warning" />
+<ErrorCircle color="error" />
+```
+
+### `className`
+
+Add custom CSS classes:
+
+```tsx
+<Search className="my-custom-class" />
+```
+
+### `style`
+
+Apply inline styles, including CSS custom properties:
+
+```tsx
+<Search style={{ "--reltio-icon-size": "20px" }} />
+```
+
+### `aria-label`
+
+Add accessible label for meaningful icons:
+
+```tsx
+<Close aria-label="Close dialog" />
+```
+
+## CSS Customization
+
+Icons use CSS custom properties defined on the root element. Override these for custom styling:
+
+```css
+.my-custom-icon {
+  --reltio-icon-size: 40px;
+  --reltio-icon-color: #ff6b6b;
+}
+```
+
+Available CSS variables:
+
+<table>
+	<thead>
+		<tr>
+			<th>Variable</th>
+			<th>Description</th>
+			<th>Default</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>--reltio-icon-size</code></td>
+			<td>Custom size override</td>
+			<td>(based on size prop)</td>
+		</tr>
+		<tr>
+			<td><code>--reltio-icon-color</code></td>
+			<td>Custom color override</td>
+			<td>(based on color prop)</td>
+		</tr>
+		<tr>
+			<td><code>--reltio-icon-size-small</code></td>
+			<td>Small size value</td>
+			<td>16px</td>
+		</tr>
+		<tr>
+			<td><code>--reltio-icon-size-medium</code></td>
+			<td>Medium size value</td>
+			<td>24px</td>
+		</tr>
+		<tr>
+			<td><code>--reltio-icon-size-large</code></td>
+			<td>Large size value</td>
+			<td>32px</td>
+		</tr>
+		<tr>
+			<td><code>--reltio-icon-size-xlarge</code></td>
+			<td>XLarge size value</td>
+			<td>48px</td>
+		</tr>
+	</tbody>
+</table>
+
+## Accessibility
+
+Icons support two accessibility modes:
+
+### Decorative Icons (Default)
+
+When no `aria-label` is provided, icons are hidden from screen readers:
+
+```tsx
+// Decorative icon - hidden from screen readers
+<Search />
+// Renders with aria-hidden="true"
+```
+
+Use decorative icons when:
+- The icon accompanies visible text
+- The icon is purely decorative
+- The meaning is conveyed by surrounding context
+
+### Meaningful Icons
+
+When `aria-label` is provided, icons are announced to screen readers:
+
+```tsx
+// Meaningful icon - announced to screen readers
+<Search aria-label="Search" />
+// Renders with role="img" and aria-label="Search"
+```
+
+Use meaningful icons when:
+- The icon is the only content in a button
+- The icon conveys information not available in text
+- The icon is interactive without surrounding text
+
+## How to Add a New Icon
+
+Adding icons is automated through a generation script:
+
+### Step 1: Add SVG File
+
+Place your SVG file in `public/icons/` using kebab-case naming:
+
+```
+public/icons/my-new-icon.svg
+```
+
+SVG requirements:
+- Use 24×24 viewBox (Material Design 3 standard)
+- Use outlined style for consistency
+- Remove fixed colors (use currentColor for fill)
+
+### Step 2: Run Generation Script
+
+Execute the icon generation script:
+
+```bash
+node scripts/generate-icons.mjs
+```
+
+This automatically generates:
+- React component: `icons/MyNewIcon.tsx`
+- Storybook stories: `icons/MyNewIcon.stories.tsx`
+- Updated barrel export: `icons/index.ts`
+- Updated manifest: `icons/manifest.json`
+
+### Step 3: Format Code
+
+Run the formatter to ensure consistency:
+
+```bash
+npm run format
+```
+
+### Step 4: Verify in Storybook
+
+Start Storybook to verify your new icon:
+
+```bash
+npm run dev
+```
+
+Your icon will appear in:
+- The Icon Library grid
+- Individual icon story pages
+
+## Icon Categories
+
+The library includes icons from these categories:
+
+<table>
+	<thead>
+		<tr>
+			<th>Category</th>
+			<th>Examples</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><strong>Navigation</strong></td>
+			<td>ArrowBack, ArrowForward, ChevronLeft, ChevronRight, Menu, Close</td>
+		</tr>
+		<tr>
+			<td><strong>Actions</strong></td>
+			<td>Search, Add, Remove, Edit, Delete, Save, Refresh, Download, Upload</td>
+		</tr>
+		<tr>
+			<td><strong>Status</strong></td>
+			<td>Check, CheckCircle, ErrorCircle, Warning, Info, Help</td>
+		</tr>
+		<tr>
+			<td><strong>Content</strong></td>
+			<td>ContentCopy, ContentPaste, FilterList, Sort, Visibility, VisibilityOff</td>
+		</tr>
+		<tr>
+			<td><strong>Communication</strong></td>
+			<td>Email, Notifications, Chat, Comment</td>
+		</tr>
+		<tr>
+			<td><strong>File</strong></td>
+			<td>Folder, Description, Attachment</td>
+		</tr>
+		<tr>
+			<td><strong>User</strong></td>
+			<td>Person, People, AccountCircle, Settings, Logout</td>
+		</tr>
+	</tbody>
+</table>
+
+## Best Practices
+
+1. **Use semantic colors appropriately** - Success for positive actions, Warning for caution, Error for destructive actions
+2. **Always provide aria-label for icon-only buttons** - Screen reader users need context
+3. **Keep sizes consistent** - Use the standard size props rather than custom sizes
+4. **Prefer React components over raw SVGs** - Better tree-shaking and type safety
+5. **Follow naming conventions** - Use kebab-case for files, PascalCase for components
