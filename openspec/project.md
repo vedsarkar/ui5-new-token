@@ -207,3 +207,43 @@ Components are designed for external customization via:
 - Components only depend on React and React DOM
 - No UI framework dependencies (Material-UI, Ant Design, etc.)
 - Keeps bundle size minimal and reduces conflicts
+
+## Icon Library
+
+### Overview
+The icon library provides consistent iconography across all Reltio products. Icons are available as:
+- Static SVG files at `/icons/{icon-name}.svg` (for direct URL access)
+- React components via `import { IconName } from "@reltio/design/icons"`
+
+### Icon Naming Conventions
+- **File names:** kebab-case (e.g., `arrow-back.svg`, `check-circle.svg`)
+- **Component names:** PascalCase derived from file name (e.g., `ArrowBack`, `CheckCircle`)
+- **Source:** Material Design 3 icons (Outlined style, weight 400, grade 0, optical size 24, fill 0)
+
+### Adding New Icons
+1. Download SVG from [Material Design Icons](https://fonts.google.com/icons) with settings: Outlined, weight 400, grade 0, optical size 24, fill 0
+2. Save SVG to `public/icons/{icon-name}.svg` (kebab-case naming)
+3. Run `npm run generate-icons` to generate React component and stories
+4. Verify in Storybook at `Icons/{IconName}`
+5. Run `npm run format && npm run lint` before committing
+
+### Icon Component Props
+All icon components accept these props:
+- `size`: "small" | "medium" | "large" | "xlarge" (default: "medium")
+- `color`: "inherited" | "primary" | "secondary" | "success" | "warning" | "error" (default: "inherited")
+- `className`: Additional CSS class for custom styling
+- `style`: Inline styles, supports `--reltio-icon-size` and `--reltio-icon-color` CSS variables
+- `aria-label`: Accessibility label (when provided, icon becomes `role="img"`; otherwise `aria-hidden="true"`)
+
+### Usage Examples
+```tsx
+// Basic usage
+import { Search, Add, Close } from "@reltio/design/icons";
+
+<Search />
+<Add size="large" color="primary" />
+<Close aria-label="Close dialog" />
+
+// Custom sizing via CSS variables
+<Search style={{ "--reltio-icon-size": "48px" }} />
+```

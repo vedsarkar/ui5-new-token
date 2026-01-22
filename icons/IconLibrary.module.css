@@ -1,0 +1,117 @@
+.root {
+	--reltio-icon-library-bg: #ffffff;
+	--reltio-icon-library-border: #e0e0e0;
+	--reltio-icon-library-text: #333333;
+	--reltio-icon-library-text-secondary: #666666;
+	--reltio-icon-library-hover: #f5f5f5;
+	--reltio-icon-library-button-bg: #f0f0f0;
+	--reltio-icon-library-button-hover: #e0e0e0;
+
+	font-family: var(--reltio-font-family-body, "Roboto", sans-serif);
+	display: grid;
+	gap: 16px;
+}
+
+.searchContainer {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-bottom: 24px;
+}
+
+.searchInput {
+	flex: 1;
+	padding: 12px 16px;
+	font-size: 16px;
+	border: 1px solid var(--reltio-icon-library-border);
+	border-radius: 8px;
+	outline: none;
+	transition: border-color 0.2s;
+
+	&:focus {
+		border-color: var(--reltio-color-primary, #0066cc);
+	}
+}
+
+.iconCount {
+	color: var(--reltio-icon-library-text-secondary);
+	font-size: 14px;
+	white-space: nowrap;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+	gap: 16px;
+}
+
+.iconCard {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 16px;
+	border: 1px solid var(--reltio-icon-library-border);
+	border-radius: 8px;
+	background: var(--reltio-icon-library-bg);
+	transition: background-color 0.2s;
+	gap: 8px;
+
+	&:hover {
+		background: var(--reltio-icon-library-hover);
+	}
+}
+
+.iconLink {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-decoration: none;
+	color: inherit;
+}
+
+.iconPreview {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	margin-bottom: 8px;
+	color: var(--reltio-icon-library-text);
+}
+
+.iconName {
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--reltio-icon-library-text);
+	text-align: center;
+	word-break: break-word;
+	margin-bottom: 12px;
+}
+
+.actions {
+	display: flex;
+	gap: 8px;
+}
+
+.copyButton {
+	padding: 6px 8px;
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--reltio-icon-library-text);
+	background: var(--reltio-icon-library-button-bg);
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background: var(--reltio-icon-library-button-hover);
+	}
+}
+
+.noResults {
+	text-align: center;
+	padding: 48px;
+	color: var(--reltio-icon-library-text-secondary);
+	font-size: 16px;
+}

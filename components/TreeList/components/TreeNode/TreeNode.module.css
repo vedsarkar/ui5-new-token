@@ -26,6 +26,14 @@
 	cursor: pointer;
 }
 
+.chevron {
+	transition: transform 0.2s ease;
+}
+
+.expanded {
+	transform: rotate(90deg);
+}
+
 .spinner {
 	display: inline-block;
 	width: var(--reltio-tree-list-spinner-size, 10px);
