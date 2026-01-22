@@ -92,11 +92,20 @@ export const AutoResize = meta.story({
 export const WithCustomCssVariables = meta.story({
 	args: {
 		label: "Custom styled",
+		supportingText: "Themed with CSS custom properties",
 		style: {
-			"--reltio-textarea-border-radius": "16px",
+			"--reltio-textarea-font-family": "Georgia, serif",
+			"--reltio-textarea-font-size": "18px",
+			"--reltio-textarea-line-height": "1.6",
+			"--reltio-textarea-color-text": "#4a148c",
 			"--reltio-textarea-color-border": "#9c27b0",
-			"--reltio-textarea-color-border-focus": "#9c27b0",
+			"--reltio-textarea-color-border-focus": "#6a1b9a",
 			"--reltio-textarea-color-background": "#faf5ff",
+			"--reltio-textarea-color-label": "#7b1fa2",
+			"--reltio-textarea-color-supporting-text": "#9c27b0",
+			"--reltio-textarea-border-radius": "16px",
+			"--reltio-textarea-padding": "20px",
+			"--reltio-textarea-min-height": "120px",
 		},
 	},
 	parameters: {
