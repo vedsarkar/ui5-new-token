@@ -1,7 +1,7 @@
 # icon-library Specification
 
 ## Purpose
-TBD - created by archiving change add-icon-library. Update Purpose after archive.
+Provide a standardized icon library system with SVG source management, automatic React component generation, and dual access patterns (direct URL and npm import) for consistent icon usage across the design system.
 ## Requirements
 ### Requirement: SVG Source Management
 
