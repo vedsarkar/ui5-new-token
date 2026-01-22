@@ -25,6 +25,12 @@
 			"import": "import { ArrowForward } from \"@reltio/design/icons\""
 		},
 		{
+			"name": "ArrowRight",
+			"kebabName": "arrow-right",
+			"path": "/icons/arrow-right.svg",
+			"import": "import { ArrowRight } from \"@reltio/design/icons\""
+		},
+		{
 			"name": "Attachment",
 			"kebabName": "attachment",
 			"path": "/icons/attachment.svg",

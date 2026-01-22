@@ -4,6 +4,7 @@ import { AccountCircle } from "./AccountCircle";
 import { Add } from "./Add";
 import { ArrowBack } from "./ArrowBack";
 import { ArrowForward } from "./ArrowForward";
+import { ArrowRight } from "./ArrowRight";
 import { Attachment } from "./Attachment";
 import { Chat } from "./Chat";
 import { Check } from "./Check";
@@ -50,6 +51,7 @@ export {
 	Add,
 	ArrowBack,
 	ArrowForward,
+	ArrowRight,
 	Attachment,
 	Chat,
 	Check,
@@ -100,6 +102,7 @@ export const iconMap: Record<
 	Add: Add,
 	ArrowBack: ArrowBack,
 	ArrowForward: ArrowForward,
+	ArrowRight: ArrowRight,
 	Attachment: Attachment,
 	Chat: Chat,
 	Check: Check,
