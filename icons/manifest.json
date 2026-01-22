@@ -19,10 +19,28 @@
 			"import": "import { ArrowBack } from \"@reltio/design/icons\""
 		},
 		{
+			"name": "ArrowDropDown",
+			"kebabName": "arrow-drop-down",
+			"path": "/icons/arrow-drop-down.svg",
+			"import": "import { ArrowDropDown } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "ArrowDropUp",
+			"kebabName": "arrow-drop-up",
+			"path": "/icons/arrow-drop-up.svg",
+			"import": "import { ArrowDropUp } from \"@reltio/design/icons\""
+		},
+		{
 			"name": "ArrowForward",
 			"kebabName": "arrow-forward",
 			"path": "/icons/arrow-forward.svg",
 			"import": "import { ArrowForward } from \"@reltio/design/icons\""
+		},
+		{
+			"name": "ArrowLeft",
+			"kebabName": "arrow-left",
+			"path": "/icons/arrow-left.svg",
+			"import": "import { ArrowLeft } from \"@reltio/design/icons\""
 		},
 		{
 			"name": "ArrowRight",

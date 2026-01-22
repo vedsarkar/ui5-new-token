@@ -3,7 +3,10 @@ export type { IconColor, IconProps, IconSize } from "./Icon.types";
 import { AccountCircle } from "./AccountCircle";
 import { Add } from "./Add";
 import { ArrowBack } from "./ArrowBack";
+import { ArrowDropDown } from "./ArrowDropDown";
+import { ArrowDropUp } from "./ArrowDropUp";
 import { ArrowForward } from "./ArrowForward";
+import { ArrowLeft } from "./ArrowLeft";
 import { ArrowRight } from "./ArrowRight";
 import { Attachment } from "./Attachment";
 import { Chat } from "./Chat";
@@ -50,7 +53,10 @@ export {
 	AccountCircle,
 	Add,
 	ArrowBack,
+	ArrowDropDown,
+	ArrowDropUp,
 	ArrowForward,
+	ArrowLeft,
 	ArrowRight,
 	Attachment,
 	Chat,
@@ -101,7 +107,10 @@ export const iconMap: Record<
 	AccountCircle: AccountCircle,
 	Add: Add,
 	ArrowBack: ArrowBack,
+	ArrowDropDown: ArrowDropDown,
+	ArrowDropUp: ArrowDropUp,
 	ArrowForward: ArrowForward,
+	ArrowLeft: ArrowLeft,
 	ArrowRight: ArrowRight,
 	Attachment: Attachment,
 	Chat: Chat,
