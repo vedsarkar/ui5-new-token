@@ -3,7 +3,7 @@
 import { forwardRef, useId } from "react";
 import { classNames } from "@/utils/classNames";
 import styles from "./TextArea.module.css";
-import type { TextAreaProps } from "@/components";
+import type { TextAreaProps } from "./TextArea.types";
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 	(
@@ -22,12 +22,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 		const textareaId = providedId || generatedId;
 		const supportingTextId = `${textareaId}-supporting`;
 
-		const hasValue =
-			rest.value !== undefined
-				? String(rest.value).length > 0
-				: rest.defaultValue !== undefined
-					? String(rest.defaultValue).length > 0
-					: false;
+    const hasValue = String(rest.value ?? rest.defaultValue ?? '').length > 0;
 
 		return (
 			<div
