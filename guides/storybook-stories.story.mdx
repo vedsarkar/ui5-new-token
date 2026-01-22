@@ -1,0 +1,661 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/Writing Storybook Stories" />
+
+# Writing Storybook Stories
+
+This guide explains how to write effective Storybook stories that serve as automated test cases for visual, interaction, and accessibility testing. It covers the CSF Next format, testing integration with Chromatic, and the separation between stories and documentation.
+
+> **🎯 Key Principle:** A story is a test case, not documentation. Each story should define a single, testable component state.
+
+## Business Value
+
+<table>
+  <thead>
+    <tr>
+      <th>Benefit</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Automated Visual Testing</td>
+      <td>Every story becomes a visual regression test via Chromatic</td>
+    </tr>
+    <tr>
+      <td>Type Safety</td>
+      <td>CSF Next provides full TypeScript inference for component props</td>
+    </tr>
+    <tr>
+      <td>Reduced Maintenance</td>
+      <td>Stories serve as single source of truth for testing and documentation</td>
+    </tr>
+    <tr>
+      <td>Cross-Browser Coverage</td>
+      <td>Tests run across Chrome, Firefox, Safari, and Edge automatically</td>
+    </tr>
+  </tbody>
+</table>
+
+## CSF Next Format
+
+We use [CSF Next (CSF Factories)](https://storybook.js.org/docs/api/csf/csf-next) — the latest Component Story Format that provides full type safety through factory functions.
+
+### Why CSF Next?
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>CSF 3 (Legacy)</th>
+      <th>CSF Next</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Type Safety</td>
+      <td>Manual type annotations required</td>
+      <td>Automatic inference from component</td>
+    </tr>
+    <tr>
+      <td>Meta Definition</td>
+      <td>Default export with <code>satisfies Meta</code></td>
+      <td><code>preview.meta()</code> factory function</td>
+    </tr>
+    <tr>
+      <td>Story Creation</td>
+      <td>Direct object assignment</td>
+      <td><code>meta.story()</code> function</td>
+    </tr>
+    <tr>
+      <td>Test Integration</td>
+      <td>Requires <code>composeStories</code></td>
+      <td>Direct reuse via <code>.composed</code></td>
+    </tr>
+  </tbody>
+</table>
+
+### Basic Structure
+
+```tsx
+import { fn } from "storybook/test";
+import preview from "@/.storybook/preview";
+import { Button } from "./Button";
+
+const meta = preview.meta({
+  component: Button,
+  parameters: {
+    layout: "centered",
+  },
+  args: {
+    onClick: fn(),
+  },
+});
+
+export const Default = meta.story({
+  args: {
+    children: "Button",
+  },
+});
+
+export const Primary = meta.story({
+  args: {
+    variant: "filled",
+    color: "primary",
+    children: "Primary Button",
+  },
+});
+```
+
+### Key Functions
+
+<table>
+  <thead>
+    <tr>
+      <th>Function</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>preview.meta()</code></td>
+      <td>Creates component metadata with automatic prop inference</td>
+    </tr>
+    <tr>
+      <td><code>meta.story()</code></td>
+      <td>Defines individual stories with full type checking</td>
+    </tr>
+    <tr>
+      <td><code>fn()</code></td>
+      <td>Creates a spy function for testing callbacks</td>
+    </tr>
+  </tbody>
+</table>
+
+## Stories as Test Cases
+
+Each story is not just a sandbox for exploration — it is a **full testing scenario** that powers automated testing through [Chromatic](https://www.chromatic.com/).
+
+### What Chromatic Tests Automatically
+
+<table>
+  <thead>
+    <tr>
+      <th>Test Type</th>
+      <th>What It Catches</th>
+      <th>How It Works</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://www.chromatic.com/features/visual-test">Visual Tests</a></td>
+      <td>Styling regressions, layout shifts, visual inconsistencies</td>
+      <td>Pixel-perfect snapshots compared against baselines</td>
+    </tr>
+    <tr>
+      <td><a href="https://www.chromatic.com/features/interaction-test">Interaction Tests</a></td>
+      <td>Broken click handlers, form validation, state changes</td>
+      <td>Simulates user interactions via Testing Library</td>
+    </tr>
+    <tr>
+      <td><a href="https://www.chromatic.com/features/accessibility-test">Accessibility Tests</a></td>
+      <td>WCAG violations, missing labels, contrast issues</td>
+      <td>Runs axe-core on each component state</td>
+    </tr>
+  </tbody>
+</table>
+
+### Writing Testable Stories
+
+Every story should capture a **single, deterministic component state**:
+
+**✅ Do:** One state per story
+
+```tsx
+export const Disabled = meta.story({
+  args: {
+    disabled: true,
+    children: "Disabled Button",
+  },
+});
+
+export const DisabledPrimary = meta.story({
+  args: {
+    variant: "filled",
+    color: "primary",
+    disabled: true,
+    children: "Disabled Primary",
+  },
+});
+```
+
+**❌ Don't:** Multiple states or complex logic in stories
+
+```tsx
+// Bad: This is not a testable story
+export const AllStates = meta.story({
+  render: () => (
+    <div>
+      <Button>Default</Button>
+      <Button disabled>Disabled</Button>
+      <Button variant="primary">Primary</Button>
+    </div>
+  ),
+});
+```
+
+## Stories vs. Documentation
+
+Stories and documentation serve different purposes and must be kept separate.
+
+### Stories: Define Component States
+
+A story file (`.stories.tsx`) should contain **only** component state definitions:
+
+- Props combinations (`args`)
+- Layout configuration (`parameters.layout`)
+- Action handlers (`fn()`)
+
+**✅ Do:** Clean, focused stories
+
+```tsx
+export const Small = meta.story({
+  args: {
+    size: "small",
+    children: "Small Button",
+  },
+});
+
+export const Medium = meta.story({
+  args: {
+    size: "medium",
+    children: "Medium Button",
+  },
+});
+
+export const Large = meta.story({
+  args: {
+    size: "large",
+    children: "Large Button",
+  },
+});
+```
+
+**❌ Don't:** Documentation or explanations in story files
+
+```tsx
+// Bad: Story file contains documentation
+const componentDescription =
+  "TreeList renders hierarchical data with expand/collapse controls...";
+
+const cssVariables = [
+  { name: "--reltio-tree-list-font-family", description: "Font family..." },
+  // ...20 more lines of documentation
+];
+
+export const WithCustomCssVariables = meta.story({
+  render: ({ style, ...args }) => (
+    <div>
+      {/* Rendering documentation alongside the component */}
+      <div style={{ background: "#0f172a", padding: "10px" }}>
+        <div>CSS variables</div>
+        <ul>
+          {cssVariables.map((v) => (
+            <li key={v.name}>{v.name}: {v.description}</li>
+          ))}
+        </ul>
+      </div>
+      <TreeList {...args} />
+    </div>
+  ),
+});
+```
+
+### Documentation: Use Autodocs
+
+Component documentation belongs in [Autodocs](https://storybook.js.org/docs/writing-docs/autodocs) or MDX files — not in stories.
+
+Autodocs automatically generates documentation from:
+
+- Component prop types (via TypeScript or PropTypes)
+- JSDoc comments in component source
+- Story metadata and args
+
+> **💡 Note:** Autodocs is enabled globally in `.storybook/preview.tsx`, so all components get documentation pages automatically.
+
+For custom documentation, create a separate MDX file:
+
+```
+components/
+  Button/
+    Button.tsx           # Component implementation
+    Button.stories.tsx   # Stories (test cases only)
+    Button.mdx           # Custom documentation (optional)
+```
+
+## Testing Actions with fn()
+
+Use the [`fn()` function](https://storybook.js.org/docs/essentials/actions) from `storybook/test` to spy on callback props.
+
+### Basic Usage
+
+```tsx
+import { fn } from "storybook/test";
+
+const meta = preview.meta({
+  component: Button,
+  args: {
+    onClick: fn(),
+  },
+});
+```
+
+### Why fn() Instead of Action Matching
+
+<table>
+  <thead>
+    <tr>
+      <th>Approach</th>
+      <th>Pros</th>
+      <th>Cons</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fn()</code> (recommended)</td>
+      <td>Type-safe, testable in play functions, explicit</td>
+      <td>Requires manual assignment</td>
+    </tr>
+    <tr>
+      <td><code>argTypesRegex</code> (legacy)</td>
+      <td>Automatic matching</td>
+      <td>Not type-safe, not available in play functions</td>
+    </tr>
+  </tbody>
+</table>
+
+### Testing Interactions
+
+When using `fn()`, you can assert on calls in play functions:
+
+```tsx
+import { fn } from "storybook/test";
+import { expect, userEvent, within } from "storybook/test";
+
+export const ClickTest = meta.story({
+  args: {
+    onClick: fn(),
+    children: "Click me",
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole("button");
+
+    await userEvent.click(button);
+
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+  },
+});
+```
+
+### No Custom Logging
+
+Storybook's [Actions panel](https://storybook.js.org/docs/essentials/actions) automatically displays all `fn()` calls with their arguments. Never use `console.log()`, DOM manipulation, or custom UI to display callback data.
+
+**✅ Do:** Let fn() handle logging automatically
+
+```tsx
+const meta = preview.meta({
+  component: TreeList,
+  args: {
+    onExpand: fn(),  // Calls appear in Actions panel with all arguments
+  },
+});
+
+export const ControlledExpanded = meta.story({
+  args: {
+    expandedKeys: ["root", "node-1"],
+  },
+});
+```
+
+**❌ Don't:** Create custom logging UI or use console.log
+
+```tsx
+// Bad: Manual DOM manipulation for logging
+export const ControlledExpanded = meta.story({
+  args: {
+    onExpand: (keys, node) => {
+      // Bad: Custom logging via DOM
+      document.getElementById("expanded-keys").innerHTML = JSON.stringify(keys);
+      document.getElementById("toggled-node").innerHTML = JSON.stringify(node);
+    },
+  },
+  render: (args) => (
+    <>
+      {/* Bad: Custom debug UI */}
+      <div style={{ fontFamily: "monospace", background: "#f7f7f7" }}>
+        <div><strong>Expanded keys:</strong> <span id="expanded-keys"></span></div>
+        <div><strong>Toggled node:</strong> <span id="toggled-node"></span></div>
+      </div>
+      <TreeList {...args} />
+    </>
+  ),
+});
+```
+
+> **💡 Tip:** The Actions panel shows the full call history with expandable argument inspection. This is more powerful than any custom logging solution.
+
+## ArgTypes Mapping for Complex Props
+
+When a component prop accepts complex values (JSX elements, objects, functions), use the built-in [argTypes mapping](https://storybook.js.org/docs/api/arg-types#mapping) instead of creating custom args with render functions.
+
+### Why Use Mapping?
+
+<table>
+  <thead>
+    <tr>
+      <th>Approach</th>
+      <th>Pros</th>
+      <th>Cons</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>argTypes.mapping</code> (recommended)</td>
+      <td>Declarative, URL-shareable, works with controls, testable</td>
+      <td>Only predefined values available</td>
+    </tr>
+    <tr>
+      <td>Custom arg + render function</td>
+      <td>Full control over rendering</td>
+      <td>Breaks testing, complex logic in stories</td>
+    </tr>
+  </tbody>
+</table>
+
+### How Mapping Works
+
+The `mapping` property creates a lookup table connecting simple string options to complex values:
+
+**✅ Do:** Use argTypes mapping for complex props
+
+```tsx
+import { CustomLabel, TagLabel, InfoLabel } from "./labels";
+
+const meta = preview.meta({
+  component: TreeList,
+  argTypes: {
+    LabelComponent: {
+      control: { type: "select" },
+      options: ["default", "tag", "info"],
+      mapping: {
+        default: CustomLabel,
+        tag: TagLabel,
+        info: InfoLabel,
+      },
+    },
+  },
+});
+
+export const WithTagLabel = meta.story({
+  args: {
+    LabelComponent: "tag", // Maps to TagLabel component
+  },
+});
+```
+
+**❌ Don't:** Create custom args with render function logic
+
+```tsx
+// Bad: Custom arg requires complex render function
+type CustomLabelArgs = ComponentProps<typeof TreeList> & {
+  labelVariant: "default" | "tag" | "info";
+};
+
+export const CustomLabel = meta.story({
+  argTypes: {
+    labelVariant: {
+      control: { type: "inline-radio" },
+      options: ["default", "tag", "info"],
+    },
+  },
+  args: {
+    labelVariant: "tag",
+  },
+  render: (rawArgs) => {
+    const { labelVariant, ...treeListArgs } = rawArgs;
+
+    // Bad: Manual mapping logic inside render
+    const LabelMap = {
+      default: DefaultLabel,
+      tag: TagLabel,
+      info: InfoLabel,
+    };
+    const Label = LabelMap[labelVariant];
+
+    return <TreeList {...treeListArgs} LabelComponent={Label} />;
+  },
+});
+```
+
+### When to Use Mapping
+
+<table>
+  <thead>
+    <tr>
+      <th>Use Case</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Custom render props</td>
+      <td><code>LabelComponent</code>, <code>renderItem</code></td>
+    </tr>
+    <tr>
+      <td>Icon props</td>
+      <td><code>icon: &#123; left: &lt;ArrowLeft /&gt;, right: &lt;ArrowRight /&gt; &#125;</code></td>
+    </tr>
+    <tr>
+      <td>Complex objects</td>
+      <td><code>theme: &#123; light: lightTheme, dark: darkTheme &#125;</code></td>
+    </tr>
+    <tr>
+      <td>Callback variations</td>
+      <td><code>onSubmit: &#123; sync: syncHandler, async: asyncHandler &#125;</code></td>
+    </tr>
+  </tbody>
+</table>
+
+> **💡 Tip:** If a prop accepts JSX or complex objects, always prefer `mapping` over custom render logic. This keeps stories declarative and testable.
+
+## Story Naming Conventions
+
+Use descriptive names that reflect the component state being tested:
+
+<table>
+  <thead>
+    <tr>
+      <th>Pattern</th>
+      <th>Example</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Default state</td>
+      <td><code>Default</code></td>
+      <td>Component with minimal/default props</td>
+    </tr>
+    <tr>
+      <td>Variant</td>
+      <td><code>Filled</code>, <code>Outlined</code>, <code>Text</code></td>
+      <td>Visual variant of the component</td>
+    </tr>
+    <tr>
+      <td>Size</td>
+      <td><code>Small</code>, <code>Medium</code>, <code>Large</code></td>
+      <td>Size variant</td>
+    </tr>
+    <tr>
+      <td>State</td>
+      <td><code>Disabled</code>, <code>Loading</code>, <code>Error</code></td>
+      <td>Interactive state</td>
+    </tr>
+    <tr>
+      <td>Combination</td>
+      <td><code>DisabledFilledPrimary</code></td>
+      <td>Multiple props combined</td>
+    </tr>
+    <tr>
+      <td>Use case</td>
+      <td><code>AsLink</code>, <code>AsExternalLink</code></td>
+      <td>Specific usage pattern</td>
+    </tr>
+  </tbody>
+</table>
+
+## Best Practices
+
+### Story Structure
+
+1. **One state per story** — each export tests a specific prop combination
+2. **Minimal args** — only include props relevant to the state being tested
+3. **Descriptive names** — story names should describe what state is being tested
+4. **No documentation** — keep explanatory content in MDX or autodocs
+
+### Testing Focus
+
+1. **Cover all variants** — create stories for each visual variant
+2. **Cover all states** — disabled, loading, error, empty, etc.
+3. **Cover edge cases** — long text, missing data, boundary conditions
+4. **Use fn() for callbacks** — enables action logging and interaction testing
+
+### What NOT to Include
+
+1. **Inline documentation** — use autodocs or MDX instead
+2. **Multiple components per story** — unless testing composition
+3. **Complex render functions** — keep stories declarative
+4. **Wrapper components** — use decorators for consistent wrappers
+
+## Quick Reference
+
+### Minimal Story File Template
+
+```tsx
+import { fn } from "storybook/test";
+import preview from "@/.storybook/preview";
+import { MyComponent } from "./MyComponent";
+
+const meta = preview.meta({
+  component: MyComponent,
+  parameters: {
+    layout: "centered", // or "padded", "fullscreen"
+  },
+  args: {
+    onChange: fn(),
+    onClick: fn(),
+  },
+});
+
+export const Default = meta.story({
+  args: {
+    // minimal props
+  },
+});
+
+export const VariantA = meta.story({
+  args: {
+    variant: "a",
+  },
+});
+
+export const Disabled = meta.story({
+  args: {
+    disabled: true,
+  },
+});
+```
+
+### Checklist
+
+- [ ] Uses CSF Next format (`preview.meta()` and `meta.story()`)
+- [ ] Each story defines a single component state
+- [ ] No documentation or explanatory text in stories
+- [ ] All callback props use `fn()` from `storybook/test`
+- [ ] Complex props use `argTypes.mapping` instead of custom render logic
+- [ ] Story names are descriptive and follow naming conventions
+- [ ] All visual variants have corresponding stories
+- [ ] All interactive states (disabled, loading, etc.) have stories
+
+## Sources and References
+
+- [CSF Next Documentation](https://storybook.js.org/docs/api/csf/csf-next) — official guide to CSF Factories format
+- [Chromatic Visual Testing](https://www.chromatic.com/features/visual-test) — visual regression testing features
+- [Chromatic Interaction Testing](https://www.chromatic.com/features/interaction-test) — interaction test automation
+- [Chromatic Accessibility Testing](https://www.chromatic.com/features/accessibility-test) — automated a11y testing
+- [Storybook Actions](https://storybook.js.org/docs/essentials/actions) — fn() function and action logging
+- [Storybook Autodocs](https://storybook.js.org/docs/writing-docs/autodocs) — automatic documentation generation
+- [ArgTypes Mapping](https://storybook.js.org/docs/api/arg-types#mapping) — handling complex props in controls
+- [How to Write Stories](https://storybook.js.org/docs/writing-stories) — official Storybook guide
