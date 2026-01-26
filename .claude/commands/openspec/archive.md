@@ -19,7 +19,11 @@ tags: [openspec, archive]
 2. Validate the change ID by running `npx openspec list` (or `npx openspec show <id>`) and stop if the change is missing, already archived, or otherwise not ready to archive.
 3. Run `npx openspec archive <id> --yes` so the CLI moves the change and applies spec updates without prompts (use `--skip-specs` only for tooling-only work).
 4. Review the command output to confirm the target specs were updated and the change landed in `changes/archive/`.
-5. Validate with `npx openspec validate --strict` and inspect with `npx openspec show <id>` if anything looks off.
+5. Check for Storybook spec imports that need path updates:
+   - Search for imports referencing the old path: `rg "openspec/changes/<id>" components/`
+   - Update any `Spec.story.mdx` files to import from `openspec/specs/<spec-name>/spec.md` instead of the archived `openspec/changes/<id>/specs/` path.
+   - Run `npm run build-storybook` to verify no broken imports.
+6. Validate with `npx openspec validate --strict` and inspect with `npx openspec show <id>` if anything looks off.
 
 **Reference**
 - Use `npx openspec list` to confirm change IDs before archiving.
