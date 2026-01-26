@@ -19,5 +19,5 @@ Track these steps as TODOs and complete them one by one.
 5. Reference `openspec list` or `openspec show <item>` when additional context is required.
 
 **Reference**
-- Use `openspec show <id> --json --deltas-only` if you need additional context from the proposal while implementing.
+- Use `npx openspec show <id> --json --deltas-only` if you need additional context from the proposal while implementing.
 <!-- OPENSPEC:END -->
