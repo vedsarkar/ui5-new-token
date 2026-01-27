@@ -10,6 +10,9 @@ The chat system requires a robust Markdown rendering component that can safely h
 - **ADDED** Support for graceful degradation when invalid Markdown is provided
 - **ADDED** TypeScript types following project conventions (MarkdownRenderer.types.ts)
 - **ADDED** CSS Modules styling with CSS custom properties
+- **ADDED** Tag-to-class mapping for all Markdown elements (p, h1-h6, ul, ol, li, code, pre, blockquote, a, etc.) via react-markdown components prop
+- **ADDED** Tag-to-component mapping for complex elements (details/summary rendered via MarkdownDetails component)
+- **ADDED** Explicit prohibition of global styles (no global CSS, element selectors, or tag-based styling rules)
 - **ADDED** Comprehensive Storybook stories demonstrating valid and invalid Markdown scenarios
 - **ADDED** Integration with react-markdown library (already in dependencies)
 
@@ -19,5 +22,9 @@ The chat system requires a robust Markdown rendering component that can safely h
 - Affected code:
   - `components/MarkdownRenderer/` - new component folder
   - Uses existing `react-markdown` dependency from package.json
+  - Requires explicit tag-to-class mapping configuration in react-markdown components prop
+  - Requires tag-to-component mapping for details/summary elements (uses MarkdownDetails component from add-markdown-details change)
+  - All styling must be scoped to CSS Modules classes (no global styles allowed)
 - Breaking changes: None
 - Migration: N/A (new component)
+- Styling constraints: All Markdown element styling MUST be implemented via CSS Modules classes assigned through react-markdown's components prop. Global styles, element selectors, and tag-based CSS rules are explicitly forbidden.

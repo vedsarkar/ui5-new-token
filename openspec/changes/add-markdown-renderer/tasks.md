@@ -28,12 +28,16 @@
 ## 3. Styling
 
 - [ ] 3.1 Define CSS custom properties on `.root` class with `--reltio-markdown-renderer-` prefix
-- [ ] 3.2 Style Markdown elements (h1-h6, p, ul, ol, li, code, pre, blockquote, a, strong, em)
-- [ ] 3.3 Style GFM elements (table, thead, tbody, tr, th, td, input[type="checkbox"], del)
-- [ ] 3.4 Style raw HTML elements (br, b, sup, sub, i, strong, em)
-- [ ] 3.5 Ensure all styles use CSS variables with fallback values
-- [ ] 3.6 Use `classNames` utility for all className composition
-- [ ] 3.7 Ensure responsive design and proper spacing
+- [ ] 3.2 Implement tag-to-class mapping via react-markdown components prop for all Markdown elements (h1-h6, p, ul, ol, li, code, pre, blockquote, a, strong, em)
+- [ ] 3.3 Implement tag-to-class mapping for GFM elements (table, thead, tbody, tr, th, td, input[type="checkbox"], del)
+- [ ] 3.4 Implement tag-to-class mapping for raw HTML elements (br, b, sup, sub, i, strong, em)
+- [ ] 3.5 Create CSS Modules classes for each Markdown element (e.g., `.heading1`, `.paragraph`, `.list`, `.listItem`, `.code`, `.codeBlock`, `.blockquote`, `.link`, etc.)
+- [ ] 3.6 Assign CSS Modules classes to React elements via react-markdown components prop mapping
+- [ ] 3.7 Ensure all styles use CSS variables with fallback values
+- [ ] 3.8 Use `classNames` utility for all className composition
+- [ ] 3.9 Verify NO global styles are used (no global CSS files, no element selectors like `p {}`, `h1 {}`, no tag-based styling rules)
+- [ ] 3.10 Verify all styling is applied ONLY through CSS Modules classes assigned via components prop
+- [ ] 3.11 Ensure responsive design and proper spacing
 
 ## 4. Error Handling
 
@@ -66,6 +70,8 @@
 - [ ] 6.3 Run `npm run format` and fix formatting issues
 - [ ] 6.4 Run `npm run lint` and fix linting errors
 - [ ] 6.5 Verify TypeScript strict mode compliance
+- [ ] 6.6 Verify tag-to-class mapping is correctly typed in react-markdown components prop
+- [ ] 6.7 Verify no global styles exist in codebase (acceptance criterion: all styling via CSS Modules classes only)
 
 ## 7. Testing
 

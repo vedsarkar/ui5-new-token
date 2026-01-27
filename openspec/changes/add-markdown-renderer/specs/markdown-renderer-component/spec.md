@@ -81,6 +81,14 @@ The MarkdownRenderer component SHALL render Markdown-formatted text content as p
 - **AND** HTML tags work correctly within Markdown context
 - **AND** example: `Text with <br /> line break and <b>bold</b> and <sup>superscript</sup> and <sub>subscript</sub>`
 
+#### Scenario: GitHub Flavored Markdown (GFM) details/summary renders correctly
+- **WHEN** Markdown content contains GFM details/summary syntax (e.g., `<details><summary>Title</summary>Content</details>`)
+- **THEN** details blocks are rendered using the MarkdownDetails component
+- **AND** MarkdownDetails component is used in the tag-to-component mapping via react-markdown components prop
+- **AND** details blocks display with enhanced UI including icon indicators
+- **AND** details blocks support expand/collapse functionality
+- **AND** summary content is extracted and displayed correctly
+
 ### Requirement: Security and Sanitization
 
 The MarkdownRenderer component SHALL sanitize all rendered content to prevent execution of malicious scripts and protect against XSS (Cross-Site Scripting) attacks. The component SHALL use a third-party HTML sanitizer library (e.g., DOMPurify, sanitize-html) to perform sanitization.
@@ -177,6 +185,40 @@ The MarkdownRenderer component SHALL define all design tokens as CSS custom prop
 - **AND** blockquote border color defined
 - **AND** all with appropriate fallback values
 
+### Requirement: Tag-to-Class Mapping (MANDATORY)
+
+The MarkdownRenderer component SHALL implement all Markdown element styling through an explicit tag-to-class mapping approach using react-markdown's components prop. Global styles, element selectors, and tag-based CSS rules are explicitly FORBIDDEN.
+
+#### Scenario: All Markdown elements use CSS Modules classes or dedicated components
+- **WHEN** MarkdownRenderer renders Markdown content
+- **THEN** each Markdown/HTML tag (p, h1-h6, ul, ol, li, code, pre, blockquote, a, strong, em, table, thead, tbody, tr, th, td, del, br, b, sup, sub, i) is rendered using a React element with an assigned CSS Modules class
+- **AND** details and summary tags are rendered using the MarkdownDetails component (not direct CSS Modules classes)
+- **AND** tag-to-component mapping is configured via react-markdown components prop
+- **AND** example: `p` tag maps to React element with `className={styles.paragraph}`, `h1` maps to `className={styles.heading1}`, `details` maps to `<MarkdownDetails>`, etc.
+- **AND** NO global CSS rules target these tags directly
+
+#### Scenario: react-markdown components prop configuration
+- **WHEN** MarkdownRenderer is implemented
+- **THEN** react-markdown components prop contains explicit mappings for all supported tags
+- **AND** each mapping returns a React element with appropriate CSS Modules class (for standard elements) or a dedicated component (for complex elements like details)
+- **AND** details tag maps to MarkdownDetails component: `details: ({node, ...props}) => <MarkdownDetails {...props}>{props.children}</MarkdownDetails>`
+- **AND** example structure: `components={{ p: ({node, ...props}) => <p {...props} className={classNames(styles.paragraph)} />, h1: ({node, ...props}) => <h1 {...props} className={classNames(styles.heading1)} />, details: ({node, ...props}) => <MarkdownDetails {...props}>{props.children}</MarkdownDetails>, ... }}`
+- **AND** all styling is applied through CSS Modules classes or dedicated component styling
+
+#### Scenario: Global styles are explicitly forbidden
+- **WHEN** MarkdownRenderer is implemented
+- **THEN** NO global CSS files contain element selectors for Markdown tags (e.g., no `p {}`, `h1 {}`, `ul {}`, `code {}` rules)
+- **AND** NO global CSS rules target react-markdown output via tag selectors
+- **AND** NO styling is applied through global stylesheets
+- **AND** ALL styling is scoped to CSS Modules classes only
+- **AND** this constraint is non-optional and enforceable
+
+#### Scenario: CSS Modules classes for all elements
+- **WHEN** MarkdownRenderer is implemented
+- **THEN** CSS Modules file contains classes for all Markdown elements (e.g., `.heading1`, `.heading2`, `.paragraph`, `.list`, `.listItem`, `.code`, `.codeBlock`, `.blockquote`, `.link`, `.table`, `.tableRow`, `.tableCell`, etc.)
+- **AND** each class uses CSS custom properties with `--reltio-markdown-renderer-` prefix
+- **AND** classes are assigned via components prop mapping, not through global selectors
+
 ### Requirement: className Utility Usage
 
 The MarkdownRenderer component SHALL use the classNames utility from utils/classNames.ts for all className composition, providing stable base classes for external customization.
@@ -259,6 +301,7 @@ The MarkdownRenderer component SHALL have comprehensive Storybook stories demons
 - classNames utility from utils/classNames.ts
 - react-markdown (already in package.json dependencies)
 - Third-party HTML sanitizer library (e.g., DOMPurify, sanitize-html) - to be selected during implementation
+- MarkdownDetails component (from add-markdown-details change) - for rendering details/summary blocks
 
 ### Browser Support
 - Modern evergreen browsers (Chrome, Firefox, Safari, Edge)
