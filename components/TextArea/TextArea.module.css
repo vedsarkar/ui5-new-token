@@ -13,9 +13,11 @@
 	--reltio-textarea-padding: var(--spacing-m, 16px);
 	--reltio-textarea-min-height: var(--spacing-3xl, 56px);
 	--reltio-textarea-max-height: min(500px, 50cqh);
+	--reltio-textarea-border-width: 1px;
+	--reltio-textarea-border-width-focus: 2px;
 
 	--_border-color: var(--reltio-textarea-color-border);
-	--_border-width: 1px;
+	--_border-width: var(--reltio-textarea-border-width);
 	--_label-color: var(--reltio-textarea-color-label);
 	--_supporting-text-color: var(--reltio-textarea-color-supporting-text);
 
@@ -25,7 +27,7 @@
 
 .root:focus-within {
 	--_border-color: var(--reltio-textarea-color-border-focus);
-	--_border-width: 2px;
+	--_border-width: var(--reltio-textarea-border-width-focus);
 	--_label-color: var(--reltio-textarea-color-border-focus);
 }
 
