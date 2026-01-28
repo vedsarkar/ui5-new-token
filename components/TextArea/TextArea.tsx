@@ -22,7 +22,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 		const textareaId = providedId || generatedId;
 		const supportingTextId = `${textareaId}-supporting`;
 
-    const hasValue = String(rest.value ?? rest.defaultValue ?? '').length > 0;
+		const hasValue = String(rest.value ?? rest.defaultValue ?? "").length > 0;
 
 		return (
 			<div

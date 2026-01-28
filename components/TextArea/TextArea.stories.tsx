@@ -1,5 +1,6 @@
 import { fn } from "storybook/test";
 import preview from "../../.storybook/preview";
+import { Attachment, ContentCopy, Share } from "../../icons";
 import { Button } from "../Button";
 import { TextArea } from "./TextArea";
 
@@ -44,13 +45,13 @@ export const WithToolbar = meta.story({
 		toolbar: (
 			<>
 				<Button variant="outlined" size="small">
-					Bold
+					<Attachment size="small" /> Attach
 				</Button>
 				<Button variant="outlined" size="small">
-					Italic
+					<ContentCopy size="small" /> Copy
 				</Button>
 				<Button variant="outlined" size="small">
-					Link
+					<Share size="small" /> Share
 				</Button>
 			</>
 		),
