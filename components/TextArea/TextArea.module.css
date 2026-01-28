@@ -1,17 +1,24 @@
 .root {
-	--reltio-textarea-font-family: var(--font-primary, "Roboto", sans-serif);
-	--reltio-textarea-font-size: var(--font-size-base, 16px);
-	--reltio-textarea-line-height: var(--line-height-base, 1.5);
-	--reltio-textarea-color-text: var(--color-text, #1d1b20);
-	--reltio-textarea-color-border: var(--color-border, #79747e);
-	--reltio-textarea-color-border-focus: var(--color-primary, #6750a4);
-	--reltio-textarea-color-background: var(--color-background, #fff);
-	--reltio-textarea-color-error: var(--color-error, #b3261e);
-	--reltio-textarea-color-label: var(--color-text-secondary, #49454f);
-	--reltio-textarea-color-supporting-text: var(--color-text-secondary, #49454f);
-	--reltio-textarea-border-radius: var(--spacing-xs, 4px);
-	--reltio-textarea-padding: var(--spacing-m, 16px);
-	--reltio-textarea-min-height: var(--spacing-3xl, 56px);
+	--reltio-textarea-font-family: var(
+		--reltio-font-family-body,
+		"Roboto",
+		sans-serif
+	);
+	--reltio-textarea-font-size: var(--reltio-font-size-body, 16px);
+	--reltio-textarea-line-height: var(--reltio-line-height-body, 1.5);
+	--reltio-textarea-color-text: var(--reltio-color-text, #1d1b20);
+	--reltio-textarea-color-border: var(--reltio-color-border, #79747e);
+	--reltio-textarea-color-border-focus: var(--reltio-color-primary, #6750a4);
+	--reltio-textarea-color-background: var(--reltio-color-background, #fff);
+	--reltio-textarea-color-error: var(--reltio-color-error, #b3261e);
+	--reltio-textarea-color-label: var(--reltio-color-text-secondary, #49454f);
+	--reltio-textarea-color-supporting-text: var(
+		--reltio-color-text-secondary,
+		#49454f
+	);
+	--reltio-textarea-border-radius: var(--reltio-spacing-xs, 4px);
+	--reltio-textarea-padding: var(--reltio-spacing-md, 16px);
+	--reltio-textarea-min-height: var(--reltio-spacing-3xl, 56px);
 	--reltio-textarea-max-height: min(500px, 50cqh);
 	--reltio-textarea-border-width: 1px;
 	--reltio-textarea-border-width-focus: 2px;
