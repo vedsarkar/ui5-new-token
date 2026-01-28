@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The AssistantMessage component displays assistant-authored messages in a chat interface with support for both Markdown and MDX formatting, along with loading and error states. It provides consistent styling and layout for assistant messages, distinguishing them visually from user messages.
+The AssistantMessage component displays assistant-authored messages in a chat interface with support for both Markdown and MDX formatting, along with error states. It provides consistent styling and layout for assistant messages, distinguishing them visually from user messages.
 
 ## ADDED Requirements
 
@@ -44,43 +44,6 @@ The AssistantMessage component SHALL display assistant message content with prop
 - **THEN** component renders empty container or placeholder
 - **AND** no errors are thrown
 - **AND** component remains stable
-
-### Requirement: Loading State
-
-The AssistantMessage component SHALL support a loading state that displays a visual indicator while content is being generated or fetched.
-
-#### Scenario: Loading state displays indicator
-- **WHEN** loading prop is true
-- **THEN** loading indicator is displayed
-- **AND** loading indicator is visually distinct
-- **AND** loading indicator is animated or pulsing
-- **AND** message content area shows loading state
-
-#### Scenario: Loading state accessibility
-- **WHEN** loading prop is true
-- **THEN** component has aria-busy="true" attribute
-- **AND** component has aria-label describing loading state
-- **AND** screen readers announce loading state
-
-#### Scenario: Loading state styling
-- **WHEN** loading prop is true
-- **THEN** loading indicator uses appropriate styling
-- **AND** loading indicator size and color are customizable via CSS variables
-- **AND** loading state does not interfere with message layout
-
-#### Scenario: Transition from loading to content
-- **WHEN** loading prop changes from true to false
-- **AND** content is provided
-- **THEN** loading indicator is removed
-- **AND** content is displayed
-- **AND** transition is smooth
-
-#### Scenario: Transition from loading to error
-- **WHEN** loading prop changes from true to false
-- **AND** error prop is true
-- **THEN** loading indicator is removed
-- **AND** error state is displayed
-- **AND** transition is smooth
 
 ### Requirement: Error State
 
@@ -197,14 +160,12 @@ The AssistantMessage component SHALL define all design tokens as CSS custom prop
 - **THEN** background color defined
 - **AND** text color defined
 - **AND** border color defined (if applicable)
-- **AND** loading indicator color defined
 - **AND** all with appropriate fallback values
 - **NOTE:** Error message colors are provided by ErrorMessage component CSS variables
 
 #### Scenario: CSS variables for spacing
 - **WHEN** AssistantMessage is rendered
 - **THEN** content padding defined
-- **AND** loading indicator spacing defined
 - **AND** all with appropriate fallback values
 - **NOTE:** Error message spacing is provided by ErrorMessage component CSS variables
 
@@ -241,9 +202,8 @@ The AssistantMessage component SHALL be fully typed with TypeScript using strict
 - **AND** type is clearly documented
 
 #### Scenario: State prop types
-- **WHEN** loading and error props are provided
-- **THEN** loading accepts boolean type
-- **AND** error accepts boolean type
+- **WHEN** error prop is provided
+- **THEN** error accepts boolean type
 - **AND** errorMessage accepts string type (optional)
 - **AND** types are clearly documented
 
@@ -259,7 +219,7 @@ The AssistantMessage component SHALL be fully typed with TypeScript using strict
 
 ### Requirement: Storybook Documentation
 
-The AssistantMessage component SHALL have comprehensive Storybook stories demonstrating message display, Markdown/MDX rendering, loading/error states, and edge cases, with each story showing only ONE variant.
+The AssistantMessage component SHALL have comprehensive Storybook stories demonstrating message display, Markdown/MDX rendering, error states, and edge cases, with each story showing only ONE variant.
 
 #### Scenario: Stories for message display
 - **WHEN** viewing Storybook
@@ -275,24 +235,12 @@ The AssistantMessage component SHALL have comprehensive Storybook stories demons
 - **AND** stories exist for MDX with embedded React components
 - **AND** each story demonstrates specific content type
 
-#### Scenario: Stories for loading state
-- **WHEN** viewing Storybook
-- **THEN** stories exist for loading state
-- **AND** stories demonstrate loading indicator
-- **AND** stories show loading state accessibility
-
 #### Scenario: Stories for error state
 - **WHEN** viewing Storybook
 - **THEN** stories exist for error state with default message (using ErrorMessage component)
 - **AND** stories exist for error state with custom message (using ErrorMessage component)
 - **AND** error handling behavior is clearly demonstrated
 - **AND** stories show ErrorMessage component integration
-
-#### Scenario: Stories for state transitions
-- **WHEN** viewing Storybook
-- **THEN** stories exist for loading to content transition
-- **AND** stories exist for loading to error transition
-- **AND** transitions are clearly demonstrated
 
 #### Scenario: Stories for error handling
 - **WHEN** viewing Storybook
@@ -309,7 +257,7 @@ The AssistantMessage component SHALL have comprehensive Storybook stories demons
 - **THEN** stories demonstrate semantic HTML structure
 - **AND** a11y addon shows no violations
 - **AND** keyboard navigation works correctly
-- **AND** loading and error states are accessible
+- **AND** error states are accessible
 
 #### Scenario: Stories for customization
 - **WHEN** viewing Storybook
@@ -345,4 +293,4 @@ The AssistantMessage component SHALL have comprehensive Storybook stories demons
 - Screen reader compatible
 - Proper ARIA attributes (aria-busy, aria-label, role="alert", aria-live)
 - Keyboard navigation support
-- Loading and error states are accessible
+- Error states are accessible

@@ -2,12 +2,11 @@
 
 ## Why
 
-The chat system requires a component to display assistant messages with support for both Markdown and MDX content, along with loading and error states. AssistantMessage will serve as a building block for the Chat component, providing consistent styling and behavior for assistant-authored content with rich formatting capabilities.
+The chat system requires a component to display assistant messages with support for both Markdown and MDX content, along with error states. AssistantMessage will serve as a building block for the Chat component, providing consistent styling and behavior for assistant-authored content with rich formatting capabilities.
 
 ## What Changes
 
 - **ADDED** `AssistantMessage` component for displaying assistant messages with Markdown and MDX rendering
-- **ADDED** Loading state support with visual indicator
 - **ADDED** Error state support using ErrorMessage component for consistent error display
 - **ADDED** Integration with MarkdownRenderer component (depends on add-markdown-renderer proposal)
 - **ADDED** Integration with MDXRenderer component (depends on add-mdx-renderer proposal)

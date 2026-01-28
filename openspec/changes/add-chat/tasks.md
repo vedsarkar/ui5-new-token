@@ -12,11 +12,12 @@
 
 - [ ] 2.1 Integrate UserMessage component for user messages
 - [ ] 2.2 Integrate AssistantMessage component for assistant messages
-- [ ] 2.3 Implement message type detection and routing
-- [ ] 2.4 Implement message list rendering
-- [ ] 2.5 Ensure component accepts messages array prop
-- [ ] 2.6 Handle empty messages array gracefully
-- [ ] 2.7 Support extensible message types (future-proof design)
+- [ ] 2.3 Integrate Loading component for loading states
+- [ ] 2.4 Implement message type detection and routing
+- [ ] 2.5 Implement message list rendering
+- [ ] 2.6 Ensure component accepts messages array prop
+- [ ] 2.7 Handle empty messages array gracefully
+- [ ] 2.8 Support extensible message types (future-proof design)
 
 ## 3. Performance Optimizations
 
@@ -64,7 +65,7 @@
 - [ ] 7.3 Story: Chat with single assistant message
 - [ ] 7.4 Story: Chat with conversation (multiple messages)
 - [ ] 7.5 Story: Chat with mixed message types
-- [ ] 7.6 Story: Chat with loading assistant message
+- [ ] 7.6 Story: Chat with loading state (using Loading component)
 - [ ] 7.7 Story: Chat with error assistant message
 - [ ] 7.8 Story: Chat with many messages (performance test)
 - [ ] 7.9 Story: Chat with empty messages array

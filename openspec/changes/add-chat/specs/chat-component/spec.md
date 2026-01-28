@@ -66,6 +66,24 @@ The Chat component SHALL support messages of any type through an extensible mess
 - **AND** new message types can be added without breaking changes
 - **AND** type system remains type-safe
 
+### Requirement: Loading State Support
+
+The Chat component SHALL support loading states using the Loading component to indicate when assistant responses are being generated.
+
+#### Scenario: Loading state displays Loading component
+- **WHEN** loading state is active (e.g., waiting for assistant response)
+- **THEN** Loading component is displayed in message list
+- **AND** Loading component is properly positioned
+- **AND** Loading component uses appropriate size and styling
+- **AND** loading state is clearly visible to users
+
+#### Scenario: Loading state transitions
+- **WHEN** loading state changes from active to inactive
+- **AND** assistant message is received
+- **THEN** Loading component is removed
+- **AND** AssistantMessage component is displayed
+- **AND** transition is smooth
+
 ### Requirement: Performance Optimizations
 
 The Chat component SHALL implement performance optimizations to handle very large numbers of messages efficiently, including virtualization, memoization, and efficient rendering.
@@ -233,7 +251,7 @@ The Chat component SHALL have comprehensive Storybook stories demonstrating mess
 
 #### Scenario: Stories for message states
 - **WHEN** viewing Storybook
-- **THEN** stories exist for loading assistant messages
+- **THEN** stories exist for loading states (using Loading component)
 - **AND** stories exist for error assistant messages (using ErrorMessage component)
 - **AND** stories demonstrate state transitions
 
@@ -278,6 +296,7 @@ The Chat component SHALL have comprehensive Storybook stories demonstrating mess
 - classNames utility from utils/classNames.ts
 - UserMessage component (from add-user-message proposal)
 - AssistantMessage component (from add-assistant-message proposal)
+- Loading component (from add-loading-component proposal)
 - Virtualization library (react-window, react-virtualized, or custom implementation)
 
 ### Browser Support
