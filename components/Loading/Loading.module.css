@@ -1,0 +1,104 @@
+/* CSS Custom Properties - All defined on .root with --reltio-loading- prefix */
+.root {
+	--reltio-loading-size-small: 20px;
+	--reltio-loading-size-medium: 32px;
+	--reltio-loading-size-large: 48px;
+	--reltio-loading-size: var(--reltio-loading-size-medium, 32px);
+
+	/* Dot flashing animation tokens */
+	--reltio-loading-dot-size: 8px;
+	--reltio-loading-dot-radius: 5px;
+	--reltio-loading-dot-color: #8d8dc8;
+	--reltio-loading-dot-color-dimmed: rgba(152, 128, 255, 0.2);
+	--reltio-loading-dot-gap: 12px;
+	--reltio-loading-dot-margin-left: 20px;
+	--reltio-loading-dot-duration: 1s;
+	--reltio-loading-dot-delay-middle: 0.5s;
+	--reltio-loading-dot-delay-last: 1s;
+
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+}
+
+/* GIF container - uses CSS variable for size with fallback */
+.indicator {
+	width: var(--reltio-loading-size, 32px);
+	height: var(--reltio-loading-size, 32px);
+	display: block;
+	object-fit: contain;
+}
+
+/* Size variants - set --reltio-loading-size and dot dimensions per variant */
+.small {
+	--reltio-loading-size: var(--reltio-loading-size-small, 20px);
+	--reltio-loading-dot-size: 5px;
+	--reltio-loading-dot-radius: 3px;
+	--reltio-loading-dot-gap: 8px;
+	--reltio-loading-dot-margin-left: 12px;
+}
+
+.medium {
+	--reltio-loading-size: var(--reltio-loading-size-medium, 32px);
+	--reltio-loading-dot-size: 8px;
+	--reltio-loading-dot-radius: 5px;
+	--reltio-loading-dot-gap: 12px;
+	--reltio-loading-dot-margin-left: 20px;
+}
+
+.large {
+	--reltio-loading-size: var(--reltio-loading-size-large, 48px);
+	--reltio-loading-dot-size: 12px;
+	--reltio-loading-dot-radius: 7.5px;
+	--reltio-loading-dot-gap: 18px;
+	--reltio-loading-dot-margin-left: 30px;
+}
+
+/* Dot flashing indicator - uses CSS variables from .root */
+.dotFlashing {
+	position: absolute;
+	left: calc(var(--reltio-loading-size, 32px) + var(--reltio-loading-dot-margin-left, 20px));
+	bottom: 20%;
+	transform: translateY(50%);
+	width: var(--reltio-loading-dot-size, 8px);
+	height: var(--reltio-loading-dot-size, 8px);
+	border-radius: var(--reltio-loading-dot-radius, 5px);
+	background-color: var(--reltio-loading-dot-color, #8d8dc8);
+	animation: dotFlashing var(--reltio-loading-dot-duration, 1s) infinite linear alternate;
+	animation-delay: var(--reltio-loading-dot-delay-middle, 0.5s);
+}
+
+.dotFlashing::before,
+.dotFlashing::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	display: block;
+	width: var(--reltio-loading-dot-size, 8px);
+	height: var(--reltio-loading-dot-size, 8px);
+	border-radius: var(--reltio-loading-dot-radius, 5px);
+	background-color: var(--reltio-loading-dot-color, #8d8dc8);
+	animation: dotFlashing var(--reltio-loading-dot-duration, 1s) infinite alternate;
+}
+
+.dotFlashing::before {
+	left: calc(-1 * var(--reltio-loading-dot-gap, 12px));
+	animation-delay: 0s;
+}
+
+.dotFlashing::after {
+	left: var(--reltio-loading-dot-gap, 12px);
+	animation-delay: var(--reltio-loading-dot-delay-last, 1s);
+}
+
+@keyframes dotFlashing {
+	0% {
+		background-color: var(--reltio-loading-dot-color, #8d8dc8);
+	}
+	50%,
+	100% {
+		background-color: var(--reltio-loading-dot-color-dimmed, rgba(152, 128, 255, 0.2));
+	}
+}
