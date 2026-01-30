@@ -1,0 +1,238 @@
+/* CSS Custom Properties - All defined on .root */
+.root {
+	/* Font tokens */
+	--reltio-mdx-renderer-font-family: var(
+		--reltio-font-family-body,
+		"Roboto",
+		sans-serif
+	);
+	--reltio-mdx-renderer-font-size: var(--reltio-font-size-body, 16px);
+	--reltio-mdx-renderer-font-weight: var(--reltio-font-weight-body, 400);
+	--reltio-mdx-renderer-line-height: var(--reltio-line-height-body, 1.5);
+	--reltio-mdx-renderer-letter-spacing: var(
+		--reltio-letter-spacing-body,
+		0.15px
+	);
+
+	/* Code font tokens */
+	--reltio-mdx-renderer-code-font-family: "Courier New", Courier, monospace;
+	--reltio-mdx-renderer-code-font-size: 0.9em;
+
+	/* Color tokens */
+	--reltio-mdx-renderer-color-text: var(--reltio-color-text, #0e0e25);
+	--reltio-mdx-renderer-color-link: var(--reltio-color-primary, #0000cc);
+	--reltio-mdx-renderer-color-code-background: var(
+		--reltio-color-surface,
+		#f5f5fa
+	);
+	--reltio-mdx-renderer-color-blockquote-border: var(
+		--reltio-color-border,
+		#e0e0e0
+	);
+	--reltio-mdx-renderer-color-table-border: var(--reltio-color-border, #e0e0e0);
+
+	/* Spacing tokens */
+	--reltio-mdx-renderer-paragraph-margin: var(--reltio-spacing-md, 16px);
+	--reltio-mdx-renderer-heading-margin-top: var(--reltio-spacing-lg, 24px);
+	--reltio-mdx-renderer-heading-margin-bottom: var(--reltio-spacing-sm, 12px);
+	--reltio-mdx-renderer-list-item-spacing: var(--reltio-spacing-xs, 8px);
+	--reltio-mdx-renderer-code-block-padding: var(--reltio-spacing-sm, 12px);
+	--reltio-mdx-renderer-blockquote-padding: var(--reltio-spacing-md, 16px);
+	--reltio-mdx-renderer-table-cell-padding: var(--reltio-spacing-xs, 8px);
+
+	/* Base styles */
+	font-family: var(--reltio-mdx-renderer-font-family);
+	font-size: var(--reltio-mdx-renderer-font-size);
+	font-weight: var(--reltio-mdx-renderer-font-weight);
+	line-height: var(--reltio-mdx-renderer-line-height);
+	letter-spacing: var(--reltio-mdx-renderer-letter-spacing);
+	color: var(--reltio-mdx-renderer-color-text);
+}
+
+/* Headings */
+.heading1 {
+	font-size: 2em;
+	font-weight: 600;
+	margin-top: var(--reltio-mdx-renderer-heading-margin-top);
+	margin-bottom: var(--reltio-mdx-renderer-heading-margin-bottom);
+	line-height: 1.2;
+}
+
+.heading2 {
+	font-size: 1.75em;
+	font-weight: 600;
+	margin-top: var(--reltio-mdx-renderer-heading-margin-top);
+	margin-bottom: var(--reltio-mdx-renderer-heading-margin-bottom);
+	line-height: 1.3;
+}
+
+.heading3 {
+	font-size: 1.5em;
+	font-weight: 600;
+	margin-top: var(--reltio-mdx-renderer-heading-margin-top);
+	margin-bottom: var(--reltio-mdx-renderer-heading-margin-bottom);
+	line-height: 1.4;
+}
+
+.heading4 {
+	font-size: 1.25em;
+	font-weight: 600;
+	margin-top: var(--reltio-mdx-renderer-heading-margin-top);
+	margin-bottom: var(--reltio-mdx-renderer-heading-margin-bottom);
+	line-height: 1.4;
+}
+
+.heading5 {
+	font-size: 1.1em;
+	font-weight: 600;
+	margin-top: var(--reltio-mdx-renderer-heading-margin-top);
+	margin-bottom: var(--reltio-mdx-renderer-heading-margin-bottom);
+	line-height: 1.5;
+}
+
+.heading6 {
+	font-size: 1em;
+	font-weight: 600;
+	margin-top: var(--reltio-mdx-renderer-heading-margin-top);
+	margin-bottom: var(--reltio-mdx-renderer-heading-margin-bottom);
+	line-height: 1.5;
+}
+
+/* Paragraphs */
+.paragraph {
+	margin: 0 0 var(--reltio-mdx-renderer-paragraph-margin) 0;
+}
+
+/* Lists */
+.list {
+	margin: var(--reltio-mdx-renderer-paragraph-margin) 0;
+	padding-left: var(--reltio-spacing-lg, 24px);
+}
+
+.listItem {
+	margin: var(--reltio-mdx-renderer-list-item-spacing) 0;
+}
+
+/* Code */
+.code {
+	font-family: var(--reltio-mdx-renderer-code-font-family);
+	font-size: var(--reltio-mdx-renderer-code-font-size);
+	background-color: var(--reltio-mdx-renderer-color-code-background);
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+}
+
+.codeBlock {
+	font-family: var(--reltio-mdx-renderer-code-font-family);
+	font-size: var(--reltio-mdx-renderer-code-font-size);
+}
+
+.pre {
+	background-color: var(--reltio-mdx-renderer-color-code-background);
+	padding: var(--reltio-mdx-renderer-code-block-padding);
+	border-radius: 4px;
+	overflow-x: auto;
+	margin: var(--reltio-mdx-renderer-paragraph-margin) 0;
+}
+
+/* Blockquotes */
+.blockquote {
+	margin: var(--reltio-mdx-renderer-paragraph-margin) 0;
+	padding-left: var(--reltio-mdx-renderer-blockquote-padding);
+	border-left: 4px solid var(--reltio-mdx-renderer-color-blockquote-border);
+	color: var(--reltio-mdx-renderer-color-text);
+	opacity: 0.8;
+}
+
+/* Links */
+.link {
+	color: var(--reltio-mdx-renderer-color-link);
+	text-decoration: underline;
+	text-decoration-color: currentColor;
+	text-underline-offset: 2px;
+}
+
+.link:hover {
+	text-decoration-thickness: 2px;
+}
+
+/* Emphasis */
+.strong {
+	font-weight: 600;
+}
+
+.em {
+	font-style: italic;
+}
+
+/* Tables */
+.table {
+	border-collapse: collapse;
+	margin: var(--reltio-mdx-renderer-paragraph-margin) 0;
+	width: 100%;
+}
+
+.thead {
+	border-bottom: 2px solid var(--reltio-mdx-renderer-color-table-border);
+}
+
+.tbody {
+	border-bottom: 1px solid var(--reltio-mdx-renderer-color-table-border);
+}
+
+.tr {
+	border-bottom: 1px solid var(--reltio-mdx-renderer-color-table-border);
+}
+
+.th {
+	padding: var(--reltio-mdx-renderer-table-cell-padding);
+	text-align: left;
+	font-weight: 600;
+}
+
+.td {
+	padding: var(--reltio-mdx-renderer-table-cell-padding);
+}
+
+/* Strikethrough */
+.del {
+	text-decoration: line-through;
+	opacity: 0.7;
+}
+
+/* Checkboxes */
+.checkbox {
+	margin-right: var(--reltio-spacing-xs, 8px);
+	cursor: not-allowed;
+}
+
+/* Raw HTML elements */
+.br {
+	/* Line break - no additional styling needed */
+}
+
+.b {
+	font-weight: 600;
+}
+
+.sup {
+	font-size: 0.75em;
+	vertical-align: super;
+}
+
+.sub {
+	font-size: 0.75em;
+	vertical-align: sub;
+}
+
+.i {
+	font-style: italic;
+}
+
+/* Error / fallback state */
+.error {
+	font-family: var(--reltio-mdx-renderer-code-font-family);
+	white-space: pre-wrap;
+	word-break: break-word;
+	color: var(--reltio-mdx-renderer-color-text);
+}
