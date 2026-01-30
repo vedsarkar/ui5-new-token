@@ -2,46 +2,79 @@
 
 ## Purpose
 
-The AssistantMessage component displays assistant-authored messages in a chat interface with support for both Markdown and MDX formatting, along with error states. It provides consistent styling and layout for assistant messages, distinguishing them visually from user messages.
+The AssistantMessage component displays assistant-authored messages in a chat interface with support for both Markdown and MDX formatting, and error states. It provides consistent styling and layout for assistant messages and distinguishes them visually from user messages. Content type (mdx vs markdown) is determined by a dedicated helper; the component uses that result to choose MarkdownRenderer or MDXRenderer.
 
 ## ADDED Requirements
 
+### Requirement: Content Type Helper
+
+The project SHALL provide a helper that determines whether a given content string should be rendered as MDX or Markdown. The AssistantMessage component SHALL use this helper to select the correct renderer.
+
+**Responsibility:** Decide content type only. The helper does not render content, parse JSX, or touch the DOM. It returns a single value: `"mdx"` or `"markdown"`.
+
+**Input:**
+- `content`: string (the raw message content, which may be empty)
+- Optional override (e.g. prop from caller): when provided, the helper SHALL return the override and SHALL NOT infer from content
+
+**Output:** One of `"mdx"` or `"markdown"`.
+
+**Decision rules:**
+- IF an explicit override is provided (e.g. "use markdown" or "use mdx"), THEN return that override.
+- ELSE IF the content string indicates MDX (e.g. contains JSX-like patterns such as `<Identifier` or `</Identifier>` where the identifier suggests a component or tag), THEN return `"mdx"`.
+- ELSE return `"markdown"`.
+
+Edge cases:
+- Empty, null, or whitespace-only content: helper MAY return `"markdown"` (or a value that causes the component to render nothing; exact behavior is an implementation choice).
+- Malformed or ambiguous content: helper SHALL still return either `"mdx"` or `"markdown"` (no third state); implementation MAY default to `"markdown"` when uncertain.
+
+#### Scenario: Helper returns mdx when content suggests JSX
+- **WHEN** content contains JSX-like patterns (e.g. `<Button>`, `</div>`)
+- **AND** no override is provided
+- **THEN** helper returns `"mdx"`
+
+#### Scenario: Helper returns markdown when content has no JSX
+- **WHEN** content contains only Markdown and/or plain text (no JSX-like patterns)
+- **AND** no override is provided
+- **THEN** helper returns `"markdown"`
+
+#### Scenario: Override takes precedence
+- **WHEN** caller provides an explicit content type override
+- **THEN** helper returns the override
+- **AND** content string is not used to infer type
+
+#### Scenario: AssistantMessage depends on helper
+- **WHEN** AssistantMessage has content to render
+- **THEN** component calls the content type helper (with content and any override prop)
+- **AND** component uses the helper result to choose MarkdownRenderer (for `"markdown"`) or MDXRenderer (for `"mdx"`)
+- **AND** component does not duplicate the helper’s decision logic
+
 ### Requirement: Message Display
 
-The AssistantMessage component SHALL display assistant message content with proper formatting and styling, supporting both Markdown and MDX content types.
+The AssistantMessage component SHALL display assistant message content with proper formatting and styling, supporting both Markdown and MDX content types by delegating to the appropriate renderer based on the content type helper.
 
 #### Scenario: Plain text message displays correctly
 - **WHEN** message content contains plain text
-- **THEN** text is displayed in assistant message container
+- **THEN** text is displayed in the assistant message container
 - **AND** text is properly formatted and readable
-- **AND** styling distinguishes message as assistant-authored
+- **AND** styling distinguishes the message as assistant-authored
 
 #### Scenario: Markdown content renders correctly
-- **WHEN** message content contains Markdown syntax
-- **THEN** Markdown is rendered using MarkdownRenderer component
-- **AND** all Markdown features work correctly (headers, lists, links, code, etc.)
-- **AND** GitHub Flavored Markdown (GFM) features work correctly (tables, task lists, strikethrough, autolinks)
-- **AND** raw HTML embedded in Markdown renders correctly (e.g., `<br />`, `<b>`, `<sup>`, `<sub>`)
-- **AND** rendered content is properly styled within assistant message container
+- **WHEN** content type helper returns `"markdown"` for the message content
+- **THEN** MarkdownRenderer is used
+- **AND** Markdown features work (headers, lists, links, code, etc.)
+- **AND** GFM and raw HTML in Markdown are supported per MarkdownRenderer
+- **AND** rendered content is styled within the assistant message container
 
 #### Scenario: MDX content renders correctly
-- **WHEN** message content contains MDX syntax (Markdown with JSX)
-- **THEN** MDX is rendered using MDXRenderer component
+- **WHEN** content type helper returns `"mdx"` for the message content
+- **THEN** MDXRenderer is used
 - **AND** React components embedded in MDX are rendered and functional
-- **AND** all Markdown features work correctly within MDX
-- **AND** GitHub Flavored Markdown (GFM) features work correctly within MDX (tables, task lists, strikethrough, autolinks)
-- **AND** raw HTML embedded in MDX renders correctly (e.g., `<br />`, `<b>`, `<sup>`, `<sub>`)
-- **AND** rendered content is properly styled within assistant message container
-
-#### Scenario: Content type detection
-- **WHEN** message content is provided
-- **THEN** component detects whether content is MDX (contains JSX) or Markdown
-- **AND** appropriate renderer (MDXRenderer or MarkdownRenderer) is used
-- **AND** detection is automatic or configurable via prop
+- **AND** Markdown and GFM work within MDX per MDXRenderer
+- **AND** rendered content is styled within the assistant message container
 
 #### Scenario: Empty content handled
 - **WHEN** message content is empty string, null, or undefined
-- **THEN** component renders empty container or placeholder
+- **THEN** component renders empty container or no content area
 - **AND** no errors are thrown
 - **AND** component remains stable
 
@@ -52,245 +85,87 @@ The AssistantMessage component SHALL support an error state that displays an err
 #### Scenario: Error state displays message using ErrorMessage
 - **WHEN** error prop is true
 - **THEN** ErrorMessage component is rendered
-- **AND** error message is displayed via ErrorMessage component
-- **AND** error message is visually distinct and clearly identifiable as an error
-- **AND** ErrorMessage provides consistent styling and accessibility
+- **AND** error message is displayed via ErrorMessage
+- **AND** error is visually distinct and ErrorMessage provides consistent styling and accessibility
 
 #### Scenario: Custom error message via ErrorMessage
-- **WHEN** error prop is true
-- **AND** errorMessage prop is provided
-- **THEN** ErrorMessage component is rendered with custom message prop
-- **AND** custom error message is displayed
-- **WHEN** error prop is true
-- **AND** errorMessage prop is not provided
-- **THEN** ErrorMessage component is rendered without message prop
-- **AND** ErrorMessage displays default error message
-
-#### Scenario: Error state accessibility via ErrorMessage
-- **WHEN** error prop is true
-- **THEN** ErrorMessage component provides role="alert" and aria-live attributes
-- **AND** error message is announced to screen readers
-- **AND** error state is keyboard accessible
-- **AND** ErrorMessage handles all accessibility requirements
-
-#### Scenario: Error state styling via ErrorMessage
-- **WHEN** error prop is true
-- **THEN** ErrorMessage component provides error styling (error colors, icons)
-- **AND** error styling is consistent with ErrorMessage component
-- **AND** error styling is customizable via ErrorMessage CSS variables
-- **AND** error state does not interfere with message layout
+- **WHEN** error prop is true and errorMessage prop is provided
+- **THEN** ErrorMessage is rendered with that message
+- **WHEN** error prop is true and errorMessage is not provided
+- **THEN** ErrorMessage is rendered with its default message
 
 #### Scenario: Error state with content
-- **WHEN** error prop is true
-- **AND** content is also provided
-- **THEN** ErrorMessage component is displayed
-- **AND** content may be hidden or displayed alongside error (implementation decision)
+- **WHEN** error prop is true and content is also provided
+- **THEN** ErrorMessage is displayed
+- **AND** content may be hidden or shown alongside error (implementation decision)
 
 ### Requirement: Renderer Integration
 
-The AssistantMessage component SHALL use MarkdownRenderer and MDXRenderer components appropriately based on content type, ensuring proper error handling and styling integration.
+The AssistantMessage component SHALL use MarkdownRenderer and MDXRenderer based on the content type helper result. It SHALL NOT implement its own content-type detection logic; that remains the helper’s responsibility.
 
-#### Scenario: Markdown content uses MarkdownRenderer
-- **WHEN** message content contains Markdown (no JSX)
-- **THEN** content is passed to MarkdownRenderer component
-- **AND** MarkdownRenderer handles Markdown parsing and rendering
-- **AND** MarkdownRenderer error handling applies
+#### Scenario: Markdown path uses MarkdownRenderer
+- **WHEN** helper returns `"markdown"`
+- **THEN** content is passed to MarkdownRenderer
+- **AND** MarkdownRenderer handles parsing, rendering, and its own error handling
 
-#### Scenario: MDX content uses MDXRenderer
-- **WHEN** message content contains MDX (with JSX)
-- **THEN** content is passed to MDXRenderer component
-- **AND** MDXRenderer handles MDX parsing and rendering
-- **AND** MDXRenderer error handling applies
+#### Scenario: MDX path uses MDXRenderer
+- **WHEN** helper returns `"mdx"`
+- **THEN** content is passed to MDXRenderer
+- **AND** MDXRenderer handles parsing, rendering, and its own error handling
 - **AND** embedded React components are rendered
 
-#### Scenario: Styling integration
-- **WHEN** MarkdownRenderer or MDXRenderer renders content
-- **THEN** rendered content uses appropriate styling within assistant message context
-- **AND** CSS variables cascade correctly
-- **AND** visual consistency is maintained
-
-#### Scenario: Invalid content handled
-- **WHEN** message content contains invalid Markdown or MDX
-- **THEN** appropriate renderer handles error gracefully
-- **AND** assistant message still displays (with fallback content if needed)
-- **AND** parent component is not affected
+#### Scenario: Invalid content handled by renderers
+- **WHEN** message content is invalid Markdown or MDX
+- **THEN** the chosen renderer handles the error gracefully (per its spec)
+- **AND** AssistantMessage remains stable and parent is not affected
 
 ### Requirement: Visual Design
 
-The AssistantMessage component SHALL have distinct visual styling that clearly identifies messages as assistant-authored, with appropriate layout and spacing.
+The AssistantMessage component SHALL have distinct visual styling that identifies messages as assistant-authored, with appropriate layout and spacing.
 
 #### Scenario: Assistant message styling
 - **WHEN** AssistantMessage is rendered
-- **THEN** message has distinct background color or styling
+- **THEN** message has distinct background and/or styling
 - **AND** message is visually distinct from user messages
 - **AND** message has appropriate padding and border-radius
-- **AND** message aligns appropriately (typically left-aligned or opposite of user messages)
 
 #### Scenario: Content area styling
-- **WHEN** AssistantMessage is rendered
+- **WHEN** AssistantMessage is rendered with content
 - **THEN** content area has proper spacing
 - **AND** text is readable with appropriate contrast
-- **AND** Markdown and MDX elements are properly styled
+- **AND** Markdown/MDX elements are styled (via renderers and cascade)
 
-### Requirement: CSS Custom Properties Customization
+### Requirement: CSS Custom Properties
 
-The AssistantMessage component SHALL define all design tokens as CSS custom properties on the root element, enabling external customization via inline styles or CSS overrides.
+The AssistantMessage component SHALL define design tokens as CSS custom properties on the root element, with `--reltio-assistant-message-` prefix and fallback values. External customization via style prop or overrides SHALL be supported (e.g. `--reltio-assistant-message-background`). Error message colors and spacing are provided by the ErrorMessage component.
 
-#### Scenario: All CSS variables defined on root
-- **WHEN** AssistantMessage component is rendered
-- **THEN** all CSS custom properties are defined on .root class
-- **AND** variables use --reltio-assistant-message- prefix
-- **AND** all variables include fallback values
-
-#### Scenario: External customization via inline styles
-- **WHEN** developer provides style prop with CSS variables
-- **THEN** AssistantMessage applies custom values
-- **AND** maintains all other styling and behavior
-- **AND** example: `<AssistantMessage style={{ "--reltio-assistant-message-background": "#f5f5f5" }}>`
-
-#### Scenario: CSS variables for layout
+#### Scenario: CSS variables on root
 - **WHEN** AssistantMessage is rendered
-- **THEN** padding, margin, border-radius defined
-- **AND** max-width defined for message container
-- **AND** alignment properties defined
-- **AND** all with appropriate fallback values
+- **THEN** design tokens are defined on the root element with `--reltio-assistant-message-` prefix
+- **AND** developer may override via style prop (e.g. `--reltio-assistant-message-background`)
 
-#### Scenario: CSS variables for colors
-- **WHEN** AssistantMessage is rendered
-- **THEN** background color defined
-- **AND** text color defined
-- **AND** border color defined (if applicable)
-- **AND** all with appropriate fallback values
-- **NOTE:** Error message colors are provided by ErrorMessage component CSS variables
+### Requirement: className and TypeScript
 
-#### Scenario: CSS variables for spacing
-- **WHEN** AssistantMessage is rendered
-- **THEN** content padding defined
-- **AND** all with appropriate fallback values
-- **NOTE:** Error message spacing is provided by ErrorMessage component CSS variables
+The AssistantMessage component SHALL use the classNames utility for all className composition and SHALL be fully typed in TypeScript (strict mode). Types SHALL live in AssistantMessage.types.ts using the `type` keyword. AssistantMessageProps and any content-type-related types SHALL be exported. Props SHALL include content, error, errorMessage, optional content-type override, optional meta, className, style, and rest div props as appropriate.
 
-### Requirement: className Utility Usage
-
-The AssistantMessage component SHALL use the classNames utility from utils/classNames.ts for all className composition, providing stable base classes for external customization.
-
-#### Scenario: classNames utility composes CSS modules
-- **WHEN** AssistantMessage is rendered
-- **THEN** classNames utility combines all applicable CSS module classes
-- **AND** automatically adds base classes for BEM-like naming
-- **AND** filters out falsy values
-
-#### Scenario: Custom className support
-- **WHEN** developer provides className prop
-- **THEN** custom classes are added to root element
-- **AND** CSS modules classes are preserved
-- **AND** no class name conflicts occur
-
-### Requirement: TypeScript Type Safety
-
-The AssistantMessage component SHALL be fully typed with TypeScript using strict mode, with all types defined in a separate AssistantMessage.types.ts file using the `type` keyword (not `interface`).
-
-#### Scenario: Component props fully typed
-- **WHEN** developer uses AssistantMessage component
-- **THEN** all props have proper TypeScript types
-- **AND** TypeScript provides autocomplete
-- **AND** invalid prop combinations are caught at compile time
-
-#### Scenario: Content prop type
-- **WHEN** content prop is provided
-- **THEN** content accepts string type
-- **AND** null and undefined are handled appropriately
-- **AND** type is clearly documented
-
-#### Scenario: State prop types
-- **WHEN** error prop is provided
-- **THEN** error accepts boolean type
-- **AND** errorMessage accepts string type (optional)
-- **AND** types are clearly documented
-
-#### Scenario: Metadata prop types
-- **WHEN** optional metadata props are provided
-- **THEN** all metadata props are properly typed
-- **AND** optional props are clearly marked as optional
-
-#### Scenario: Types exported alongside component
-- **WHEN** developer imports AssistantMessage
-- **THEN** AssistantMessageProps type can be imported
-- **AND** all types are properly documented
+#### Scenario: classNames and types
+- **WHEN** developer uses AssistantMessage
+- **THEN** root element classNames are composed via classNames utility
+- **AND** AssistantMessageProps and content-type types are exported and usable
 
 ### Requirement: Storybook Documentation
 
-The AssistantMessage component SHALL have comprehensive Storybook stories demonstrating message display, Markdown/MDX rendering, error states, and edge cases, with each story showing only ONE variant.
+The AssistantMessage component SHALL have Storybook stories that demonstrate one variant per story: plain text, Markdown content, MDX content, error state (default and custom message), empty content, and optional features (e.g. meta, content-type override, CSS variable customization). Stories SHALL be consistent with project conventions (e.g. one variant per story, a11y where applicable).
 
-#### Scenario: Stories for message display
-- **WHEN** viewing Storybook
-- **THEN** separate stories exist for plain text, Markdown, MDX content
-- **AND** each story shows single variant
-- **AND** stories are interactive and functional
+#### Scenario: One variant per story
+- **WHEN** viewing AssistantMessage in Storybook
+- **THEN** each story shows a single variant (plain text, Markdown, MDX, error, empty, override, meta, customization)
+- **AND** stories follow project conventions
 
-#### Scenario: Stories for content types
-- **WHEN** viewing Storybook
-- **THEN** stories exist for Markdown features (headers, lists, code blocks, links)
-- **AND** stories exist for GFM features (tables, task lists, strikethrough, autolinks)
-- **AND** stories exist for raw HTML rendering in Markdown (br, b, sup, sub, etc.)
-- **AND** stories exist for MDX with embedded React components
-- **AND** each story demonstrates specific content type
+## Intended Structure (Design)
 
-#### Scenario: Stories for error state
-- **WHEN** viewing Storybook
-- **THEN** stories exist for error state with default message (using ErrorMessage component)
-- **AND** stories exist for error state with custom message (using ErrorMessage component)
-- **AND** error handling behavior is clearly demonstrated
-- **AND** stories show ErrorMessage component integration
+- **AssistantMessage:** `AssistantMessage.tsx`, `AssistantMessage.types.ts`, `AssistantMessage.module.css`, `AssistantMessage.stories.tsx`, `index.ts`.
+- **Content type helper:** Implemented as a function (or small module) with defined input, output, and decision rules above. Location (e.g. utils, or next to the component) is an implementation choice.
+- **Dependencies:** React, TypeScript, CSS Modules, classNames utility, MarkdownRenderer, MDXRenderer, ErrorMessage.
 
-#### Scenario: Stories for error handling
-- **WHEN** viewing Storybook
-- **THEN** stories exist for invalid Markdown/MDX
-- **AND** stories exist for empty/null content
-- **AND** error handling behavior is clearly demonstrated
-
-#### Scenario: Stories for optional features
-- **WHEN** viewing Storybook
-- **THEN** stories exist for messages without optional features
-
-#### Scenario: Stories for accessibility features
-- **WHEN** viewing Storybook
-- **THEN** stories demonstrate semantic HTML structure
-- **AND** a11y addon shows no violations
-- **AND** keyboard navigation works correctly
-- **AND** error states are accessible
-
-#### Scenario: Stories for customization
-- **WHEN** viewing Storybook
-- **THEN** stories demonstrate CSS variable customization
-- **AND** stories show className prop usage
-
-## Technical Implementation
-
-### Component Structure
-- `AssistantMessage.tsx` - Component implementation
-- `AssistantMessage.types.ts` - TypeScript type definitions (using `type`, not `interface`)
-- `AssistantMessage.module.css` - CSS Modules styles with all CSS variables on .root
-- `AssistantMessage.stories.tsx` - Storybook stories (one variant per story)
-- `index.ts` - Public exports
-
-### Dependencies
-- React 19
-- TypeScript (strict mode)
-- CSS Modules
-- classNames utility from utils/classNames.ts
-- MarkdownRenderer component (from add-markdown-renderer proposal)
-- MDXRenderer component (from add-mdx-renderer proposal)
-- ErrorMessage component (from add-error-message proposal)
-
-### Browser Support
-- Modern evergreen browsers (Chrome, Firefox, Safari, Edge)
-- ES2020+ JavaScript features
-- CSS custom properties required (no IE11)
-
-### Accessibility Standards
-- WCAG 2.1 Level AA compliant
-- Semantic HTML structure
-- Screen reader compatible
-- Proper ARIA attributes (aria-busy, aria-label, role="alert", aria-live)
-- Keyboard navigation support
-- Error states are accessible
+No implementation is implied beyond what is specified; the above describes the intended design and scope.
