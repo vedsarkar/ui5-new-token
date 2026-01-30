@@ -141,10 +141,10 @@ The MarkdownRenderer component SHALL handle invalid or malformed Markdown input 
 - **AND** component remains stable
 
 #### Scenario: Error boundary prevents crashes
-- **WHEN** Markdown parsing throws an unexpected error
-- **THEN** component catches the error
-- **AND** displays content as plain text or a safe fallback
-- **AND** parent component is not affected
+- **WHEN** a descendant (e.g. ReactMarkdown or custom components) throws during render
+- **THEN** the design system ErrorBoundary catches the error
+- **AND** fallback (raw content in pre) is displayed
+- **AND** parent component is not affected. Sync errors are caught by try-catch and show the same fallback.
 
 ### Requirement: CSS Custom Properties Customization
 
@@ -299,9 +299,9 @@ The MarkdownRenderer component SHALL have comprehensive Storybook stories demons
 - TypeScript (strict mode)
 - CSS Modules
 - classNames utility from utils/classNames.ts
-- react-markdown (already in package.json dependencies)
-- Third-party HTML sanitizer library (e.g., DOMPurify, sanitize-html) - to be selected during implementation
-- MarkdownDetails component (from add-markdown-details change) - for rendering details/summary blocks
+- react-markdown with remark-gfm, rehype-raw, rehype-sanitize
+- ErrorBoundary component from @/components/ErrorBoundary (wraps ReactMarkdown subtree)
+- createBaseMarkdownComponents from MarkdownComponents (includes MarkdownDetails for details/summary)
 
 ### Browser Support
 - Modern evergreen browsers (Chrome, Firefox, Safari, Edge)

@@ -13,7 +13,7 @@ The MarkdownRenderer component needs to render GitHub Flavored Markdown (GFM) `<
 - **ADDED** `MarkdownDetails` component for rendering Markdown `<details>` blocks with enhanced UI
 - **ADDED** Internal state management for open/closed state
 - **ADDED** Summary extraction logic (extracts `<summary>` node from children or uses fallback)
-- **ADDED** Icon support for expand/collapse indicators (using ExpandLess/ExpandMore icons)
+- **ADDED** Icon support: CodeBrackets icon to the left of the summary; ExpandLess/ExpandMore for expand/collapse on the right
 - **ADDED** TypeScript types following project conventions (MarkdownDetails.types.ts)
 - **ADDED** CSS Modules styling with CSS custom properties
 - **ADDED** Comprehensive Storybook stories demonstrating all use cases
@@ -27,4 +27,4 @@ The MarkdownRenderer component needs to render GitHub Flavored Markdown (GFM) `<
   - `components/MarkdownRenderer/` - will use MarkdownDetails in tag-to-component mapping
 - Breaking changes: None
 - Migration: N/A (new component)
-- Dependencies: Uses existing icon library (ExpandLess, ExpandMore)
+- Dependencies: Uses existing icon library (CodeBrackets, ExpandLess, ExpandMore)

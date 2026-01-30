@@ -51,19 +51,24 @@ The MarkdownDetails component SHALL extract the `<summary>` node from its childr
 
 ### Requirement: Icon Indicators
 
-The MarkdownDetails component SHALL display icons to indicate the expandable state, using ExpandLess and ExpandMore icons from the icon library.
+The MarkdownDetails component SHALL display icons: a CodeBrackets icon to the left of the summary text, and ExpandLess/ExpandMore icons on the right to indicate the expandable state.
 
-#### Scenario: Icon displays based on state
+#### Scenario: Leading icon (left of summary)
+- **WHEN** MarkdownDetails component is rendered
+- **THEN** a CodeBrackets icon is displayed to the left of the summary text
+- **AND** the leading icon uses the same size and color conventions as the expand icon
+- **AND** the leading icon is decorative (aria-hidden) so screen readers announce only the summary text
+
+#### Scenario: Expand/collapse icon displays based on state
 - **WHEN** details block is closed
-- **THEN** ExpandMore icon is displayed
-- **AND** icon is positioned appropriately (typically before or after summary text)
+- **THEN** ExpandMore icon is displayed on the right
 - **WHEN** details block is open
-- **THEN** ExpandLess icon is displayed
+- **THEN** ExpandLess icon is displayed on the right
 - **AND** icon transitions smoothly between states
 
-#### Scenario: Icon animation on state change
+#### Scenario: Expand icon animation on state change
 - **WHEN** details block state changes from closed to open (or vice versa)
-- **THEN** icon transitions smoothly (rotation or fade animation)
+- **THEN** the expand/collapse icon (right) transitions smoothly
 - **AND** animation duration is appropriate (typically 200-300ms)
 - **AND** animation does not interfere with accessibility
 
