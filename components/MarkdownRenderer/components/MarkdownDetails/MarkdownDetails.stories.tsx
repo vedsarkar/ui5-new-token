@@ -13,7 +13,9 @@ export const Default = meta.story({
 	args: {
 		children: [
 			<p key="1">This is the default content inside the details block.</p>,
-			<p key="2">When no summary is provided, it uses "Details" as the fallback.</p>,
+			<p key="2">
+				When no summary is provided, it uses "Details" as the fallback.
+			</p>,
 		],
 	},
 });
@@ -53,8 +55,8 @@ export const InitiallyOpen = meta.story({
 		children: [
 			<summary key="summary">This details block is open by default</summary>,
 			<p key="1">
-				You can see this content immediately because the details element is set to
-				open.
+				You can see this content immediately because the details element is set
+				to open.
 			</p>,
 			<p key="2">You can still collapse it by clicking the summary.</p>,
 		],
@@ -129,5 +131,38 @@ export const EmptyContent = meta.story({
 export const MinimalContent = meta.story({
 	args: {
 		children: <p>Minimal content without summary</p>,
+	},
+});
+
+// Content with inline code
+export const WithInlineCode = meta.story({
+	args: {
+		children: [
+			<summary key="summary">API usage</summary>,
+			<p key="p1">
+				Use the <code key="c1">fetch()</code> method to retrieve data from the
+				endpoint. Set <code key="c2">Content-Type: application/json</code> in
+				the request headers.
+			</p>,
+			<p key="p2">
+				Example: <code key="c3">const response = await fetch(url);</code>
+			</p>,
+		],
+	},
+});
+
+// Content with pre/code block
+export const WithPreBlock = meta.story({
+	args: {
+		children: [
+			<summary key="summary">Example script</summary>,
+			<pre key="pre">
+				<code>{`function greet(name) {
+  return \`Hello, \${name}!\`;
+}
+console.log(greet("World"));`}</code>
+			</pre>,
+			<p key="p">Run the script with Node.js to see the output.</p>,
+		],
 	},
 });

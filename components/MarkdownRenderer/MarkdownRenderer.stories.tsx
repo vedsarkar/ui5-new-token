@@ -63,7 +63,8 @@ External links open in a new tab with proper security attributes.`,
 
 export const Emphasis = meta.story({
 	args: {
-		content: "This is **bold text** and this is *italic text*.\n\nYou can also use __bold__ and _italic_ syntax.\n\n_**Bold**_ and __*italic*__ can be combined.",
+		content:
+			"This is **bold text** and this is *italic text*.\n\nYou can also use __bold__ and _italic_ syntax.\n\n_**Bold**_ and __*italic*__ can be combined.",
 	},
 });
 

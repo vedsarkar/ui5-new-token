@@ -1,13 +1,13 @@
 import { evaluateSync } from "@mdx-js/mdx";
+import type { MDXComponents } from "mdx/types.js";
 import * as runtime from "react/jsx-runtime";
 import remarkGfm from "remark-gfm";
-import type { MDXComponents } from "mdx/types.js";
 import type { PluggableList } from "unified";
 import { Button } from "@/components/Button";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { createBaseMarkdownComponents } from "@/components/MarkdownRenderer/components/MarkdownComponents";
-import type { ComponentWhitelist } from "@/components/MarkdownRenderer/components/MarkdownComponents/markdownComponents.types";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
+import { createBaseMarkdownComponents } from "@/components/MarkdownRenderer/components/MarkdownComponents/markdownComponents";
+import type { ComponentWhitelist } from "@/components/MarkdownRenderer/components/MarkdownComponents/markdownComponents.types";
 import { classNames } from "@/utils/classNames";
 import styles from "./MDXRenderer.module.css";
 import type { MDXRendererProps } from "./MDXRenderer.types";
