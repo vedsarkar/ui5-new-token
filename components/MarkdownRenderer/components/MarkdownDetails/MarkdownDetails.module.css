@@ -7,7 +7,11 @@
 	border-radius: var(--reltio-markdown-details-border-radius, 12px);
 	overflow: hidden;
 	padding: 0;
-	font-family: var(--reltio-markdown-details-font-family, "Roboto Flex", sans-serif);
+	font-family: var(
+		--reltio-markdown-details-font-family,
+		"Roboto Flex",
+		sans-serif
+	);
 	font-size: var(--reltio-markdown-details-font-size, 14px);
 }
 
@@ -29,10 +33,7 @@
 }
 
 .summary:hover {
-	background-color: var(
-		--reltio-markdown-details-summary-hover-bg,
-		#b2b2ff4d
-	);
+	background-color: var(--reltio-markdown-details-summary-hover-bg, #b2b2ff4d);
 }
 
 .summary::-webkit-details-marker {
@@ -82,7 +83,7 @@
 	line-height: var(--reltio-markdown-details-content-line-height, 1.71);
 }
 
-.content :global(pre) {
+.content pre {
 	margin: 0;
 	background-color: var(
 		--reltio-markdown-details-code-background-color,
@@ -92,7 +93,7 @@
 	padding: var(--reltio-markdown-details-content-pre-padding, 16px);
 }
 
-.content :global(code) {
+.content code {
 	color: var(--reltio-markdown-details-content-code-color, #0e0e25);
 }
 

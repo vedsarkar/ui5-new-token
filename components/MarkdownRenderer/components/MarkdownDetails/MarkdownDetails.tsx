@@ -1,10 +1,13 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { ExpandLess } from "@/icons/ExpandLess";
-import { ExpandMore } from "@/icons/ExpandMore";
-import { CodeBrackets } from "@/icons/CodeBrackets";
-import { classNames } from "@/utils/classNames";
-import styles from "./MarkdownDetails.module.css";
-import type { MarkdownDetailsProps } from "./MarkdownDetails.types";
+import React, {useEffect, useState} from 'react';
+
+import {CodeBrackets} from '@/icons/CodeBrackets';
+import {ExpandLess} from '@/icons/ExpandLess';
+import {ExpandMore} from '@/icons/ExpandMore';
+import {classNames} from '@/utils/classNames';
+
+import styles from './MarkdownDetails.module.css';
+
+import type {MarkdownDetailsProps} from "./MarkdownDetails.types";
 
 /**
  * MarkdownDetails Component
@@ -27,17 +30,17 @@ export const MarkdownDetails = ({
 		setIsOpen(initialOpen);
 	}, [initialOpen]);
 
-  // Extract summary from children
-  let summary: React.ReactNode = 'Details'
-  const contentChildren: React.ReactNode[] = []
+	// Extract summary from children
+	let summary: React.ReactNode = "Details";
+	const contentChildren: React.ReactNode[] = [];
 
-  React.Children.forEach(children, (child) => {
-    if (React.isValidElement(child) && child.type === 'summary') {
-      summary = (child.props as { children?: React.ReactNode }).children
-    } else if (child) {
-      contentChildren.push(child)
-    }
-  })
+	React.Children.forEach(children, (child) => {
+		if (React.isValidElement(child) && child.type === "summary") {
+			summary = (child.props as {children?: React.ReactNode}).children;
+		} else if (child) {
+			contentChildren.push(child);
+		}
+	});
 
 	// Handle toggle
 	const handleToggle = (event: React.SyntheticEvent<HTMLDetailsElement>) => {
@@ -56,7 +59,7 @@ export const MarkdownDetails = ({
 			onToggle={handleToggle}
 			{...rest}
 		>
-			<summary className={styles.summary} aria-expanded={isOpen}>
+			<summary className={styles.summary}>
 				<span className={styles.icon} aria-hidden="true">
 					<CodeBrackets size="small" aria-hidden="true" />
 				</span>

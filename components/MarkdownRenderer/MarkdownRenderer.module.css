@@ -4,12 +4,16 @@
 	word-break: break-word;
 }
 
- .root {
+.root {
 	word-wrap: break-word;
 	line-height: var(--reltio-markdown-components-line-height, 1.5);
-	font-family: var(--reltio-markdown-components-font-family, "Roboto Flex", sans-serif);
+	font-family: var(
+		--reltio-markdown-components-font-family,
+		"Roboto Flex",
+		sans-serif
+	);
 	font-size: var(--reltio-markdown-components-font-size, 14px);
 	font-weight: var(--reltio-markdown-components-font-weight, 400);
 	letter-spacing: var(--reltio-markdown-components-letter-spacing, 0.15px);
 	color: var(--reltio-markdown-components-color-text, #0e0e25);
-} 
+}

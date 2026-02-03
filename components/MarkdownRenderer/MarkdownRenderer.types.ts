@@ -2,7 +2,7 @@ import type React from "react";
 
 /**
  * CSS custom properties for markdown components.
- */export type MarkdownComponentsCSSVariables = {
+ */ export type MarkdownComponentsCSSVariables = {
 	/** Base typography (root / MarkdownRenderer) */
 	"--reltio-markdown-components-font-family"?: string;
 	"--reltio-markdown-components-font-size"?: string;
@@ -42,7 +42,6 @@ import type React from "react";
 	"--reltio-markdown-components-blockquote-padding-left"?: string;
 	"--reltio-markdown-components-blockquote-border-width"?: string;
 };
-
 
 /**
  * Props for the MarkdownRenderer component

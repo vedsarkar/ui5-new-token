@@ -1,11 +1,14 @@
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
+import remarkGfm from "remark-gfm";
+
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { createBaseMarkdownComponents } from "@/components/MarkdownRenderer/components/MarkdownComponents/markdownComponents";
 import { classNames } from "@/utils/classNames";
+
 import styles from "./MarkdownRenderer.module.css";
+
 import type { MarkdownRendererProps } from "./MarkdownRenderer.types";
 
 /**
@@ -69,7 +72,7 @@ export const MarkdownRenderer = ({
 				</ErrorBoundary>
 			</div>
 		);
-	} catch (error) {
+	} catch {
 		// Graceful error handling - render content as plain text
 		return (
 			<div className={composedClassName} style={style}>
