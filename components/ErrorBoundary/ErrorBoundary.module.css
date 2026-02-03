@@ -1,16 +1,11 @@
-/* CSS Custom Properties - All defined on .root */
 .root {
-	--reltio-error-boundary-min-height: var(--reltio-spacing-md, 24px);
-	--reltio-error-boundary-padding: var(--reltio-spacing-md, 16px);
-	--reltio-error-boundary-background: var(--reltio-color-surface, #ffffff);
-	--reltio-error-boundary-border-color: var(--reltio-color-border, #e0e0e0);
-	--reltio-error-boundary-border-width: 1px;
-	--reltio-error-boundary-border-radius: var(--reltio-border-radius-md, 4px);
+	min-height: 24px;
+	padding: 16px;
+	background: transparent;
+	border-radius: 4px;
+}
 
-	min-height: var(--reltio-error-boundary-min-height);
-	padding: var(--reltio-error-boundary-padding);
-	background: var(--reltio-error-boundary-background);
-	border: var(--reltio-error-boundary-border-width) solid
-		var(--reltio-error-boundary-border-color);
-	border-radius: var(--reltio-error-boundary-border-radius);
+.error {
+	background-color: #ffffff;
+	border: 1px solid #e0e0e0;
 }

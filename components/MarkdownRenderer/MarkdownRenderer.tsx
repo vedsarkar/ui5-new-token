@@ -3,7 +3,7 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { createBaseMarkdownComponents } from "@/components/MarkdownComponents";
+import { createBaseMarkdownComponents } from "@/components/MarkdownRenderer/components/MarkdownComponents/markdownComponents";
 import { classNames } from "@/utils/classNames";
 import styles from "./MarkdownRenderer.module.css";
 import type { MarkdownRendererProps } from "./MarkdownRenderer.types";
@@ -25,7 +25,7 @@ export const MarkdownRenderer = ({
 		return null;
 	}
 
-	const components = createBaseMarkdownComponents(styles);
+	const components = createBaseMarkdownComponents();
 
 	// Compose className using classNames utility
 	const composedClassName = classNames(styles.root, className);

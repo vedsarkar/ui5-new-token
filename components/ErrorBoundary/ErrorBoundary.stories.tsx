@@ -1,6 +1,6 @@
 import type React from "react";
 import preview from "@/.storybook/preview";
-import { ErrorBoundary } from "./ErrorBoundary";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const meta = preview.meta({
 	component: ErrorBoundary,

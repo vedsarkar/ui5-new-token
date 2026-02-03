@@ -1,8 +1,9 @@
 import React from "react";
 import { classNames } from "@/utils/classNames";
-import { MarkdownDetails } from "@/components/MarkdownDetails";
+import { MarkdownDetails } from "@/components/MarkdownRenderer/components/MarkdownDetails";
 import type { Components } from "react-markdown";
 import type { ComponentWhitelist } from "./markdownComponents.types";
+import styles from "./markdownComponents.module.css";
 
 /**
  * react-markdown passes a `node` prop (hast/mdast element) to custom components.
@@ -13,46 +14,63 @@ import type { ComponentWhitelist } from "./markdownComponents.types";
  * Creates the base component mapping for react-markdown (headings, lists, code,
  * links, tables, details, etc.). Used by MarkdownRenderer.
  */
-export function createBaseMarkdownComponents(
-	styles: Record<string, string>,
-): Components {
+export  const createBaseMarkdownComponents=(): Components=> {
+
 	return {
 		// Headings
 		h1: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"h1"> & { node?: unknown }) => (
-			<h1 {...props} className={classNames(styles.heading1, props.className)} />
+			<h1
+				{...props}
+				className={classNames(styles.heading1, props.className)}
+			/>
 		),
 		h2: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"h2"> & { node?: unknown }) => (
-			<h2 {...props} className={classNames(styles.heading2, props.className)} />
+			<h2
+				{...props}
+				className={classNames(styles.heading2, props.className)}
+			/>
 		),
 		h3: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"h3"> & { node?: unknown }) => (
-			<h3 {...props} className={classNames(styles.heading3, props.className)} />
+			<h3
+				{...props}
+				className={classNames(styles.heading3, props.className)}
+			/>
 		),
 		h4: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"h4"> & { node?: unknown }) => (
-			<h4 {...props} className={classNames(styles.heading4, props.className)} />
+			<h4
+				{...props}
+				className={classNames(styles.heading4, props.className)}
+			/>
 		),
 		h5: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"h5"> & { node?: unknown }) => (
-			<h5 {...props} className={classNames(styles.heading5, props.className)} />
+			<h5
+				{...props}
+				className={classNames(styles.heading5, props.className)}
+			/>
 		),
 		h6: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"h6"> & { node?: unknown }) => (
-			<h6 {...props} className={classNames(styles.heading6, props.className)} />
+			<h6
+				{...props}
+				className={classNames(styles.heading6, props.className)}
+			/>
 		),
 
 		// Paragraphs
@@ -60,7 +78,10 @@ export function createBaseMarkdownComponents(
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"p"> & { node?: unknown }) => (
-			<p {...props} className={classNames(styles.paragraph, props.className)} />
+			<p
+				{...props}
+				className={classNames(styles.paragraph, props.className)}
+			/>
 		),
 
 		// Lists
@@ -68,19 +89,28 @@ export function createBaseMarkdownComponents(
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"ul"> & { node?: unknown }) => (
-			<ul {...props} className={classNames(styles.list, props.className)} />
+			<ul
+				{...props}
+				className={classNames(styles.list, props.className)}
+			/>
 		),
 		ol: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"ol"> & { node?: unknown }) => (
-			<ol {...props} className={classNames(styles.list, props.className)} />
+			<ol
+				{...props}
+				className={classNames(styles.list, props.className)}
+			/>
 		),
 		li: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"li"> & { node?: unknown }) => (
-			<li {...props} className={classNames(styles.listItem, props.className)} />
+			<li
+				{...props}
+				className={classNames(styles.listItem, props.className)}
+			/>
 		),
 
 		// Code
@@ -104,7 +134,10 @@ export function createBaseMarkdownComponents(
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"pre"> & { node?: unknown }) => (
-			<pre {...props} className={classNames(styles.pre, props.className)} />
+			<pre
+				{...props}
+				className={classNames(styles.pre, props.className)}
+			/>
 		),
 
 		// Blockquotes
@@ -132,7 +165,7 @@ export function createBaseMarkdownComponents(
 					href={href}
 					target={isExternal ? "_blank" : undefined}
 					rel={isExternal ? "noopener noreferrer" : undefined}
-					className={classNames(styles.link, props.className)}
+						className={classNames(styles.link, props.className)}
 				/>
 			);
 		},
@@ -151,7 +184,10 @@ export function createBaseMarkdownComponents(
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"em"> & { node?: unknown }) => (
-			<em {...props} className={classNames(styles.em, props.className)} />
+			<em
+				{...props}
+				className={classNames(styles.em, props.className)}
+			/>
 		),
 
 		// GFM Tables
@@ -159,37 +195,54 @@ export function createBaseMarkdownComponents(
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"table"> & { node?: unknown }) => (
-			<table {...props} className={classNames(styles.table, props.className)} />
+			<div className={styles.root}>
+				<table
+					{...props}
+					className={classNames(styles.table, props.className)}
+				/>
+			</div>
 		),
 		thead: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"thead"> & { node?: unknown }) => (
-			<thead {...props} className={classNames(styles.thead, props.className)} />
+			<thead
+				{...props}
+				className={classNames(styles.header, props.className)}
+			/>
 		),
 		tbody: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"tbody"> & { node?: unknown }) => (
-			<tbody {...props} className={classNames(styles.tbody, props.className)} />
+			<tbody {...props} />
 		),
 		tr: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"tr"> & { node?: unknown }) => (
-			<tr {...props} className={classNames(styles.tr, props.className)} />
+			<tr
+				{...props}
+				className={classNames(styles.row, props.className)}
+			/>
 		),
 		th: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"th"> & { node?: unknown }) => (
-			<th {...props} className={classNames(styles.th, props.className)} />
+			<th
+				{...props}
+				className={classNames(styles.headerCell, props.className)}
+			/>
 		),
 		td: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"td"> & { node?: unknown }) => (
-			<td {...props} className={classNames(styles.td, props.className)} />
+			<td
+				{...props}
+				className={classNames(styles.cell, props.className)}
+			/>
 		),
 
 		// GFM Strikethrough
@@ -197,7 +250,10 @@ export function createBaseMarkdownComponents(
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"del"> & { node?: unknown }) => (
-			<del {...props} className={classNames(styles.del, props.className)} />
+			<del
+				{...props}
+				className={classNames(styles.del, props.className)}
+			/>
 		),
 
 		// GFM Task Lists
@@ -224,31 +280,46 @@ export function createBaseMarkdownComponents(
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"br"> & { node?: unknown }) => (
-			<br {...props} className={classNames(styles.br, props.className)} />
+			<br
+				{...props}
+				className={classNames(styles.br, props.className)}
+			/>
 		),
 		b: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"b"> & { node?: unknown }) => (
-			<b {...props} className={classNames(styles.b, props.className)} />
+			<b
+				{...props}
+					className={classNames(styles.b, props.className)}
+			/>
 		),
 		sup: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"sup"> & { node?: unknown }) => (
-			<sup {...props} className={classNames(styles.sup, props.className)} />
+			<sup
+				{...props}
+				className={classNames(styles.sup, props.className)}
+			/>
 		),
 		sub: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"sub"> & { node?: unknown }) => (
-			<sub {...props} className={classNames(styles.sub, props.className)} />
+			<sub
+				{...props}
+				className={classNames(styles.sub, props.className)}
+			/>
 		),
 		i: ({
 			node,
 			...props
 		}: React.ComponentPropsWithoutRef<"i"> & { node?: unknown }) => (
-			<i {...props} className={classNames(styles.i, props.className)} />
+			<i
+				{...props}
+				className={classNames(styles.i, props.className)}
+			/>
 		),
 
 		// Details/Summary - use MarkdownDetails component
@@ -273,10 +344,9 @@ export function createBaseMarkdownComponents(
  * Otherwise returns the base mapping (for MarkdownRenderer).
  */
 export function createMarkdownComponents(
-	styles: Record<string, string>,
 	allowedComponents?: ComponentWhitelist,
 ): Components {
-	const baseComponents = createBaseMarkdownComponents(styles);
+	const baseComponents = createBaseMarkdownComponents();
 
 	if (!allowedComponents || Object.keys(allowedComponents).length === 0) {
 		return baseComponents;

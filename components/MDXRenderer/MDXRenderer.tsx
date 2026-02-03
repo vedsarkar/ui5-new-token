@@ -5,8 +5,8 @@ import type { MDXComponents } from "mdx/types.js";
 import type { PluggableList } from "unified";
 import { Button } from "@/components/Button";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { createBaseMarkdownComponents } from "@/components/MarkdownComponents";
-import type { ComponentWhitelist } from "@/components/MarkdownComponents/markdownComponents.types";
+import { createBaseMarkdownComponents } from "@/components/MarkdownRenderer/components/MarkdownComponents";
+import type { ComponentWhitelist } from "@/components/MarkdownRenderer/components/MarkdownComponents/markdownComponents.types";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 import { classNames } from "@/utils/classNames";
 import styles from "./MDXRenderer.module.css";
@@ -37,7 +37,7 @@ export const MDXRenderer = ({
 	// Base markdown elements (styled) + design system / custom components (passed through).
 	// Custom components must be passed directly so MDX resolves <Button> to our Button, not the native tag.
 	const mergedComponents = {
-		...createBaseMarkdownComponents(styles),
+		...createBaseMarkdownComponents(),
 		...defaultComponents,
 		...allowedComponents,
 	};
