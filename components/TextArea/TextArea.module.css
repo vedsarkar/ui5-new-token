@@ -1,0 +1,154 @@
+.root {
+	--reltio-textarea-font-family: var(
+		--reltio-font-family-body,
+		"Roboto",
+		sans-serif
+	);
+	--reltio-textarea-font-size: var(--reltio-font-size-body, 16px);
+	--reltio-textarea-line-height: var(--reltio-line-height-body, 1.5);
+	--reltio-textarea-color-text: var(--reltio-color-text, #1d1b20);
+	--reltio-textarea-color-border: var(--reltio-color-border, #79747e);
+	--reltio-textarea-color-border-focus: var(--reltio-color-primary, #6750a4);
+	--reltio-textarea-color-background: var(--reltio-color-background, #fff);
+	--reltio-textarea-color-error: var(--reltio-color-error, #b3261e);
+	--reltio-textarea-color-label: var(--reltio-color-text-secondary, #49454f);
+	--reltio-textarea-color-supporting-text: var(
+		--reltio-color-text-secondary,
+		#49454f
+	);
+	--reltio-textarea-border-radius: var(--reltio-spacing-xs, 4px);
+	--reltio-textarea-padding: var(--reltio-spacing-md, 16px);
+	--reltio-textarea-min-height: var(--reltio-spacing-3xl, 56px);
+	--reltio-textarea-max-height: min(500px, 50cqh);
+	--reltio-textarea-border-width: 1px;
+	--reltio-textarea-border-width-focus: 2px;
+
+	--_border-color: var(--reltio-textarea-color-border);
+	--_border-width: var(--reltio-textarea-border-width);
+	--_label-color: var(--reltio-textarea-color-label);
+	--_supporting-text-color: var(--reltio-textarea-color-supporting-text);
+
+	font-family: var(--reltio-textarea-font-family);
+	container-type: inline-size;
+}
+
+.root:focus-within {
+	--_border-color: var(--reltio-textarea-color-border-focus);
+	--_border-width: var(--reltio-textarea-border-width-focus);
+	--_label-color: var(--reltio-textarea-color-border-focus);
+}
+
+.root[data-error="true"] {
+	--_border-color: var(--reltio-textarea-color-error);
+	--_label-color: var(--reltio-textarea-color-error);
+	--_supporting-text-color: var(--reltio-textarea-color-error);
+}
+
+.root[data-error="true"]:focus-within {
+	--_border-color: var(--reltio-textarea-color-error);
+	--_label-color: var(--reltio-textarea-color-error);
+}
+
+.root[data-disabled="true"] {
+	opacity: 0.38;
+	cursor: not-allowed;
+}
+
+.inputContainer {
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr auto;
+	grid-template-areas:
+		"textarea"
+		"toolbar";
+	margin: 0;
+	box-sizing: border-box;
+	border-radius: var(--reltio-textarea-border-radius);
+	outline: var(--_border-width) solid var(--_border-color);
+	cursor: text;
+	transition:
+		outline-color 0.1s ease,
+		outline-width 0.1s ease;
+	background: var(--reltio-textarea-color-background);
+}
+
+.root[data-disabled="true"] .inputContainer {
+	cursor: not-allowed;
+}
+
+.textarea {
+	grid-area: textarea;
+	position: relative;
+	display: block;
+	z-index: 1;
+	border: none;
+	outline: none;
+	background: none;
+	width: 100%;
+	min-height: var(--reltio-textarea-min-height);
+	max-height: var(--reltio-textarea-max-height);
+	border-radius: var(--reltio-textarea-border-radius);
+	box-sizing: border-box;
+	font-size: var(--reltio-textarea-font-size);
+	font-family: var(--reltio-textarea-font-family);
+	line-height: var(--reltio-textarea-line-height);
+	resize: none;
+	color: var(--reltio-textarea-color-text);
+	padding: var(--reltio-textarea-padding);
+	overflow-y: auto;
+	field-sizing: content;
+}
+
+.textarea::placeholder {
+	color: var(--reltio-textarea-color-label);
+}
+
+.textarea:disabled {
+	cursor: not-allowed;
+}
+
+.label {
+	position: absolute;
+	opacity: 0;
+	top: 16px;
+	left: 8px;
+	transform: translateY(-50%);
+	transition: all 0.2s ease;
+	background-color: var(--reltio-textarea-color-background);
+	padding: 4px 8px;
+	border-radius: var(--reltio-textarea-border-radius);
+	color: var(--_label-color);
+	z-index: 2;
+	font-size: var(--reltio-textarea-font-size);
+	font-family: var(--reltio-textarea-font-family);
+	pointer-events: none;
+}
+
+.textarea:not(:placeholder-shown) + .label {
+	top: -1px;
+	font-size: 12px;
+	opacity: 1;
+}
+
+.textarea:focus + .label {
+	top: -1px;
+	font-size: 12px;
+	opacity: 1;
+}
+
+.supportingText {
+	font-size: 12px;
+	padding: 4px var(--reltio-textarea-padding);
+	color: var(--_supporting-text-color);
+	font-family: var(--reltio-textarea-font-family);
+}
+
+.toolbar {
+	grid-area: toolbar;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 12px;
+}
