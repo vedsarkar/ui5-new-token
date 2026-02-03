@@ -27,36 +27,17 @@ export const MarkdownDetails = ({
 		setIsOpen(initialOpen);
 	}, [initialOpen]);
 
-	// Extract summary and content from children
-	const { summaryContent, content } = useMemo(() => {
-		const childrenArray = React.Children.toArray(children);
-		let summary: React.ReactNode = null;
-		const nonSummaryChildren: React.ReactNode[] = [];
+  // Extract summary from children
+  let summary: React.ReactNode = 'Details'
+  const contentChildren: React.ReactNode[] = []
 
-		// Look for a summary element in children
-		React.Children.forEach(childrenArray, (child) => {
-			if (
-				React.isValidElement(child) &&
-				typeof child.type === "string" &&
-				child.type === "summary"
-			) {
-				summary = (child as React.ReactElement<{ children?: React.ReactNode }>)
-					.props.children;
-			} else {
-				nonSummaryChildren.push(child);
-			}
-		});
-
-		// If no summary found, use default fallback
-		if (summary === null) {
-			summary = "Details";
-		}
-
-		return {
-			summaryContent: summary,
-			content: nonSummaryChildren,
-		};
-	}, [children]);
+  React.Children.forEach(children, (child) => {
+    if (React.isValidElement(child) && child.type === 'summary') {
+      summary = (child.props as { children?: React.ReactNode }).children
+    } else if (child) {
+      contentChildren.push(child)
+    }
+  })
 
 	// Handle toggle
 	const handleToggle = (event: React.SyntheticEvent<HTMLDetailsElement>) => {
@@ -76,11 +57,13 @@ export const MarkdownDetails = ({
 			{...rest}
 		>
 			<summary className={styles.summary} aria-expanded={isOpen}>
-				<span className={styles.summaryLeadingIcon} aria-hidden="true">
+				<span className={styles.icon} aria-hidden="true">
 					<CodeBrackets size="small" aria-hidden="true" />
 				</span>
-				<span className={styles.summaryText}>{summaryContent}</span>
-				<span className={styles.icon}>
+				<span className={styles.summaryText}>{summary}</span>
+				<span
+					className={classNames(styles.chevron, isOpen && styles.chevronOpen)}
+				>
 					{isOpen ? (
 						<ExpandLess size="small" aria-hidden="true" />
 					) : (
@@ -88,7 +71,7 @@ export const MarkdownDetails = ({
 					)}
 				</span>
 			</summary>
-			<div className={styles.content}>{content}</div>
+			<div className={styles.content}>{contentChildren}</div>
 		</details>
 	);
 };

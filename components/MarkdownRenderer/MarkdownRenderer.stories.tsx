@@ -63,11 +63,7 @@ External links open in a new tab with proper security attributes.`,
 
 export const Emphasis = meta.story({
 	args: {
-		content: `This is **bold text** and this is *italic text*.
-
-You can also use __bold__ and _italic_ syntax.
-
-**Bold** and *italic* can be combined.`,
+		content: "This is **bold text** and this is *italic text*.\n\nYou can also use __bold__ and _italic_ syntax.\n\n_**Bold**_ and __*italic*__ can be combined.",
 	},
 });
 
@@ -87,6 +83,18 @@ Another code block:
 def hello():
     print("Hello, World!")
 \`\`\``,
+	},
+});
+
+export const CodeBlockWrappedInPre = meta.story({
+	args: {
+		content: `Paragraph before the code block.
+
+<pre><code>function example() {
+  return "Code inside pre tag";
+}</code></pre>
+
+Paragraph after the code block.`,
 	},
 });
 
@@ -110,6 +118,16 @@ export const Tables = meta.story({
 | Cell 1   | Cell 2   | Cell 3   |
 | Cell 4   | Cell 5   | Cell 6   |
 | Cell 7   | Cell 8   | Cell 9   |`,
+	},
+});
+
+export const TableWithMarkdownInCells = meta.story({
+	args: {
+		content: `| Feature | Description | Status |
+|---------|-------------|--------|
+| **Bold** | *Italic* text in cell | \`code\` |
+| [Link](https://example.com) | ~~Strikethrough~~ | **Bold** and *italic* |
+| Inline \`code\` | Multiple **formats** in one cell | Done ✅ |`,
 	},
 });
 
@@ -254,10 +272,33 @@ export const CustomCssVariables = meta.story({
 	args: {
 		content: `# Custom Styling
 
-This markdown uses custom CSS variables for styling.`,
+This paragraph uses custom **font size**, line height, and text color.
+
+- List item one
+- List item two
+
+A [link](https://example.com) and inline \`code\` to show their colors.
+
+> Blockquote with custom border and text color.
+
+| Table | Border |
+|-------|--------|
+| Cell  | Cell   |`,
 		style: {
-			"--reltio-markdown-renderer-font-size": "18px",
-			"--reltio-markdown-renderer-color-link": "#ff0000",
+			"--reltio-markdown-components-font-size": "18px",
+			"--reltio-markdown-components-font-weight": "600",
+			"--reltio-markdown-components-line-height": "1.6",
+			"--reltio-markdown-components-color-text": "#1a1a2e",
+			"--reltio-markdown-components-color-link": "#e94560",
+			"--reltio-markdown-components-color-code-background": "#f0e6fa",
+			"--reltio-markdown-components-color-blockquote-border": "#e94560",
+			"--reltio-markdown-components-color-blockquote-text": "#16213e",
+			"--reltio-markdown-components-heading-margin": "1em 0 0.5em",
+			"--reltio-markdown-components-paragraph-margin-bottom": "1rem",
+			"--reltio-markdown-components-blockquote-padding-left": "1.25rem",
+			"--reltio-markdown-components-blockquote-border-width": "4px",
+			"--reltio-markdown-components-code-padding": "0.2em 0.4em",
+			"--reltio-markdown-components-code-border-radius": "6px",
 		},
 	},
 });

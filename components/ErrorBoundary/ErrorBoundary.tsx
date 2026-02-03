@@ -31,7 +31,7 @@ export class ErrorBoundary extends React.Component<
 		if (this.state.hasError && this.state.error) {
 			return (
 				<div
-					className={classNames(styles.root)}
+					className={classNames(styles.root, styles.error)}
 					data-testid="error-boundary-fallback"
 				>
 					{this.props.fallback}

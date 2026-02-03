@@ -1,5 +1,5 @@
 import type React from "react";
-import type { ComponentWhitelist } from "@/components/MarkdownComponents/markdownComponents.types";
+import type { ComponentWhitelist } from "@/components/MarkdownRenderer/components/MarkdownComponents/markdownComponents.types";
 
 /**
  * Props for the MDXRenderer component
@@ -26,9 +26,10 @@ export type MDXRendererProps = {
 	 * Additional CSS variables or inline styles
 	 */
 	style?: React.CSSProperties & {
-		"--reltio-mdx-renderer-font-size"?: string;
 		"--reltio-mdx-renderer-font-family"?: string;
+		"--reltio-mdx-renderer-font-size"?: string;
+		"--reltio-mdx-renderer-font-weight"?: string;
+		"--reltio-mdx-renderer-line-height"?: string;
 		"--reltio-mdx-renderer-color-text"?: string;
-		"--reltio-mdx-renderer-color-link"?: string;
 	};
 };

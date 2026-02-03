@@ -1,0 +1,287 @@
+/* Paragraphs */
+.paragraph {
+	margin: 8px 0 7px 0;
+	line-height: var(--reltio-markdown-components-line-height, 1.5);
+
+}
+
+.paragraph:not(:last-child) {
+	margin-bottom: var(
+		--reltio-markdown-components-paragraph-margin-bottom,
+		0.5rem
+	);
+}
+
+/* Headings - shared then per-level */
+.heading1,
+.heading2,
+.heading3,
+.heading4,
+.heading5,
+.heading6 {
+	margin: var(
+		--reltio-markdown-components-heading-margin,
+		1rem 0 0.5rem 0
+	);
+	font-weight: 600;
+	font-family: "Libre Franklin", sans-serif;
+}
+
+.heading1 {
+	font-size: var(--reltio-markdown-components-heading1-size, 1.5rem);
+}
+
+.heading2 {
+	font-size: var(--reltio-markdown-components-heading2-size, 1.25rem);
+}
+
+.heading3 {
+	font-size: var(--reltio-markdown-components-heading3-size, 1.1rem);
+}
+
+.heading4 {
+	font-size: var(--reltio-markdown-components-heading4-size, 1rem);
+}
+
+.heading5 {
+	font-size: var(--reltio-markdown-components-heading5-size, 0.95rem);
+}
+
+.heading6 {
+	font-size: var(--reltio-markdown-components-heading6-size, 0.9rem);
+}
+
+/* Emphasis */
+.strong {
+	font-weight: 600;
+}
+
+.em {
+	font-style: italic;
+}
+
+/* Lists */
+.list {
+	margin: var(--reltio-markdown-components-list-margin, 0.5rem 0);
+	padding-left: var(
+		--reltio-markdown-components-list-padding-left,
+		1.5rem
+	);
+}
+
+.listItem {
+	margin: var(
+		--reltio-markdown-components-list-item-margin,
+		0.25rem 0
+	);
+}
+
+/* Code - inline and block */
+ pre {
+	overflow-x: auto;
+	margin: 0;
+	background-color: rgb(245, 245, 250);
+	border-radius: 8px;
+	padding: 16px;
+	border: 1px solid #9898b34d;
+}
+
+ code {
+	background-color: var(
+		--reltio-markdown-components-color-code-background,
+		#f5f5f5
+	);
+	padding: var(--reltio-markdown-components-code-padding, 0.2em 0.4em);
+	border-radius: var(
+		--reltio-markdown-components-code-border-radius,
+		3px
+	);
+	font-family: var(
+		--reltio-markdown-components-code-font-family,
+		monospace
+	);
+	font-size: var(--reltio-markdown-components-code-font-size, 0.9em);
+}
+
+pre code {
+	background-color: transparent;
+	padding: 0;
+}
+
+/* Classes applied by component (code can be .code or .codeBlock) */
+.code {
+	font-family: var(
+		--reltio-markdown-components-code-font-family,
+		monospace
+	);
+	font-size: var(--reltio-markdown-components-code-font-size, 0.9em);
+	background-color: var(
+		--reltio-markdown-components-color-code-background,
+		#f5f5f5
+	);
+	padding: var(--reltio-markdown-components-code-padding, 0.2em 0.4em);
+	border-radius: var(
+		--reltio-markdown-components-code-border-radius,
+		3px
+	);
+}
+
+.codeBlock {
+	font-family: var(
+		--reltio-markdown-components-code-font-family,
+		monospace
+	);
+	font-size: var(--reltio-markdown-components-code-font-size, 0.9em);
+}
+
+.pre {
+	overflow-x: auto;
+}
+
+/* Links */
+.link {
+	color: var(--reltio-markdown-components-color-link, #0000cc);
+	text-decoration: none;
+}
+
+.link:hover {
+	text-decoration: underline;
+}
+
+/* Blockquote */
+.blockquote {
+	border-left: var(
+		--reltio-markdown-components-blockquote-border-width,
+		4px
+	) solid var(
+		--reltio-markdown-components-color-blockquote-border,
+		#ddd
+	);
+	margin: var(--reltio-markdown-components-blockquote-margin, 1rem 0);
+	padding-left: var(
+		--reltio-markdown-components-blockquote-padding-left,
+		1rem
+	);
+	color: var(--reltio-markdown-components-color-blockquote-text, #666);
+}
+
+/* Tables - uses global CSS variables with :root values as fallbacks */
+.root {
+	font-family: var(--reltio-markdown-components-base-font, "Roboto Flex", sans-serif);
+	width: 100%;
+	border-collapse: collapse;
+	position: relative;
+	color: var(--color-text, #0e0e25);
+	background-color:  #ffffff;
+	border: 1px solid  #9898b34d;
+	border-radius: 16px;
+	overflow: auto;
+	box-sizing: border-box;
+	font-size: 14px;
+	--table-cell-background: #ffffff;
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.header {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	box-shadow: 0 1px 0  #9898b34d;
+}
+
+.headerCell {
+		padding: 16px;
+	font-weight: 600;
+	text-align: left;
+	border-right: 1px solid  #9898b34d;
+	background-color:  #e3e3f2;
+	
+}
+
+.headerCell:last-child {
+	border-right: none;
+}
+
+.cell {
+	padding: 8px 16px;
+	border-bottom: 1px solid  #9898b34d;
+	border-right: 1px solid  #9898b34d;
+	text-align: left;
+	background-color: var(--table-cell-background);
+}
+
+.cell:last-child {
+	border-right: none;
+}
+
+.row:hover .cell {
+	background-color: var(--color-table-row-hover, #f5f5fa);
+}
+
+.clickableRow {
+	cursor: pointer;
+}
+
+.row:last-child .cell {
+	border-bottom: none;
+}
+
+/* Strikethrough */
+.del {
+	text-decoration: line-through;
+	opacity: 0.7;
+}
+
+/* Checkboxes */
+.checkbox {
+	margin-right: var(--reltio-spacing-xs, 8px);
+	cursor: not-allowed;
+}
+
+/* Raw HTML elements */
+.br {
+	display: inline;
+}
+
+.b {
+	font-weight: 600;
+}
+
+.sup {
+	font-size: 0.75em;
+	vertical-align: super;
+}
+
+.sub {
+	font-size: 0.75em;
+	vertical-align: sub;
+}
+
+.i {
+	font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.table {
+		display: block;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.heading1 {
+		font-size: 1.3rem;
+	}
+
+	.heading2 {
+		font-size: 1.15rem;
+	}
+
+	.heading3 {
+		font-size: 1.05rem;
+	}
+}
