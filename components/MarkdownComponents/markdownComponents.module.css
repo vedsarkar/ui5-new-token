@@ -104,11 +104,6 @@ pre code {
 	border-radius: var(--reltio-markdown-components-code-border-radius, 3px);
 }
 
-.codeBlock {
-	font-family: var(--reltio-markdown-components-code-font-family, monospace);
-	font-size: var(--reltio-markdown-components-code-font-size, 0.9em);
-}
-
 .pre {
 	overflow-x: auto;
 }
@@ -132,8 +127,8 @@ pre code {
 	color: var(--reltio-markdown-components-color-blockquote-text, #666);
 }
 
-/* Tables - uses global CSS variables with :root values as fallbacks */
-.root {
+/* Tables */
+.tableWrapper {
 	font-family: var(
 		--reltio-markdown-components-base-font,
 		"Roboto Flex",
@@ -149,7 +144,6 @@ pre code {
 	overflow: auto;
 	box-sizing: border-box;
 	font-size: 14px;
-	--table-cell-background: #ffffff;
 }
 
 .table {
@@ -181,7 +175,10 @@ pre code {
 	border-bottom: 1px solid #9898b34d;
 	border-right: 1px solid #9898b34d;
 	text-align: left;
-	background-color: var(--table-cell-background);
+	background-color: var(
+		--reltio-markdown-components-color-table-cell-background,
+		#ffffff
+	);
 }
 
 .cell:last-child {
@@ -190,10 +187,6 @@ pre code {
 
 .row:hover .cell {
 	background-color: var(--color-table-row-hover, #f5f5fa);
-}
-
-.clickableRow {
-	cursor: pointer;
 }
 
 .row:last-child .cell {
@@ -213,26 +206,10 @@ pre code {
 }
 
 /* Raw HTML elements */
-.br {
-	display: inline;
-}
-
-.b {
-	font-weight: 600;
-}
-
-.sup {
-	font-size: 0.75em;
-	vertical-align: super;
-}
-
-.sub {
-	font-size: 0.75em;
-	vertical-align: sub;
-}
-
-.i {
-	font-style: italic;
+.divider {
+	border: none;
+	border-top: 1px solid var(--color-border, #ddd);
+	margin: 1.5rem 0;
 }
 
 /* Responsive */

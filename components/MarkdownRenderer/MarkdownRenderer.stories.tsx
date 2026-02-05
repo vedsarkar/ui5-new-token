@@ -169,7 +169,22 @@ You can also use <i>italic</i> and <strong>strong</strong> and <em>emphasis</em>
 	},
 });
 
-// Details/Summary
+// Horizontal rule (hr / divider)
+export const HorizontalRule = meta.story({
+	args: {
+		content: `Section above.
+
+---
+
+Section in the middle.
+
+***
+
+Section below.`,
+	},
+});
+
+// Details/Summary (details → MarkdownDetails)
 export const DetailsSummary = meta.story({
 	args: {
 		content: `<details>
@@ -300,6 +315,7 @@ A [link](https://example.com) and inline \`code\` to show their colors.
 			"--reltio-markdown-components-blockquote-border-width": "4px",
 			"--reltio-markdown-components-code-padding": "0.2em 0.4em",
 			"--reltio-markdown-components-code-border-radius": "6px",
+			"--reltio-markdown-components-color-table-cell-background": "lime",
 		},
 	},
 });

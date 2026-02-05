@@ -1,6 +1,4 @@
 import React from "react";
-import { classNames } from "@/utils/classNames";
-import styles from "./ErrorBoundary.module.css";
 import type {
 	ErrorBoundaryProps,
 	ErrorBoundaryState,
@@ -28,23 +26,9 @@ export class ErrorBoundary extends React.Component<
 	}
 
 	render(): React.ReactNode {
-		if (this.state.hasError && this.state.error) {
-			return (
-				<div
-					className={classNames(styles.root, styles.error)}
-					data-testid="error-boundary-fallback"
-				>
-					{this.props.fallback}
-				</div>
-			);
+		if (this.state.error) {
+			return this.props.fallback;
 		}
-		return (
-			<div
-				className={classNames(styles.root)}
-				data-testid="error-boundary-children"
-			>
-				{this.props.children}
-			</div>
-		);
+		return this.props.children;
 	}
 }
