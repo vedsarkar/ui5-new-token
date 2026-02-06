@@ -67,29 +67,13 @@
 }
 
 /* Code - inline and block */
-pre {
+.pre {
 	overflow-x: auto;
 	margin: 0;
-	background-color: rgb(245, 245, 250);
+	background-color: #e3e3f2;
 	border-radius: 8px;
 	padding: 16px;
-	border: 1px solid #9898b34d;
-}
-
-code {
-	background-color: var(
-		--reltio-markdown-components-color-code-background,
-		#f5f5f5
-	);
-	padding: var(--reltio-markdown-components-code-padding, 0.2em 0.4em);
-	border-radius: var(--reltio-markdown-components-code-border-radius, 3px);
-	font-family: var(--reltio-markdown-components-code-font-family, monospace);
-	font-size: var(--reltio-markdown-components-code-font-size, 0.9em);
-}
-
-pre code {
-	background-color: transparent;
-	padding: 0;
+	border: 1px solid #e3e3f2;
 }
 
 /* Classes applied by component (code can be .code or .codeBlock) */
@@ -104,8 +88,9 @@ pre code {
 	border-radius: var(--reltio-markdown-components-code-border-radius, 3px);
 }
 
-.pre {
-	overflow-x: auto;
+.pre .code {
+	background-color: transparent;
+	padding: 0;
 }
 
 /* Links */

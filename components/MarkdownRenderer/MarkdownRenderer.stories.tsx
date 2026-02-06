@@ -87,18 +87,6 @@ def hello():
 	},
 });
 
-export const CodeBlockWrappedInPre = meta.story({
-	args: {
-		content: `Paragraph before the code block.
-
-<pre><code>function example() {
-  return "Code inside pre tag";
-}</code></pre>
-
-Paragraph after the code block.`,
-	},
-});
-
 export const Blockquotes = meta.story({
 	args: {
 		content: `> This is a blockquote.
