@@ -175,15 +175,8 @@ Section below.`,
 // Details/Summary (details → MarkdownDetails)
 export const DetailsSummary = meta.story({
 	args: {
-		content: `<details>
-<summary>Click to expand</summary>
-This content is hidden by default. Click the summary to see it.
-</details>
-
-<details>
-<summary>Another details block</summary>
-This is another collapsible section with more content.
-</details>`,
+		content:
+			'<details>\n<summary>Summary of Tools Used</summary>\n\n- **`get_potential_matches_stats_tool`** — Retrieved tenant-wide potential match statistics\n  - **Inputs**: `min_matches=0`, `tenant_id="mlrianew"`\n</details>',
 	},
 });
 

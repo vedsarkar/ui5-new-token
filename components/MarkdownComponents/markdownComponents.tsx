@@ -1,30 +1,31 @@
+import type { MarkdownToJSX } from "markdown-to-jsx";
 import React from "react";
-import type { Components } from "react-markdown";
 import { MarkdownDetails } from "@/components/MarkdownRenderer/components/MarkdownDetails";
-import type { ReactMarkdownProps } from "@/components/MarkdownRenderer/MarkdownRenderer.types";
 import { classNames } from "@/utils/classNames";
 import styles from "./markdownComponents.module.css";
+
+type OverrideProps<T extends keyof React.JSX.IntrinsicElements> =
+	React.ComponentPropsWithoutRef<T> & {
+		node?: unknown;
+	};
 
 export const tagWithClass = <T extends keyof React.JSX.IntrinsicElements>(
 	Tag: T,
 	baseClassName?: string,
-) => {
-	return ({ node: _node, className, ...rest }: ReactMarkdownProps<T>) =>
+): React.ElementType => {
+	return ({ node: _node, className, ...rest }: OverrideProps<T>) =>
 		React.createElement(Tag, {
 			...(rest as React.ComponentPropsWithoutRef<T>),
 			className: classNames(baseClassName, className),
 		});
 };
-/**
- * react-markdown passes a `node` prop (hast/mdast element) to custom components.
- * We destructure it to avoid spreading it onto the DOM. It is not used for logic.
- */
 
 /**
- * Creates the base component mapping for react-markdown (headings, lists, code,
+ * Creates the base component/override mapping for markdown-to-jsx (headings, lists, code,
  * links, tables, details, etc.). Used by MarkdownRenderer and MDXRenderer.
+ * Components accept standard DOM-like props; `node` is optional for MDX compatibility.
  */
-export const createBaseMarkdownComponents = (): Components => {
+export const createBaseMarkdownComponents = (): MarkdownToJSX.Overrides => {
 	return {
 		// Headings
 		h1: tagWithClass("h1", styles.heading1),
@@ -49,11 +50,7 @@ export const createBaseMarkdownComponents = (): Components => {
 		blockquote: tagWithClass("blockquote", styles.blockquote),
 
 		// Links
-		a: ({
-			node,
-			href,
-			...props
-		}: React.ComponentPropsWithoutRef<"a"> & { node?: unknown }) => {
+		a: ({ node: _node, href, ...props }: OverrideProps<"a">) => {
 			const isExternal =
 				href && (href.startsWith("http") || href.startsWith("//"));
 			return (
@@ -72,10 +69,7 @@ export const createBaseMarkdownComponents = (): Components => {
 		em: tagWithClass("em", styles.em),
 
 		// GFM Tables
-		table: ({
-			node,
-			...props
-		}: React.ComponentPropsWithoutRef<"table"> & { node?: unknown }) => (
+		table: ({ node: _node, ...props }: OverrideProps<"table">) => (
 			<div className={styles.tableWrapper}>
 				<table
 					{...props}
@@ -92,10 +86,7 @@ export const createBaseMarkdownComponents = (): Components => {
 		hr: tagWithClass("hr", styles.divider),
 
 		// Details/Summary - use MarkdownDetails component
-		details: ({
-			node,
-			...props
-		}: React.ComponentPropsWithoutRef<"details"> & { node?: unknown }) => (
+		details: ({ node: _node, ...props }: OverrideProps<"details">) => (
 			<MarkdownDetails {...props}>{props.children}</MarkdownDetails>
 		),
 	};

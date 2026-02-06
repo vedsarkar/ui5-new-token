@@ -62,6 +62,3 @@ export type MarkdownRendererProps = {
 	 */
 	style?: React.CSSProperties & MarkdownComponentsCSSVariables;
 };
-
-export type ReactMarkdownProps<T extends React.ElementType> =
-	React.ComponentPropsWithoutRef<T> & { node?: unknown };

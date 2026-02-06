@@ -1,8 +1,7 @@
-# markdown-renderer-component Specification
+# Spec delta: markdown-renderer-component
 
-## Purpose
-TBD - created by archiving change add-markdown-renderer. Update Purpose after archive.
-## Requirements
+## MODIFIED Requirements
+
 ### Requirement: Markdown Rendering
 
 The MarkdownRenderer component SHALL render Markdown-formatted text content as properly formatted HTML, supporting common Markdown features including headers, paragraphs, lists, links, code blocks, emphasis, and blockquotes. The component SHALL support GitHub Flavored Markdown (GFM) extensions and raw HTML rendering.
@@ -86,40 +85,6 @@ The MarkdownRenderer component SHALL render Markdown-formatted text content as p
 - **AND** details blocks support expand/collapse functionality
 - **AND** summary content is extracted and displayed correctly
 
-### Requirement: Security and Sanitization
-
-The MarkdownRenderer component SHALL sanitize all rendered content to prevent execution of malicious scripts and protect against XSS (Cross-Site Scripting) attacks. The component SHALL use a third-party HTML sanitizer library (e.g., DOMPurify, sanitize-html) to perform sanitization.
-
-#### Scenario: Malicious scripts are prevented
-- **WHEN** Markdown content contains script tags (e.g., `<script>alert('XSS')</script>`)
-- **THEN** script tags are removed or sanitized
-- **AND** no JavaScript code is executed
-- **AND** malicious content is rendered as plain text or safely removed
-
-#### Scenario: Event handlers are sanitized
-- **WHEN** Markdown content contains HTML with event handlers (e.g., `<img onerror="alert('XSS')" src="x">`)
-- **THEN** event handler attributes are removed
-- **AND** no event handlers are executed
-- **AND** HTML elements are rendered without dangerous attributes
-
-#### Scenario: Dangerous HTML attributes are sanitized
-- **WHEN** Markdown content contains HTML with dangerous attributes (e.g., `onclick`, `onerror`, `onload`, `javascript:` URLs)
-- **THEN** dangerous attributes are removed or sanitized
-- **AND** only safe HTML attributes are preserved
-- **AND** safe formatting tags (br, b, sup, sub, i, strong, em) are allowed
-
-#### Scenario: HTML sanitization preserves safe content
-- **WHEN** Markdown content contains safe HTML tags (e.g., `<br />`, `<b>`, `<sup>`, `<sub>`)
-- **THEN** safe HTML tags are rendered correctly
-- **AND** sanitization does not break legitimate formatting
-- **AND** user experience is not degraded
-
-#### Scenario: Links are sanitized for security
-- **WHEN** Markdown content contains links with javascript: URLs or data: URLs
-- **THEN** dangerous URL schemes are sanitized or removed
-- **AND** only safe URL schemes (http, https, mailto) are allowed
-- **AND** links open with appropriate security attributes (rel="noopener noreferrer")
-
 ### Requirement: Error Handling
 
 The MarkdownRenderer component SHALL handle invalid or malformed Markdown input gracefully without breaking the parent component or displaying error messages to end users.
@@ -142,45 +107,6 @@ The MarkdownRenderer component SHALL handle invalid or malformed Markdown input 
 - **THEN** the design system ErrorBoundary catches the error
 - **AND** fallback (raw content in pre) is displayed
 - **AND** parent component is not affected. Sync errors are caught by try-catch and show the same fallback.
-
-### Requirement: CSS Custom Properties Customization
-
-The MarkdownRenderer component SHALL define all design tokens as CSS custom properties on the root element, enabling external customization via inline styles or CSS overrides.
-
-#### Scenario: All CSS variables defined on root
-- **WHEN** MarkdownRenderer component is rendered
-- **THEN** all CSS custom properties are defined on .root class
-- **AND** variables use --reltio-markdown-renderer- prefix
-- **AND** all variables include fallback values
-
-#### Scenario: External customization via inline styles
-- **WHEN** developer provides style prop with CSS variables
-- **THEN** MarkdownRenderer applies custom values
-- **AND** maintains all other styling and behavior
-- **AND** example: `<MarkdownRenderer style={{ "--reltio-markdown-renderer-font-size": "18px" }}>`
-
-#### Scenario: CSS variables for typography
-- **WHEN** MarkdownRenderer is rendered
-- **THEN** font-family, font-size, font-weight, line-height defined
-- **AND** heading sizes (h1-h6) defined with appropriate scale
-- **AND** code font-family and font-size defined
-- **AND** all with appropriate fallback values
-
-#### Scenario: CSS variables for spacing
-- **WHEN** MarkdownRenderer is rendered
-- **THEN** paragraph margins defined
-- **AND** list item spacing defined
-- **AND** heading margins defined
-- **AND** code block padding defined
-- **AND** all with appropriate fallback values
-
-#### Scenario: CSS variables for colors
-- **WHEN** MarkdownRenderer is rendered
-- **THEN** text color defined
-- **AND** link color defined
-- **AND** code background color defined
-- **AND** blockquote border color defined
-- **AND** all with appropriate fallback values
 
 ### Requirement: Tag-to-Class Mapping (MANDATORY)
 
@@ -215,70 +141,3 @@ The MarkdownRenderer component SHALL implement all Markdown element styling thro
 - **THEN** CSS Modules file contains classes for all Markdown elements (e.g., `.heading1`, `.heading2`, `.paragraph`, `.list`, `.listItem`, `.code`, `.codeBlock`, `.blockquote`, `.link`, `.table`, `.tableRow`, `.tableCell`, etc.)
 - **AND** each class uses CSS custom properties with `--reltio-markdown-renderer-` prefix
 - **AND** classes are assigned via overrides mapping, not through global selectors
-
-### Requirement: className Utility Usage
-
-The MarkdownRenderer component SHALL use the classNames utility from utils/classNames.ts for all className composition, providing stable base classes for external customization.
-
-#### Scenario: classNames utility composes CSS modules
-- **WHEN** MarkdownRenderer is rendered
-- **THEN** classNames utility combines all applicable CSS module classes
-- **AND** automatically adds base classes for BEM-like naming
-- **AND** filters out falsy values
-
-#### Scenario: Custom className support
-- **WHEN** developer provides className prop
-- **THEN** custom classes are added to root element
-- **AND** CSS modules classes are preserved
-- **AND** no class name conflicts occur
-
-### Requirement: TypeScript Type Safety
-
-The MarkdownRenderer component SHALL be fully typed with TypeScript using strict mode, with all types defined in a separate MarkdownRenderer.types.ts file using the `type` keyword (not `interface`).
-
-#### Scenario: Component props fully typed
-- **WHEN** developer uses MarkdownRenderer component
-- **THEN** all props have proper TypeScript types
-- **AND** TypeScript provides autocomplete
-- **AND** invalid prop combinations are caught at compile time
-
-#### Scenario: Content prop type
-- **WHEN** content prop is provided
-- **THEN** content accepts string type
-- **AND** null and undefined are handled appropriately
-- **AND** type is clearly documented
-
-#### Scenario: Types exported alongside component
-- **WHEN** developer imports MarkdownRenderer
-- **THEN** MarkdownRendererProps type can be imported
-- **AND** all types are properly documented
-
-### Requirement: Storybook Documentation
-
-The MarkdownRenderer component SHALL have comprehensive Storybook stories demonstrating valid Markdown rendering, error handling, and edge cases, with each story showing only ONE variant.
-
-#### Scenario: Stories for valid Markdown features
-- **WHEN** viewing Storybook
-- **THEN** separate stories exist for headers, paragraphs, lists, links, code, emphasis, blockquotes
-- **AND** separate stories exist for GFM features (tables, task lists, strikethrough, autolinks)
-- **AND** separate stories exist for raw HTML rendering (br, b, sup, sub, etc.)
-- **AND** each story shows single feature or combination
-- **AND** stories are interactive and functional
-
-#### Scenario: Stories for error handling
-- **WHEN** viewing Storybook
-- **THEN** stories exist for invalid Markdown syntax
-- **AND** stories exist for empty/null/undefined content
-- **AND** error handling behavior is clearly demonstrated
-
-#### Scenario: Stories for accessibility features
-- **WHEN** viewing Storybook
-- **THEN** stories demonstrate semantic HTML structure
-- **AND** a11y addon shows no violations
-- **AND** keyboard navigation works correctly
-
-#### Scenario: Stories for customization
-- **WHEN** viewing Storybook
-- **THEN** stories demonstrate CSS variable customization
-- **AND** stories show className prop usage
-
