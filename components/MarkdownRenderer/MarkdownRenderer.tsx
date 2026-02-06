@@ -4,7 +4,7 @@ import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { createBaseMarkdownComponents } from "@/components/MarkdownRenderer/components/MarkdownComponents/markdownComponents";
+import { createBaseMarkdownComponents } from "@/components/MarkdownComponents/markdownComponents";
 import { classNames } from "@/utils/classNames";
 
 import styles from "./MarkdownRenderer.module.css";
@@ -18,66 +18,43 @@ import type { MarkdownRendererProps } from "./MarkdownRenderer.types";
  * for invalid or malformed Markdown input. Supports GitHub Flavored Markdown
  * (GFM) and raw HTML rendering with proper sanitization.
  */
+
+/** Stable base markdown components (created once to avoid new refs every render). */
+const baseMarkdownComponents = createBaseMarkdownComponents();
+
 export const MarkdownRenderer = ({
 	content,
 	className,
 	style,
 }: MarkdownRendererProps) => {
-	// Handle empty/null/undefined content
-	if (!content) {
+	if (content === null || content === undefined) {
 		return null;
 	}
 
-	const components = createBaseMarkdownComponents();
-
-	// Compose className using classNames utility
 	const composedClassName = classNames(styles.root, className);
-
-	try {
-		return (
-			<div className={composedClassName} style={style}>
-				<ErrorBoundary fallback={<pre className={styles.error}>{content}</pre>}>
-					<ReactMarkdown
-						remarkPlugins={[remarkGfm]}
-						rehypePlugins={
-							[
-								rehypeRaw,
-								rehypeSanitize({
-									tagNames: [
-										"br",
-										"b",
-										"strong",
-										"i",
-										"em",
-										"sup",
-										"sub",
-										"p",
-										"span",
-										"div",
-										"details",
-										"summary",
-									],
-									attributes: {
-										"*": ["className", "id"],
-										a: ["href", "target", "rel"],
-										input: ["type", "checked", "disabled"],
-									},
-								}),
-							] as React.ComponentProps<typeof ReactMarkdown>["rehypePlugins"]
-						}
-						components={components}
-					>
-						{content}
-					</ReactMarkdown>
-				</ErrorBoundary>
-			</div>
-		);
-	} catch {
-		// Graceful error handling - render content as plain text
-		return (
-			<div className={composedClassName} style={style}>
-				<pre className={styles.error}>{content}</pre>
-			</div>
-		);
-	}
+	// We rely on rehype-sanitize defaultSchema for allowed HTML tags.
+	// Raw HTML is supported, but only within the safe default allowlist.
+	return (
+		<div className={composedClassName} style={style}>
+			<ErrorBoundary fallback={<pre className={styles.error}>{content}</pre>}>
+				<ReactMarkdown
+					remarkPlugins={[remarkGfm]}
+					rehypePlugins={
+						[
+							rehypeRaw,
+							rehypeSanitize({
+								attributes: {
+									a: ["href", "target", "rel"],
+									input: ["type", "checked", "disabled"],
+								},
+							}),
+						] as React.ComponentProps<typeof ReactMarkdown>["rehypePlugins"]
+					}
+					components={baseMarkdownComponents}
+				>
+					{content}
+				</ReactMarkdown>
+			</ErrorBoundary>
+		</div>
+	);
 };

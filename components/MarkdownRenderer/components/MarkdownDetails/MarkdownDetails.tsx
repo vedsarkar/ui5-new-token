@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 
-import {CodeBrackets} from '@/icons/CodeBrackets';
-import {ExpandLess} from '@/icons/ExpandLess';
-import {ExpandMore} from '@/icons/ExpandMore';
-import {classNames} from '@/utils/classNames';
+import { CodeBrackets } from "@/icons/CodeBrackets";
+import { ExpandLess } from "@/icons/ExpandLess";
+import { ExpandMore } from "@/icons/ExpandMore";
+import { classNames } from "@/utils/classNames";
 
-import styles from './MarkdownDetails.module.css';
+import styles from "./MarkdownDetails.module.css";
 
-import type {MarkdownDetailsProps} from "./MarkdownDetails.types";
+import type { MarkdownDetailsProps } from "./MarkdownDetails.types";
 
 /**
  * MarkdownDetails Component
@@ -35,9 +35,13 @@ export const MarkdownDetails = ({
 	const contentChildren: React.ReactNode[] = [];
 
 	React.Children.forEach(children, (child) => {
-		if (React.isValidElement(child) && child.type === "summary") {
-			summary = (child.props as {children?: React.ReactNode}).children;
-		} else if (child) {
+		if (
+			React.isValidElement(child) &&
+			typeof child.type === "string" &&
+			child.type === "summary"
+		) {
+			summary = (child.props as { children?: React.ReactNode }).children;
+		} else if (child != null) {
 			contentChildren.push(child);
 		}
 	});
@@ -53,15 +57,15 @@ export const MarkdownDetails = ({
 
 	return (
 		<details
-			open={isOpen}
 			className={composedClassName}
 			style={style}
 			onToggle={handleToggle}
+			open={initialOpen}
 			{...rest}
 		>
 			<summary className={styles.summary}>
 				<span className={styles.icon} aria-hidden="true">
-					<CodeBrackets size="small" aria-hidden="true" />
+					<CodeBrackets size="small" />
 				</span>
 				<span className={styles.summaryText}>{summary}</span>
 				<span

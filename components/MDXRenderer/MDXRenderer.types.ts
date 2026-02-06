@@ -1,5 +1,5 @@
 import type React from "react";
-import type { ComponentWhitelist } from "@/components/MarkdownRenderer/components/MarkdownComponents/markdownComponents.types";
+import type { ComponentWhitelist } from "@/components/MarkdownComponents/markdownComponents.types";
 
 /**
  * Props for the MDXRenderer component
