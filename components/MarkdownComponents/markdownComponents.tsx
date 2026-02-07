@@ -1,13 +1,9 @@
 import type { MarkdownToJSX } from "markdown-to-jsx";
 import React from "react";
 import { MarkdownDetails } from "@/components/MarkdownRenderer/components/MarkdownDetails";
+import type { OverrideProps } from "@/components/MarkdownRenderer/MarkdownRenderer.types";
 import { classNames } from "@/utils/classNames";
 import styles from "./markdownComponents.module.css";
-
-type OverrideProps<T extends keyof React.JSX.IntrinsicElements> =
-	React.ComponentPropsWithoutRef<T> & {
-		node?: unknown;
-	};
 
 export const tagWithClass = <T extends keyof React.JSX.IntrinsicElements>(
 	Tag: T,

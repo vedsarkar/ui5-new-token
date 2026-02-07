@@ -62,3 +62,8 @@ export type MarkdownRendererProps = {
 	 */
 	style?: React.CSSProperties & MarkdownComponentsCSSVariables;
 };
+
+export type OverrideProps<T extends keyof React.JSX.IntrinsicElements> =
+	React.ComponentPropsWithoutRef<T> & {
+		node?: unknown;
+	};
