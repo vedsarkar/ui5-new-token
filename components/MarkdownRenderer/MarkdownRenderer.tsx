@@ -1,7 +1,5 @@
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import rehypeSanitize from "rehype-sanitize";
-import remarkGfm from "remark-gfm";
+import Markdown, { sanitizer } from "markdown-to-jsx";
+import { useMemo } from "react";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { createBaseMarkdownComponents } from "@/components/MarkdownComponents/markdownComponents";
@@ -16,44 +14,44 @@ import type { MarkdownRendererProps } from "./MarkdownRenderer.types";
  *
  * Safely renders Markdown-formatted text content with robust error handling
  * for invalid or malformed Markdown input. Supports GitHub Flavored Markdown
- * (GFM) and raw HTML rendering with proper sanitization.
+ * (GFM), raw HTML rendering with proper sanitization, and optional
+ * tag-to-component overrides via the components prop.
  */
 
-/** Stable base markdown components (created once to avoid new refs every render). */
-const baseMarkdownComponents = createBaseMarkdownComponents();
+/** Stable base markdown overrides (created once to avoid new refs every render). */
+const baseMarkdownOverrides = createBaseMarkdownComponents();
 
 export const MarkdownRenderer = ({
 	content,
+	components,
 	className,
 	style,
 }: MarkdownRendererProps) => {
+	const overrides = useMemo(
+		() =>
+			components
+				? { ...baseMarkdownOverrides, ...components }
+				: baseMarkdownOverrides,
+		[components],
+	);
+
 	if (content === null || content === undefined) {
 		return null;
 	}
 
 	const composedClassName = classNames(styles.root, className);
-	// We rely on rehype-sanitize defaultSchema for allowed HTML tags.
-	// Raw HTML is supported, but only within the safe default allowlist.
 	return (
 		<div className={composedClassName} style={style}>
 			<ErrorBoundary fallback={<pre className={styles.error}>{content}</pre>}>
-				<ReactMarkdown
-					remarkPlugins={[remarkGfm]}
-					rehypePlugins={
-						[
-							rehypeRaw,
-							rehypeSanitize({
-								attributes: {
-									a: ["href", "target", "rel"],
-									input: ["type", "checked", "disabled"],
-								},
-							}),
-						] as React.ComponentProps<typeof ReactMarkdown>["rehypePlugins"]
-					}
-					components={baseMarkdownComponents}
+				<Markdown
+					options={{
+						overrides,
+						tagfilter: true,
+						sanitizer,
+					}}
 				>
 					{content}
-				</ReactMarkdown>
+				</Markdown>
 			</ErrorBoundary>
 		</div>
 	);

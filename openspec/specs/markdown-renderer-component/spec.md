@@ -81,7 +81,7 @@ The MarkdownRenderer component SHALL render Markdown-formatted text content as p
 #### Scenario: GitHub Flavored Markdown (GFM) details/summary renders correctly
 - **WHEN** Markdown content contains GFM details/summary syntax (e.g., `<details><summary>Title</summary>Content</details>`)
 - **THEN** details blocks are rendered using the MarkdownDetails component
-- **AND** MarkdownDetails component is used in the tag-to-component mapping via react-markdown components prop
+- **AND** MarkdownDetails component is used in the tag-to-component mapping via markdown-to-jsx overrides
 - **AND** details blocks display with enhanced UI including icon indicators
 - **AND** details blocks support expand/collapse functionality
 - **AND** summary content is extracted and displayed correctly
@@ -138,7 +138,7 @@ The MarkdownRenderer component SHALL handle invalid or malformed Markdown input 
 - **AND** component remains stable
 
 #### Scenario: Error boundary prevents crashes
-- **WHEN** a descendant (e.g. ReactMarkdown or custom components) throws during render
+- **WHEN** a descendant (e.g. markdown-to-jsx renderer or custom components) throws during render
 - **THEN** the design system ErrorBoundary catches the error
 - **AND** fallback (raw content in pre) is displayed
 - **AND** parent component is not affected. Sync errors are caught by try-catch and show the same fallback.
@@ -184,28 +184,28 @@ The MarkdownRenderer component SHALL define all design tokens as CSS custom prop
 
 ### Requirement: Tag-to-Class Mapping (MANDATORY)
 
-The MarkdownRenderer component SHALL implement all Markdown element styling through an explicit tag-to-class mapping approach using react-markdown's components prop. Global styles, element selectors, and tag-based CSS rules are explicitly FORBIDDEN.
+The MarkdownRenderer component SHALL implement all Markdown element styling through an explicit tag-to-class mapping approach using markdown-to-jsx's overrides option. Global styles, element selectors, and tag-based CSS rules are explicitly FORBIDDEN.
 
 #### Scenario: All Markdown elements use CSS Modules classes or dedicated components
 - **WHEN** MarkdownRenderer renders Markdown content
 - **THEN** each Markdown/HTML tag (p, h1-h6, ul, ol, li, code, pre, blockquote, a, strong, em, table, thead, tbody, tr, th, td, del, br, b, sup, sub, i) is rendered using a React element with an assigned CSS Modules class
 - **AND** details and summary tags are rendered using the MarkdownDetails component (not direct CSS Modules classes)
-- **AND** tag-to-component mapping is configured via react-markdown components prop
+- **AND** tag-to-component mapping is configured via markdown-to-jsx overrides option
 - **AND** example: `p` tag maps to React element with `className={styles.paragraph}`, `h1` maps to `className={styles.heading1}`, `details` maps to `<MarkdownDetails>`, etc.
 - **AND** NO global CSS rules target these tags directly
 
-#### Scenario: react-markdown components prop configuration
+#### Scenario: markdown-to-jsx overrides configuration
 - **WHEN** MarkdownRenderer is implemented
-- **THEN** react-markdown components prop contains explicit mappings for all supported tags
+- **THEN** markdown-to-jsx overrides option contains explicit mappings for all supported tags
 - **AND** each mapping returns a React element with appropriate CSS Modules class (for standard elements) or a dedicated component (for complex elements like details)
-- **AND** details tag maps to MarkdownDetails component: `details: ({node, ...props}) => <MarkdownDetails {...props}>{props.children}</MarkdownDetails>`
-- **AND** example structure: `components={{ p: ({node, ...props}) => <p {...props} className={classNames(styles.paragraph)} />, h1: ({node, ...props}) => <h1 {...props} className={classNames(styles.heading1)} />, details: ({node, ...props}) => <MarkdownDetails {...props}>{props.children}</MarkdownDetails>, ... }}`
+- **AND** details tag maps to MarkdownDetails component (e.g. overrides.details renders `<MarkdownDetails>{children}</MarkdownDetails>`)
+- **AND** example structure: overrides assign components or { component, props } so that p, h1, details, etc. receive the same CSS Modules classes or MarkdownDetails as today
 - **AND** all styling is applied through CSS Modules classes or dedicated component styling
 
 #### Scenario: Global styles are explicitly forbidden
 - **WHEN** MarkdownRenderer is implemented
 - **THEN** NO global CSS files contain element selectors for Markdown tags (e.g., no `p {}`, `h1 {}`, `ul {}`, `code {}` rules)
-- **AND** NO global CSS rules target react-markdown output via tag selectors
+- **AND** NO global CSS rules target markdown-to-jsx output via tag selectors
 - **AND** NO styling is applied through global stylesheets
 - **AND** ALL styling is scoped to CSS Modules classes only
 - **AND** this constraint is non-optional and enforceable
@@ -214,7 +214,7 @@ The MarkdownRenderer component SHALL implement all Markdown element styling thro
 - **WHEN** MarkdownRenderer is implemented
 - **THEN** CSS Modules file contains classes for all Markdown elements (e.g., `.heading1`, `.heading2`, `.paragraph`, `.list`, `.listItem`, `.code`, `.codeBlock`, `.blockquote`, `.link`, `.table`, `.tableRow`, `.tableCell`, etc.)
 - **AND** each class uses CSS custom properties with `--reltio-markdown-renderer-` prefix
-- **AND** classes are assigned via components prop mapping, not through global selectors
+- **AND** classes are assigned via overrides mapping, not through global selectors
 
 ### Requirement: className Utility Usage
 
@@ -281,4 +281,35 @@ The MarkdownRenderer component SHALL have comprehensive Storybook stories demons
 - **WHEN** viewing Storybook
 - **THEN** stories demonstrate CSS variable customization
 - **AND** stories show className prop usage
+
+### Requirement: Single Markdown Rendering Solution
+
+The design system SHALL use only one markdown rendering solution and expose only one public component for rendering markdown-formatted content and content that includes React components. That component SHALL support all tag-to-component overrides (headings, lists, code, links, tables, details→MarkdownDetails, etc.) and rendering with React components. It SHALL accept an optional components prop to extend or restrict which React components can be used when rendering content. No other markdown rendering library and no separate second renderer component SHALL be used.
+
+#### Scenario: One component for all content
+- **WHEN** a consumer needs to render markdown or content with React components
+- **THEN** only one public component is available for that purpose
+- **AND** that component supports all tag-to-component overrides and rendering with React components
+- **AND** the component accepts content and an optional components prop
+
+#### Scenario: No separate MDX or Markdown-only component
+- **WHEN** the design system is used
+- **THEN** there is no separate MDXRenderer or second markdown renderer component
+- **AND** the unified component provides the combined behavior previously offered by separate components
+
+### Requirement: Rendering with React Components
+
+The unified markdown renderer component SHALL support rendering content that includes embedded React components. It SHALL accept an optional components prop that extends or restricts which React components can be used when rendering content. Default allowed components MAY include design system components (e.g. Button).
+
+#### Scenario: React components in content render correctly
+- **WHEN** content contains embedded React components
+- **THEN** React components are rendered and functional
+- **AND** component props are passed correctly
+- **AND** components can be nested within Markdown structure
+
+#### Scenario: Optional components prop
+- **WHEN** the developer provides the optional components prop
+- **THEN** the custom component set is used when rendering content
+- **AND** the default set is extended or replaced as specified
+- **AND** configuration is type-safe
 
