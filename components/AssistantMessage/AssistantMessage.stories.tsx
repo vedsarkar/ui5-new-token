@@ -57,28 +57,6 @@ export const EmptyContent = meta.story({
 	},
 });
 
-export const ContentTypeOverrideMarkdown = meta.story({
-	args: {
-		content:
-			"<Button>Force markdown</Button> so this is rendered as Markdown, not MDX.",
-		contentType: "markdown",
-	},
-});
-
-export const ContentTypeOverrideMdx = meta.story({
-	args: {
-		content: "Plain text only but we force MDX renderer.",
-		contentType: "mdx",
-	},
-});
-
-export const WithMeta = meta.story({
-	args: {
-		content: "Response with metadata above.",
-		meta: "Assistant",
-	},
-});
-
 export const WithCustomCssVariables = meta.story({
 	args: {
 		content: "Custom styled assistant message.",

@@ -24,7 +24,6 @@
 	min-width: 0;
 	color: var(--reltio-user-message-content-color, #0e0e25);
 	background-color: var(--reltio-user-message-content-background, #f5f5fa);
-
 }
 
 .meta {

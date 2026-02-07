@@ -59,14 +59,18 @@
 /* Dot flashing indicator - uses CSS variables from .root */
 .dotFlashing {
 	position: absolute;
-	left: calc(var(--reltio-loading-size, 32px) + var(--reltio-loading-dot-margin-left, 20px));
+	left: calc(
+		var(--reltio-loading-size, 32px) +
+		var(--reltio-loading-dot-margin-left, 20px)
+	);
 	bottom: 20%;
 	transform: translateY(50%);
 	width: var(--reltio-loading-dot-size, 8px);
 	height: var(--reltio-loading-dot-size, 8px);
 	border-radius: var(--reltio-loading-dot-radius, 5px);
 	background-color: var(--reltio-loading-dot-color, #8d8dc8);
-	animation: dotFlashing var(--reltio-loading-dot-duration, 1s) infinite linear alternate;
+	animation: dotFlashing var(--reltio-loading-dot-duration, 1s) infinite linear
+		alternate;
 	animation-delay: var(--reltio-loading-dot-delay-middle, 0.5s);
 }
 
@@ -80,7 +84,8 @@
 	height: var(--reltio-loading-dot-size, 8px);
 	border-radius: var(--reltio-loading-dot-radius, 5px);
 	background-color: var(--reltio-loading-dot-color, #8d8dc8);
-	animation: dotFlashing var(--reltio-loading-dot-duration, 1s) infinite alternate;
+	animation: dotFlashing var(--reltio-loading-dot-duration, 1s) infinite
+		alternate;
 }
 
 .dotFlashing::before {
@@ -99,6 +104,9 @@
 	}
 	50%,
 	100% {
-		background-color: var(--reltio-loading-dot-color-dimmed, rgba(152, 128, 255, 0.2));
+		background-color: var(
+			--reltio-loading-dot-color-dimmed,
+			rgba(152, 128, 255, 0.2)
+		);
 	}
 }

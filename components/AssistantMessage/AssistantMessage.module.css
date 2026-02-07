@@ -4,9 +4,6 @@
 	--reltio-assistant-message-padding: 12px 16px;
 	--reltio-assistant-message-border-radius: 8px;
 	--reltio-assistant-message-content-color: #0e0e25;
-	--reltio-assistant-message-meta-color: #6c757d;
-	--reltio-assistant-message-meta-font-size: 12px;
-	--reltio-assistant-message-meta-margin-bottom: 8px;
 
 	display: flex;
 	flex-direction: column;
@@ -20,12 +17,6 @@
 	flex: 1;
 	min-width: 0;
 	color: var(--reltio-assistant-message-content-color, #0e0e25);
-}
-
-.meta {
-	color: var(--reltio-assistant-message-meta-color, #6c757d);
-	font-size: var(--reltio-assistant-message-meta-font-size, 12px);
-	margin-bottom: var(--reltio-assistant-message-meta-margin-bottom, 8px);
 }
 
 .errorWrapper {

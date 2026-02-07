@@ -2,55 +2,13 @@
 
 ## Purpose
 
-The AssistantMessage component displays assistant-authored messages in a chat interface with support for both Markdown and MDX formatting, and error states. It provides consistent styling and layout for assistant messages and distinguishes them visually from user messages. Content type (mdx vs markdown) is determined by a dedicated helper; the component uses that result to choose MarkdownRenderer or MDXRenderer.
+The AssistantMessage component displays assistant-authored messages in a chat interface with support for both Markdown and MDX formatting, and error states. It provides consistent styling and layout for assistant messages and distinguishes them visually from user messages. Markdown and MDX content are rendered by a single unified markdown renderer component.
 
 ## ADDED Requirements
 
-### Requirement: Content Type Helper
-
-The project SHALL provide a helper that determines whether a given content string should be rendered as MDX or Markdown. The AssistantMessage component SHALL use this helper to select the correct renderer.
-
-**Responsibility:** Decide content type only. The helper does not render content, parse JSX, or touch the DOM. It returns a single value: `"mdx"` or `"markdown"`.
-
-**Input:**
-- `content`: string (the raw message content, which may be empty)
-- Optional override (e.g. prop from caller): when provided, the helper SHALL return the override and SHALL NOT infer from content
-
-**Output:** One of `"mdx"` or `"markdown"`.
-
-**Decision rules:**
-- IF an explicit override is provided (e.g. "use markdown" or "use mdx"), THEN return that override.
-- ELSE IF the content string indicates MDX (e.g. contains JSX-like patterns such as `<Identifier` or `</Identifier>` where the identifier suggests a component or tag), THEN return `"mdx"`.
-- ELSE return `"markdown"`.
-
-Edge cases:
-- Empty, null, or whitespace-only content: helper MAY return `"markdown"` (or a value that causes the component to render nothing; exact behavior is an implementation choice).
-- Malformed or ambiguous content: helper SHALL still return either `"mdx"` or `"markdown"` (no third state); implementation MAY default to `"markdown"` when uncertain.
-
-#### Scenario: Helper returns mdx when content suggests JSX
-- **WHEN** content contains JSX-like patterns (e.g. `<Button>`, `</div>`)
-- **AND** no override is provided
-- **THEN** helper returns `"mdx"`
-
-#### Scenario: Helper returns markdown when content has no JSX
-- **WHEN** content contains only Markdown and/or plain text (no JSX-like patterns)
-- **AND** no override is provided
-- **THEN** helper returns `"markdown"`
-
-#### Scenario: Override takes precedence
-- **WHEN** caller provides an explicit content type override
-- **THEN** helper returns the override
-- **AND** content string is not used to infer type
-
-#### Scenario: AssistantMessage depends on helper
-- **WHEN** AssistantMessage has content to render
-- **THEN** component calls the content type helper (with content and any override prop)
-- **AND** component uses the helper result to choose MarkdownRenderer (for `"markdown"`) or MDXRenderer (for `"mdx"`)
-- **AND** component does not duplicate the helper’s decision logic
-
 ### Requirement: Message Display
 
-The AssistantMessage component SHALL display assistant message content with proper formatting and styling, supporting both Markdown and MDX content types by delegating to the appropriate renderer based on the content type helper.
+The AssistantMessage component SHALL display assistant message content with proper formatting and styling by delegating to the unified markdown renderer component, which supports both Markdown and MDX (including embedded React components).
 
 #### Scenario: Plain text message displays correctly
 - **WHEN** message content contains plain text
@@ -59,17 +17,15 @@ The AssistantMessage component SHALL display assistant message content with prop
 - **AND** styling distinguishes the message as assistant-authored
 
 #### Scenario: Markdown content renders correctly
-- **WHEN** content type helper returns `"markdown"` for the message content
-- **THEN** MarkdownRenderer is used
-- **AND** Markdown features work (headers, lists, links, code, etc.)
-- **AND** GFM and raw HTML in Markdown are supported per MarkdownRenderer
+- **WHEN** message content contains Markdown (headers, lists, links, code, etc.)
+- **THEN** the unified renderer is used
+- **AND** Markdown features and GFM are supported
 - **AND** rendered content is styled within the assistant message container
 
 #### Scenario: MDX content renders correctly
-- **WHEN** content type helper returns `"mdx"` for the message content
-- **THEN** MDXRenderer is used
-- **AND** React components embedded in MDX are rendered and functional
-- **AND** Markdown and GFM work within MDX per MDXRenderer
+- **WHEN** message content contains MDX (e.g. embedded React components)
+- **THEN** the unified renderer is used
+- **AND** React components and Markdown within the content are rendered
 - **AND** rendered content is styled within the assistant message container
 
 #### Scenario: Empty content handled
@@ -101,22 +57,16 @@ The AssistantMessage component SHALL support an error state that displays an err
 
 ### Requirement: Renderer Integration
 
-The AssistantMessage component SHALL use MarkdownRenderer and MDXRenderer based on the content type helper result. It SHALL NOT implement its own content-type detection logic; that remains the helper’s responsibility.
+The AssistantMessage component SHALL use the unified markdown renderer component for all message content (Markdown and MDX). It SHALL NOT use separate renderers for different content types.
 
-#### Scenario: Markdown path uses MarkdownRenderer
-- **WHEN** helper returns `"markdown"`
-- **THEN** content is passed to MarkdownRenderer
-- **AND** MarkdownRenderer handles parsing, rendering, and its own error handling
+#### Scenario: All content uses unified renderer
+- **WHEN** AssistantMessage has content to render
+- **THEN** content is passed to the unified markdown renderer component
+- **AND** that component handles parsing, rendering, and error handling for both Markdown and MDX
 
-#### Scenario: MDX path uses MDXRenderer
-- **WHEN** helper returns `"mdx"`
-- **THEN** content is passed to MDXRenderer
-- **AND** MDXRenderer handles parsing, rendering, and its own error handling
-- **AND** embedded React components are rendered
-
-#### Scenario: Invalid content handled by renderers
+#### Scenario: Invalid content handled by renderer
 - **WHEN** message content is invalid Markdown or MDX
-- **THEN** the chosen renderer handles the error gracefully (per its spec)
+- **THEN** the unified renderer handles the error gracefully (per its spec)
 - **AND** AssistantMessage remains stable and parent is not affected
 
 ### Requirement: Visual Design
@@ -146,26 +96,25 @@ The AssistantMessage component SHALL define design tokens as CSS custom properti
 
 ### Requirement: className and TypeScript
 
-The AssistantMessage component SHALL use the classNames utility for all className composition and SHALL be fully typed in TypeScript (strict mode). Types SHALL live in AssistantMessage.types.ts using the `type` keyword. AssistantMessageProps and any content-type-related types SHALL be exported. Props SHALL include content, error, errorMessage, optional content-type override, optional meta, className, style, and rest div props as appropriate.
+The AssistantMessage component SHALL use the classNames utility for all className composition and SHALL be fully typed in TypeScript (strict mode). Types SHALL live in AssistantMessage.types.ts using the `type` keyword. AssistantMessageProps SHALL be exported. Props SHALL include content, error, errorMessage, className, style, and rest div props as appropriate.
 
 #### Scenario: classNames and types
 - **WHEN** developer uses AssistantMessage
 - **THEN** root element classNames are composed via classNames utility
-- **AND** AssistantMessageProps and content-type types are exported and usable
+- **AND** AssistantMessageProps is exported and usable
 
 ### Requirement: Storybook Documentation
 
-The AssistantMessage component SHALL have Storybook stories that demonstrate one variant per story: plain text, Markdown content, MDX content, error state (default and custom message), empty content, and optional features (e.g. meta, content-type override, CSS variable customization). Stories SHALL be consistent with project conventions (e.g. one variant per story, a11y where applicable).
+The AssistantMessage component SHALL have Storybook stories that demonstrate one variant per story: plain text, Markdown content, MDX content, error state (default and custom message), empty content, and optional features (e.g. CSS variable customization). Stories SHALL be consistent with project conventions (e.g. one variant per story, a11y where applicable).
 
 #### Scenario: One variant per story
 - **WHEN** viewing AssistantMessage in Storybook
-- **THEN** each story shows a single variant (plain text, Markdown, MDX, error, empty, override, meta, customization)
+- **THEN** each story shows a single variant (plain text, Markdown, MDX, error, empty, customization)
 - **AND** stories follow project conventions
 
 ## Intended Structure (Design)
 
 - **AssistantMessage:** `AssistantMessage.tsx`, `AssistantMessage.types.ts`, `AssistantMessage.module.css`, `AssistantMessage.stories.tsx`, `index.ts`.
-- **Content type helper:** Implemented as a function (or small module) with defined input, output, and decision rules above. Location (e.g. utils, or next to the component) is an implementation choice.
-- **Dependencies:** React, TypeScript, CSS Modules, classNames utility, MarkdownRenderer, MDXRenderer, ErrorMessage.
+- **Dependencies:** React, TypeScript, CSS Modules, classNames utility, unified markdown renderer component (markdown-renderer), ErrorMessage.
 
 No implementation is implied beyond what is specified; the above describes the intended design and scope.
