@@ -25,5 +25,5 @@
 ## 4. Validation
 
 - [x] 4.1 Run Storybook for the unified component; confirm all variants (Markdown, React components, error handling, customization) render correctly and no regressions.
-<!-- - [ ] 4.2 Run `npm run lint` and `npm run format`; fix any issues. -->
+- [ ] 4.2 Run `npm run lint` and `npm run format`; fix any issues.
 - [x] 4.3 Run `npx openspec validate replace-mdx-js-mdx-with-markdown-to-jsx --strict` and resolve any validation failures.
