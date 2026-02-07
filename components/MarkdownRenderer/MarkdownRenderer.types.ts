@@ -1,8 +1,10 @@
+import type { MarkdownToJSX } from "markdown-to-jsx";
 import type React from "react";
 
 /**
  * CSS custom properties for markdown components.
- */ export type MarkdownComponentsCSSVariables = {
+ */
+export type MarkdownComponentsCSSVariables = {
 	/** Base typography (root / MarkdownRenderer) */
 	"--reltio-markdown-components-font-family"?: string;
 	"--reltio-markdown-components-font-size"?: string;
@@ -51,6 +53,12 @@ export type MarkdownRendererProps = {
 	 * Markdown content to render
 	 */
 	content: string | null | undefined;
+
+	/**
+	 * Optional overrides to extend or replace tag-to-component mappings.
+	 * Merged with base overrides (headings, lists, code, details, etc.).
+	 */
+	components?: MarkdownToJSX.Overrides;
 
 	/**
 	 * Additional CSS class names

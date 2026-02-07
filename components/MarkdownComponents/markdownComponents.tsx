@@ -18,8 +18,8 @@ export const tagWithClass = <T extends keyof React.JSX.IntrinsicElements>(
 
 /**
  * Creates the base component/override mapping for markdown-to-jsx (headings, lists, code,
- * links, tables, details, etc.). Used by MarkdownRenderer and MDXRenderer.
- * Components accept standard DOM-like props; `node` is optional for MDX compatibility.
+ * links, tables, details, etc.). Used by MarkdownRenderer.
+ * Components accept standard DOM-like props; `node` is optional for compatibility.
  */
 export const createBaseMarkdownComponents = (): MarkdownToJSX.Overrides => {
 	return {

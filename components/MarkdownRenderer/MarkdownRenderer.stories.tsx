@@ -1,4 +1,5 @@
 import preview from "@/.storybook/preview";
+import { Button } from "@/components/Button";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 
 const meta = preview.meta({
@@ -6,6 +7,7 @@ const meta = preview.meta({
 	parameters: {
 		layout: "padded",
 	},
+	tags: ["autodocs"],
 });
 
 // Basic Markdown rendering
@@ -242,6 +244,37 @@ export const NullContent = meta.story({
 export const UndefinedContent = meta.story({
 	args: {
 		content: undefined,
+	},
+});
+
+// Optional components prop (tag/override overrides)
+export const CustomOverrides = meta.story({
+	args: {
+		content: `# Heading with custom override\n\nParagraph text.`,
+		components: {
+			h1: ({ children, ...props }) => (
+				<h1
+					{...props}
+					style={{ color: "green", borderBottom: "2px solid green" }}
+				>
+					{children}
+				</h1>
+			),
+		},
+	},
+});
+
+// Button as React component (<Button> in content, not native <button>)
+export const ButtonAsReactComponent = meta.story({
+	args: {
+		content: `Use the design system Button in MDX:
+
+<Button variant="filled">Filled</Button> <Button variant="outlined">Outlined</Button>`,
+		components: {
+			Button: ({ children, ...props }) => (
+				<Button {...props}>{children}</Button>
+			),
+		},
 	},
 });
 
