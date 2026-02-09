@@ -34,27 +34,6 @@ The AssistantMessage component SHALL display assistant message content with prop
 - **AND** no errors are thrown
 - **AND** component remains stable
 
-### Requirement: Error State
-
-The AssistantMessage component SHALL support an error state that displays an error message when content generation or fetching fails. The component SHALL use the ErrorMessage component for all error display and styling.
-
-#### Scenario: Error state displays message using ErrorMessage
-- **WHEN** error prop is true
-- **THEN** ErrorMessage component is rendered
-- **AND** error message is displayed via ErrorMessage
-- **AND** error is visually distinct and ErrorMessage provides consistent styling and accessibility
-
-#### Scenario: Custom error message via ErrorMessage
-- **WHEN** error prop is true and errorMessage prop is provided
-- **THEN** ErrorMessage is rendered with that message
-- **WHEN** error prop is true and errorMessage is not provided
-- **THEN** ErrorMessage is rendered with its default message
-
-#### Scenario: Error state with content
-- **WHEN** error prop is true and content is also provided
-- **THEN** ErrorMessage is displayed
-- **AND** content may be hidden or shown alongside error (implementation decision)
-
 ### Requirement: Renderer Integration
 
 The AssistantMessage component SHALL use the unified markdown renderer component for all message content (Markdown and MDX). It SHALL NOT use separate renderers for different content types.
@@ -87,7 +66,7 @@ The AssistantMessage component SHALL have distinct visual styling that identifie
 
 ### Requirement: CSS Custom Properties
 
-The AssistantMessage component SHALL define design tokens as CSS custom properties on the root element, with `--reltio-assistant-message-` prefix and fallback values. External customization via style prop or overrides SHALL be supported (e.g. `--reltio-assistant-message-background`). Error message colors and spacing are provided by the ErrorMessage component.
+The AssistantMessage component SHALL define design tokens as CSS custom properties on the root element, with `--reltio-assistant-message-` prefix and fallback values. External customization via style prop or overrides SHALL be supported (e.g. `--reltio-assistant-message-background`).
 
 #### Scenario: CSS variables on root
 - **WHEN** AssistantMessage is rendered

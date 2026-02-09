@@ -10,11 +10,6 @@ export type UserMessageProps = {
 	content?: string | null;
 
 	/**
-	 * Optional metadata (e.g. user label) rendered above content.
-	 */
-	meta?: React.ReactNode;
-
-	/**
 	 * Additional CSS class names
 	 */
 	className?: string;

@@ -1,33 +1,9 @@
-/* CSS Custom Properties - All defined on .root with --reltio-user-message- prefix */
-.root {
-	--reltio-user-message-background: #f5f5fa;
-	--reltio-user-message-padding: 12px 16px;
-	--reltio-user-message-border-radius: 12px;
-	--reltio-user-message-content-color: #0e0e25;
-	--reltio-user-message-content-background: #f5f5fa;
-	--reltio-user-message-meta-color: #6c757d;
-	--reltio-user-message-meta-font-size: 12px;
-	--reltio-user-message-meta-margin-bottom: 8px;
-	--reltio-user-message-max-width: 100%;
-
+.userMessageRoot {
 	display: flex;
-	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 	background-color: var(--reltio-user-message-background, #f5f5fa);
 	padding: var(--reltio-user-message-padding, 12px 16px);
 	border-radius: var(--reltio-user-message-border-radius, 12px);
-	max-width: var(--reltio-user-message-max-width, 100%);
-	box-sizing: border-box;
-}
-
-.content {
-	flex: 1;
-	min-width: 0;
-	color: var(--reltio-user-message-content-color, #0e0e25);
-	background-color: var(--reltio-user-message-content-background, #f5f5fa);
-}
-
-.meta {
-	color: var(--reltio-user-message-meta-color, #6c757d);
-	font-size: var(--reltio-user-message-meta-font-size, 12px);
-	margin-bottom: var(--reltio-user-message-meta-margin-bottom, 8px);
+	max-width: var(--reltio-user-message-max-width, 80%);
 }

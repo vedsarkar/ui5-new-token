@@ -35,9 +35,13 @@ const allowedMarkdownComponents: MarkdownToJSX.Overrides = {
 			{children}
 		</Button>
 	),
-	Button: ({ node: _node, ...props }: { node?: unknown; [key: string]: unknown }) => (
-		<Button {...(props as React.ComponentProps<typeof Button>)} />
-	),
+	Button: ({
+		node: _node,
+		...props
+	}: {
+		node?: unknown;
+		[key: string]: unknown;
+	}) => <Button {...(props as React.ComponentProps<typeof Button>)} />,
 };
 
 /**
@@ -57,7 +61,11 @@ export const AssistantMessage = ({
 	const hasContent = content != null && String(content).trim() !== "";
 
 	return (
-		<div className={classNames(styles.root, className)} style={style} {...rest}>
+		<div
+			className={classNames(styles.assistantMessageRoot, className)}
+			style={style}
+			{...rest}
+		>
 			{error && (
 				<div className={styles.errorWrapper}>
 					<ErrorMessage message={errorMessage ?? undefined} />
@@ -66,10 +74,10 @@ export const AssistantMessage = ({
 			{!error && hasContent && (
 				<div className={styles.content}>
 					<MarkdownRenderer
-					content={content}
-					components={allowedMarkdownComponents}
-					style={contentColorStyle}
-				/>
+						content={content}
+						components={allowedMarkdownComponents}
+						style={contentColorStyle}
+					/>
 				</div>
 			)}
 		</div>

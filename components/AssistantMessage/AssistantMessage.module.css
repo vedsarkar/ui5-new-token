@@ -1,16 +1,17 @@
 /* CSS Custom Properties - All defined on .root with --reltio-assistant-message- prefix */
-.root {
-	--reltio-assistant-message-background: #f5f5fa;
+.assistantMessageRoot {
+	--reltio-assistant-message-background: transparent;
 	--reltio-assistant-message-padding: 12px 16px;
 	--reltio-assistant-message-border-radius: 8px;
 	--reltio-assistant-message-content-color: #0e0e25;
 
 	display: flex;
 	flex-direction: column;
-	background-color: var(--reltio-assistant-message-background, #f5f5fa);
+	background-color: var(--reltio-assistant-message-background, transparent);
 	padding: var(--reltio-assistant-message-padding, 12px 16px);
 	border-radius: var(--reltio-assistant-message-border-radius, 8px);
 	box-sizing: border-box;
+	width: 100%;
 }
 
 .content {

@@ -5,7 +5,7 @@ import type React from "react";
  */
 export type AssistantMessageProps = {
 	/**
-	 * Message content (Markdown or MDX string). When empty/null and not in error state, no content area is rendered.
+	 * Message content (Markdown or MDX string). When empty/null, no content area is rendered.
 	 */
 	content?: string | null;
 

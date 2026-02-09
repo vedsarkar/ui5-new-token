@@ -66,23 +66,43 @@ The Chat component SHALL support messages of any type through an extensible mess
 - **AND** new message types can be added without breaking changes
 - **AND** type system remains type-safe
 
-### Requirement: Loading State Support
+### Requirement: Initial Loading State
 
-The Chat component SHALL support loading states using the Loading component to indicate when assistant responses are being generated.
+The Chat component SHALL show a skeleton placeholder while chat data is initially loading.
 
-#### Scenario: Loading state displays Loading component
-- **WHEN** loading state is active (e.g., waiting for assistant response)
-- **THEN** Loading component is displayed in message list
-- **AND** Loading component is properly positioned
-- **AND** Loading component uses appropriate size and styling
-- **AND** loading state is clearly visible to users
+#### Scenario: Initial loading displays skeleton
+- **WHEN** chat data is initially loading (before the first messages are available)
+- **THEN** a skeleton placeholder is displayed in place of the message list
+- **AND** the skeleton is clearly visible to users as a loading indicator
+- **AND** no message list is shown until chat data is available
 
-#### Scenario: Loading state transitions
-- **WHEN** loading state changes from active to inactive
-- **AND** assistant message is received
-- **THEN** Loading component is removed
-- **AND** AssistantMessage component is displayed
-- **AND** transition is smooth
+#### Scenario: After initial load
+- **WHEN** chat data has finished loading and messages are available
+- **THEN** the skeleton is no longer shown
+- **AND** the message list is displayed
+- **AND** the transition from skeleton to content is clear
+
+### Requirement: Waiting-for-Assistant Loading State
+
+The Chat component SHALL show an assistant loading indicator when the chat is waiting for a response from the assistant.
+
+#### Scenario: Waiting when last message is from user
+- **WHEN** the messages array has at least one message
+- **AND** the last message in the array is from the user
+- **THEN** the chat is considered waiting for an assistant response
+- **AND** an assistant loading indicator is shown at the end of the message list
+- **AND** the indicator is clearly visible to users
+
+#### Scenario: Not waiting when last message is from assistant
+- **WHEN** the messages array is empty or the last message in the array is from the assistant
+- **THEN** the chat is not considered waiting for an assistant response
+- **AND** no assistant loading indicator is shown
+
+#### Scenario: Transition when assistant responds
+- **WHEN** the chat was waiting for an assistant response and a new assistant message is added to the messages array
+- **THEN** the assistant loading indicator is no longer shown
+- **AND** the new assistant message is displayed
+- **AND** the transition is clear to the user
 
 ### Requirement: Performance Optimizations
 
@@ -251,8 +271,8 @@ The Chat component SHALL have comprehensive Storybook stories demonstrating mess
 
 #### Scenario: Stories for message states
 - **WHEN** viewing Storybook
-- **THEN** stories exist for loading states (using Loading component)
-- **AND** stories exist for error assistant messages (using ErrorMessage component)
+- **THEN** stories exist for initial loading (skeleton placeholder)
+- **AND** stories exist for waiting-for-assistant (assistant loading indicator when last message is from user)
 - **AND** stories demonstrate state transitions
 
 #### Scenario: Stories for performance
@@ -296,7 +316,8 @@ The Chat component SHALL have comprehensive Storybook stories demonstrating mess
 - classNames utility from utils/classNames.ts
 - UserMessage component (from add-user-message proposal)
 - AssistantMessage component (from add-assistant-message proposal)
-- Loading component (from add-loading-component proposal)
+- Skeleton component for initial loading placeholder
+- AssistantLoader component (size in pixels, default 16) for waiting-for-assistant indicator
 - Virtualization library (react-window, react-virtualized, or custom implementation)
 
 ### Browser Support

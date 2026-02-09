@@ -1,6 +1,6 @@
 import type React from "react";
 import preview from "@/.storybook/preview";
-import { UserMessage } from "./UserMessage";
+import { UserMessage } from "@/components/UserMessage";
 
 const meta = preview.meta({
 	component: UserMessage,
@@ -46,7 +46,7 @@ export const HeadersAndLists = meta.story({
 export const CodeBlocks = meta.story({
 	args: {
 		content: `Inline code: \`const x = 5;\`
-
+Block code:
 \`\`\`javascript
 function greet(name) {
   return "Hello, " + name;
@@ -73,19 +73,12 @@ export const EmptyContent = meta.story({
 	},
 });
 
-export const WithMeta = meta.story({
+export const WithCustomStyles = meta.story({
 	args: {
-		content: "User message with metadata above.",
-		meta: "You",
-	},
-});
-
-export const WithCustomCssVariables = meta.story({
-	args: {
-		content: "Custom styled user message.",
+		content: "User message with custom style overrides.",
 		style: {
-			"--reltio-user-message-background": "#e8eaf6",
-			"--reltio-user-message-content-color": "#1a237e",
+			backgroundColor: "#0d5c2e",
+			color: "#f0fff4",
 		} as React.CSSProperties,
 	},
 });

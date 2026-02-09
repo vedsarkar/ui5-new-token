@@ -21,13 +21,15 @@
 - [x] 3.6 Layout per spec.
 - [x] 3.7 Use unified markdown renderer for all content.
 
-## 4. Error State
+## 4. Styling and Types
 
-- [x] 4.1 Implement error prop and logic: when error is true, render ErrorMessage (content hidden or shown per spec).
-- [x] 4.2 Pass errorMessage prop to ErrorMessage when provided; otherwise let ErrorMessage use its default.
-- [x] 4.3 Ensure ErrorMessage styling fits within AssistantMessage layout (e.g. wrapper or spacing as needed).
+- [x] 4.1 Define CSS custom properties on `.root` with `--reltio-assistant-message-` prefix (e.g. background, padding, border-radius, content colors) and fallback values.
+- [x] 4.2 Use `classNames` utility for all className composition; support className and style props on root.
+- [x] 4.3 Ensure content area and renderer output are styled so that AssistantMessage design tokens (e.g. content color) apply to rendered Markdown/MDX where specified.
+- [x] 4.4 Run `npm run format` and `npm run lint`; fix any issues in new or touched files.
+- [x] 4.5 Verify TypeScript strict mode compliance and that all new code is properly typed.
 
-## 5. Styling and Types
+## 5. Storybook and Documentation
 
 - [x] 5.1 Define CSS custom properties on `.root` with `--reltio-assistant-message-` prefix (e.g. background, padding, border-radius, content colors) and fallback values.
 - [x] 5.2 Use `classNames` utility for all className composition; support className and style props on root.
@@ -35,7 +37,7 @@
 - [x] 5.4 Run `npm run format` and `npm run lint`; fix any issues in new or touched files.
 - [x] 5.5 Verify TypeScript strict mode compliance and that all new code is properly typed.
 
-## 6. Storybook and Documentation
+## 6. Testing and Validation
 
 - [x] 6.1 Create `AssistantMessage.stories.tsx` with one variant per story per project conventions.
 - [x] 6.2 Add story: plain text (or Markdown-only) assistant message.

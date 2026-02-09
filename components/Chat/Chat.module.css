@@ -1,0 +1,65 @@
+/* CSS Custom Properties - All defined on .root with --reltio-chat- prefix */
+.chatWrapper {
+	--reltio-chat-height: 400px;
+	--reltio-chat-width: 100%;
+	--reltio-chat-background: #ffffff;
+	--reltio-chat-padding: 16px;
+	--reltio-chat-message-gap: 12px;
+	--reltio-chat-border-radius: 0;
+	--reltio-chat-border: none;
+	--reltio-chat-scrollbar-width: 8px;
+
+	display: flex;
+	flex-direction: column;
+	height: var(--reltio-chat-height, 400px);
+	width: var(--reltio-chat-width, 100%);
+	background: var(--reltio-chat-background, #ffffff);
+	padding: var(--reltio-chat-padding, 16px);
+	border-radius: var(--reltio-chat-border-radius, 0);
+	border: var(--reltio-chat-border, none);
+	box-sizing: border-box;
+	overflow: hidden;
+}
+
+.listWrapper {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	overflow-x: hidden;
+	scrollbar-width: thin;
+	scrollbar-gutter: stable;
+	width: 100%;
+}
+
+.listWrapper::-webkit-scrollbar {
+	width: var(--reltio-chat-scrollbar-width, 8px);
+}
+
+.listWrapper::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.listWrapper::-webkit-scrollbar-thumb {
+	background: #c1c1c1;
+	border-radius: 4px;
+}
+
+.list {
+	display: flex;
+	align-items: flex-end;
+	flex-direction: column;
+	gap: var(--reltio-chat-message-gap, 12px);
+}
+
+.spacer {
+	flex-shrink: 0;
+	width: 100%;
+}
+
+.loadingWrapper {
+	flex-shrink: 0;
+	margin-top: var(--reltio-chat-message-gap, 12px);
+	width: 100%;
+}
