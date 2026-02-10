@@ -4,6 +4,8 @@ export * from "./Button";
 export * from "./Chat";
 export * from "./ErrorMessage";
 export * from "./Skeleton";
+export * from "./ErrorBoundary";
+export * from "./MarkdownRenderer";
 export * from "./TextArea";
 export * from "./TreeList";
 export * from "./UserMessage";
