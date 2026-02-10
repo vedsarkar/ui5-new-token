@@ -1,6 +1,6 @@
 import type React from "react";
 import preview from "@/.storybook/preview";
-import { ErrorMessage } from "./ErrorMessage";
+import {ErrorMessage} from "@/components/ErrorMessage";
 
 const meta = preview.meta({
 	component: ErrorMessage,
@@ -40,18 +40,14 @@ export const LongText = meta.story({
 	},
 });
 
-export const EmptyMessage = meta.story({
-	args: {
-		message: "",
-	},
-});
 
 export const WithCustomCssVariables = meta.story({
 	args: {
 		message: "Custom styled error.",
 		style: {
-			"--reltio-error-message-bg": "#fff5f5",
-			"--reltio-error-message-text-color": "#c53030",
+			"--reltio-error-message-bg": "#d6ef9a5c",
+			"--reltio-error-message-text-color": "#567215",
+			"--reltio-error-message-border-color": "#567215",
 		} as React.CSSProperties,
 	},
 });

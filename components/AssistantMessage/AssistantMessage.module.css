@@ -19,7 +19,3 @@
 	min-width: 0;
 	color: var(--reltio-assistant-message-content-color, #0e0e25);
 }
-
-.errorWrapper {
-	margin: 0;
-}

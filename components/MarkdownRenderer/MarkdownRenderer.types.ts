@@ -1,4 +1,3 @@
-import type { MarkdownToJSX } from "markdown-to-jsx";
 import type React from "react";
 
 /**
@@ -49,17 +48,6 @@ export type MarkdownComponentsCSSVariables = {
  * Props for the MarkdownRenderer component
  */
 export type MarkdownRendererProps = {
-	/**
-	 * Markdown content to render
-	 */
-	content: string | null | undefined;
-
-	/**
-	 * Optional overrides to extend or replace tag-to-component mappings.
-	 * Merged with base overrides (headings, lists, code, details, etc.).
-	 */
-	components?: MarkdownToJSX.Overrides;
-
 	/**
 	 * Additional CSS class names
 	 */

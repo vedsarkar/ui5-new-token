@@ -1,6 +1,5 @@
 import preview from "@/.storybook/preview";
-import { Button } from "@/components/Button";
-import { MarkdownRenderer } from "./MarkdownRenderer";
+import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 
 const meta = preview.meta({
 	component: MarkdownRenderer,
@@ -13,7 +12,7 @@ const meta = preview.meta({
 // Basic Markdown rendering
 export const Headers = meta.story({
 	args: {
-		content: `# Heading 1
+		children: `# Heading 1
 ## Heading 2
 ### Heading 3
 #### Heading 4
@@ -24,7 +23,7 @@ export const Headers = meta.story({
 
 export const Paragraphs = meta.story({
 	args: {
-		content: `This is a paragraph.
+		children: `This is a paragraph.
 
 This is another paragraph with multiple sentences. It demonstrates how paragraphs are separated and rendered.
 
@@ -34,7 +33,7 @@ And here's a third paragraph to show spacing.`,
 
 export const Lists = meta.story({
 	args: {
-		content: `Unordered list:
+		children: `Unordered list:
 - Item 1
 - Item 2
 - Item 3
@@ -55,7 +54,7 @@ Nested lists:
 
 export const Links = meta.story({
 	args: {
-		content: `This is a [link to example.com](https://example.com).
+		children: `This is a [link to example.com](https://example.com).
 
 This is an [internal link](/about).
 
@@ -65,14 +64,14 @@ External links open in a new tab with proper security attributes.`,
 
 export const Emphasis = meta.story({
 	args: {
-		content:
+		children:
 			"This is **bold text** and this is *italic text*.\n\nYou can also use __bold__ and _italic_ syntax.\n\n_**Bold**_ and __*italic*__ can be combined.",
 	},
 });
 
 export const Code = meta.story({
 	args: {
-		content: `Inline code: \`const x = 5;\`
+		children: `Inline code: \`const x = 5;\`
 
 Code block:
 \`\`\`javascript
@@ -91,7 +90,7 @@ def hello():
 
 export const Blockquotes = meta.story({
 	args: {
-		content: `> This is a blockquote.
+		children: `> This is a blockquote.
 > It can span multiple lines.
 > And supports **formatting** inside.
 
@@ -104,7 +103,7 @@ export const Blockquotes = meta.story({
 // GFM Features
 export const Tables = meta.story({
 	args: {
-		content: `| Header 1 | Header 2 | Header 3 |
+		children: `| Header 1 | Header 2 | Header 3 |
 |----------|----------|----------|
 | Cell 1   | Cell 2   | Cell 3   |
 | Cell 4   | Cell 5   | Cell 6   |
@@ -114,7 +113,7 @@ export const Tables = meta.story({
 
 export const TableWithMarkdownInCells = meta.story({
 	args: {
-		content: `| Feature | Description | Status |
+		children: `| Feature | Description | Status |
 |---------|-------------|--------|
 | **Bold** | *Italic* text in cell | \`code\` |
 | [Link](https://example.com) | ~~Strikethrough~~ | **Bold** and *italic* |
@@ -124,7 +123,7 @@ export const TableWithMarkdownInCells = meta.story({
 
 export const TaskLists = meta.story({
 	args: {
-		content: `Task list:
+		children: `Task list:
 - [ ] Uncompleted task
 - [x] Completed task
 - [ ] Another uncompleted task
@@ -134,7 +133,7 @@ export const TaskLists = meta.story({
 
 export const Strikethrough = meta.story({
 	args: {
-		content: `This text has ~~strikethrough~~ formatting.
+		children: `This text has ~~strikethrough~~ formatting.
 
 You can combine ~~strikethrough~~ with **bold** and *italic*.`,
 	},
@@ -142,7 +141,7 @@ You can combine ~~strikethrough~~ with **bold** and *italic*.`,
 
 export const Autolinks = meta.story({
 	args: {
-		content: `Visit https://example.com for more information.
+		children: `Visit https://example.com for more information.
 
 Email us at user@example.com for support.
 
@@ -153,7 +152,7 @@ Both URLs and emails are automatically converted to links.`,
 // Raw HTML
 export const RawHtml = meta.story({
 	args: {
-		content: `Text with <br /> line break and <b>bold</b> and <sup>superscript</sup> and <sub>subscript</sub>.
+		children: `Text with <br /> line break and <b>bold</b> and <sup>superscript</sup> and <sub>subscript</sub>.
 
 You can also use <i>italic</i> and <strong>strong</strong> and <em>emphasis</em> tags.`,
 	},
@@ -162,7 +161,7 @@ You can also use <i>italic</i> and <strong>strong</strong> and <em>emphasis</em>
 // Horizontal rule (hr / divider)
 export const HorizontalRule = meta.story({
 	args: {
-		content: `Section above.
+		children: `Section above.
 
 ---
 
@@ -177,7 +176,7 @@ Section below.`,
 // Details/Summary (details → MarkdownDetails)
 export const DetailsSummary = meta.story({
 	args: {
-		content:
+		children:
 			'<details>\n<summary>Summary of Tools Used</summary>\n\n- **`get_potential_matches_stats_tool`** — Retrieved tenant-wide potential match statistics\n  - **Inputs**: `min_matches=0`, `tenant_id="mlrianew"`\n</details>',
 	},
 });
@@ -185,7 +184,7 @@ export const DetailsSummary = meta.story({
 // Complex example
 export const ComplexMarkdown = meta.story({
 	args: {
-		content: `# Complex Markdown Example
+		children: `# Complex Markdown Example
 
 This document demonstrates **multiple** Markdown features working together.
 
@@ -220,7 +219,7 @@ Visit [our website](https://example.com) for more info.
 // Error handling
 export const InvalidMarkdown = meta.story({
 	args: {
-		content: `This is valid markdown.
+		children: `This is valid markdown.
 
 [Unclosed link
 **Unclosed bold
@@ -231,57 +230,41 @@ The component should handle malformed markdown gracefully.`,
 
 export const EmptyContent = meta.story({
 	args: {
-		content: "",
+		children: "",
 	},
 });
 
 export const NullContent = meta.story({
 	args: {
-		content: null,
+		children: null,
 	},
 });
 
 export const UndefinedContent = meta.story({
 	args: {
-		content: undefined,
+		children: undefined,
 	},
 });
 
-// Optional components prop (tag/override overrides)
 export const CustomOverrides = meta.story({
 	args: {
-		content: `# Heading with custom override\n\nParagraph text.`,
-		components: {
-			h1: ({ children, ...props }) => (
-				<h1
-					{...props}
-					style={{ color: "green", borderBottom: "2px solid green" }}
-				>
-					{children}
-				</h1>
-			),
-		},
+		children: `# Heading with custom override\n\nParagraph text.`,
 	},
 });
 
 // Button as React component (<Button> in content, not native <button>)
 export const ButtonAsReactComponent = meta.story({
 	args: {
-		content: `Use the design system Button in MDX:
+		children: `Use the design system Button in MDX:
 
 <Button variant="filled">Filled</Button> <Button variant="outlined">Outlined</Button>`,
-		components: {
-			Button: ({ children, ...props }) => (
-				<Button {...props}>{children}</Button>
-			),
-		},
 	},
 });
 
 // Customization
 export const CustomClassName = meta.story({
 	args: {
-		content: `This markdown has a custom className applied.`,
+		children: "This markdown has a custom className applied.",
 		className: "custom-markdown",
 	},
 	render: (args) => (
@@ -300,7 +283,7 @@ export const CustomClassName = meta.story({
 
 export const CustomCssVariables = meta.story({
 	args: {
-		content: `# Custom Styling
+		children: `# Custom Styling
 
 This paragraph uses custom **font size**, line height, and text color.
 

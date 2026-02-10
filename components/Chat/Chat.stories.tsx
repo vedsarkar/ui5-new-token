@@ -1,7 +1,7 @@
 import type React from "react";
 import preview from "@/.storybook/preview";
-import { Chat } from "./Chat";
-import type { Message } from "./Chat.types";
+import { Chat } from "@/components/Chat";
+import type { Message } from "@/components/Chat";
 
 const meta = preview.meta({
 	component: Chat,
@@ -101,15 +101,6 @@ const manyMessages: Message[] = Array.from({ length: 100 }, (_, i) =>
 export const ManyMessages = meta.story({
 	args: {
 		messages: manyMessages,
-		enableVirtualization: true,
-		estimatedMessageHeight: 80,
-	},
-});
-
-export const ManyMessagesWithoutVirtualization = meta.story({
-	args: {
-		messages: manyMessages,
-		enableVirtualization: false,
 	},
 });
 
@@ -200,13 +191,5 @@ export const WithCustomCssVariables = meta.story({
 			"--reltio-chat-background": "#f8f9fa",
 			"--reltio-chat-message-gap": "16px",
 		} as React.CSSProperties,
-	},
-});
-
-export const VirtualizationEnabled = meta.story({
-	args: {
-		messages: manyMessages.slice(0, 50),
-		enableVirtualization: true,
-		estimatedMessageHeight: 80,
 	},
 });

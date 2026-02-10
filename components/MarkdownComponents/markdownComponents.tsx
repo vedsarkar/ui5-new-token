@@ -4,6 +4,7 @@ import { MarkdownDetails } from "@/components/MarkdownRenderer/components/Markdo
 import type { OverrideProps } from "@/components/MarkdownRenderer/MarkdownRenderer.types";
 import { classNames } from "@/utils/classNames";
 import styles from "./markdownComponents.module.css";
+import { Button } from "@/components/Button";
 
 export const tagWithClass = <T extends keyof React.JSX.IntrinsicElements>(
 	Tag: T,
@@ -21,69 +22,72 @@ export const tagWithClass = <T extends keyof React.JSX.IntrinsicElements>(
  * links, tables, details, etc.). Used by MarkdownRenderer.
  * Components accept standard DOM-like props; `node` is optional for compatibility.
  */
-export const createBaseMarkdownComponents = (): MarkdownToJSX.Overrides => {
-	return {
-		// Headings
-		h1: tagWithClass("h1", styles.heading1),
-		h2: tagWithClass("h2", styles.heading2),
-		h3: tagWithClass("h3", styles.heading3),
-		h4: tagWithClass("h4", styles.heading4),
-		h5: tagWithClass("h5", styles.heading5),
-		h6: tagWithClass("h6", styles.heading6),
+export const baseMarkdownComponents = {
+	// Headings
+	h1: tagWithClass("h1", styles.heading1),
+	h2: tagWithClass("h2", styles.heading2),
+	h3: tagWithClass("h3", styles.heading3),
+	h4: tagWithClass("h4", styles.heading4),
+	h5: tagWithClass("h5", styles.heading5),
+	h6: tagWithClass("h6", styles.heading6),
 
-		// Paragraphs
-		p: tagWithClass("p", styles.paragraph),
+	// Paragraphs
+	p: tagWithClass("p", styles.paragraph),
 
-		// Lists
-		ul: tagWithClass("ul", styles.list),
-		ol: tagWithClass("ol", styles.list),
-		li: tagWithClass("li", styles.listItem),
+	// Lists
+	ul: tagWithClass("ul", styles.list),
+	ol: tagWithClass("ol", styles.list),
+	li: tagWithClass("li", styles.listItem),
 
-		// Code
-		code: tagWithClass("code", styles.code),
-		pre: tagWithClass("pre", styles.pre),
-		// Blockquotes
-		blockquote: tagWithClass("blockquote", styles.blockquote),
+	// Code
+	code: tagWithClass("code", styles.code),
+	pre: tagWithClass("pre", styles.pre),
+	// Blockquotes
+	blockquote: tagWithClass("blockquote", styles.blockquote),
 
-		// Links
-		a: ({ node: _node, href, ...props }: OverrideProps<"a">) => {
-			const isExternal =
-				href && (href.startsWith("http") || href.startsWith("//"));
-			return (
-				<a
-					{...props}
-					href={href}
-					target={isExternal ? "_blank" : undefined}
-					rel={isExternal ? "noopener noreferrer" : undefined}
-					className={classNames(styles.link, props.className)}
-				/>
-			);
-		},
+	// Links
+	a: ({ node: _node, href, ...props }: OverrideProps<"a">) => {
+		const isExternal =
+			href && (href.startsWith("http") || href.startsWith("//"));
+		return (
+			<a
+				{...props}
+				href={href}
+				target={isExternal ? "_blank" : undefined}
+				rel={isExternal ? "noopener noreferrer" : undefined}
+				className={classNames(styles.link, props.className)}
+			/>
+		);
+	},
 
-		// Emphasis
-		strong: tagWithClass("strong", styles.strong),
-		em: tagWithClass("em", styles.em),
+	// Emphasis
+	strong: tagWithClass("strong", styles.strong),
+	em: tagWithClass("em", styles.em),
 
-		// GFM Tables
-		table: ({ node: _node, ...props }: OverrideProps<"table">) => (
-			<div className={styles.tableWrapper}>
-				<table
-					{...props}
-					className={classNames(styles.table, props.className)}
-				/>
-			</div>
-		),
-		thead: tagWithClass("thead", styles.header),
-		tr: tagWithClass("tr", styles.row),
-		th: tagWithClass("th", styles.headerCell),
-		td: tagWithClass("td", styles.cell),
+	// GFM Tables
+	table: ({ node: _node, ...props }: OverrideProps<"table">) => (
+		<div className={styles.tableWrapper}>
+			<table {...props} className={classNames(styles.table, props.className)} />
+		</div>
+	),
+	thead: tagWithClass("thead", styles.header),
+	tr: tagWithClass("tr", styles.row),
+	th: tagWithClass("th", styles.headerCell),
+	td: tagWithClass("td", styles.cell),
 
-		// Raw HTML elements
-		hr: tagWithClass("hr", styles.divider),
+	// Raw HTML elements
+	hr: tagWithClass("hr", styles.divider),
+	button: ({ node: _node, ...props }: OverrideProps<"button">) => (
+		<Button
+			{...(props as React.ComponentProps<typeof Button>)}
+			className={classNames(props.className)}
+		/>
+	),
 
-		// Details/Summary - use MarkdownDetails component
-		details: ({ node: _node, ...props }: OverrideProps<"details">) => (
-			<MarkdownDetails {...props}>{props.children}</MarkdownDetails>
-		),
-	};
+	// Details/Summary - use MarkdownDetails component
+	details: ({ node: _node, ...props }: OverrideProps<"details">) => (
+		<MarkdownDetails {...props}>{props.children}</MarkdownDetails>
+	),
 };
+
+export const allowedMarkdownComponents: MarkdownToJSX.Overrides = { Button };

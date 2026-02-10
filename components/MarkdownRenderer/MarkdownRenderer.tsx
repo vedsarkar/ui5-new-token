@@ -1,8 +1,9 @@
 import Markdown, { sanitizer } from "markdown-to-jsx";
-import { useMemo } from "react";
-
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { createBaseMarkdownComponents } from "@/components/MarkdownComponents/markdownComponents";
+import {
+	baseMarkdownComponents,
+	allowedMarkdownComponents,
+} from "@/components/MarkdownComponents/markdownComponents";
 import { classNames } from "@/utils/classNames";
 
 import styles from "./MarkdownRenderer.module.css";
@@ -18,39 +19,29 @@ import type { MarkdownRendererProps } from "./MarkdownRenderer.types";
  * tag-to-component overrides via the components prop.
  */
 
-/** Stable base markdown overrides (created once to avoid new refs every render). */
-const baseMarkdownOverrides = createBaseMarkdownComponents();
-
 export const MarkdownRenderer = ({
-	content,
-	components,
+	children,
 	className,
 	style,
-}: MarkdownRendererProps) => {
-	const overrides = useMemo(
-		() =>
-			components
-				? { ...baseMarkdownOverrides, ...components }
-				: baseMarkdownOverrides,
-		[components],
-	);
-
-	if (content === null || content === undefined) {
+}: React.PropsWithChildren<MarkdownRendererProps>) => {
+	if (children === null || children === undefined) {
 		return null;
 	}
-
 	const composedClassName = classNames(styles.root, className);
 	return (
 		<div className={composedClassName} style={style}>
-			<ErrorBoundary fallback={<pre className={styles.error}>{content}</pre>}>
+			<ErrorBoundary fallback={<pre className={styles.error}>{children}</pre>}>
 				<Markdown
 					options={{
-						overrides,
+						overrides: {
+							...baseMarkdownComponents,
+							...allowedMarkdownComponents,
+						},
 						tagfilter: true,
 						sanitizer,
 					}}
 				>
-					{content}
+					{typeof children === "string" ? children : String(children)}
 				</Markdown>
 			</ErrorBoundary>
 		</div>

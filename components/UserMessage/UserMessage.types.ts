@@ -5,11 +5,6 @@ import type React from "react";
  */
 export type UserMessageProps = {
 	/**
-	 * Message content (Markdown string). When empty/null, no content area is rendered.
-	 */
-	content?: string | null;
-
-	/**
 	 * Additional CSS class names
 	 */
 	className?: string;
@@ -19,10 +14,6 @@ export type UserMessageProps = {
 	 */
 	style?: React.CSSProperties;
 
-	/**
-	 * Additional attributes passed to the root element
-	 */
-} & Omit<
-	React.ComponentPropsWithoutRef<"div">,
-	"children" | "className" | "style"
->;
+	 /** We expect user message source as a string */
+	 children: string;
+};

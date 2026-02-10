@@ -1,47 +1,19 @@
-import type { MarkdownToJSX } from "markdown-to-jsx";
 import type React from "react";
-import { Button } from "@/components/Button";
-import { ErrorMessage } from "@/components/ErrorMessage";
-import { MarkdownRenderer } from "@/components/MarkdownRenderer";
-import type { OverrideProps } from "@/components/MarkdownRenderer/MarkdownRenderer.types";
-import { classNames } from "@/utils/classNames";
+import {ErrorMessage} from "@/components/ErrorMessage";
+import {MarkdownRenderer} from "@/components/MarkdownRenderer";
+import {classNames} from "@/utils/classNames";
 import styles from "./AssistantMessage.module.css";
-import type { AssistantMessageProps } from "./AssistantMessage.types";
+import type {AssistantMessageProps} from "./AssistantMessage.types";
 
-/** Pass assistant message content color into the unified renderer so its text uses it. */
-const contentColorStyle = {
-	"--reltio-markdown-components-color-text":
-		"var(--reltio-assistant-message-content-color, #0e0e25)",
-} as React.CSSProperties;
-
-/** Allowed components for MarkdownRenderer (maps HTML/custom tags to design system components). */
-const allowedMarkdownComponents: MarkdownToJSX.Overrides = {
-	button: ({
-		node: _node,
-		children,
-		className,
-		type,
-		disabled,
-		onClick,
-		"aria-label": ariaLabel,
-	}: OverrideProps<"button">) => (
-		<Button
-			className={classNames(className)}
-			type={type}
-			disabled={disabled}
-			onClick={onClick}
-			aria-label={ariaLabel}
-		>
-			{children}
-		</Button>
-	),
-	Button: ({
-		node: _node,
-		...props
-	}: {
-		node?: unknown;
-		[key: string]: unknown;
-	}) => <Button {...(props as React.ComponentProps<typeof Button>)} />,
+const normalizeError = (errorMessage: React.ReactNode | null): React.ReactNode | null => {
+	if (errorMessage == null) {
+		return null;
+	}
+	if (typeof errorMessage === "string") {
+		const trimmed = errorMessage.trim();
+		return trimmed ? <ErrorMessage message={trimmed} /> : null;
+	}
+	return errorMessage;
 };
 
 /**
@@ -51,14 +23,14 @@ const allowedMarkdownComponents: MarkdownToJSX.Overrides = {
  * When error is true, shows ErrorMessage and hides content.
  */
 export const AssistantMessage = ({
-	content,
-	error = false,
+	children,
 	errorMessage,
 	className,
 	style,
 	...rest
-}: AssistantMessageProps) => {
-	const hasContent = content != null && String(content).trim() !== "";
+}: React.PropsWithChildren<AssistantMessageProps>) => {
+	const errorNode = normalizeError(errorMessage);
+	const content = children.trim();
 
 	return (
 		<div
@@ -66,20 +38,8 @@ export const AssistantMessage = ({
 			style={style}
 			{...rest}
 		>
-			{error && (
-				<div className={styles.errorWrapper}>
-					<ErrorMessage message={errorMessage ?? undefined} />
-				</div>
-			)}
-			{!error && hasContent && (
-				<div className={styles.content}>
-					<MarkdownRenderer
-						content={content}
-						components={allowedMarkdownComponents}
-						style={contentColorStyle}
-					/>
-				</div>
-			)}
+			{errorNode && <div className={styles.errorWrapper}>{errorNode}</div>}
+			{!errorNode && content && <MarkdownRenderer>{content}</MarkdownRenderer>}
 		</div>
 	);
 };

@@ -55,18 +55,6 @@ export type ChatProps = {
 	autoScroll?: boolean;
 
 	/**
-	 * Estimated height in pixels per message for virtual scrolling. Used when virtualization is enabled.
-	 * @default 80
-	 */
-	estimatedMessageHeight?: number;
-
-	/**
-	 * When set, only messages in the viewport plus this many above/below are rendered (virtual scrolling).
-	 * Omit or 0 to render all messages (no virtualization).
-	 */
-	enableVirtualization?: boolean;
-
-	/**
 	 * Additional CSS class names
 	 */
 	className?: string;

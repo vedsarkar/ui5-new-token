@@ -5,20 +5,9 @@ import type React from "react";
  */
 export type AssistantMessageProps = {
 	/**
-	 * Message content (Markdown or MDX string). When empty/null, no content area is rendered.
+	 * Error content: string is passed to ErrorMessage; custom ReactNode is rendered as is.
 	 */
-	content?: string | null;
-
-	/**
-	 * When true, display error state using ErrorMessage (content is hidden).
-	 * @default false
-	 */
-	error?: boolean;
-
-	/**
-	 * Custom error message passed to ErrorMessage when error is true. When not provided, ErrorMessage uses its default.
-	 */
-	errorMessage?: string | null;
+	errorMessage?: React.ReactNode | null;
 
 	/**
 	 * Additional CSS class names
@@ -30,10 +19,6 @@ export type AssistantMessageProps = {
 	 */
 	style?: React.CSSProperties;
 
-	/**
-	 * Additional attributes passed to the root element
-	 */
-} & Omit<
-	React.ComponentPropsWithoutRef<"div">,
-	"children" | "className" | "style"
->;
+	 /** We expect assistant message source as a string */
+	 children: string;
+};

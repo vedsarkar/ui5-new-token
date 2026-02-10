@@ -9,6 +9,7 @@ import styles from "./Chat.module.css";
 import type { ChatProps, Message } from "./Chat.types";
 
 const NEAR_BOTTOM_THRESHOLD = 80;
+const ITEM_HEIGHT = 80;
 
 const isUserMessage = (m: Message) => m.role === "user";
 
@@ -16,10 +17,10 @@ const isAssistantMessage = (m: Message) => m.role === "assistant";
 
 const ChatMessageRow = memo(({ message }: { message: Message }) => {
 	if (isUserMessage(message)) {
-		return <UserMessage content={message.content ?? undefined} />;
+		return <UserMessage>{message.content}</UserMessage>;
 	}
 	if (isAssistantMessage(message)) {
-		return <AssistantMessage content={message.content ?? undefined} />;
+		return <AssistantMessage>{message.content}</AssistantMessage>;
 	}
 	return message.content ?? null;
 });
@@ -34,8 +35,6 @@ export const Chat = ({
 	messages,
 	initialLoading = false,
 	autoScroll = true,
-	estimatedMessageHeight = 80,
-	enableVirtualization = false,
 	className,
 	style,
 	...rest
@@ -47,7 +46,6 @@ export const Chat = ({
 	const isNearBottomRef = useRef(true);
 
 	const totalCount = messages.length;
-	const itemHeight = estimatedMessageHeight;
 	const bufferCount = 3;
 
 	const {
@@ -57,29 +55,32 @@ export const Chat = ({
 		topSpacerHeight,
 		bottomSpacerHeight,
 	} = useMemo(() => {
-		if (!enableVirtualization || totalCount === 0 || wrapperHeight <= 0) {
+		if (totalCount === 0 || wrapperHeight <= 0) {
 			return {
 				startIndex: 0,
 				endIndex: Math.max(0, totalCount - 1),
-				totalHeight: totalCount * itemHeight,
+				totalHeight: totalCount * ITEM_HEIGHT,
 				topSpacerHeight: 0,
 				bottomSpacerHeight: 0,
 			};
 		}
 		const visibleCount =
-			Math.ceil(wrapperHeight / itemHeight) + 2 * bufferCount;
-		const start = Math.max(0, Math.floor(scrollTop / itemHeight) - bufferCount);
+			Math.ceil(wrapperHeight / ITEM_HEIGHT) + 2 * bufferCount;
+		const start = Math.max(
+			0,
+			Math.floor(scrollTop / ITEM_HEIGHT) - bufferCount,
+		);
 		const end = Math.min(totalCount - 1, start + visibleCount - 1);
-		const top = start * itemHeight;
-		const bottom = (totalCount - 1 - end) * itemHeight;
+		const top = start * ITEM_HEIGHT;
+		const bottom = (totalCount - 1 - end) * ITEM_HEIGHT;
 		return {
 			startIndex: start,
 			endIndex: end,
-			totalHeight: totalCount * itemHeight,
+			totalHeight: totalCount * ITEM_HEIGHT,
 			topSpacerHeight: top,
 			bottomSpacerHeight: bottom,
 		};
-	}, [enableVirtualization, totalCount, wrapperHeight, scrollTop, itemHeight]);
+	}, [totalCount, wrapperHeight, scrollTop]);
 
 	const handleScroll = useCallback(() => {
 		const el = listWrapperRef.current;
@@ -120,12 +121,12 @@ export const Chat = ({
 	}, [messages, waitingForAssistant, autoScroll]);
 
 	const visibleMessages = useMemo(() => {
-		if (!enableVirtualization || totalCount === 0) return messages;
+		if (totalCount === 0) return messages;
 		return messages.slice(startIndex, endIndex + 1);
-	}, [enableVirtualization, messages, totalCount, startIndex, endIndex]);
+	}, [messages, totalCount, startIndex, endIndex]);
 
 	const renderListContent = () => {
-		if (enableVirtualization && totalCount > 0) {
+		if (totalCount > 0) {
 			return (
 				<>
 					{topSpacerHeight > 0 && (
@@ -190,7 +191,7 @@ export const Chat = ({
 					<div
 						className={classNames(styles.list)}
 						style={
-							enableVirtualization && totalCount > 0
+							totalCount > 0
 								? ({ minHeight: totalHeight } as React.CSSProperties)
 								: undefined
 						}

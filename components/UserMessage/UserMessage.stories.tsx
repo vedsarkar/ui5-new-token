@@ -11,13 +11,13 @@ const meta = preview.meta({
 
 export const PlainText = meta.story({
 	args: {
-		content: "Here is a simple user message with no formatting.",
+		children: "Here is a simple user message with no formatting.",
 	},
 });
 
 export const Markdown = meta.story({
 	args: {
-		content: `## Hello
+		children: `## Hello
 
 This message uses **Markdown**:
 
@@ -30,7 +30,7 @@ And a [link](https://example.com).`,
 
 export const HeadersAndLists = meta.story({
 	args: {
-		content: `### Section
+		children: `### Section
 
 - First item
 - Second item
@@ -45,7 +45,7 @@ export const HeadersAndLists = meta.story({
 
 export const CodeBlocks = meta.story({
 	args: {
-		content: `Inline code: \`const x = 5;\`
+		children: `Inline code: \`const x = 5;\`
 Block code:
 \`\`\`javascript
 function greet(name) {
@@ -57,25 +57,25 @@ function greet(name) {
 
 export const Links = meta.story({
 	args: {
-		content: `Check [example.com](https://example.com) and [internal](/about) for more.`,
+		children: `Check [example.com](https://example.com) and [internal](/about) for more.`,
 	},
 });
 
 export const InvalidMarkdown = meta.story({
 	args: {
-		content: "Text with unclosed **bold and [broken link.",
+		children: "Text with unclosed **bold and [broken link.",
 	},
 });
 
 export const EmptyContent = meta.story({
 	args: {
-		content: "",
+		children: "",
 	},
 });
 
 export const WithCustomStyles = meta.story({
 	args: {
-		content: "User message with custom style overrides.",
+		children: "User message with custom style overrides.",
 		style: {
 			backgroundColor: "#0d5c2e",
 			color: "#f0fff4",

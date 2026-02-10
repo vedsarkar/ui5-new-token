@@ -26,18 +26,6 @@ export const Large = meta.story({
 	},
 });
 
-export const WithCustomLabel = meta.story({
-	args: {
-		label: "Fetching data…",
-	},
-});
-
-export const WithoutLabel = meta.story({
-	args: {
-		label: undefined,
-	},
-});
-
 export const CustomSize = meta.story({
 	args: {
 		size: 64,

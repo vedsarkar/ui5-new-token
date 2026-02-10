@@ -1,7 +1,7 @@
-import { MarkdownRenderer } from "@/components/MarkdownRenderer";
-import { classNames } from "@/utils/classNames";
+import {MarkdownRenderer} from "@/components/MarkdownRenderer";
+import {classNames} from "@/utils/classNames";
 import styles from "./UserMessage.module.css";
-import type { UserMessageProps } from "./UserMessage.types";
+import type {UserMessageProps} from "./UserMessage.types";
 
 /**
  * UserMessage Component
@@ -10,12 +10,12 @@ import type { UserMessageProps } from "./UserMessage.types";
  * Empty or null content renders an empty container; invalid Markdown is handled by MarkdownRenderer.
  */
 export const UserMessage = ({
-	content,
+	children,
 	className,
 	style,
 	...rest
 }: UserMessageProps) => {
-	const hasContent = content != null && String(content).trim() !== "";
+	const hasContent = children != null && String(children).trim() !== "";
 
 	return (
 		<div
@@ -23,7 +23,7 @@ export const UserMessage = ({
 			style={style}
 			{...rest}
 		>
-			{hasContent && <MarkdownRenderer content={content} />}
+			{hasContent && <MarkdownRenderer>{children}</MarkdownRenderer>}
 		</div>
 	);
 };

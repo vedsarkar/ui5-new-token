@@ -7,7 +7,7 @@ export type ErrorMessageProps = {
 	/**
 	 * Custom error message text. When not provided or empty, a default message is shown.
 	 */
-	message?: string | null;
+	message?: React.ReactNode | null;
 
 	/**
 	 * Whether to show the error icon (ErrorCircle).
