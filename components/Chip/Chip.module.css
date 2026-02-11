@@ -1,0 +1,65 @@
+.root {
+	--reltio-chip-background: #eeeeee;
+	--reltio-chip-color: #333333;
+	--reltio-chip-font-family: var(
+		--reltio-font-family-body,
+		"Roboto",
+		sans-serif
+	);
+	--reltio-chip-font-size: var(--reltio-font-size-body, 16px);
+	--reltio-chip-font-weight: var(--reltio-font-weight-body, 400);
+	--reltio-chip-letter-spacing: 0.4px;
+	--reltio-chip-padding-x: 10px;
+	--reltio-chip-padding-y: 3px;
+	--reltio-chip-gap: 10px;
+	--reltio-chip-border-radius: 3px;
+	--reltio-chip-icon-size: 24px;
+	--reltio-chip-disabled-opacity: 0.38;
+
+	display: inline-flex;
+	align-items: center;
+	gap: var(--reltio-chip-gap);
+	padding: var(--reltio-chip-padding-y) var(--reltio-chip-padding-x);
+	background-color: var(--reltio-chip-background);
+	color: var(--reltio-chip-color);
+	font-family: var(--reltio-chip-font-family);
+	font-size: var(--reltio-chip-font-size);
+	font-weight: var(--reltio-chip-font-weight);
+	letter-spacing: var(--reltio-chip-letter-spacing);
+	line-height: normal;
+	border-radius: var(--reltio-chip-border-radius);
+	border: none;
+	box-sizing: border-box;
+	white-space: nowrap;
+	user-select: none;
+}
+
+.disabled {
+	opacity: var(--reltio-chip-disabled-opacity);
+	pointer-events: none;
+}
+
+.removeButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	margin: 0;
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: inherit;
+	width: var(--reltio-chip-icon-size);
+	height: var(--reltio-chip-icon-size);
+	flex-shrink: 0;
+	border-radius: 50%;
+
+	&:focus-visible {
+		outline: 2px solid var(--reltio-color-primary, #0000cc);
+		outline-offset: 1px;
+	}
+
+	&:hover {
+		opacity: 0.7;
+	}
+}
