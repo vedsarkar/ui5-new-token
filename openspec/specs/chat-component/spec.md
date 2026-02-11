@@ -1,298 +1,198 @@
 # chat-component Specification
 
 ## Purpose
-TBD - created by archiving change add-chat. Update Purpose after archive.
+
+Provides a scrollable chat window that renders a conversation between a user and an AI assistant, with support for loading states, auto-scroll behavior, and a scroll-to-bottom button.
+
 ## Requirements
+
 ### Requirement: Message List Display
 
-The Chat component SHALL display a list of messages, rendering each message using the appropriate message component based on message type.
+The Chat component SHALL display a list of messages, rendering each message using the appropriate internal component based on message role.
 
 #### Scenario: User messages render correctly
-- **WHEN** messages array contains user messages
-- **THEN** each user message is rendered using UserMessage component
-- **AND** user messages are displayed in correct order
-- **AND** user messages have proper spacing between them
+- **WHEN** messages array contains messages with `role: "user"`
+- **THEN** each user message is rendered using the internal UserMessage component
+- **AND** the message `content` is passed as children to UserMessage
 
 #### Scenario: Assistant messages render correctly
-- **WHEN** messages array contains assistant messages
-- **THEN** each assistant message is rendered using AssistantMessage component
-- **AND** assistant messages are displayed in correct order
-- **AND** assistant messages have proper spacing between them
+- **WHEN** messages array contains messages with `role: "assistant"`
+- **THEN** each assistant message is rendered using the internal AssistantMessage component
+- **AND** the message `content` is passed as children to AssistantMessage
 
-#### Scenario: Mixed message types render correctly
-- **WHEN** messages array contains both user and assistant messages
-- **THEN** messages are rendered in correct order
-- **AND** each message type uses appropriate component
-- **AND** messages have proper spacing and visual distinction
+#### Scenario: Unknown role messages render content directly
+- **WHEN** messages array contains messages with roles other than "user" or "assistant"
+- **THEN** the message `content` is rendered as-is (or null if content is absent)
+- **AND** no error is thrown
 
 #### Scenario: Empty messages array handled
 - **WHEN** messages array is empty
-- **THEN** component renders empty container or placeholder
+- **THEN** component renders an empty container
 - **AND** no errors are thrown
-- **AND** component remains stable
 
 #### Scenario: Message order preserved
 - **WHEN** messages array is provided
 - **THEN** messages are displayed in array order
-- **AND** first message appears first, last message appears last
-- **AND** order is maintained during updates
 
 ### Requirement: Message Type System
 
-The Chat component SHALL support messages of any type through an extensible message type system, routing each message to the appropriate renderer based on message type.
+The Chat component SHALL use a `Message` type with fields: `messageId` (optional string), `role` ("user" | "assistant" | "system"), `content` (string), `timestamp` (optional Date), and `createdAt` (optional string).
 
-#### Scenario: User message type routes to UserMessage
-- **WHEN** message has type "user"
-- **THEN** message is rendered using UserMessage component
-- **AND** message props are passed correctly
+#### Scenario: Message keying strategy
+- **WHEN** messages are rendered
+- **THEN** each message uses `messageId` as the React key when available
+- **AND** falls back to `${index}-${role}` when `messageId` is absent
 
-#### Scenario: Assistant message type routes to AssistantMessage
-- **WHEN** message has type "assistant"
-- **THEN** message is rendered using AssistantMessage component
-- **AND** message props are passed correctly
+#### Scenario: Types exported alongside component
+- **WHEN** developer imports Chat
+- **THEN** `ChatProps`, `Message`, `UserChatMessage`, `AssistantChatMessage`, and `ChatMessage` types can be imported
+- **AND** all types use the `type` keyword in `Chat.types.ts`
 
-#### Scenario: Unknown message types handled gracefully
-- **WHEN** message has unknown or unsupported type
-- **THEN** component handles gracefully (renders fallback or ignores)
-- **AND** no errors are thrown
-- **AND** other messages continue to render correctly
+### Requirement: Message Grouping (Last Message Pinning)
 
-#### Scenario: Extensible for future message types
-- **WHEN** new message type is added in future
-- **THEN** message type system can be extended
-- **AND** new message types can be added without breaking changes
-- **AND** type system remains type-safe
+The Chat component SHALL split messages into two groups: all messages before the last user message ("top") and from the last user message onward ("last"), wrapping the last group in a sticky container.
+
+#### Scenario: Messages split at last user message
+- **WHEN** messages array has more than 2 messages
+- **THEN** messages are split at the last user message index
+- **AND** top messages render individually
+- **AND** last messages (from last user message onward) render inside a `lastMessageWrapper` div
+
+#### Scenario: Two or fewer messages
+- **WHEN** messages array has 2 or fewer messages
+- **THEN** all messages are treated as "top" messages
+- **AND** no `lastMessageWrapper` is rendered
+
+### Requirement: Thinking (Assistant Loading) State
+
+The Chat component SHALL accept a `thinking` prop (boolean, default `false`) that shows an AssistantLoader below the last message group when true. This state is fully controlled from outside.
+
+#### Scenario: Thinking indicator shown
+- **WHEN** `thinking` prop is `true`
+- **AND** there are messages with a last message wrapper
+- **THEN** the AssistantLoader component is rendered inside the `lastMessageWrapper` after the last messages
+- **AND** the chat automatically smooth-scrolls to the bottom
+
+#### Scenario: Thinking indicator hidden
+- **WHEN** `thinking` prop is `false` or not provided
+- **THEN** no AssistantLoader is rendered
 
 ### Requirement: Initial Loading State
 
-The Chat component SHALL show a skeleton placeholder while chat data is initially loading.
+The Chat component SHALL accept an `initialLoading` prop (boolean, default `false`) that displays a Skeleton placeholder instead of the message list.
 
 #### Scenario: Initial loading displays skeleton
-- **WHEN** chat data is initially loading (before the first messages are available)
-- **THEN** a skeleton placeholder is displayed in place of the message list
-- **AND** the skeleton is clearly visible to users as a loading indicator
-- **AND** no message list is shown until chat data is available
+- **WHEN** `initialLoading` prop is `true`
+- **THEN** a `Skeleton` component with `rows={5}` is rendered instead of the message list
+- **AND** no messages are displayed
 
-#### Scenario: After initial load
-- **WHEN** chat data has finished loading and messages are available
-- **THEN** the skeleton is no longer shown
-- **AND** the message list is displayed
-- **AND** the transition from skeleton to content is clear
+#### Scenario: After initial load completes
+- **WHEN** `initialLoading` transitions from `true` to `false`
+- **THEN** the Skeleton is replaced by the message list
+- **AND** messages are displayed normally
 
-### Requirement: Waiting-for-Assistant Loading State
+### Requirement: Auto-Scroll Behavior
 
-The Chat component SHALL show an assistant loading indicator when the chat is waiting for a response from the assistant.
+The Chat component SHALL automatically scroll to the bottom on initial render and when `thinking` becomes true.
 
-#### Scenario: Waiting when last message is from user
-- **WHEN** the messages array has at least one message
-- **AND** the last message in the array is from the user
-- **THEN** the chat is considered waiting for an assistant response
-- **AND** an assistant loading indicator is shown at the end of the message list
-- **AND** the indicator is clearly visible to users
+#### Scenario: Scroll to bottom on mount
+- **WHEN** Chat component mounts
+- **THEN** the container instantly scrolls to the bottom (`behavior: "instant"`)
 
-#### Scenario: Not waiting when last message is from assistant
-- **WHEN** the messages array is empty or the last message in the array is from the assistant
-- **THEN** the chat is not considered waiting for an assistant response
-- **AND** no assistant loading indicator is shown
+#### Scenario: Scroll to bottom when thinking starts
+- **WHEN** `thinking` prop changes to `true`
+- **THEN** the container smooth-scrolls to the bottom (`behavior: "smooth"`)
 
-#### Scenario: Transition when assistant responds
-- **WHEN** the chat was waiting for an assistant response and a new assistant message is added to the messages array
-- **THEN** the assistant loading indicator is no longer shown
-- **AND** the new assistant message is displayed
-- **AND** the transition is clear to the user
+### Requirement: Scroll-to-Bottom Button
+
+The Chat component SHALL display a scroll-to-bottom button when the user has scrolled away from the bottom, using a configurable threshold.
+
+#### Scenario: Button appears when scrolled up
+- **WHEN** user scrolls up more than 100px from the bottom (SCROLL_THRESHOLD)
+- **THEN** a button with `KeyboardArrowDown` icon is displayed
+- **AND** the button has `aria-label="Scroll to bottom"`
+
+#### Scenario: Button scrolls to bottom on click
+- **WHEN** user clicks the scroll-to-bottom button
+- **THEN** the chat container smooth-scrolls to the bottom
+
+#### Scenario: Button hidden when at bottom
+- **WHEN** user is within 100px of the bottom
+- **THEN** the scroll-to-bottom button is not displayed
 
 ### Requirement: Performance Optimizations
 
-The Chat component SHALL implement performance optimizations to handle very large numbers of messages efficiently, including virtualization, memoization, and efficient rendering.
+The Chat component SHALL use React.memo for individual message rendering to prevent unnecessary re-renders.
 
-#### Scenario: Virtual scrolling for large lists
-- **WHEN** messages array contains 100+ messages
-- **THEN** only visible messages are rendered
-- **AND** scroll performance remains smooth
-- **AND** initial render time is acceptable
-- **AND** memory usage is reasonable
-
-#### Scenario: Memoization prevents unnecessary re-renders
+#### Scenario: Memoized message component
 - **WHEN** messages array is updated
-- **THEN** only changed messages re-render
+- **THEN** only changed messages re-render via the memoized `ChatMessage` component
 - **AND** unchanged messages do not re-render
-- **AND** performance remains optimal
 
-#### Scenario: Efficient rendering
-- **WHEN** messages are added, removed, or updated
-- **THEN** rendering is efficient
-- **AND** only necessary DOM updates occur
-- **AND** scroll position is maintained appropriately
+### Requirement: Accessibility
 
-### Requirement: Virtual Scrolling
+The Chat component SHALL use semantic ARIA attributes to communicate the chat region to assistive technologies.
 
-The Chat component SHALL implement virtual scrolling (windowing) to render only visible messages plus a small buffer, improving performance for large message lists.
-
-#### Scenario: Only visible messages rendered
-- **WHEN** messages array contains many messages
-- **THEN** only messages in viewport are rendered
-- **AND** messages above and below viewport are not rendered
-- **AND** small buffer of messages above/below viewport may be rendered
-
-#### Scenario: Smooth scrolling experience
-- **WHEN** user scrolls through message list
-- **THEN** scrolling is smooth
-- **AND** messages appear as user scrolls
-- **AND** no visible gaps or jumps occur
-
-#### Scenario: Scroll position maintained
-- **WHEN** messages are added or updated
-- **THEN** scroll position is maintained appropriately
-- **AND** user's view is not disrupted unnecessarily
-- **AND** auto-scroll behavior is configurable
-
-#### Scenario: Dynamic message heights supported
-- **WHEN** messages have variable heights
-- **THEN** virtual scrolling handles dynamic heights correctly
-- **AND** scroll position calculations are accurate
-- **AND** performance remains acceptable
-
-### Requirement: Auto-scroll Behavior
-
-The Chat component SHALL support optional auto-scroll to bottom when new messages are added, with configurable behavior.
-
-#### Scenario: Auto-scroll when enabled
-- **WHEN** autoScroll prop is true
-- **AND** new message is added
-- **AND** user is near bottom of list
-- **THEN** chat automatically scrolls to show new message
-- **AND** scroll is smooth
-
-#### Scenario: Auto-scroll respects user scroll position
-- **WHEN** autoScroll prop is true
-- **AND** new message is added
-- **AND** user has scrolled up to read history
-- **THEN** chat does not auto-scroll
-- **AND** user's scroll position is preserved
-
-#### Scenario: Auto-scroll when disabled
-- **WHEN** autoScroll prop is false
-- **AND** new message is added
-- **THEN** chat does not auto-scroll
-- **AND** user's scroll position is preserved
+#### Scenario: Chat region announced
+- **WHEN** Chat component is rendered
+- **THEN** the root element has `role="log"`
+- **AND** has `aria-live="polite"` for dynamic content updates
+- **AND** has `aria-label="Chat messages"`
 
 ### Requirement: CSS Custom Properties Customization
 
-The Chat component SHALL define all design tokens as CSS custom properties on the root element, enabling external customization via inline styles or CSS overrides.
+The Chat component SHALL define design tokens as CSS custom properties on the root element with the `--reltio-chat-` prefix.
 
 #### Scenario: All CSS variables defined on root
 - **WHEN** Chat component is rendered
-- **THEN** all CSS custom properties are defined on .root class
-- **AND** variables use --reltio-chat- prefix
+- **THEN** CSS custom properties are defined on `.root` class
+- **AND** variables use `--reltio-chat-` prefix
 - **AND** all variables include fallback values
 
 #### Scenario: External customization via inline styles
 - **WHEN** developer provides style prop with CSS variables
 - **THEN** Chat applies custom values
-- **AND** maintains all other styling and behavior
-- **AND** example: `<Chat style={{ "--reltio-chat-height": "600px" }}>`
-
-#### Scenario: CSS variables for layout
-- **WHEN** Chat is rendered
-- **THEN** height, width, padding, margin defined
-- **AND** message spacing defined
-- **AND** scrollbar styling defined
-- **AND** all with appropriate fallback values
-
-#### Scenario: CSS variables for colors
-- **WHEN** Chat is rendered
-- **THEN** background color defined
-- **AND** border color defined (if applicable)
-- **AND** all with appropriate fallback values
 
 ### Requirement: className Utility Usage
 
-The Chat component SHALL use the classNames utility from utils/classNames.ts for all className composition, providing stable base classes for external customization.
+The Chat component SHALL use the `classNames` utility from `utils/classNames.ts` for all className composition.
 
 #### Scenario: classNames utility composes CSS modules
-- **WHEN** Chat is rendered
-- **THEN** classNames utility combines all applicable CSS module classes
-- **AND** automatically adds base classes for BEM-like naming
+- **WHEN** Chat component is rendered
+- **THEN** `classNames` utility combines `styles.root` with custom className
 - **AND** filters out falsy values
 
 #### Scenario: Custom className support
 - **WHEN** developer provides className prop
-- **THEN** custom classes are added to root element
-- **AND** CSS modules classes are preserved
-- **AND** no class name conflicts occur
+- **THEN** custom classes are appended to the root element
+- **AND** CSS module classes are preserved
 
 ### Requirement: TypeScript Type Safety
 
-The Chat component SHALL be fully typed with TypeScript using strict mode, with all types defined in a separate Chat.types.ts file using the `type` keyword (not `interface`).
+The Chat component SHALL be fully typed with TypeScript in strict mode, with all types in a separate `Chat.types.ts` file using the `type` keyword.
 
 #### Scenario: Component props fully typed
 - **WHEN** developer uses Chat component
-- **THEN** all props have proper TypeScript types
-- **AND** TypeScript provides autocomplete
-- **AND** invalid prop combinations are caught at compile time
-
-#### Scenario: Messages array type
-- **WHEN** messages prop is provided
-- **THEN** messages accepts array of message types
-- **AND** message types are properly typed (UserMessage, AssistantMessage, etc.)
-- **AND** type is clearly documented
-
-#### Scenario: Message type system types
-- **WHEN** message types are defined
-- **THEN** message types are properly typed
-- **AND** type system is extensible
-- **AND** types are clearly documented
-
-#### Scenario: Types exported alongside component
-- **WHEN** developer imports Chat
-- **THEN** ChatProps type can be imported
-- **AND** Message, UserMessage, AssistantMessage types available
-- **AND** all types are properly documented
+- **THEN** `messages` is typed as `Message[]` (required)
+- **AND** `thinking` is typed as optional boolean (default false)
+- **AND** `initialLoading` is typed as optional boolean (default false)
+- **AND** `className` is typed as optional string
+- **AND** `style` is typed as optional `React.CSSProperties`
+- **AND** additional div attributes are typed via `Omit<React.ComponentPropsWithoutRef<"div">, "children" | "className" | "style">`
 
 ### Requirement: Storybook Documentation
 
-The Chat component SHALL have comprehensive Storybook stories demonstrating message lists, various message types, performance scenarios, and edge cases, with each story showing only ONE variant.
+The Chat component SHALL have comprehensive Storybook stories demonstrating message lists, loading states, and interaction, with each story showing only ONE variant.
 
 #### Scenario: Stories for message lists
 - **WHEN** viewing Storybook
-- **THEN** separate stories exist for single message, multiple messages, mixed types
-- **AND** each story shows single scenario
-- **AND** stories are interactive and functional
+- **THEN** stories exist for user messages, assistant messages, and mixed conversations
 
-#### Scenario: Stories for message types
+#### Scenario: Stories for loading states
 - **WHEN** viewing Storybook
-- **THEN** stories exist for user messages only
-- **AND** stories exist for assistant messages only
-- **AND** stories exist for mixed message types
-
-#### Scenario: Stories for message states
-- **WHEN** viewing Storybook
-- **THEN** stories exist for initial loading (skeleton placeholder)
-- **AND** stories exist for waiting-for-assistant (assistant loading indicator when last message is from user)
-- **AND** stories demonstrate state transitions
-
-#### Scenario: Stories for performance
-- **WHEN** viewing Storybook
-- **THEN** stories exist for large message lists (100+ messages)
-- **AND** stories exist for very large message lists (1000+ messages)
-- **AND** performance is demonstrated
+- **THEN** story exists for `initialLoading` (skeleton placeholder)
+- **AND** story exists for `thinking` (assistant loader indicator)
 
 #### Scenario: Stories for edge cases
 - **WHEN** viewing Storybook
-- **THEN** stories exist for empty messages array
-- **AND** stories exist for messages with Markdown/MDX content
-- **AND** edge cases are clearly demonstrated
-
-#### Scenario: Stories for accessibility features
-- **WHEN** viewing Storybook
-- **THEN** stories demonstrate semantic HTML structure
-- **AND** a11y addon shows no violations
-- **AND** keyboard navigation works correctly
-- **AND** screen reader compatibility is demonstrated
-
-#### Scenario: Stories for customization
-- **WHEN** viewing Storybook
-- **THEN** stories demonstrate CSS variable customization
-- **AND** stories show className prop usage
-- **AND** stories show auto-scroll configuration
-
+- **THEN** stories exist for empty messages, Markdown content in messages

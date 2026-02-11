@@ -1,148 +1,113 @@
 # skeleton-component Specification
 
 ## Purpose
-TBD - created by archiving change add-skeleton-component. Update Purpose after archive.
+
+Displays a configurable number of rectangular placeholder bars with a shimmer animation, used as a loading placeholder to reserve space and indicate that content is loading.
+
 ## Requirements
+
 ### Requirement: Row Placeholders
 
-The Skeleton component SHALL accept a `rows` prop and render the corresponding number of rectangular placeholder bars.
+The Skeleton component SHALL accept a `rows` prop (number, default 3) and render the corresponding number of rectangular placeholder bars. Invalid or non-positive values are coerced to a minimum of 1.
 
 #### Scenario: Renders number of rows from prop
-- **WHEN** Skeleton is rendered with rows prop set to N (N ≥ 1)
+- **WHEN** Skeleton is rendered with `rows` prop set to N (N >= 1)
 - **THEN** exactly N rectangular placeholder bars are displayed
-- **AND** each bar is a distinct rectangular element
+- **AND** each bar is a separate `<div>` element with class `row` and `aria-hidden="true"`
 
 #### Scenario: Default rows when not specified
-- **WHEN** Skeleton is rendered without rows prop
-- **THEN** a default number of placeholder bars are displayed
-- **AND** the default is a positive integer (e.g. 1 or 3)
+- **WHEN** Skeleton is rendered without `rows` prop
+- **THEN** 3 placeholder bars are displayed (DEFAULT_ROWS = 3)
 
-#### Scenario: Single row placeholder
-- **WHEN** rows is 1
-- **THEN** one rectangular placeholder bar is displayed
-- **AND** it is full width within the Skeleton container
-
-### Requirement: Size (Number) Affects Line Height and Line Gap
-
-The Skeleton component SHALL accept a `size` prop of type number that is passed to styles and affects the line height and line gap of placeholder bars.
-
-#### Scenario: Size passed to styles
-- **WHEN** Skeleton is rendered with size set to a number (e.g. 12, 16, 20)
-- **THEN** the value is passed to styles (e.g. via CSS custom properties)
-- **AND** line height of placeholder bars reflects the size
-- **AND** line gap (spacing between rows) reflects the size or a derived value
-
-#### Scenario: Default size when not specified
-- **WHEN** Skeleton is rendered without size prop
-- **THEN** a default numeric size is used for line height and line gap
-- **AND** the appearance is consistent with the default
-
-#### Scenario: Larger size increases dimensions
-- **WHEN** size is increased (e.g. from 12 to 20)
-- **THEN** line height increases
-- **AND** line gap increases (or is derived from size) so spacing scales appropriately
+#### Scenario: Invalid rows values coerced
+- **WHEN** `rows` is 0, negative, NaN, or non-integer
+- **THEN** the value is coerced via `Math.max(1, Math.floor(Number(rows)) || DEFAULT_ROWS)`
+- **AND** at least 1 bar is displayed
 
 ### Requirement: Shimmer Animation
 
-The Skeleton component SHALL apply a typical skeleton loading animation with a moving (shimmer) gradient to each placeholder bar.
+The Skeleton component SHALL apply a shimmer (moving gradient) animation to each placeholder bar via CSS.
 
 #### Scenario: Shimmer gradient moves across placeholders
 - **WHEN** Skeleton is rendered
-- **THEN** each placeholder bar displays a shimmer (moving gradient) animation
+- **THEN** each placeholder bar displays a shimmer animation
 - **AND** the animation is continuous and smooth
-- **AND** the effect is visually recognizable as a loading skeleton
-
-#### Scenario: Animation is performant
-- **WHEN** Skeleton is rendered with multiple rows
-- **THEN** the shimmer animation runs without noticeable jank
-- **AND** the animation does not cause layout thrashing
 
 ### Requirement: Full Width Layout
 
-The Skeleton component SHALL have a width of 100% so it fills its container.
+The Skeleton component SHALL render at 100% width to fill its container.
 
 #### Scenario: Skeleton spans container width
 - **WHEN** Skeleton is rendered inside a container
-- **THEN** the Skeleton root element has width 100%
-- **AND** placeholder bars extend across the available width (subject to CSS variables)
-- **AND** the component is suitable for use in full-width content areas
+- **THEN** the root element spans 100% of the container width
 
 ### Requirement: Accessibility
 
-The Skeleton component SHALL expose loading placeholder state to assistive technologies so screen readers can announce that content is loading.
+The Skeleton component SHALL expose the loading state to assistive technologies.
 
 #### Scenario: Loading state announced to screen readers
 - **WHEN** Skeleton is rendered
-- **THEN** the component has aria-busy="true" or equivalent to indicate loading
-- **AND** an aria-label (or default) describes the loading placeholder
-- **AND** screen readers can announce that content is loading
+- **THEN** the root element has `role="status"`
+- **AND** has `aria-busy="true"`
+- **AND** has `aria-label="Loading content"` (DEFAULT_LABEL)
 
-#### Scenario: Decorative animation does not disrupt accessibility
+#### Scenario: Rows hidden from assistive technologies
 - **WHEN** Skeleton is rendered
-- **THEN** the shimmer animation is decorative (e.g. aria-hidden on animated parts if needed)
-- **AND** focus and screen reader flow are not disrupted by the animation
+- **THEN** each placeholder bar has `aria-hidden="true"`
+- **AND** screen readers only see the root element's status announcement
 
 ### Requirement: CSS Custom Properties Customization
 
-The Skeleton component SHALL define all design tokens as CSS custom properties on the root element with the `--reltio-skeleton-` prefix, enabling external customization.
+The Skeleton component SHALL define design tokens as CSS custom properties with the `--reltio-skeleton-` prefix, enabling external customization.
 
-#### Scenario: All CSS variables defined on root
-- **WHEN** Skeleton component is rendered
-- **THEN** all CSS custom properties are defined on .root class
-- **AND** variables use --reltio-skeleton- prefix
-- **AND** all variables include fallback values
-
-#### Scenario: External customization via inline styles
-- **WHEN** a developer provides style prop with CSS variables (e.g. --reltio-skeleton-row-height)
-- **THEN** Skeleton applies the custom values
-- **AND** other styling and behavior are preserved
+#### Scenario: CSS variables supported via style prop
+- **WHEN** developer provides `style` prop with CSS variables
+- **THEN** `--reltio-skeleton-row-height` and `--reltio-skeleton-row-gap` can be customized
+- **AND** other CSS custom properties on `.skeletonRoot` apply
 
 ### Requirement: className Utility Usage
 
-The Skeleton component SHALL use the classNames utility from utils/classNames.ts for all className composition.
+The Skeleton component SHALL use the `classNames` utility for all className composition.
 
 #### Scenario: classNames utility composes CSS modules
 - **WHEN** Skeleton component is rendered
-- **THEN** classNames utility combines all applicable CSS module classes
-- **AND** base classes for BEM-like naming are applied where relevant
-- **AND** falsy values are filtered out
+- **THEN** `classNames` utility combines `styles.skeletonRoot` with custom className
 
 #### Scenario: Custom className support
-- **WHEN** a developer provides className prop
+- **WHEN** developer provides className prop
 - **THEN** custom classes are appended to the root element
-- **AND** CSS module classes are preserved
-- **AND** no class name conflicts occur
+
+### Requirement: Props Passthrough
+
+The Skeleton component SHALL accept and pass through standard div HTML attributes (excluding `children`, `className`, and `style`) to the root element.
+
+#### Scenario: Additional HTML attributes passed through
+- **WHEN** developer provides additional HTML attributes
+- **THEN** attributes are spread onto the root `<div>` element via `...rest`
 
 ### Requirement: TypeScript Type Safety
 
-The Skeleton component SHALL be fully typed with TypeScript using strict mode, with all types defined in a separate Skeleton.types.ts file using the `type` keyword (not `interface`).
+The Skeleton component SHALL be fully typed with TypeScript in strict mode, with all types in a separate `Skeleton.types.ts` file using the `type` keyword.
 
 #### Scenario: Component props fully typed
-- **WHEN** a developer uses the Skeleton component
-- **THEN** all props have proper TypeScript types
-- **AND** the rows prop type is number with a sensible default
-- **AND** the size prop type is number with a sensible default
-- **AND** SkeletonProps (or equivalent) is exported for consumers
+- **WHEN** developer uses Skeleton component
+- **THEN** `rows` is typed as optional number (default 3)
+- **AND** `size` is typed as optional number (default 16)
+- **AND** `label` is typed as optional string
+- **AND** `className` is typed as optional string
+- **AND** `style` is typed as `React.CSSProperties & { "--reltio-skeleton-row-height"?: string; "--reltio-skeleton-row-gap"?: string }`
+- **AND** additional div attributes are typed via `Omit<React.ComponentPropsWithoutRef<"div">, "children" | "className" | "style">`
 
 #### Scenario: Types exported alongside component
-- **WHEN** a developer imports Skeleton
-- **THEN** SkeletonProps type can be imported from the same entry
-- **AND** types are in Skeleton.types.ts
+- **WHEN** developer imports Skeleton
+- **THEN** `SkeletonProps` type can be imported
+- **AND** types are in `Skeleton.types.ts`
 
 ### Requirement: Storybook Documentation
 
-The Skeleton component SHALL have Storybook stories demonstrating row variants and customization, with each story showing only ONE variant.
+The Skeleton component SHALL have Storybook stories demonstrating row variants, with each story showing only ONE variant.
 
-#### Scenario: Stories for row counts and size
+#### Scenario: Stories for row counts
 - **WHEN** viewing Storybook
-- **THEN** at least one story shows Skeleton with a single row
-- **AND** at least one story shows Skeleton with multiple rows (e.g. 3 or 5)
-- **AND** at least one story demonstrates size (number) affecting line height and gap
+- **THEN** stories exist for different row counts (e.g., 1, 3, 5)
 - **AND** each story shows a single variant
-
-#### Scenario: Stories for customization and accessibility
-- **WHEN** viewing Storybook
-- **THEN** stories demonstrate CSS variable customization where relevant
-- **AND** a11y addon shows no violations for Skeleton stories
-- **AND** loading placeholder behavior is visible and documented
-
