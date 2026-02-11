@@ -2,15 +2,10 @@ import { classNames } from "@/utils/classNames";
 import styles from "./AssistantLoader.module.css";
 import type { AssistantLoaderProps } from "./AssistantLoader.types";
 
-/**
- * Assistant loader component path relative to public (served from root in Storybook/Vite).
- */
 const LOADING_GIF_SRC = "/icons/loading.gif";
 const DEFAULT_LABEL = "thinking";
 
 /**
- * AssistantLoader Component
- *
  * Displays a standardized loading indicator for assistant responses using a GIF animation.
  * Size is controlled via the `--reltio-assistant-loader-size` CSS variable (default: 32px).
  * Includes accessibility attributes (aria-busy, aria-label, role="status").

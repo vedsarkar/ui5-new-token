@@ -230,18 +230,6 @@ export const EmptyContent = meta.story({
 	},
 });
 
-export const NullContent = meta.story({
-	args: {
-		children: null,
-	},
-});
-
-export const UndefinedContent = meta.story({
-	args: {
-		children: undefined,
-	},
-});
-
 export const CustomOverrides = meta.story({
 	args: {
 		children: `# Heading with custom override\n\nParagraph text.`,
@@ -254,61 +242,5 @@ export const ButtonAsReactComponent = meta.story({
 		children: `Use the design system Button in MDX:
 
 <Button variant="filled">Filled</Button> <Button variant="outlined">Outlined</Button>`,
-	},
-});
-
-// Customization
-export const CustomClassName = meta.story({
-	args: {
-		children: "This markdown has a custom className applied.",
-		className: "custom-markdown",
-	},
-	render: (args) => (
-		<>
-			<Markdown {...args} />
-			<style>{`
-				.custom-markdown {
-					background-color: #f0f0f0;
-					padding: 16px;
-					border-radius: 4px;
-				}
-			`}</style>
-		</>
-	),
-});
-
-export const CustomCssVariables = meta.story({
-	args: {
-		children: `# Custom Styling
-
-This paragraph uses custom **font size**, line height, and text color.
-
-- List item one
-- List item two
-
-A [link](https://example.com) and inline \`code\` to show their colors.
-
-> Blockquote with custom border and text color.
-
-| Table | Border |
-|-------|--------|
-| Cell  | Cell   |`,
-		style: {
-			"--reltio-markdown-font-size": "18px",
-			"--reltio-markdown-font-weight": "600",
-			"--reltio-markdown-line-height": "1.6",
-			"--reltio-markdown-color-text": "#1a1a2e",
-			"--reltio-markdown-color-link": "#e94560",
-			"--reltio-markdown-color-code-background": "#f0e6fa",
-			"--reltio-markdown-color-blockquote-border": "#e94560",
-			"--reltio-markdown-color-blockquote-text": "#16213e",
-			"--reltio-markdown-heading-margin": "1em 0 0.5em",
-			"--reltio-markdown-paragraph-margin-bottom": "1rem",
-			"--reltio-markdown-blockquote-padding-left": "1.25rem",
-			"--reltio-markdown-blockquote-border-width": "4px",
-			"--reltio-markdown-code-padding": "0.2em 0.4em",
-			"--reltio-markdown-code-border-radius": "6px",
-			"--reltio-markdown-color-table-cell-background": "lime",
-		},
 	},
 });

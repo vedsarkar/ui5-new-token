@@ -1,6 +1,6 @@
 /* CSS Custom Properties - All defined on .root with --reltio-chat- prefix */
 .root {
-	--reltio-chat-padding: 0;
+	--reltio-chat-padding: 16px;
 	--reltio-chat-message-gap: 16px;
 	--reltio-chat-scroll-button-size: 36px;
 	--reltio-chat-scroll-button-bg: #ffffff;

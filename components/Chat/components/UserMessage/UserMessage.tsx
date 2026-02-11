@@ -4,8 +4,6 @@ import styles from "./UserMessage.module.css";
 import type { UserMessageProps } from "./UserMessage.types";
 
 /**
- * UserMessage Component
- *
  * Displays user-authored message content with Markdown support via Markdown component.
  * Empty or null content renders an empty container; invalid Markdown is handled by Markdown component.
  */

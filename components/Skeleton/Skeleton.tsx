@@ -6,8 +6,6 @@ const DEFAULT_LABEL = "Loading content";
 const DEFAULT_ROWS = 3;
 
 /**
- * Skeleton Component
- *
  * Displays a configurable number of rectangular placeholder bars with a shimmer
  * (moving gradient) animation. Used as a loading placeholder to reserve space
  * and indicate that content is loading. Full width by default.

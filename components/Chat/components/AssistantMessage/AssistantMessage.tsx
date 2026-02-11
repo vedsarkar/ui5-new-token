@@ -13,14 +13,12 @@ const normalizeError = (
 	}
 	if (typeof errorMessage === "string") {
 		const trimmed = errorMessage.trim();
-		return trimmed ? <ErrorMessage message={trimmed} /> : null;
+		return trimmed ? <ErrorMessage>{trimmed}</ErrorMessage> : null;
 	}
 	return errorMessage;
 };
 
 /**
- * AssistantMessage Component
- *
  * Displays assistant-authored message content with Markdown and MDX support via the Markdown component.
  * When error is true, shows ErrorMessage and hides content.
  */

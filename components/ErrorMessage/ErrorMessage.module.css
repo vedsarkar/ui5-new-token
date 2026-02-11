@@ -37,7 +37,6 @@
 	justify-content: center;
 	width: var(--reltio-error-message-icon-size, 20px);
 	height: var(--reltio-error-message-icon-size, 20px);
-	margin-top: 2px;
 }
 
 .iconWrapper svg {

@@ -10,8 +10,6 @@ import styles from "./Details.module.css";
 import type { DetailsProps } from "./Details.types";
 
 /**
- * Details Component
- *
  * Enhanced details component for rendering collapsible content blocks
  * with improved visual design, accessibility, and consistent styling
  * aligned with the design system.

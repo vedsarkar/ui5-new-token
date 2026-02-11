@@ -4,11 +4,12 @@ import { Chat } from "@/components/Chat";
 
 const meta = preview.meta({
 	component: Chat,
+	parameters: {
+		layout: "fullscreen",
+	},
 	decorators: [
 		(Story) => (
-			<div
-				style={{ height: "100vh", padding: "16px", boxSizing: "border-box" }}
-			>
+			<div style={{ height: "100vh" }}>
 				<Story />
 			</div>
 		),

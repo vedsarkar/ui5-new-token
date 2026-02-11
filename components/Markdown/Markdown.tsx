@@ -7,8 +7,6 @@ import type { MarkdownProps } from "./Markdown.types";
 import { allowedOverrides, baseOverrides } from "./markdownOverrides";
 
 /**
- * Markdown Component
- *
  * Safely renders Markdown-formatted text content with robust error handling
  * for invalid or malformed Markdown input. Supports GitHub Flavored Markdown
  * (GFM), raw HTML rendering with proper sanitization, and optional

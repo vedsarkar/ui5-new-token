@@ -35,12 +35,23 @@ const ChatMessage = memo(({ message }: { message: Message }) => {
 const isScrolledToBottom = (el: HTMLElement) =>
 	el.scrollHeight - el.scrollTop - el.clientHeight < SCROLL_THRESHOLD;
 
+/**
+ * Scrollable chat window that renders a conversation between a user and an AI assistant.
+ *
+ * **Loading behavior (`initialLoading → false`):**
+ * The last user message is pinned to the top edge of the visible chat area;
+ * all subsequent assistant messages are displayed below it.
+ *
+ * **Thinking behavior (`thinking → true`):**
+ * The chat automatically scrolls to the last user message and shows
+ * a loader (AssistantLoader) directly beneath it, indicating the assistant
+ * is generating a response.
+ */
 export const Chat = ({
 	messages,
 	thinking = false,
 	initialLoading = false,
 	className,
-	style,
 	...rest
 }: ChatProps) => {
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -52,11 +63,14 @@ export const Chat = ({
 		setShowScrollButton(!isScrolledToBottom(el));
 	}, []);
 
-	const scrollToBottom = useCallback(() => {
-		const el = containerRef.current;
-		if (!el) return;
-		el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-	}, []);
+	const scrollToBottom = useCallback(
+		(behavior: "smooth" | "instant" = "smooth") => {
+			const el = containerRef.current;
+			if (!el) return;
+			el.scrollTo({ top: el.scrollHeight, behavior });
+		},
+		[],
+	);
 
 	useEffect(() => {
 		const el = containerRef.current;
@@ -65,38 +79,41 @@ export const Chat = ({
 		return () => el.removeEventListener("scroll", handleScroll);
 	}, [handleScroll]);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: re-check scroll position when content changes
 	useEffect(() => {
 		const el = containerRef.current;
 		if (!el) return;
-		scrollToBottom();
+		scrollToBottom("instant");
 		setShowScrollButton(!isScrolledToBottom(el));
-	}, [thinking]);
+	}, [scrollToBottom]);
 
-	const [topMessages, lastMessage] = useMemo(() => {
-		return [messages.slice(0, -1), messages.slice(-1)[0]];
+	useEffect(() => {
+		const el = containerRef.current;
+		if (!el) return;
+		if (thinking) {
+			scrollToBottom("smooth");
+		}
+	}, [thinking, scrollToBottom]);
+
+	const [topMessages, lastMessages] = useMemo(() => {
+		if (messages.length <= 2) return [messages, []];
+		const lastUserMessageIndex = messages.findLastIndex(isUserMessage);
+		return [
+			messages.slice(0, lastUserMessageIndex),
+			messages.slice(lastUserMessageIndex),
+		];
 	}, [messages]);
 
 	return (
 		<div
 			ref={containerRef}
 			className={classNames(styles.root, className)}
-			style={style}
 			role="log"
 			aria-live="polite"
 			aria-label="Chat messages"
 			{...rest}
 		>
 			{initialLoading ? (
-				<>
-					<div className={styles.userMessageSkeletonWrapper}>
-						<Skeleton
-							rows={1}
-							style={{ "--reltio-skeleton-row-height": "45px" }}
-						/>
-					</div>
-					<Skeleton rows={4} />
-				</>
+				<Skeleton rows={5} />
 			) : (
 				<>
 					{topMessages.map((msg, i) => (
@@ -105,17 +122,24 @@ export const Chat = ({
 							message={msg}
 						/>
 					))}
-					<div className={styles.lastMessageWrapper}>
-						<ChatMessage message={lastMessage} />
-						{thinking && <AssistantLoader />}
-					</div>
+					{lastMessages.length > 0 && (
+						<div className={styles.lastMessageWrapper}>
+							{lastMessages.map((msg, i) => (
+								<ChatMessage
+									key={msg.messageId ?? `${i}-${msg.role}`}
+									message={msg}
+								/>
+							))}
+							{thinking && <AssistantLoader />}
+						</div>
+					)}
 				</>
 			)}
 			{showScrollButton && (
 				<button
 					type="button"
 					className={classNames(styles.scrollToBottom)}
-					onClick={scrollToBottom}
+					onClick={() => scrollToBottom("smooth")}
 					aria-label="Scroll to bottom"
 				>
 					<KeyboardArrowDown size="small" />
