@@ -3,6 +3,11 @@
 	font-family: "Inter", sans-serif !important;
 }
 
+body {
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
 /* Storybook MDX documentation table styles */
 #storybook-docs table {
 	width: 100%;

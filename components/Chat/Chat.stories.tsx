@@ -1,45 +1,18 @@
-import type React from "react";
 import preview from "@/.storybook/preview";
-import { Chat } from "@/components/Chat";
 import type { Message } from "@/components/Chat";
+import { Chat } from "@/components/Chat";
 
 const meta = preview.meta({
 	component: Chat,
-	parameters: {
-		layout: "centered",
-	},
 	decorators: [
 		(Story) => (
-			<div style={{ minHeight: "420px", minWidth: "800px" }}>
+			<div
+				style={{ height: "100vh", padding: "16px", boxSizing: "border-box" }}
+			>
 				<Story />
 			</div>
 		),
 	],
-});
-
-const singleUserMessage: Message[] = [
-	{ role: "user", content: "Hello, I have a question about the API." },
-];
-
-export const SingleUserMessage = meta.story({
-	args: {
-		messages: singleUserMessage,
-	},
-});
-
-const singleAssistantMessage: Message[] = [
-	{
-		role: "assistant",
-		content: `I'd be happy to help. What would you like to know about the API?
-
-You can ask about authentication, rate limits, endpoints, or any other topic. I'll do my best to provide clear and accurate answers.`,
-	},
-];
-
-export const SingleAssistantMessage = meta.story({
-	args: {
-		messages: singleAssistantMessage,
-	},
 });
 
 const conversation: Message[] = [
@@ -79,6 +52,7 @@ You can request a higher limit by contacting support. Enterprise plans often inc
 export const WaitingForAssistant = meta.story({
 	args: {
 		messages: waitingForAssistant,
+		thinking: true,
 	},
 });
 
@@ -180,16 +154,5 @@ And **bold** text. You can mix interactive components with Markdown in longer re
 export const MDXContent = meta.story({
 	args: {
 		messages: withMdx,
-	},
-});
-
-export const WithCustomCssVariables = meta.story({
-	args: {
-		messages: conversation,
-		style: {
-			"--reltio-chat-height": "500px",
-			"--reltio-chat-background": "#f8f9fa",
-			"--reltio-chat-message-gap": "16px",
-		} as React.CSSProperties,
 	},
 });

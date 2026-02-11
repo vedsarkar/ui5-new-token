@@ -14,27 +14,17 @@ const DEFAULT_ROWS = 3;
  */
 export const Skeleton = ({
 	rows = DEFAULT_ROWS,
-	label,
 	className,
-	style,
-	size,
 	...rest
 }: SkeletonProps) => {
-	const sizeStyle = {
-		"--reltio-skeleton-row-height": size ? `${size}px` : undefined,
-		"--reltio-skeleton-row-gap": size ? `${size * 0.2}px` : undefined,
-	} as React.CSSProperties;
-	const mergedStyle = { ...sizeStyle, ...style };
-	const ariaLabel = label ?? DEFAULT_LABEL;
 	const rowCount = Math.max(1, Math.floor(Number(rows)) || DEFAULT_ROWS);
 
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: status role is correct for loading placeholder; output is for calculation results
 		<div
 			className={classNames(styles.skeletonRoot, className)}
-			style={mergedStyle}
 			aria-busy="true"
-			aria-label={ariaLabel}
+			aria-label={DEFAULT_LABEL}
 			role="status"
 			{...rest}
 		>

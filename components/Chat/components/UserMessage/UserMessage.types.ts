@@ -14,6 +14,6 @@ export type UserMessageProps = {
 	 */
 	style?: React.CSSProperties;
 
-	 /** We expect user message source as a string */
-	 children: string;
+	/** We expect user message source as a string */
+	children: string;
 };

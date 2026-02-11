@@ -5,24 +5,24 @@ import { ExpandLess } from "@/icons/ExpandLess";
 import { ExpandMore } from "@/icons/ExpandMore";
 import { classNames } from "@/utils/classNames";
 
-import styles from "./MarkdownDetails.module.css";
+import styles from "./Details.module.css";
 
-import type { MarkdownDetailsProps } from "./MarkdownDetails.types";
+import type { DetailsProps } from "./Details.types";
 
 /**
- * MarkdownDetails Component
+ * Details Component
  *
- * Enhanced details component for rendering GitHub Flavored Markdown (GFM)
- * `<details>` blocks with improved visual design, accessibility, and
- * consistent styling aligned with the design system.
+ * Enhanced details component for rendering collapsible content blocks
+ * with improved visual design, accessibility, and consistent styling
+ * aligned with the design system.
  */
-export const MarkdownDetails = ({
+export const Details = ({
 	open: initialOpen = false,
 	children,
 	className,
 	style,
 	...rest
-}: MarkdownDetailsProps) => {
+}: DetailsProps) => {
 	const [isOpen, setIsOpen] = useState(initialOpen);
 
 	// Update internal state when open prop changes

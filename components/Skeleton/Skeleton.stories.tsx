@@ -4,16 +4,6 @@ import { Skeleton } from "./Skeleton";
 
 const meta = preview.meta({
 	component: Skeleton,
-	parameters: {
-		layout: "centered",
-	},
-	decorators: [
-		(Story) => (
-			<div style={{ width: 400 }}>
-				<Story />
-			</div>
-		),
-	],
 });
 
 export const OneRow = meta.story({
@@ -22,44 +12,18 @@ export const OneRow = meta.story({
 	},
 });
 
-export const ThreeRows = meta.story({
-	args: {
-		rows: 3,
-	},
-});
-
-export const FiveRows = meta.story({
-	args: {
-		rows: 5,
-	},
-});
-
 export const CustomRowCount = meta.story({
 	args: {
-		rows: 4,
+		rows: 10,
 	},
 });
 
-export const WithCustomLabel = meta.story({
-	args: {
-		label: "Loading article…",
-		rows: 3,
-	},
-});
-
-export const WithSize = meta.story({
-	args: {
-		size: 20,
-		rows: 3,
-	},
-});
-
-export const WithCustomCssVariables = meta.story({
+export const WithCustomStyle = meta.story({
 	args: {
 		rows: 3,
 		style: {
-			"--reltio-skeleton-row-height": "24px",
-			"--reltio-skeleton-row-gap": "16px",
+			"--reltio-skeleton-row-height": "40px",
+			"--reltio-skeleton-row-gap": "24px",
 		} as React.CSSProperties,
 	},
 });

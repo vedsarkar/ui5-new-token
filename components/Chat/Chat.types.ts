@@ -43,16 +43,17 @@ export type ChatProps = {
 	messages: Message[];
 
 	/**
+	 * When true, shows the AssistantLoader below the message list to indicate the assistant is generating a response.
+	 * Fully controlled from outside — no internal logic derives this state.
+	 * @default false
+	 */
+	thinking?: boolean;
+
+	/**
 	 * When true, chat data is initially loading. The Skeleton component is shown in place of the message list until data is available.
 	 * @default false
 	 */
 	initialLoading?: boolean;
-
-	/**
-	 * When true, automatically scrolls to the bottom when new messages are added and user is near bottom.
-	 * @default true
-	 */
-	autoScroll?: boolean;
 
 	/**
 	 * Additional CSS class names

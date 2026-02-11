@@ -1,0 +1,223 @@
+/* Error fallback when markdown fails to parse */
+.error {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+/* ── Root ── */
+.root {
+	word-wrap: break-word;
+	line-height: var(--reltio-markdown-line-height, 1.5);
+	font-family: var(--reltio-markdown-font-family, "Roboto Flex", sans-serif);
+	font-size: var(--reltio-markdown-font-size, 14px);
+	font-weight: var(--reltio-markdown-font-weight, 400);
+	letter-spacing: var(--reltio-markdown-letter-spacing, 0.15px);
+	color: var(--reltio-markdown-color-text, #0e0e25);
+}
+
+/* ── Paragraphs ── */
+.root p {
+	margin: 8px 0 7px 0;
+	line-height: var(--reltio-markdown-line-height, 1.5);
+}
+
+.root p:not(:last-child) {
+	margin-bottom: var(--reltio-markdown-paragraph-margin-bottom, 0.5rem);
+}
+
+/* ── Headings ── */
+.root h1,
+.root h2,
+.root h3,
+.root h4,
+.root h5,
+.root h6 {
+	margin: var(--reltio-markdown-heading-margin, 1rem 0 0.5rem 0);
+	font-weight: 600;
+	font-family: "Libre Franklin", sans-serif;
+}
+
+.root h1 {
+	font-size: var(--reltio-markdown-heading1-size, 1.5rem);
+}
+
+.root h2 {
+	font-size: var(--reltio-markdown-heading2-size, 1.25rem);
+}
+
+.root h3 {
+	font-size: var(--reltio-markdown-heading3-size, 1.1rem);
+}
+
+.root h4 {
+	font-size: var(--reltio-markdown-heading4-size, 1rem);
+}
+
+.root h5 {
+	font-size: var(--reltio-markdown-heading5-size, 0.95rem);
+}
+
+.root h6 {
+	font-size: var(--reltio-markdown-heading6-size, 0.9rem);
+}
+
+/* ── Emphasis ── */
+.root strong {
+	font-weight: 600;
+}
+
+.root em {
+	font-style: italic;
+}
+
+/* ── Lists ── */
+.root ul,
+.root ol {
+	margin: var(--reltio-markdown-list-margin, 0.5rem 0);
+	padding-left: var(--reltio-markdown-list-padding-left, 1.5rem);
+}
+
+.root li {
+	margin: var(--reltio-markdown-list-item-margin, 0.25rem 0);
+}
+
+/* ── Code ── */
+.root pre {
+	overflow-x: auto;
+	margin: 0;
+	background-color: #e3e3f2;
+	border-radius: 8px;
+	padding: 16px;
+	border: 1px solid #e3e3f2;
+}
+
+.root code {
+	font-family: var(--reltio-markdown-code-font-family, monospace);
+	font-size: var(--reltio-markdown-code-font-size, 0.9em);
+	background-color: var(--reltio-markdown-color-code-background, #f5f5f5);
+	padding: var(--reltio-markdown-code-padding, 0.2em 0.4em);
+	border-radius: var(--reltio-markdown-code-border-radius, 3px);
+}
+
+.root pre code {
+	background-color: transparent;
+	padding: 0;
+}
+
+/* ── Links ── */
+.root a {
+	color: var(--reltio-markdown-color-link, #0000cc);
+	text-decoration: none;
+}
+
+.root a:hover {
+	text-decoration: underline;
+}
+
+/* ── Blockquote ── */
+.root blockquote {
+	border-left: var(--reltio-markdown-blockquote-border-width, 4px) solid
+		var(--reltio-markdown-color-blockquote-border, #ddd);
+	margin: var(--reltio-markdown-blockquote-margin, 1rem 0);
+	padding-left: var(--reltio-markdown-blockquote-padding-left, 1rem);
+	color: var(--reltio-markdown-color-blockquote-text, #666);
+}
+
+/* ── Tables ── */
+.tableWrapper {
+	font-family: var(--reltio-markdown-base-font, "Roboto Flex", sans-serif);
+	width: 100%;
+	border-collapse: collapse;
+	position: relative;
+	color: var(--color-text, #0e0e25);
+	background-color: #ffffff;
+	border: 1px solid #9898b34d;
+	border-radius: 16px;
+	overflow: auto;
+	box-sizing: border-box;
+	font-size: 14px;
+}
+
+.tableWrapper table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.tableWrapper thead {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	box-shadow: 0 1px 0 #9898b34d;
+}
+
+.tableWrapper th {
+	padding: 16px;
+	font-weight: 600;
+	text-align: left;
+	border-right: 1px solid #9898b34d;
+	background-color: #e3e3f2;
+}
+
+.tableWrapper th:last-child {
+	border-right: none;
+}
+
+.tableWrapper td {
+	padding: 8px 16px;
+	border-bottom: 1px solid #9898b34d;
+	border-right: 1px solid #9898b34d;
+	text-align: left;
+	background-color: var(--reltio-markdown-color-table-cell-background, #ffffff);
+}
+
+.tableWrapper td:last-child {
+	border-right: none;
+}
+
+.tableWrapper tr:hover td {
+	background-color: var(--color-table-row-hover, #f5f5fa);
+}
+
+.tableWrapper tr:last-child td {
+	border-bottom: none;
+}
+
+/* ── Strikethrough ── */
+.root del {
+	text-decoration: line-through;
+	opacity: 0.7;
+}
+
+/* ── Checkboxes ── */
+.root input[type="checkbox"] {
+	margin-right: var(--reltio-spacing-xs, 8px);
+	cursor: not-allowed;
+}
+
+/* ── Horizontal rule ── */
+.root hr {
+	border: none;
+	border-top: 1px solid var(--color-border, #ddd);
+	margin: 1.5rem 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+	.tableWrapper table {
+		display: block;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.root h1 {
+		font-size: 1.3rem;
+	}
+
+	.root h2 {
+		font-size: 1.15rem;
+	}
+
+	.root h3 {
+		font-size: 1.05rem;
+	}
+}

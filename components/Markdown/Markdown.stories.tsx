@@ -1,12 +1,8 @@
 import preview from "@/.storybook/preview";
-import { MarkdownRenderer } from "@/components/MarkdownRenderer";
+import { Markdown } from "./Markdown";
 
 const meta = preview.meta({
-	component: MarkdownRenderer,
-	parameters: {
-		layout: "padded",
-	},
-	tags: ["autodocs"],
+	component: Markdown,
 });
 
 // Basic Markdown rendering
@@ -173,7 +169,7 @@ Section below.`,
 	},
 });
 
-// Details/Summary (details → MarkdownDetails)
+// Details/Summary (details → Details)
 export const DetailsSummary = meta.story({
 	args: {
 		children:
@@ -269,7 +265,7 @@ export const CustomClassName = meta.story({
 	},
 	render: (args) => (
 		<>
-			<MarkdownRenderer {...args} />
+			<Markdown {...args} />
 			<style>{`
 				.custom-markdown {
 					background-color: #f0f0f0;
@@ -298,21 +294,21 @@ A [link](https://example.com) and inline \`code\` to show their colors.
 |-------|--------|
 | Cell  | Cell   |`,
 		style: {
-			"--reltio-markdown-components-font-size": "18px",
-			"--reltio-markdown-components-font-weight": "600",
-			"--reltio-markdown-components-line-height": "1.6",
-			"--reltio-markdown-components-color-text": "#1a1a2e",
-			"--reltio-markdown-components-color-link": "#e94560",
-			"--reltio-markdown-components-color-code-background": "#f0e6fa",
-			"--reltio-markdown-components-color-blockquote-border": "#e94560",
-			"--reltio-markdown-components-color-blockquote-text": "#16213e",
-			"--reltio-markdown-components-heading-margin": "1em 0 0.5em",
-			"--reltio-markdown-components-paragraph-margin-bottom": "1rem",
-			"--reltio-markdown-components-blockquote-padding-left": "1.25rem",
-			"--reltio-markdown-components-blockquote-border-width": "4px",
-			"--reltio-markdown-components-code-padding": "0.2em 0.4em",
-			"--reltio-markdown-components-code-border-radius": "6px",
-			"--reltio-markdown-components-color-table-cell-background": "lime",
+			"--reltio-markdown-font-size": "18px",
+			"--reltio-markdown-font-weight": "600",
+			"--reltio-markdown-line-height": "1.6",
+			"--reltio-markdown-color-text": "#1a1a2e",
+			"--reltio-markdown-color-link": "#e94560",
+			"--reltio-markdown-color-code-background": "#f0e6fa",
+			"--reltio-markdown-color-blockquote-border": "#e94560",
+			"--reltio-markdown-color-blockquote-text": "#16213e",
+			"--reltio-markdown-heading-margin": "1em 0 0.5em",
+			"--reltio-markdown-paragraph-margin-bottom": "1rem",
+			"--reltio-markdown-blockquote-padding-left": "1.25rem",
+			"--reltio-markdown-blockquote-border-width": "4px",
+			"--reltio-markdown-code-padding": "0.2em 0.4em",
+			"--reltio-markdown-code-border-radius": "6px",
+			"--reltio-markdown-color-table-cell-background": "lime",
 		},
 	},
 });

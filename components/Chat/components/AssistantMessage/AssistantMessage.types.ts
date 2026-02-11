@@ -19,6 +19,6 @@ export type AssistantMessageProps = {
 	 */
 	style?: React.CSSProperties;
 
-	 /** We expect assistant message source as a string */
-	 children: string;
+	/** We expect assistant message source as a string */
+	children: string;
 };

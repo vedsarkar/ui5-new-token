@@ -8,26 +8,10 @@ const meta = preview.meta({
 	},
 });
 
-export const Small = meta.story({
-	args: {
-		size: 20,
-	},
-});
-
-export const Medium = meta.story({
-	args: {
-		size: 32,
-	},
-});
-
-export const Large = meta.story({
-	args: {
-		size: 48,
-	},
-});
+export const Default = meta.story({});
 
 export const CustomSize = meta.story({
 	args: {
-		size: 64,
+		style: { "--reltio-assistant-loader-size": "48px" },
 	},
 });

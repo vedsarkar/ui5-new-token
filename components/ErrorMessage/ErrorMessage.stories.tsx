@@ -1,6 +1,6 @@
 import type React from "react";
 import preview from "@/.storybook/preview";
-import {ErrorMessage} from "@/components/ErrorMessage";
+import { ErrorMessage } from "@/components/ErrorMessage";
 
 const meta = preview.meta({
 	component: ErrorMessage,
@@ -39,7 +39,6 @@ export const LongText = meta.story({
 			"An unexpected error occurred while processing your request. This could be due to a temporary server issue, invalid input, or a network problem. Please verify your data and try again. If the problem persists, contact support.",
 	},
 });
-
 
 export const WithCustomCssVariables = meta.story({
 	args: {

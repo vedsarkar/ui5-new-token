@@ -1,11 +1,13 @@
 import type React from "react";
-import {ErrorMessage} from "@/components/ErrorMessage";
-import {MarkdownRenderer} from "@/components/MarkdownRenderer";
-import {classNames} from "@/utils/classNames";
+import { ErrorMessage } from "@/components/ErrorMessage";
+import { Markdown } from "@/components/Markdown";
+import { classNames } from "@/utils/classNames";
 import styles from "./AssistantMessage.module.css";
-import type {AssistantMessageProps} from "./AssistantMessage.types";
+import type { AssistantMessageProps } from "./AssistantMessage.types";
 
-const normalizeError = (errorMessage: React.ReactNode | null): React.ReactNode | null => {
+const normalizeError = (
+	errorMessage: React.ReactNode | null,
+): React.ReactNode | null => {
 	if (errorMessage == null) {
 		return null;
 	}
@@ -19,7 +21,7 @@ const normalizeError = (errorMessage: React.ReactNode | null): React.ReactNode |
 /**
  * AssistantMessage Component
  *
- * Displays assistant-authored message content with Markdown and MDX support via the unified MarkdownRenderer.
+ * Displays assistant-authored message content with Markdown and MDX support via the Markdown component.
  * When error is true, shows ErrorMessage and hides content.
  */
 export const AssistantMessage = ({
@@ -39,7 +41,7 @@ export const AssistantMessage = ({
 			{...rest}
 		>
 			{errorNode && <div className={styles.errorWrapper}>{errorNode}</div>}
-			{!errorNode && content && <MarkdownRenderer>{content}</MarkdownRenderer>}
+			{!errorNode && content && <Markdown>{content}</Markdown>}
 		</div>
 	);
 };

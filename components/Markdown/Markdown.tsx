@@ -1,17 +1,13 @@
-import Markdown, { sanitizer } from "markdown-to-jsx";
+import MarkdownToJsx, { sanitizer } from "markdown-to-jsx";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import {
-	baseMarkdownComponents,
-	allowedMarkdownComponents,
-} from "@/components/MarkdownComponents/markdownComponents";
 import { classNames } from "@/utils/classNames";
 
-import styles from "./MarkdownRenderer.module.css";
-
-import type { MarkdownRendererProps } from "./MarkdownRenderer.types";
+import styles from "./Markdown.module.css";
+import type { MarkdownProps } from "./Markdown.types";
+import { allowedOverrides, baseOverrides } from "./markdownOverrides";
 
 /**
- * MarkdownRenderer Component
+ * Markdown Component
  *
  * Safely renders Markdown-formatted text content with robust error handling
  * for invalid or malformed Markdown input. Supports GitHub Flavored Markdown
@@ -19,11 +15,11 @@ import type { MarkdownRendererProps } from "./MarkdownRenderer.types";
  * tag-to-component overrides via the components prop.
  */
 
-export const MarkdownRenderer = ({
+export const Markdown = ({
 	children,
 	className,
 	style,
-}: React.PropsWithChildren<MarkdownRendererProps>) => {
+}: React.PropsWithChildren<MarkdownProps>) => {
 	if (children === null || children === undefined) {
 		return null;
 	}
@@ -31,18 +27,18 @@ export const MarkdownRenderer = ({
 	return (
 		<div className={composedClassName} style={style}>
 			<ErrorBoundary fallback={<pre className={styles.error}>{children}</pre>}>
-				<Markdown
+				<MarkdownToJsx
 					options={{
 						overrides: {
-							...baseMarkdownComponents,
-							...allowedMarkdownComponents,
+							...baseOverrides,
+							...allowedOverrides,
 						},
 						tagfilter: true,
 						sanitizer,
 					}}
 				>
 					{typeof children === "string" ? children : String(children)}
-				</Markdown>
+				</MarkdownToJsx>
 			</ErrorBoundary>
 		</div>
 	);

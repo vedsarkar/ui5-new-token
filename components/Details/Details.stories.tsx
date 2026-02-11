@@ -1,11 +1,8 @@
 import preview from "@/.storybook/preview";
-import { MarkdownDetails } from "./MarkdownDetails";
+import { Details } from "./Details";
 
 const meta = preview.meta({
-	component: MarkdownDetails,
-	parameters: {
-		layout: "padded",
-	},
+	component: Details,
 });
 
 // Default story - no summary element provided (fallback)
@@ -78,18 +75,18 @@ export const InitiallyClosed = meta.story({
 export const MultipleDetails = meta.story({
 	render: () => (
 		<div>
-			<MarkdownDetails>
+			<Details>
 				<summary>First Details Block</summary>
 				<p>Content for the first details block.</p>
-			</MarkdownDetails>
-			<MarkdownDetails>
+			</Details>
+			<Details>
 				<summary>Second Details Block</summary>
 				<p>Content for the second details block.</p>
-			</MarkdownDetails>
-			<MarkdownDetails>
+			</Details>
+			<Details>
 				<summary>Third Details Block</summary>
 				<p>Content for the third details block.</p>
-			</MarkdownDetails>
+			</Details>
 		</div>
 	),
 });

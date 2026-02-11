@@ -5,17 +5,6 @@ import type React from "react";
  */
 export type AssistantLoaderProps = {
 	/**
-	 * Size of the loading indicator in pixels
-	 * @default 32
-	 */
-	size?: number;
-
-	/**
-	 * Accessible label for screen readers. When not provided, a default label is used.
-	 */
-	label?: string;
-
-	/**
 	 * Additional CSS class names
 	 */
 	className?: string;
