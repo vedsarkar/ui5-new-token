@@ -31,6 +31,9 @@ Thumbs.db
 *.swp
 *.tmp
 
+# Git worktrees
+.worktrees/
+
 # Applications
 *.app
 *.exe
