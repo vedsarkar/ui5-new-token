@@ -1,24 +1,31 @@
 .root {
-	--reltio-chip-background: #eeeeee;
-	--reltio-chip-color: #333333;
 	--reltio-chip-font-family: var(
 		--reltio-font-family-body,
 		"Roboto",
 		sans-serif
 	);
-	--reltio-chip-font-size: var(--reltio-font-size-body, 16px);
-	--reltio-chip-font-weight: var(--reltio-font-weight-body, 400);
-	--reltio-chip-letter-spacing: 0.4px;
-	--reltio-chip-padding-x: 10px;
-	--reltio-chip-padding-y: 3px;
-	--reltio-chip-gap: 10px;
-	--reltio-chip-border-radius: 3px;
-	--reltio-chip-icon-size: 24px;
+	--reltio-chip-font-weight: var(--reltio-font-weight-body, 500);
+	--reltio-chip-letter-spacing: 0.25px;
+	--reltio-chip-border-radius: 8px;
+	--reltio-chip-icon-size: 18px;
 	--reltio-chip-disabled-opacity: 0.38;
+	--reltio-chip-transition-duration: 180ms;
+	--reltio-chip-transition-timing: ease;
+
+	--reltio-chip-font-size: 14px;
+	--reltio-chip-height: 32px;
+	--reltio-chip-padding-x: 12px;
+	--reltio-chip-padding-y: 0;
+	--reltio-chip-gap: 6px;
+
+	--reltio-chip-background: var(--reltio-color-surface, #f0f0f5);
+	--reltio-chip-color: var(--reltio-color-text, #1a1a2e);
+	--reltio-chip-border-color: transparent;
 
 	display: inline-flex;
 	align-items: center;
 	gap: var(--reltio-chip-gap);
+	height: var(--reltio-chip-height);
 	padding: var(--reltio-chip-padding-y) var(--reltio-chip-padding-x);
 	background-color: var(--reltio-chip-background);
 	color: var(--reltio-chip-color);
@@ -26,40 +33,188 @@
 	font-size: var(--reltio-chip-font-size);
 	font-weight: var(--reltio-chip-font-weight);
 	letter-spacing: var(--reltio-chip-letter-spacing);
-	line-height: normal;
+	line-height: 1;
 	border-radius: var(--reltio-chip-border-radius);
-	border: none;
+	border: 1px solid var(--reltio-chip-border-color);
 	box-sizing: border-box;
 	white-space: nowrap;
 	user-select: none;
+	transition:
+		background-color var(--reltio-chip-transition-duration)
+		var(--reltio-chip-transition-timing),
+		border-color var(--reltio-chip-transition-duration)
+		var(--reltio-chip-transition-timing),
+		box-shadow var(--reltio-chip-transition-duration)
+		var(--reltio-chip-transition-timing);
 }
 
-.disabled {
-	opacity: var(--reltio-chip-disabled-opacity);
-	pointer-events: none;
+/* Size: Small */
+.small {
+	--reltio-chip-font-size: 12px;
+	--reltio-chip-height: 26px;
+	--reltio-chip-padding-x: 8px;
+	--reltio-chip-gap: 4px;
+	--reltio-chip-icon-size: 16px;
+	--reltio-chip-border-radius: 6px;
 }
 
-.removeButton {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	padding: 0;
-	margin: 0;
-	border: none;
-	background: none;
+/* Interactive (clickable) */
+.interactive {
 	cursor: pointer;
-	color: inherit;
-	width: var(--reltio-chip-icon-size);
-	height: var(--reltio-chip-icon-size);
-	flex-shrink: 0;
-	border-radius: 50%;
+
+	&:hover {
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+	}
+
+	&:active {
+		box-shadow: none;
+	}
 
 	&:focus-visible {
 		outline: 2px solid var(--reltio-color-primary, #0000cc);
 		outline-offset: 1px;
 	}
+}
+
+/* Variant: Filled (default) */
+.filled.default {
+	--reltio-chip-background: var(--reltio-color-surface, #f0f0f5);
+	--reltio-chip-color: var(--reltio-color-text, #1a1a2e);
+
+	&.interactive:hover {
+		--reltio-chip-background: #e4e4ec;
+	}
+}
+
+.filled.primary {
+	--reltio-chip-background: #e8e8ff;
+	--reltio-chip-color: var(--reltio-color-primary, #0000cc);
+
+	&.interactive:hover {
+		--reltio-chip-background: #d6d6ff;
+	}
+}
+
+.filled.success {
+	--reltio-chip-background: #e6f4ea;
+	--reltio-chip-color: #1b6d2f;
+
+	&.interactive:hover {
+		--reltio-chip-background: #d4edda;
+	}
+}
+
+.filled.warning {
+	--reltio-chip-background: #fef3e0;
+	--reltio-chip-color: #8a5d00;
+
+	&.interactive:hover {
+		--reltio-chip-background: #fde9c8;
+	}
+}
+
+.filled.error {
+	--reltio-chip-background: #fde8e8;
+	--reltio-chip-color: #c62828;
+
+	&.interactive:hover {
+		--reltio-chip-background: #fcd4d4;
+	}
+}
+
+/* Variant: Outlined */
+.outlined.default {
+	--reltio-chip-background: transparent;
+	--reltio-chip-color: var(--reltio-color-text, #1a1a2e);
+	--reltio-chip-border-color: #c4c4d0;
+
+	&.interactive:hover {
+		--reltio-chip-background: #f5f5fa;
+	}
+}
+
+.outlined.primary {
+	--reltio-chip-background: transparent;
+	--reltio-chip-color: var(--reltio-color-primary, #0000cc);
+	--reltio-chip-border-color: var(--reltio-color-primary, #0000cc);
+
+	&.interactive:hover {
+		--reltio-chip-background: #f0f0ff;
+	}
+}
+
+.outlined.success {
+	--reltio-chip-background: transparent;
+	--reltio-chip-color: #1b6d2f;
+	--reltio-chip-border-color: #1b6d2f;
+
+	&.interactive:hover {
+		--reltio-chip-background: #f0faf3;
+	}
+}
+
+.outlined.warning {
+	--reltio-chip-background: transparent;
+	--reltio-chip-color: #8a5d00;
+	--reltio-chip-border-color: #8a5d00;
+
+	&.interactive:hover {
+		--reltio-chip-background: #fefaf0;
+	}
+}
+
+.outlined.error {
+	--reltio-chip-background: transparent;
+	--reltio-chip-color: #c62828;
+	--reltio-chip-border-color: #c62828;
+
+	&.interactive:hover {
+		--reltio-chip-background: #fef0f0;
+	}
+}
+
+/* Disabled */
+.disabled {
+	opacity: var(--reltio-chip-disabled-opacity);
+	pointer-events: none;
+}
+
+/* Leading icon */
+.leadingIcon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: var(--reltio-chip-icon-size);
+	height: var(--reltio-chip-icon-size);
+}
+
+/* Remove button */
+.removeButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	margin: 0 -2px 0 0;
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: inherit;
+	opacity: 0.7;
+	width: var(--reltio-chip-icon-size);
+	height: var(--reltio-chip-icon-size);
+	flex-shrink: 0;
+	border-radius: 50%;
+	transition: opacity var(--reltio-chip-transition-duration)
+		var(--reltio-chip-transition-timing);
 
 	&:hover {
-		opacity: 0.7;
+		opacity: 1;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--reltio-color-primary, #0000cc);
+		outline-offset: 1px;
+		opacity: 1;
 	}
 }
