@@ -110,6 +110,8 @@ export const Chat = ({
 			role="log"
 			aria-live="polite"
 			aria-label="Chat messages"
+			// biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable region must be keyboard-focusable (WCAG 2.1.1)
+			tabIndex={0}
 			{...rest}
 		>
 			{initialLoading ? (

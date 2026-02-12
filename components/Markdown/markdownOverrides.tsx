@@ -1,4 +1,5 @@
 import type { MarkdownToJSX } from "markdown-to-jsx";
+import { Children, isValidElement } from "react";
 import type React from "react";
 import { Button } from "@/components/Button";
 import { Details } from "@/components/Details";
@@ -49,6 +50,25 @@ export const baseOverrides = {
 	details: ({ node: _node, ...props }: OverrideProps<"details">) => (
 		<Details {...props}>{props.children}</Details>
 	),
+
+	// Task list items — wrap checkbox + text in <label> for accessibility
+	li: ({ node: _node, children, ...props }: OverrideProps<"li">) => {
+		const childArray = Children.toArray(children);
+		const firstChild = childArray[0];
+		const isTaskItem =
+			isValidElement(firstChild) &&
+			(firstChild.props as Record<string, unknown>)?.type === "checkbox";
+
+		if (isTaskItem) {
+			return (
+				<li {...props}>
+					{/* biome-ignore lint/a11y/noLabelWithoutControl: implicit label wraps the checkbox input from markdown task list */}
+					<label>{children}</label>
+				</li>
+			);
+		}
+		return <li {...props}>{children}</li>;
+	},
 };
 
 export const allowedOverrides: MarkdownToJSX.Overrides = { Button };

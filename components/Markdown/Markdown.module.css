@@ -107,11 +107,11 @@
 /* ── Links ── */
 .root a {
 	color: var(--reltio-markdown-color-link, #0000cc);
-	text-decoration: none;
+	text-decoration: underline;
 }
 
 .root a:hover {
-	text-decoration: underline;
+	text-decoration: none;
 }
 
 /* ── Blockquote ── */
