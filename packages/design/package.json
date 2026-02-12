@@ -9,7 +9,8 @@
 	},
 	"dependencies": {
 		"style-inject": "^0.3.0",
-		"rc-tree": "^5.13.1"
+		"rc-tree": "^5.13.1",
+		"markdown-to-jsx": "^9.7.3"
 	},
 	"scripts": {
 		"build": "node build-css.mjs && tsc && tsc-alias",

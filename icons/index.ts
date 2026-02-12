@@ -15,6 +15,7 @@ import { CheckCircle } from "./CheckCircle";
 import { ChevronLeft } from "./ChevronLeft";
 import { ChevronRight } from "./ChevronRight";
 import { Close } from "./Close";
+import { CodeBrackets } from "./CodeBrackets";
 import { Comment } from "./Comment";
 import { ContentCopy } from "./ContentCopy";
 import { ContentPaste } from "./ContentPaste";
@@ -65,6 +66,7 @@ export {
 	ChevronLeft,
 	ChevronRight,
 	Close,
+	CodeBrackets,
 	Comment,
 	ContentCopy,
 	ContentPaste,
@@ -119,6 +121,7 @@ export const iconMap: Record<
 	ChevronLeft: ChevronLeft,
 	ChevronRight: ChevronRight,
 	Close: Close,
+	CodeBrackets: CodeBrackets,
 	Comment: Comment,
 	ContentCopy: ContentCopy,
 	ContentPaste: ContentPaste,
