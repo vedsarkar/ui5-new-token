@@ -1,0 +1,73 @@
+/* CSS Custom Properties - All defined on .root with --reltio-chat- prefix */
+.root {
+	--reltio-chat-padding: 16px;
+	--reltio-chat-message-gap: 16px;
+	--reltio-chat-scroll-button-size: 36px;
+	--reltio-chat-scroll-button-bg: #ffffff;
+	--reltio-chat-scroll-button-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	--reltio-chat-scroll-button-color: #5f6368;
+	--reltio-chat-scroll-button-hover-bg: #f1f3f4;
+	--reltio-chat-scroll-button-bottom: 16px;
+
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	height: 100%;
+	width: 100%;
+	box-sizing: border-box;
+	overflow: auto;
+	align-items: start;
+	padding: var(--reltio-chat-padding);
+	gap: var(--reltio-chat-message-gap);
+}
+
+.userMessage {
+	margin-left: auto;
+	max-width: 80%;
+}
+
+.userMessageSkeletonWrapper {
+	width: 40%;
+	margin-left: auto;
+}
+
+.scrollToBottom {
+	position: sticky;
+	bottom: var(--reltio-chat-scroll-button-bottom, 16px);
+	align-self: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--reltio-chat-scroll-button-size, 36px);
+	height: var(--reltio-chat-scroll-button-size, 36px);
+	border-radius: 50%;
+	border: none;
+	background: var(--reltio-chat-scroll-button-bg, #ffffff);
+	box-shadow: var(
+		--reltio-chat-scroll-button-shadow,
+		0 2px 8px rgba(0, 0, 0, 0.15)
+	);
+	color: var(--reltio-chat-scroll-button-color, #5f6368);
+	cursor: pointer;
+	transition: background 0.15s ease;
+	flex-shrink: 0;
+}
+
+.scrollToBottom:hover {
+	background: var(--reltio-chat-scroll-button-hover-bg);
+}
+
+.scrollToBottom:focus-visible {
+	outline: 2px solid #1a73e8;
+	outline-offset: 2px;
+}
+
+.lastMessageWrapper {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	align-items: start;
+	gap: var(--reltio-chat-message-gap);
+	min-height: 100%;
+	width: 100%;
+}
