@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Visibility } from "./Visibility";
 import styles from "./IconStories.module.css";
+import { Visibility } from "./Visibility";
 
 const meta: Meta<typeof Visibility> = {
 	component: Visibility,

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Share } from "./Share";
 import styles from "./IconStories.module.css";
+import { Share } from "./Share";
 
 const meta: Meta<typeof Share> = {
 	component: Share,

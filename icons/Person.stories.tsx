@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Person } from "./Person";
 import styles from "./IconStories.module.css";
+import { Person } from "./Person";
 
 const meta: Meta<typeof Person> = {
 	component: Person,

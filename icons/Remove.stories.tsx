@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Remove } from "./Remove";
 import styles from "./IconStories.module.css";
+import { Remove } from "./Remove";
 
 const meta: Meta<typeof Remove> = {
 	component: Remove,

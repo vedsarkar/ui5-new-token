@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { KeyboardArrowDown } from "./KeyboardArrowDown";
 import styles from "./IconStories.module.css";
+import { KeyboardArrowDown } from "./KeyboardArrowDown";
 
 const meta: Meta<typeof KeyboardArrowDown> = {
 	component: KeyboardArrowDown,

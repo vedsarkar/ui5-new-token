@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Save } from "./Save";
 import styles from "./IconStories.module.css";
+import { Save } from "./Save";
 
 const meta: Meta<typeof Save> = {
 	component: Save,

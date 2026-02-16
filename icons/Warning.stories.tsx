@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Warning } from "./Warning";
 import styles from "./IconStories.module.css";
+import { Warning } from "./Warning";
 
 const meta: Meta<typeof Warning> = {
 	component: Warning,

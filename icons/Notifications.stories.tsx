@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Notifications } from "./Notifications";
 import styles from "./IconStories.module.css";
+import { Notifications } from "./Notifications";
 
 const meta: Meta<typeof Notifications> = {
 	component: Notifications,
