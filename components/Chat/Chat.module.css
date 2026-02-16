@@ -3,10 +3,10 @@
 	--reltio-chat-padding: 16px;
 	--reltio-chat-message-gap: 16px;
 	--reltio-chat-scroll-button-size: 36px;
-	--reltio-chat-scroll-button-bg: #ffffff;
-	--reltio-chat-scroll-button-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-	--reltio-chat-scroll-button-color: #5f6368;
-	--reltio-chat-scroll-button-hover-bg: #f1f3f4;
+	--reltio-chat-scroll-button-bg: var(--reltio-color-surface);
+	--reltio-chat-scroll-button-shadow: 0 2px 8px var(--reltio-color-shadow);
+	--reltio-chat-scroll-button-color: var(--reltio-color-text-secondary);
+	--reltio-chat-scroll-button-hover-bg: var(--reltio-color-surface-raised);
 	--reltio-chat-scroll-button-bottom: 16px;
 
 	display: flex;
@@ -42,12 +42,9 @@
 	height: var(--reltio-chat-scroll-button-size, 36px);
 	border-radius: 50%;
 	border: none;
-	background: var(--reltio-chat-scroll-button-bg, #ffffff);
-	box-shadow: var(
-		--reltio-chat-scroll-button-shadow,
-		0 2px 8px rgba(0, 0, 0, 0.15)
-	);
-	color: var(--reltio-chat-scroll-button-color, #5f6368);
+	background: var(--reltio-chat-scroll-button-bg);
+	box-shadow: var(--reltio-chat-scroll-button-shadow);
+	color: var(--reltio-chat-scroll-button-color);
 	cursor: pointer;
 	transition: background 0.15s ease;
 	flex-shrink: 0;
@@ -58,7 +55,7 @@
 }
 
 .scrollToBottom:focus-visible {
-	outline: 2px solid #1a73e8;
+	outline: 2px solid var(--reltio-color-primary-focus);
 	outline-offset: 2px;
 }
 
