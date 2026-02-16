@@ -1,27 +1,12 @@
 "use client";
 
-import { forwardRef, useId } from "react";
+import { forwardRef } from "react";
 import { classNames } from "@/utils/classNames";
 import styles from "./TextArea.module.css";
 import type { TextAreaProps } from "./TextArea.types";
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
-	(
-		{
-			label,
-			error,
-			supportingText,
-			toolbar,
-			className,
-			id: providedId,
-			...rest
-		},
-		ref,
-	) => {
-		const generatedId = useId();
-		const textareaId = providedId || generatedId;
-		const supportingTextId = `${textareaId}-supporting`;
-
+	({ label, error, supportingText, toolbar, className, ...rest }, ref) => {
 		const hasValue = String(rest.value ?? rest.defaultValue ?? "").length > 0;
 
 		return (
@@ -31,17 +16,12 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 				data-has-value={hasValue || undefined}
 				className={classNames(styles.root, className)}
 			>
-				<label
-					htmlFor={textareaId}
-					className={classNames(styles.inputContainer)}
-				>
+				<label className={classNames(styles.inputContainer)}>
 					<textarea
 						ref={ref}
-						id={textareaId}
 						className={classNames(styles.textarea)}
 						placeholder={label || rest.placeholder}
 						aria-invalid={error || undefined}
-						aria-describedby={supportingText ? supportingTextId : undefined}
 						{...rest}
 					/>
 					{label && <span className={classNames(styles.label)}>{label}</span>}
@@ -50,10 +30,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 					)}
 				</label>
 				{supportingText && (
-					<div
-						id={supportingTextId}
-						className={classNames(styles.supportingText)}
-					>
+					<div className={classNames(styles.supportingText)}>
 						{supportingText}
 					</div>
 				)}
