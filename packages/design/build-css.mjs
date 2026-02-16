@@ -8,11 +8,16 @@ styleInject(\`\n${result.css}\`);
 export default json;
 `;
 
-fs.glob("../../components/**/*.module.css", (err, matches) => {
-	if (err) throw err;
-	matches.forEach(async (path) => {
-		const css = fs.readFileSync(path);
-		const result = await postcss([postcssModules]).process(css, { from: path });
-		fs.writeFileSync(`${path}.ts`, template(result));
-	});
-});
+fs.glob(
+	["../../components/**/*.module.css", "../../icons/**/*.module.css"],
+	(err, matches) => {
+		if (err) throw err;
+		matches.forEach(async (path) => {
+			const css = fs.readFileSync(path);
+			const result = await postcss([postcssModules]).process(css, {
+				from: path,
+			});
+			fs.writeFileSync(`${path}.ts`, template(result));
+		});
+	},
+);

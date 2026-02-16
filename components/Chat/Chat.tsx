@@ -23,13 +23,9 @@ const ChatMessage = memo(({ message }: { message: Message }) => {
 		);
 	}
 	if (isAssistantMessage(message)) {
-		return (
-			<AssistantMessage className={styles.assistantMessage}>
-				{message.content}
-			</AssistantMessage>
-		);
+		return <AssistantMessage>{message.content}</AssistantMessage>;
 	}
-	return message.content ?? null;
+	return <>{message.content ?? null}</>;
 });
 
 const isScrolledToBottom = (el: HTMLElement) =>
