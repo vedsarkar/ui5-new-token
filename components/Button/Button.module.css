@@ -117,6 +117,10 @@
 	color: var(--reltio-button-color-text);
 }
 
+:global([data-theme="dark"]) .filled.inherited {
+	border: 1px solid var(--reltio-color-border);
+}
+
 /* Outlined + Primary */
 .outlined.primary {
 	border-color: var(--reltio-button-color-primary);

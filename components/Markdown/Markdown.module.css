@@ -115,6 +115,7 @@
 	background-color: var(--reltio-markdown-color-code-background);
 	padding: var(--reltio-markdown-code-padding, 0.2em 0.4em);
 	border-radius: var(--reltio-markdown-code-border-radius, 3px);
+	border: 1px solid var(--reltio-markdown-color-code-block-border);
 }
 
 .root pre code {

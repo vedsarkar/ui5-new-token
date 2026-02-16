@@ -6,6 +6,7 @@
 	--reltio-icon-library-hover: var(--reltio-color-surface-raised);
 	--reltio-icon-library-button-bg: var(--reltio-color-surface-raised);
 	--reltio-icon-library-button-hover: var(--reltio-color-border);
+	--reltio-icon-library-focus-border: var(--reltio-color-primary);
 
 	font-family: var(--reltio-font-family-body, "Roboto", sans-serif);
 	display: grid;
@@ -29,7 +30,7 @@
 	transition: border-color 0.2s;
 
 	&:focus {
-		border-color: var(--reltio-color-primary);
+		border-color: var(--reltio-icon-library-focus-border);
 	}
 }
 

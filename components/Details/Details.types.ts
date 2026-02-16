@@ -17,6 +17,8 @@ export type DetailsStyleVars = {
 	"--reltio-details-hover-bg"?: string;
 	"--reltio-details-code-bg"?: string;
 	/* .summary */
+	"--reltio-details-summary-text-color"?: string;
+	"--reltio-details-summary-hover-bg"?: string;
 	"--reltio-details-summary-padding"?: string;
 	"--reltio-details-summary-gap"?: string;
 	"--reltio-details-summary-line-height"?: string;
@@ -25,14 +27,18 @@ export type DetailsStyleVars = {
 	"--reltio-details-title-letter-spacing"?: string;
 	/* .chevron */
 	"--reltio-details-chevron-size"?: string;
+	"--reltio-details-chevron-color"?: string;
 	"--reltio-details-transition-duration"?: string;
 	"--reltio-details-transition-ease"?: string;
 	/* .content */
+	"--reltio-details-content-text-color"?: string;
 	"--reltio-details-content-line-height"?: string;
 	"--reltio-details-content-padding"?: string;
+	"--reltio-details-content-code-color"?: string;
 	"--reltio-details-content-pre-padding"?: string;
 	"--reltio-details-content-pre-radius"?: string;
 	"--reltio-details-content-p-margin"?: string;
+	"--reltio-details-code-background-color"?: string;
 };
 
 /**

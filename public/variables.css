@@ -1,20 +1,20 @@
 :root {
-	--reltio-color-text: #0e0e25;
-	--reltio-color-text-secondary: #5f6368;
-	--reltio-color-text-muted: #595972;
+	--reltio-color-text: #000033;
+	--reltio-color-text-secondary: #737373;
+	--reltio-color-text-muted: #666666;
 	--reltio-color-surface: #ffffff;
-	--reltio-color-surface-raised: #f5f5fa;
-	--reltio-color-border: #e3e3f2;
+	--reltio-color-surface-raised: #eeeeee;
+	--reltio-color-border: #e5e5e5;
 	--reltio-color-primary: #0000cc;
-	--reltio-color-primary-hover: #000066;
-	--reltio-color-primary-focus: #1a73e8;
+	--reltio-color-primary-hover: #000033;
+	--reltio-color-primary-focus: #0000cc;
 	--reltio-color-on-primary: #ffffff;
 	--reltio-color-error: #dc2626;
 	--reltio-color-error-text: #b91c1c;
 	--reltio-color-error-surface: #fef2f2;
 	--reltio-color-error-border: #fecaca;
-	--reltio-color-accent: #8d8dc8;
-	--reltio-color-secondary: #6c757d;
+	--reltio-color-accent: #0000cc;
+	--reltio-color-secondary: #0000cc;
 	--reltio-color-success: #28a745;
 	--reltio-color-warning: #ffc107;
 	--reltio-color-overlay: rgba(0, 0, 0, 0.08);
@@ -22,24 +22,24 @@
 }
 
 [data-theme="dark"] {
-	--reltio-color-text: #e8e8f0;
-	--reltio-color-text-secondary: #a0a0b8;
-	--reltio-color-text-muted: #8888a0;
-	--reltio-color-surface: #1a1a2e;
-	--reltio-color-surface-raised: #252540;
-	--reltio-color-border: #3a3a55;
-	--reltio-color-primary: #6b6bff;
-	--reltio-color-primary-hover: #8585ff;
-	--reltio-color-primary-focus: #8585ff;
+	--reltio-color-text: #ffffff;
+	--reltio-color-text-secondary: #eeeeee;
+	--reltio-color-text-muted: #7c7c7c;
+	--reltio-color-surface: #000033;
+	--reltio-color-surface-raised: #000066;
+	--reltio-color-border: #333399;
+	--reltio-color-primary: #6666ff;
+	--reltio-color-primary-hover: #8888ff;
+	--reltio-color-primary-focus: #00ffff;
 	--reltio-color-on-primary: #ffffff;
 	--reltio-color-error: #f87171;
 	--reltio-color-error-text: #fca5a5;
 	--reltio-color-error-surface: #3b1a1a;
 	--reltio-color-error-border: #7f1d1d;
-	--reltio-color-accent: #a0a0e0;
-	--reltio-color-secondary: #9e9eb8;
+	--reltio-color-accent: #ffcc00;
+	--reltio-color-secondary: #00ffff;
 	--reltio-color-success: #4ade80;
 	--reltio-color-warning: #fbbf24;
-	--reltio-color-overlay: rgba(255, 255, 255, 0.08);
+	--reltio-color-overlay: rgba(255, 255, 255, 0.15);
 	--reltio-color-shadow: rgba(0, 0, 0, 0.3);
 }
