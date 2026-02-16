@@ -23,7 +23,7 @@ Eliminate UI fragmentation across products while accelerating development of new
 
 **Developers, Designers, QA Engineers, Product Managers** — build and review Reltio applications  
 **Partners & Customers** — integrate and embed Reltio UI components  
-**AI Agents** — interact via MCP-UI and A2UI protocols
+**AI Agents** — interact via MDX, MCP-UI and A2UI protocols
 
 ## Architecture & Standards
 
