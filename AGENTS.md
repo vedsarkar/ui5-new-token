@@ -34,27 +34,6 @@ Eliminate UI fragmentation across products while accelerating development of new
 5. **English Language** - All files, comments, documentation in English only
 6. **Path Aliases** - Always use `@/*` instead of relative paths (e.g., `import { classNames } from "@/utils/classNames"`)
 
-## OpenSpec Workflow
-
-This project uses OpenSpec for spec-driven development: **specify before building**.
-
-**Three stages:**
-1. **Propose** - Create specification with requirements and tasks
-2. **Implement** - Build according to approved spec
-3. **Archive** - Move completed change to project changelog
-
-**When to create proposal:**
-- New features or capabilities
-- Breaking changes (API, schema, architecture)
-- Performance optimizations that change behavior
-
-**Skip proposals for:**
-- Bug fixes, typos, formatting
-- Non-breaking dependency updates
-- Configuration changes
-
-> Full workflow guide: [@guides/spec-driven-development.story.mdx](/docs/guides-spec-driven-development)
-
 ## Essential Commands
 
 ### Development
@@ -73,7 +52,7 @@ npm run coverage          # Run tests with coverage report
 
 ## Tech Stack
 
-- **Framework**: React (latest)
+- **Framework**: React 17+
 - **Language**: TypeScript (strict mode)
 - **Documentation & Testing**: Storybook + Chromatic (visual, interaction, accessibility, coverage)
 - **Styling**: CSS Modules
