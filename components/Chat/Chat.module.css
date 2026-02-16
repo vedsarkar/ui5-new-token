@@ -7,6 +7,7 @@
 	--reltio-chat-scroll-button-shadow: 0 2px 8px var(--reltio-color-shadow);
 	--reltio-chat-scroll-button-color: var(--reltio-color-text-secondary);
 	--reltio-chat-scroll-button-hover-bg: var(--reltio-color-surface-raised);
+	--reltio-chat-scroll-button-focus-color: var(--reltio-color-primary-focus);
 	--reltio-chat-scroll-button-bottom: 16px;
 
 	display: flex;
@@ -55,7 +56,7 @@
 }
 
 .scrollToBottom:focus-visible {
-	outline: 2px solid var(--reltio-color-primary-focus);
+	outline: 2px solid var(--reltio-chat-scroll-button-focus-color);
 	outline-offset: 2px;
 }
 
