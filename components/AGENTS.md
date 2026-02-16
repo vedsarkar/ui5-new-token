@@ -34,11 +34,14 @@ import type { ButtonProps } from "@/components/Button/Button.types";
 
 ## Creating a New Component
 
-1. Follow the OpenSpec workflow - create a proposal first
-2. Use the mandatory folder structure above
-3. Implement the component following all standards
-4. Create comprehensive Storybook stories
-5. Run `npm run format` and ensure `npm run lint` passes
-6. Export only the public API through `index.ts`
+1. Start with `/opsx:new` to create a change and build artifacts step by step
+2. Use `/opsx:continue` to create each artifact (proposal → specs → design → tasks)
+3. Review each artifact before proceeding to the next
+4. Run `/opsx:apply` to implement the component following all standards
+5. Use the mandatory folder structure above
+6. Create comprehensive [Storybook stories](/?path=/docs/guides-writing-storybook-stories--docs)
+7. Run `npm run format` and ensure `npm run lint` passes
+8. Export only the public API through `index.ts`
+9. Archive the change with `/opsx:archive` after deployment
 
-> See full development workflow: [@guides/spec-driven-development.story.mdx](/?path=/docs/guides-spec-driven-development--overview)
+> See full development workflow: [Spec-Driven Development Guide](/?path=/docs/guides-spec-driven-development--docs)

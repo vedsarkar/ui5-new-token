@@ -1,89 +1,9 @@
-import type { ComponentProps, CSSProperties } from "react";
-import { useEffect, useState } from "react";
+import { fn } from "storybook/test";
 import preview from "@/.storybook/preview";
 import { TreeList } from "./TreeList";
-import type { TreeItem, TreeKey } from "./TreeList.types";
+import type { TreeItem } from "./TreeList.types";
 
-const componentDescription =
-	"TreeList renders hierarchical data with expand/collapse controls, optional custom labels, and controlled expansion via onExpand.";
-
-const cssVariables = [
-	{
-		name: "--reltio-tree-list-font-family",
-		description: "Font family for all rows.",
-		defaultValue: "inherit (fallback system-ui, sans-serif)",
-	},
-	{
-		name: "--reltio-tree-list-font-size",
-		description: "Base font size.",
-		defaultValue: "inherit (fallback 14px)",
-	},
-	{
-		name: "--reltio-tree-list-text-color",
-		description: "Text color for labels.",
-		defaultValue: "inherit (fallback #1a1a1a)",
-	},
-	{
-		name: "--reltio-tree-list-background",
-		description: "Background of the list container.",
-		defaultValue: "inherit (fallback transparent)",
-	},
-	{
-		name: "--reltio-tree-list-border-radius",
-		description: "Border radius of the container.",
-		defaultValue: "0",
-	},
-	{
-		name: "--reltio-tree-list-indent-size",
-		description: "Indent per depth level.",
-		defaultValue: "16px",
-	},
-	{
-		name: "--reltio-tree-list-toggle-size",
-		description: "Hit area size of the toggle icon.",
-		defaultValue: "26px",
-	},
-	{
-		name: "--reltio-tree-list-toggle-color",
-		description: "Color of the toggle caret.",
-		defaultValue: "#5f6368",
-	},
-	{
-		name: "--reltio-tree-list-spinner-size",
-		description: "Spinner diameter for loading nodes.",
-		defaultValue: "10px",
-	},
-	{
-		name: "--reltio-tree-list-spinner-width",
-		description: "Spinner stroke width.",
-		defaultValue: "2px",
-	},
-	{
-		name: "--reltio-tree-list-spinner-color",
-		description: "Spinner color.",
-		defaultValue: "currentColor",
-	},
-	{
-		name: "--reltio-tree-list-line-color",
-		description: "Guideline color connecting nodes.",
-		defaultValue: "rgba(0, 0, 0, 0.08)",
-	},
-	{
-		name: "--reltio-tree-list-row-padding-block",
-		description: "Vertical padding for each row.",
-		defaultValue: "2px",
-	},
-	{
-		name: "--reltio-tree-list-row-padding-inline",
-		description: "Horizontal padding for each row.",
-		defaultValue: "4px",
-	},
-	{
-		name: "--reltio-tree-list-line-height",
-		description: "Line height for row content.",
-		defaultValue: "inherit",
-	},
-];
+// -- Data Fixtures --
 
 const singleRootData: TreeItem[] = [
 	{
@@ -176,455 +96,215 @@ const multiRootData: TreeItem[] = [
 	},
 ];
 
-const loadingData: TreeItem[] = [
+const flatData: TreeItem[] = [
+	{ id: "item-1", label: "Item 1" },
+	{ id: "item-2", label: "Item 2" },
+	{ id: "item-3", label: "Item 3" },
+	{ id: "item-4", label: "Item 4" },
+	{ id: "item-5", label: "Item 5" },
+];
+
+const deepData: TreeItem[] = [
 	{
-		id: "async-root",
-		label: "Async root",
+		id: "l1",
+		label: "Level 1",
 		children: [
 			{
-				id: "loading-branch",
-				label: "Branch fetching children",
-				children: [],
-				isLoading: true,
+				id: "l2",
+				label: "Level 2",
+				children: [
+					{
+						id: "l3",
+						label: "Level 3",
+						children: [
+							{
+								id: "l4",
+								label: "Level 4",
+								children: [
+									{
+										id: "l5",
+										label: "Level 5",
+										children: [
+											{
+												id: "l6",
+												label: "Level 6",
+												children: [{ id: "l7", label: "Level 7" }],
+											},
+										],
+									},
+								],
+							},
+						],
+					},
+				],
 			},
 		],
 	},
 ];
 
+const loadingData: TreeItem[] = [
+	{
+		id: "root",
+		label: "Root",
+		children: [
+			{ id: "loaded", label: "Loaded Node" },
+			{
+				id: "loading-parent",
+				label: "Loading Children...",
+				isLoading: true,
+				children: [],
+			},
+		],
+	},
+];
+
+const longLabelsData: TreeItem[] = [
+	{
+		id: "root",
+		label:
+			"This is a very long root node label that might overflow the container",
+		children: [
+			{
+				id: "child-1",
+				label:
+					"Another extremely long label for a child node to test text wrapping and overflow behavior",
+			},
+			{
+				id: "child-2",
+				label: "Short",
+			},
+		],
+	},
+];
+
+// -- Custom Label Components --
+
+const BoldLabel = ({ data }: { data: TreeItem }) => (
+	<strong>{data.label}</strong>
+);
+
+const BadgeLabel = ({ data }: { data: TreeItem }) => (
+	<span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+		{data.label}
+		{data.children && data.children.length > 0 && (
+			<span
+				style={{
+					background: "#e0e7ff",
+					color: "#3730a3",
+					borderRadius: 10,
+					padding: "0 6px",
+					fontSize: 11,
+					fontWeight: 600,
+				}}
+			>
+				{data.children.length}
+			</span>
+		)}
+	</span>
+);
+
+// -- Meta --
+
 const meta = preview.meta({
 	component: TreeList,
-	parameters: {
-		layout: "padded",
-		docs: {
-			description: {
-				component: componentDescription,
+	args: {
+		data: singleRootData,
+		onExpand: fn(),
+	},
+	argTypes: {
+		LabelComponent: {
+			control: { type: "select" },
+			options: ["default", "bold", "badge"],
+			mapping: {
+				default: undefined,
+				bold: BoldLabel,
+				badge: BadgeLabel,
 			},
 		},
 	},
-	args: {
-		data: singleRootData,
-	},
 });
 
-type CustomLabelArgs = ComponentProps<typeof TreeList> & {
-	labelVariant: RenderLabelVariant;
-};
-type WithCustomArgs = ComponentProps<typeof TreeList> & {
-	style: CSSProperties;
-};
+// -- Data Variants --
 
-export const Default = meta.story({
-	render: (args) => <TreeList {...args} />,
-});
+export const Default = meta.story({});
 
 export const MultipleRoots = meta.story({
 	args: {
 		data: multiRootData,
 	},
-	render: (args) => <TreeList {...args} />,
 });
 
-type RenderLabelVariant =
-	| "default"
-	| "tag"
-	| "info"
-	| "tag + info"
-	| "info + tag";
-
-export const CustomLabel = meta.story({
-	argTypes: {
-		labelVariant: {
-			control: { type: "inline-radio" },
-			options: ["default", "tag", "info", "tag + info", "info + tag"],
-		},
-	},
+export const SingleNode = meta.story({
 	args: {
-		data: singleRootData,
-		labelVariant: "tag + info",
-	},
-	render: (rawArgs) => {
-		const { labelVariant, ...treeListArgs } = rawArgs;
-
-		const LabelMap: Record<
-			RenderLabelVariant,
-			React.ComponentType<{ data: TreeItem }>
-		> = {
-			default: ({ data }) => <span>{data.label}</span>,
-
-			tag: ({ data }) => (
-				<span style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
-					<span
-						style={{
-							padding: "2px 6px",
-							borderRadius: 12,
-							background: "#d9e8f8",
-							color: "#1f2937",
-							fontSize: 12,
-						}}
-					>
-						tag
-					</span>
-					<span>{data.label}</span>
-				</span>
-			),
-
-			info: ({ data }) => (
-				<span style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
-					<span>{data.label}</span>
-					<span
-						style={{
-							padding: "2px 8px",
-							borderRadius: "100%",
-							background: "#0000001a",
-							fontSize: 10,
-						}}
-					>
-						i
-					</span>
-				</span>
-			),
-
-			"tag + info": ({ data }) => (
-				<span style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
-					<span
-						style={{
-							padding: "2px 6px",
-							borderRadius: 12,
-							background: "#d9e8f8",
-							color: "#1f2937",
-							fontSize: 12,
-						}}
-					>
-						tag
-					</span>
-					<span>{data.label}</span>
-					<span
-						style={{
-							padding: "2px 8px",
-							borderRadius: "100%",
-							background: "#0000001a",
-							fontSize: 10,
-						}}
-					>
-						i
-					</span>
-				</span>
-			),
-
-			"info + tag": ({ data }) => (
-				<span style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
-					<span>{data.label}</span>
-					<span
-						style={{
-							padding: "2px 8px",
-							borderRadius: "100%",
-							background: "#0000001a",
-							fontSize: 10,
-						}}
-					>
-						i
-					</span>
-					<span
-						style={{
-							padding: "2px 6px",
-							borderRadius: 12,
-							background: "#d9e8f8",
-							color: "#1f2937",
-							fontSize: 12,
-						}}
-					>
-						tag
-					</span>
-				</span>
-			),
-		};
-
-		const Label = LabelMap[labelVariant] ?? LabelMap.default;
-
-		return <TreeList {...treeListArgs} LabelComponent={Label} />;
+		data: [{ id: "only", label: "Only Node" }],
 	},
 });
 
-export const WithCustomCssVariables = meta.story({
-	argTypes: {
-		style: {
-			control: "object",
-			description: "CSS variables applied to the parent wrapper",
-		},
-	},
+export const FlatList = meta.story({
 	args: {
-		data: singleRootData,
-		style: {
-			"--reltio-tree-list-background": "#f8fafc",
-			"--reltio-tree-list-line-color": "rgba(15, 23, 42, 0.16)",
-			"--reltio-tree-list-text-color": "#0f172a",
-			"--reltio-tree-list-font-size": "12px",
-			"--reltio-tree-list-toggle-color": "#0f172a",
-			"--reltio-tree-list-toggle-size": "26px",
-			"--reltio-tree-list-indent-size": "16px",
-			"--reltio-tree-list-line-height": "1.5",
-			"--reltio-tree-list-font-family": "monospace",
-			"--reltio-tree-list-border-radius": "6px",
-			"--reltio-tree-list-row-padding-block": "12px",
-			"--reltio-tree-list-row-padding-inline": "12px",
-		} as CSSProperties,
-	},
-	render: ({ style, ...treeArgs }) => {
-		return (
-			<div style={{ display: "grid", gap: 16 }}>
-				<div
-					style={{
-						background: "#0f172a",
-						color: "#f8fafc",
-						padding: "10px 12px",
-						borderRadius: 8,
-						fontSize: 12,
-						display: "grid",
-						gap: 6,
-					}}
-				>
-					<div style={{ fontWeight: 600 }}>CSS variables</div>
-					<div style={{ color: "#e2e8f0" }}>
-						Override variables on any parent element (for example a theme
-						wrapper). Below is the full list of supported variables with
-						defaults.
-					</div>
-					<ul style={{ margin: 0, paddingLeft: 16, display: "grid", gap: 6 }}>
-						{cssVariables.map((variable) => (
-							<li key={variable.name} style={{ lineHeight: 1.4 }}>
-								<code style={{ color: "#cbd5f5" }}>{variable.name}</code>
-								<span style={{ marginLeft: 6, color: "#cbd5e1" }}>
-									{variable.description}
-								</span>
-								<span style={{ marginLeft: 6, color: "#94a3b8" }}>
-									default: <code>{variable.defaultValue}</code>
-								</span>
-							</li>
-						))}
-					</ul>
-				</div>
-
-				<div
-					style={{
-						width: "80%",
-						height: 320,
-						overflow: "auto",
-						border: "2px dashed #94a3b8",
-						borderRadius: 10,
-						padding: 16,
-						background: "#f8fafc",
-						display: "flex",
-						flexDirection: "column",
-						gap: 12,
-					}}
-				>
-					<div style={{ color: "#475569", fontSize: 13 }}>
-						Parent wrapper (variables apply here)
-					</div>
-					<div style={style}>
-						<TreeList {...treeArgs} />
-					</div>
-				</div>
-			</div>
-		);
+		data: flatData,
 	},
 });
 
-export const ControlledExpanded = meta.story({
-	argTypes: {
-		expandedKeys: { control: { type: "object" } },
-		onExpand: { action: "expand" },
-	},
+export const DeepNesting = meta.story({
 	args: {
-		data: multiRootData,
-		expandedKeys: ["root 1", "node 1a", "root 2", "node 2a"],
-		onExpand: (keys, node) => {
-			const expandedKeysElement = document.getElementById("expanded-keys");
-			if (expandedKeysElement) {
-				expandedKeysElement.innerHTML = JSON.stringify(keys);
-			}
-			const toggledNodeElement = document.getElementById("toggled-node");
-			if (toggledNodeElement) {
-				toggledNodeElement.innerHTML = node ? JSON.stringify(node) : "";
-			}
-		},
-	},
-	render: (args) => {
-		const [expanded, setExpanded] = useState<TreeKey[]>(
-			(args.expandedKeys as TreeKey[]) ?? [],
-		);
-
-		useEffect(() => {
-			setExpanded((args.expandedKeys as TreeKey[]) ?? []);
-		}, [args.expandedKeys]);
-
-		const handleExpand = (keys: TreeKey[], node: TreeItem) => {
-			setExpanded(keys);
-			args.onExpand?.(keys, node);
-		};
-
-		return (
-			<>
-				<div
-					style={{
-						fontFamily: "monospace",
-						background: "#f7f7f7",
-						padding: "6px 10px",
-						borderRadius: 6,
-						marginBottom: 12,
-						fontSize: 12,
-						width: 480,
-						display: "grid",
-						gap: 6,
-					}}
-				>
-					<div>
-						<span>
-							<strong>Expanded keys:</strong>{" "}
-						</span>{" "}
-						<span id="expanded-keys"></span>
-					</div>
-					<div>
-						<span>
-							<strong>Toggled node:</strong>{" "}
-						</span>{" "}
-						<span id="toggled-node"></span>
-					</div>
-				</div>
-				<div
-					style={{
-						width: "100%",
-						height: 300,
-						overflow: "auto",
-						border: "1px solid #e0e0e0",
-						borderRadius: 6,
-					}}
-				>
-					<TreeList {...args} expandedKeys={expanded} onExpand={handleExpand} />
-				</div>
-			</>
-		);
+		data: deepData,
+		expandedKeys: ["l1", "l2", "l3", "l4", "l5", "l6"],
 	},
 });
 
-type LoadingArgs = ComponentProps<typeof TreeList> & { style: CSSProperties };
+// -- Controlled Expand States --
 
-export const LoadingState = meta.story({
+export const AllCollapsed = meta.story({
+	args: {
+		expandedKeys: [],
+	},
+});
+
+export const AllExpanded = meta.story({
+	args: {
+		expandedKeys: ["root", "b", "b2", "b21"],
+	},
+});
+
+export const PartiallyExpanded = meta.story({
+	args: {
+		expandedKeys: ["root"],
+	},
+});
+
+// -- Custom Label --
+
+export const WithBoldLabel = meta.story({
+	args: {
+		LabelComponent: "bold" as never,
+	},
+});
+
+export const WithBadgeLabel = meta.story({
+	args: {
+		LabelComponent: "badge" as never,
+	},
+});
+
+// -- Edge Cases --
+
+export const WithLoadingNode = meta.story({
 	args: {
 		data: loadingData,
-		style: {
-			"--reltio-tree-list-spinner-size": "10px",
-			"--reltio-tree-list-spinner-width": "2px",
-			"--reltio-tree-list-spinner-color": "currentColor",
-		} as CSSProperties,
+		expandedKeys: ["root"],
 	},
-	render: (args) => {
-		const clearLoading = (items: TreeItem[]): TreeItem[] =>
-			items.map((item) => ({
-				...item,
-				isLoading: false,
-				children: item.children ? clearLoading(item.children) : item.children,
-			}));
+});
 
-		const [data, setData] = useState<TreeItem[]>(() => clearLoading(args.data));
-		const [expanded, setExpanded] = useState<TreeKey[]>(["async-root"]);
-		const [isFetching, setIsFetching] = useState(false);
+export const LongLabels = meta.story({
+	args: {
+		data: longLabelsData,
+		expandedKeys: ["root"],
+	},
+});
 
-		const handleReset = () => {
-			setIsFetching(false);
-			setData(clearLoading(args.data));
-			setExpanded(["async-root"]);
-		};
-
-		const markLoading = (items: TreeItem[], targetId: TreeKey): TreeItem[] =>
-			items.map((item) => {
-				if (item.id === targetId) {
-					if (item.children && item.children.length > 0) {
-						return item;
-					}
-					return {
-						...item,
-						isLoading: true,
-					};
-				}
-				return {
-					...item,
-					children: item.children
-						? markLoading(item.children, targetId)
-						: item.children,
-				};
-			});
-
-		const injectChildren = (items: TreeItem[], targetId: TreeKey): TreeItem[] =>
-			items.map((item) => {
-				if (item.id === targetId) {
-					return {
-						...item,
-						isLoading: false,
-						children: [
-							{ id: `${item.id}-1`, label: "Loaded child 1" },
-							{ id: `${item.id}-2`, label: "Loaded child 2" },
-						],
-					};
-				}
-				return {
-					...item,
-					children: item.children
-						? injectChildren(item.children, targetId)
-						: item.children,
-				};
-			});
-
-		const handleExpand = (keys: TreeKey[], node: TreeItem) => {
-			setExpanded(keys);
-			if (isFetching || (node.children && node.children.length > 0)) {
-				return;
-			}
-			setData((prev) => markLoading(prev, node.id));
-			setIsFetching(true);
-			setTimeout(() => {
-				setData((prev) => injectChildren(prev, node.id));
-				setIsFetching(false);
-			}, 1500);
-		};
-
-		return (
-			<div style={{ display: "grid", gap: 8 }}>
-				<button
-					type="button"
-					style={{
-						width: 120,
-						padding: "6px 10px",
-						borderRadius: 6,
-						border: "1px solid #e2e8f0",
-						background: "#f8fafc",
-						cursor: "pointer",
-						transition: "all 120ms ease",
-						boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
-					}}
-					onClick={handleReset}
-					onMouseDown={(event) => {
-						event.currentTarget.style.transform = "translateY(1px)";
-						event.currentTarget.style.background = "#eef2f7";
-						event.currentTarget.style.boxShadow = "0 1px 0 rgba(0,0,0,0.06)";
-					}}
-					onMouseUp={(event) => {
-						event.currentTarget.style.transform = "translateY(0)";
-						event.currentTarget.style.background = "#f8fafc";
-						event.currentTarget.style.boxShadow = "0 1px 2px rgba(0,0,0,0.04)";
-					}}
-				>
-					Reset loading
-				</button>
-				<div style={args.style}>
-					<TreeList
-						{...args}
-						data={data}
-						expandedKeys={expanded}
-						onExpand={handleExpand}
-					/>
-				</div>
-			</div>
-		);
+export const EmptyData = meta.story({
+	args: {
+		data: [],
 	},
 });
