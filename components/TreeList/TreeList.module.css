@@ -1,15 +1,17 @@
 .root {
 	--reltio-tree-list-font-family: inherit;
 	--reltio-tree-list-font-size: inherit;
-	--reltio-tree-list-text-color: inherit;
-	--reltio-tree-list-background: inherit;
+	--reltio-tree-list-text-color: var(--reltio-color-text);
+	--reltio-tree-list-background: transparent;
+	--reltio-tree-list-toggle-color: var(--reltio-color-text-secondary);
+	--reltio-tree-list-line-color: var(--reltio-color-overlay);
 	--reltio-tree-list-line-height: inherit;
 	display: block;
 	overflow: auto;
 	font-family: var(--reltio-tree-list-font-family, system-ui, sans-serif);
 	font-size: var(--reltio-tree-list-font-size, 14px);
-	color: var(--reltio-tree-list-text-color, #1a1a1a);
-	background: var(--reltio-tree-list-background, transparent);
+	color: var(--reltio-tree-list-text-color);
+	background: var(--reltio-tree-list-background);
 	border: none;
 	border-radius: var(--reltio-tree-list-border-radius, 0);
 }

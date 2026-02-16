@@ -22,7 +22,7 @@
 	height: var(--reltio-tree-list-toggle-size, 26px);
 	border: none;
 	background: none;
-	color: var(--reltio-tree-list-toggle-color, #5f6368);
+	color: var(--reltio-tree-list-toggle-color);
 	cursor: pointer;
 }
 
