@@ -29,7 +29,7 @@
 	transition: border-color 0.2s;
 
 	&:focus {
-		border-color: var(--reltio-color-primary, #0066cc);
+		border-color: var(--reltio-color-primary);
 	}
 }
 

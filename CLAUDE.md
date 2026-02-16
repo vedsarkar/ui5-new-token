@@ -42,17 +42,25 @@ components/ComponentName/
 - ALL className attributes MUST use `classNames()` utility from `@/utils/classNames`
 - ALL CSS custom properties MUST be defined on `.root` class with `--reltio-{component-name}-` prefix
 - Internal elements MUST use ONLY CSS variables, never direct values
-- CSS variables MUST include fallback values: `var(--reltio-button-height, 36px)`
+- Color CSS variables MUST reference global `--reltio-color-*` tokens from `public/variables.css` without fallback values
+- Non-color CSS variables (spacing, typography, sizing) MUST include fallback values: `var(--reltio-button-height, 36px)`
 
 Example pattern:
 ```css
 .root {
   --reltio-button-height: 36px;
-  --reltio-button-bg: #007bff;
+  --reltio-button-bg: var(--reltio-color-primary);
   height: var(--reltio-button-height);
   background: var(--reltio-button-bg);
 }
 ```
+
+### Global Color Tokens
+- All color values MUST use semantic tokens defined in `public/variables.css`
+- Token naming convention: `--reltio-color-{role}` (e.g., `--reltio-color-text`, `--reltio-color-surface`)
+- Dark mode is activated via `data-theme="dark"` attribute on an ancestor element
+- Component CSS must NOT contain hardcoded hex color values; use global tokens through component-level variables
+- Token categories: text, surface, border, primary, error, accent, secondary, success, warning, effects
 
 ### Storybook
 - Every component MUST have stories demonstrating all variants

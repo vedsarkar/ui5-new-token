@@ -2,7 +2,6 @@
 	--reltio-error-message-bg: var(--reltio-color-error-surface);
 	--reltio-error-message-border-color: var(--reltio-color-error-border);
 	--reltio-error-message-text-color: var(--reltio-color-error-text);
-	--reltio-error-message-icon-color: var(--reltio-color-error);
 	--reltio-error-message-padding: 12px 16px;
 	--reltio-error-message-gap: 8px;
 	--reltio-error-message-border-radius: 8px;

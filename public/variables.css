@@ -14,6 +14,9 @@
 	--reltio-color-error-surface: #fef2f2;
 	--reltio-color-error-border: #fecaca;
 	--reltio-color-accent: #8d8dc8;
+	--reltio-color-secondary: #6c757d;
+	--reltio-color-success: #28a745;
+	--reltio-color-warning: #ffc107;
 	--reltio-color-overlay: rgba(0, 0, 0, 0.08);
 	--reltio-color-shadow: rgba(0, 0, 0, 0.15);
 }
@@ -34,6 +37,9 @@
 	--reltio-color-error-surface: #3b1a1a;
 	--reltio-color-error-border: #7f1d1d;
 	--reltio-color-accent: #a0a0e0;
+	--reltio-color-secondary: #9e9eb8;
+	--reltio-color-success: #4ade80;
+	--reltio-color-warning: #fbbf24;
 	--reltio-color-overlay: rgba(255, 255, 255, 0.08);
 	--reltio-color-shadow: rgba(0, 0, 0, 0.3);
 }

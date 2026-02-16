@@ -5,11 +5,11 @@
 	--reltio-icon-size-xlarge: 48px;
 
 	--reltio-icon-color-inherited: currentColor;
-	--reltio-icon-color-primary: var(--reltio-color-primary, #0066cc);
-	--reltio-icon-color-secondary: var(--reltio-color-secondary, #6c757d);
-	--reltio-icon-color-success: var(--reltio-color-success, #28a745);
-	--reltio-icon-color-warning: var(--reltio-color-warning, #ffc107);
-	--reltio-icon-color-error: var(--reltio-color-error, #dc3545);
+	--reltio-icon-color-primary: var(--reltio-color-primary);
+	--reltio-icon-color-secondary: var(--reltio-color-secondary);
+	--reltio-icon-color-success: var(--reltio-color-success);
+	--reltio-icon-color-warning: var(--reltio-color-warning);
+	--reltio-icon-color-error: var(--reltio-color-error);
 
 	display: inline-flex;
 	align-items: center;
