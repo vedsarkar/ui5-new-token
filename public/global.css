@@ -4,8 +4,8 @@
 }
 
 [data-theme="dark"] {
-	background-color: #1a1a2e;
-	color: #eeeeee;
+	background-color: var(--reltio-color-surface);
+	color: var(--reltio-color-text);
 }
 
 /* Storybook MDX documentation table styles */
