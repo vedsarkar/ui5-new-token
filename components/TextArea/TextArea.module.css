@@ -6,16 +6,13 @@
 	);
 	--reltio-textarea-font-size: var(--reltio-font-size-body, 16px);
 	--reltio-textarea-line-height: var(--reltio-line-height-body, 1.5);
-	--reltio-textarea-color-text: var(--reltio-color-text, #1d1b20);
-	--reltio-textarea-color-border: var(--reltio-color-border, #79747e);
-	--reltio-textarea-color-border-focus: var(--reltio-color-primary, #6750a4);
-	--reltio-textarea-color-background: var(--reltio-color-background, #fff);
-	--reltio-textarea-color-error: var(--reltio-color-error, #b3261e);
-	--reltio-textarea-color-label: var(--reltio-color-text-secondary, #49454f);
-	--reltio-textarea-color-supporting-text: var(
-		--reltio-color-text-secondary,
-		#49454f
-	);
+	--reltio-textarea-color-text: var(--reltio-color-text);
+	--reltio-textarea-color-border: var(--reltio-color-border);
+	--reltio-textarea-color-border-focus: var(--reltio-color-primary-focus);
+	--reltio-textarea-color-background: var(--reltio-color-surface);
+	--reltio-textarea-color-error: var(--reltio-color-error);
+	--reltio-textarea-color-label: var(--reltio-color-text-secondary);
+	--reltio-textarea-color-supporting-text: var(--reltio-color-text-secondary);
 	--reltio-textarea-border-radius: var(--reltio-spacing-xs, 4px);
 	--reltio-textarea-padding: var(--reltio-spacing-md, 16px);
 	--reltio-textarea-min-height: var(--reltio-spacing-3xl, 56px);
