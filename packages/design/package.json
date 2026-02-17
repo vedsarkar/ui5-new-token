@@ -1,6 +1,6 @@
 {
 	"name": "@reltio/design",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"main": "packages/design/index.js",
 	"description": "Reltio Design Platform",
 	"peerDependencies": {
@@ -13,7 +13,7 @@
 		"markdown-to-jsx": "^9.7.3"
 	},
 	"scripts": {
-		"build": "node build-css.mjs && tsc && tsc-alias",
+		"build": "node ../scripts/build-css.mjs && tsc && tsc-alias",
 		"postbuild": "cp package.json dist/ && cp README.md dist/"
 	},
 	"devDependencies": {
