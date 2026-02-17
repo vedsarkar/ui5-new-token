@@ -31,29 +31,34 @@ Static assets are served from `public/` via Storybook's `staticDirs` config, and
 
 Tokens use semantic role names, not visual descriptions:
 
-| Token | Light | Dark | Replaces |
-|-------|-------|------|----------|
-| `--reltio-color-text` | `#0e0e25` | `#e8e8f0` | `#0e0e25`, `#1a1a1a`, `#1d1b20` |
-| `--reltio-color-text-secondary` | `#5f6368` | `#a0a0b8` | `#5f6368`, `#79747e`, `#49454f`, `#666` |
-| `--reltio-color-text-muted` | `#595972` | `#8888a0` | `#595972` |
-| `--reltio-color-surface` | `#ffffff` | `#1a1a2e` | `#ffffff`, `#fff` |
-| `--reltio-color-surface-raised` | `#f5f5fa` | `#252540` | `#f5f5fa`, `#f5f5f5`, `#f1f3f4` |
-| `--reltio-color-border` | `#e3e3f2` | `#3a3a55` | `#e3e3f2`, `#ddd` |
-| `--reltio-color-primary` | `#0000cc` | `#6b6bff` | `#0000cc`, `#00c` |
-| `--reltio-color-primary-hover` | `#000066` | `#8585ff` | `#006` |
-| `--reltio-color-primary-focus` | `#1a73e8` | `#8585ff` | `#1a73e8`, `#6750a4` |
-| `--reltio-color-on-primary` | `#ffffff` | `#ffffff` | `#ffffff` (on primary bg) |
-| `--reltio-color-error` | `#dc2626` | `#f87171` | `#dc2626` |
-| `--reltio-color-error-text` | `#b91c1c` | `#fca5a5` | `#b91c1c` |
-| `--reltio-color-error-surface` | `#fef2f2` | `#3b1a1a` | `#fef2f2` |
-| `--reltio-color-error-border` | `#fecaca` | `#7f1d1d` | `#fecaca` |
-| `--reltio-color-accent` | `#8d8dc8` | `#a0a0e0` | `#8d8dc8` |
-| `--reltio-color-overlay` | `rgba(0,0,0,0.08)` | `rgba(255,255,255,0.08)` | `rgba(0,0,0,0.08)` |
-| `--reltio-color-shadow` | `rgba(0,0,0,0.15)` | `rgba(0,0,0,0.3)` | `rgba(0,0,0,0.15)` |
+| Token | Light | Dark | Source |
+|-------|-------|------|--------|
+| `--reltio-color-text` | `#000033` | `#ffffff` | Midnight / White (brand) |
+| `--reltio-color-text-secondary` | `#737373` | `#eeeeee` | Neutral gray / Warm White (brand) |
+| `--reltio-color-text-muted` | `#666666` | `#7c7c7c` | Gray text (brand) |
+| `--reltio-color-surface` | `#ffffff` | `#000033` | White / Midnight (brand) |
+| `--reltio-color-surface-raised` | `#eeeeee` | `#000066` | Warm White / Reltio Blue (brand) |
+| `--reltio-color-border` | `#e5e5e5` | `#333399` | Light Gray Border (brand) / lighter for dark visibility |
+| `--reltio-color-primary` | `#0000cc` | `#6666ff` | Reltio Cobalt (brand) / lightened for dark contrast |
+| `--reltio-color-primary-hover` | `#000066` | `#8888ff` | Reltio Blue (brand) / lightened for dark contrast |
+| `--reltio-color-primary-focus` | `#0000cc` | `#00ffff` | Reltio Cobalt / Reltio Aqua (brand) |
+| `--reltio-color-on-primary` | `#ffffff` | `#ffffff` | White (brand) |
+| `--reltio-color-error` | `#dc2626` | `#f87171` | Standard error red |
+| `--reltio-color-error-text` | `#b91c1c` | `#fca5a5` | Darker/lighter for readability |
+| `--reltio-color-error-surface` | `#fef2f2` | `#3b1a1a` | Light/dark error background |
+| `--reltio-color-error-border` | `#fecaca` | `#7f1d1d` | Light/dark error border |
+| `--reltio-color-accent` | `#6611cc` | `#ffcc00` | Purple (brand secondary) / Reltio Gold (brand) |
+| `--reltio-color-secondary` | `#0000cc` | `#00ffff` | Reltio Cobalt / Reltio Aqua (brand) |
+| `--reltio-color-success` | `#28a745` | `#4ade80` | Standard success green |
+| `--reltio-color-warning` | `#ffc107` | `#fbbf24` | Standard warning amber |
+| `--reltio-color-overlay` | `rgba(0,0,0,0.08)` | `rgba(255,255,255,0.15)` | Semi-transparent effects |
+| `--reltio-color-shadow` | `rgba(0,0,0,0.15)` | `rgba(0,0,0,0.3)` | Drop shadows |
+
+Light mode values were aligned to `docs/brand-guidelines.md` during implementation. Dark mode values deviate from brand guidelines where the brand-specified values fail WCAG contrast on dark surfaces (e.g. brand says dark primary = `#0000CC` but that gives ~1.6:1 on Midnight `#000033`).
 
 **Why semantic over primitive**: Components shouldn't know what "blue-600" means — they need "primary". This also makes dark mode natural: swap the value behind the role, not the reference.
 
-**Alternative considered**: Primitive + semantic two-tier (e.g. `--reltio-blue-600` → `--reltio-color-primary`). Rejected as over-engineering for current scope — 17 tokens don't justify an abstraction layer.
+**Alternative considered**: Primitive + semantic two-tier (e.g. `--reltio-blue-600` → `--reltio-color-primary`). Rejected as over-engineering for current scope — 21 tokens don't justify an abstraction layer.
 
 ### 2. Single file for all tokens (`public/variables.css`)
 
