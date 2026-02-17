@@ -13,15 +13,12 @@
 		"markdown-to-jsx": "^9.7.3"
 	},
 	"scripts": {
-		"build": "node ../scripts/build-css.mjs && tsc && tsc-alias",
+		"build": "tsc && tsc-alias",
 		"postbuild": "cp package.json dist/ && cp README.md dist/"
 	},
 	"devDependencies": {
 		"@types/react": "^17",
 		"@types/react-dom": "^17",
-		"glob": "^11.0.0",
-		"postcss": "^8.4.49",
-		"postcss-modules": "^6.0.1",
 		"tsc-alias": "^1.8.10",
 		"typescript": "^5.7.2"
 	}
