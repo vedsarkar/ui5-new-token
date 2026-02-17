@@ -4,9 +4,26 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Spec-Driven Development Guide
 
-Welcome to the Reltio Design Platform's spec-driven development workflow. This guide explains how we use **OpenSpec** integrated with **Cursor IDE** to ensure predictable, high-quality component development.
+Welcome to the Reltio Design Platform's spec-driven development workflow. This guide explains how we use **OpenSpec (OPSX)** integrated with **Cursor IDE** to ensure predictable, high-quality component development.
 
-> **🎯 Key Principle:** We specify before we build. Every change starts as a proposal, gets reviewed, and only then gets implemented. This reduces rework, improves quality, and creates a living changelog.
+## What is Spec-Driven Development?
+
+<video width="100%" controls>
+	<source src="/Spec-Driven_Development.mp4" type="video/mp4" />
+	Your browser does not support the video tag.
+</video>
+
+> **Note:** This video demonstrates Spec-Kit framework (by GitHub), but we've decided to use OpenSpec — a lighter alternative with flexible iteration instead of rigid phase gates. The core SDD concepts remain the same.
+
+Spec-Driven Development (SDD) is a methodology where **specifications come before implementation**. Instead of jumping straight into code, you first describe what you're building, why it matters, and how it should behave. Only then do you write the code that fulfills those specifications.
+
+This approach becomes especially powerful with AI-assisted development:
+
+- **AI needs clear instructions** — Vague requests lead to vague implementations. Detailed specs give AI the context it needs to generate accurate code.
+- **Humans need shared understanding** — Specs create a single source of truth that developers, designers, and stakeholders can review before code exists.
+- **Changes need traceability** — When every change has a proposal and spec, you can always answer "why was this built this way?"
+
+> **Key Principle:** We specify before we build. Work flows through artifacts—proposal, specs, design, tasks—with dependencies guiding progress, not rigid phases. This enables iteration while maintaining clarity.
 
 ## Business Value
 
@@ -49,29 +66,46 @@ Why does spec-driven development matter? Here's what stakeholders and team leads
 
 > **ROI Insight:** Teams using spec-driven development report 40-60% reduction in rework and significantly fewer "that's not what I meant" moments. The upfront investment in specification pays dividends throughout the project lifecycle.
 
-## Three-Stage Workflow
+## Core Concepts
 
-Every change follows three stages:
+### Actions, Not Phases
 
-### 1. Propose
+OPSX uses an action-based approach. Instead of rigid phases that lock you into a sequence, you perform actions on a change based on artifact dependencies. This means you can:
 
-Create a proposal that describes what will change and why. The proposal includes requirements, scenarios, and implementation tasks. *No code is written at this stage.*
+- Update a proposal after starting design
+- Refine specs during implementation
+- Explore at any point when clarity is needed
 
-### 2. Implement
+Dependencies guide what's possible, not what's mandatory.
 
-After the proposal is reviewed and approved, implement the changes following the task list. Each task is verified as complete before moving on.
+### Artifact Flow
 
-### 3. Archive
+Every change produces artifacts in a dependency order:
 
-After deployment, archive the completed change. The archive serves as the project changelog, preserving the history of what changed and why.
+```
+proposal → specs → design → tasks
+```
 
-### When to Create a Proposal
+- **Proposal** — Why we're making this change and what it involves
+- **Specs** — Detailed requirements with testable scenarios
+- **Design** — Technical decisions and implementation approach
+- **Tasks** — Implementation checklist that drives coding
+
+Each artifact unlocks the next. You can't create tasks without understanding what you're building (specs) and how you'll build it (design).
+
+### Brownfield-First
+
+OpenSpec is designed with a **brownfield-first** philosophy — it works with existing codebases, not just greenfield projects. Most software work isn't building from scratch; it's modifying existing systems. OpenSpec uses delta-based specifications that capture only what's changing (ADDED, MODIFIED, REMOVED requirements), eliminating the burden of restating unchanged specifications.
+
+This makes OpenSpec suitable for any project — not just this design platform. Other teams and repositories at Reltio can adopt this workflow to bring the same benefits of clarity, traceability, and AI-assisted development to their existing codebases.
+
+### When to Create a Change
 
 <table>
 	<thead>
 		<tr>
-			<th>Create Proposal ✅</th>
-			<th>Skip Proposal ❌</th>
+			<th>Create Change ✅</th>
+			<th>Skip Change ❌</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -98,22 +132,22 @@ After deployment, archive the completed change. The archive serves as the projec
 	</tbody>
 </table>
 
-> **Rule of Thumb:** If you're unsure whether to create a proposal, create one. It's safer to over-specify than to discover scope issues during implementation.
+> **Rule of Thumb:** If you're unsure whether to create a change, create one. It's safer to over-specify than to discover scope issues during implementation.
 
-## The Inductive Approach: From Specific to General
+## Bottom-Up Development: From Components to Features
 
-One of the most important principles in spec-driven development is **decomposition** — breaking large features into small, focused proposals. We call this the **inductive approach**: build specific pieces first, then compose them into larger features.
+One of the most important principles in spec-driven development is **decomposition** — breaking large features into small, focused changes. We call this the **bottom-up approach**: build foundational components first, then compose them into larger features.
 
-> **🧩 Core Principle:** Ten simple proposals are better than one complex proposal. Each small change is easier to specify, implement, review, and verify.
+> **🧩 Core Principle:** Ten simple changes are better than one complex change. Each small change is easier to specify, implement, review, and verify.
 
-### Why Small Proposals Win
+### Why Small Changes Win
 
 <table>
 	<thead>
 		<tr>
 			<th>Aspect</th>
-			<th>Large Proposal ❌</th>
-			<th>Small Proposals ✅</th>
+			<th>Large Change ❌</th>
+			<th>Small Changes ✅</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -157,43 +191,43 @@ One of the most important principles in spec-driven development is **decompositi
 
 ### Real Example: Building a Product Page
 
-**❌ Don't:** Create one massive proposal
+**❌ Don't:** Create one massive change
 
 ```
-/openspec-proposal create a Product Page with header, image gallery,
+/opsx:new create a Product Page with header, image gallery,
 price section, add-to-cart button, reviews section, and related products
 ```
 
-This creates a massive proposal that is hard for AI to implement correctly, takes days to review, has dozens of interconnected tasks, is impossible to estimate accurately, and cannot be deployed incrementally.
+This creates a massive change that is hard for AI to implement correctly, takes days to review, has dozens of interconnected tasks, is impossible to estimate accurately, and cannot be deployed incrementally.
 
-**✅ Do:** Decompose into focused proposals
+**✅ Do:** Decompose into focused changes
 
-First, ask AI to help decompose:
+First, use explore mode to help decompose:
 
 ```
-Help me decompose a Product Page into individual component proposals. 
+/opsx:explore Help me decompose a Product Page into individual component changes.
 I need: header, image gallery, price, cart button, reviews, related products.
 ```
 
-Then create proposals in order, from specific to general:
+Then create changes in order, from specific to general:
 
 ```
 # Phase 1: Foundation components (can run in parallel)
-/openspec-proposal create ProductImage component for displaying product photos
-/openspec-proposal create PriceDisplay component with sale/regular price support
-/openspec-proposal create AddToCartButton component with quantity selector
-/openspec-proposal create StarRating component for product reviews
+/opsx:new add-product-image
+/opsx:new add-price-display
+/opsx:new add-cart-button
+/opsx:new add-star-rating
 
 # Phase 2: Composite components (after Phase 1)
-/openspec-proposal create ImageGallery using ProductImage with thumbnails
-/openspec-proposal create ReviewCard component using StarRating
-/openspec-proposal create ReviewsList using ReviewCard with pagination
+/opsx:new add-image-gallery
+/opsx:new add-review-card
+/opsx:new add-reviews-list
 
 # Phase 3: Page assembly (after Phase 2)
-/openspec-proposal create ProductPage composing all product components
+/opsx:new add-product-page
 ```
 
-**Result:** 8 simple proposals instead of 1 complex one. Each can be:
+**Result:** 8 simple changes instead of 1 complex one. Each can be:
 - Implemented in hours, not days
 - Reviewed in minutes
 - Tested independently
@@ -206,7 +240,7 @@ Then create proposals in order, from specific to general:
 2. **Easier debugging** — When something breaks, you know exactly where
 3. **Better testing** — Each component has isolated, focused tests
 4. **Cleaner code** — Small scope naturally leads to clean architecture
-5. **Learning opportunity** — New developers can start with simple proposals
+5. **Learning opportunity** — New developers can start with simple changes
 
 ### Benefits for Managers
 
@@ -214,26 +248,26 @@ Then create proposals in order, from specific to general:
 2. **Visible progress** — See completions daily, not weekly
 3. **Lower risk** — Problems are caught early and isolated
 4. **Flexible prioritization** — Can reorder or pause without losing work
-5. **Better resource allocation** — Parallel work on independent proposals
+5. **Better resource allocation** — Parallel work on independent changes
 
 ### How to Decompose Effectively
 
-Use AI to help with decomposition:
+Use explore mode to help with decomposition:
 
 ```
-I want to build [feature]. Help me break it down into the smallest 
-possible independent components that I can create as separate proposals.
+/opsx:explore I want to build [feature]. Help me break it down into the smallest
+possible independent components that I can create as separate changes.
 Order them from most fundamental (no dependencies) to most composite.
 ```
 
-**Signs your proposal is too big:**
+**Signs your change is too big:**
 - More than 10 tasks in `tasks.md`
 - Touches more than 3-4 files
 - Takes more than 1 day to implement
 - Hard to describe in one sentence
 - Contains the word "and" multiple times in the title
 
-**Signs your proposal is right-sized:**
+**Signs your change is right-sized:**
 - 3-7 focused tasks
 - Single responsibility
 - Can be implemented and verified in hours
@@ -244,92 +278,157 @@ Order them from most fundamental (no dependencies) to most composite.
 
 ## Cursor IDE Integration
 
-Cursor is our corporate IDE for UI development. We use three custom commands to work with OpenSpec:
+Cursor is our corporate IDE for UI development. We use custom slash commands to work with OpenSpec.
 
-### `/openspec-proposal` — Create a Proposal
+### Core Commands
 
-Use this command when starting a new feature or significant change.
+#### `/opsx:explore` — Think Through Problems
 
-```
-/openspec-proposal
-# Scaffold a new OpenSpec change and validate strictly
-```
-
-**What happens:**
-1. AI reviews existing specs and codebase
-2. Creates `proposal.md` — why and what changes
-3. Creates `tasks.md` — implementation checklist
-4. Creates spec deltas with requirements and scenarios
-5. Validates the proposal structure
-
-**Example prompt:**
+Use this command when you need to think through an idea, investigate a problem, or clarify requirements before starting work.
 
 ```
-/openspec-proposal add a new IconButton component that extends Button 
-with icon support, including left and right icon positions
-```
-
-**Output structure:**
-
-```
-openspec/changes/add-icon-button-component/
-├── proposal.md        # Why and what changes
-├── tasks.md           # Implementation checklist
-└── specs/
-    └── icon-button/
-        └── spec.md    # Requirements and scenarios
-```
-
-### `/openspec-apply` — Implement Changes
-
-Use this command after a proposal is reviewed and approved.
-
-```
-/openspec-apply
-# Implement an approved OpenSpec change and keep tasks in sync
+/opsx:explore real-time collaboration
+# Think through ideas with no fixed structure
 ```
 
 **What happens:**
-1. AI reads proposal, design (if present), and tasks
+1. AI enters thinking partner mode
+2. Explores the codebase for relevant context
+3. Uses ASCII diagrams to visualize concepts
+4. Suggests directions without forcing structure
+
+Explore mode is for thinking, not implementing. You can exit anytime and transition to creating a change when ready.
+
+#### `/opsx:new` + `/opsx:continue` — Recommended Workflow
+
+This is the primary workflow for creating changes. It builds artifacts one at a time, giving you the opportunity to review and refine each one before moving forward.
+
+**Start a new change:**
+
+```
+/opsx:new add-icon-button
+# Create a change and see the first artifact template
+```
+
+**Continue building artifacts:**
+
+```
+/opsx:continue add-icon-button
+# Create the next artifact in sequence
+```
+
+**What happens:**
+1. `/opsx:new` creates the change directory and shows the proposal template
+2. You review and refine each artifact before proceeding
+3. `/opsx:continue` creates the next artifact based on dependencies
+4. Repeat until all artifacts are complete
+
+This deliberate pace ensures each artifact gets proper attention. Specs inform design, design informs tasks — reviewing at each step catches issues early.
+
+> **Recommended:** Use this workflow for all changes. The few extra minutes spent reviewing artifacts saves hours of rework during implementation.
+
+#### `/opsx:ff` — Fast-Forward (Use Sparingly)
+
+Generates all planning artifacts at once. Useful when you have a very clear picture of what you want and need to move quickly.
+
+```
+/opsx:ff add-icon-button
+# Create all artifacts in one go
+```
+
+**When to use:**
+- Small, well-understood changes
+- Prototyping or exploring ideas quickly
+- You're confident in the requirements
+
+**When to avoid:**
+- Complex features with multiple capabilities
+- Changes that affect existing behavior
+- When requirements need discussion
+
+> **Caution:** Skipping artifact review can lead to misaligned implementation. If you use `/opsx:ff`, take time to review the generated artifacts before running `/opsx:apply`.
+
+#### `/opsx:apply` — Implement Tasks
+
+Use this command after artifacts are complete and you're ready to generate code.
+
+```
+/opsx:apply add-icon-button
+# Implement tasks from the change
+```
+
+**What happens:**
+1. Reads all artifacts for context
 2. Implements tasks sequentially
-3. Updates task checkboxes as work completes
-4. Runs validation (format, lint)
+3. Marks checkboxes as work completes
+4. Pauses on blockers or unclear requirements
 
-**Example prompt:**
+> **Important:** Always review artifacts before running apply. The AI implements exactly what's specified.
 
-```
-/openspec-apply implement the add-icon-button-component proposal
-```
+#### `/opsx:verify` — Validate Implementation
 
-> **Important:** Always review the proposal before running apply. The AI will implement exactly what's specified — make sure the specification is correct!
-
-### `/openspec-archive` — Archive Completed Changes
-
-Use this command after the change is deployed and verified.
+Use this command before archiving to ensure implementation matches specifications.
 
 ```
-/openspec-archive
-# Archive a completed change to the project changelog
+/opsx:verify add-icon-button
+# Check completeness, correctness, and coherence
 ```
 
 **What happens:**
-1. Moves the change to `openspec/changes/archive/YYYY-MM-DD-[name]/`
-2. Updates specs if capabilities changed
-3. Creates a permanent record in the project changelog
+1. Checks task completion status
+2. Verifies requirements are implemented
+3. Confirms scenarios are covered
+4. Validates design decisions were followed
+5. Reports issues by priority (critical, warning, suggestion)
 
-**Example prompt:**
+#### `/opsx:archive` — Complete the Change
+
+Use this command after implementation is verified and deployed.
 
 ```
-/openspec-archive archive the add-icon-button-component change
+/opsx:archive add-icon-button
+# Archive to project changelog
 ```
+
+**What happens:**
+1. Checks for incomplete artifacts or tasks
+2. Offers to sync specs to main spec directory
+3. Moves change to `openspec/changes/archive/YYYY-MM-DD-<name>/`
+4. Creates a permanent changelog record
+
+### Additional Commands
+
+<table>
+	<thead>
+		<tr>
+			<th>Command</th>
+			<th>Purpose</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>/opsx:sync</code></td>
+			<td>Preview and sync specs without archiving</td>
+		</tr>
+		<tr>
+			<td><code>/opsx:bulk-archive</code></td>
+			<td>Archive multiple completed changes at once</td>
+		</tr>
+		<tr>
+			<td><code>/opsx:onboard</code></td>
+			<td>Guided tutorial through a complete workflow cycle</td>
+		</tr>
+	</tbody>
+</table>
 
 ### Project Changelog
 
 The archive directory (`openspec/changes/archive/`) serves as the project changelog. Each archived change contains:
 
 - **proposal.md** — The original motivation and scope
-- **tasks.md** — What was implemented
 - **specs/** — The requirements that were added or modified
+- **design.md** — Technical decisions and approach
+- **tasks.md** — What was implemented
 
 Browse the archive to understand project history:
 
@@ -342,9 +441,20 @@ openspec/changes/archive/
 
 ## AI-Assisted Development Workflow
 
-Working with AI in Cursor follows a collaborative pattern:
+Working with AI follows a collaborative pattern:
 
-### 1. Describe Intent Clearly
+### 1. Explore First
+
+When facing unclear requirements or complex problems, start with explore mode:
+
+```
+/opsx:explore I want to add real-time collaboration to the editor.
+What approaches should I consider?
+```
+
+Explore mode is your thinking partner. It investigates the codebase, visualizes architecture, and helps clarify requirements without committing to a direction.
+
+### 2. Describe Intent Clearly
 
 Be specific about what you want. Good prompts include:
 
@@ -355,13 +465,14 @@ Be specific about what you want. Good prompts include:
 **✅ Do:** Write focused, specific prompts
 
 ```
-/openspec-proposal add IconButton with left/right icon positions
+/opsx:new add-icon-button
+# Then describe: "IconButton extends Button with left/right icon positions"
 ```
 
 **❌ Don't:** Write vague, broad prompts
 
 ```
-/openspec-proposal make the button better
+/opsx:new make-button-better
 ```
 
 **✅ Do:** Reference existing patterns
@@ -376,90 +487,113 @@ Be specific about what you want. Good prompts include:
 "Create a disabled state" (without context)
 ```
 
-### 2. Review Before Approving
+### 3. Review Artifacts Before Implementing
 
-Always review AI-generated proposals before implementing:
+Always review AI-generated artifacts before running apply:
 
-- Check requirements match your intent
-- Verify scenarios cover edge cases
-- Ensure tasks are complete and ordered correctly
+- Check proposal captures your intent
+- Verify specs cover edge cases
+- Ensure design decisions make sense
+- Confirm tasks are complete and ordered correctly
 
-**✅ Do:** Review proposal before applying
+**✅ Do:** Review artifacts before applying
 
 ```
-Read proposal.md → Check tasks.md → Run /openspec-apply
+Read proposal.md → Check specs/ → Review design.md → Run /opsx:apply
 ```
 
 **❌ Don't:** Apply without review
 
 ```
-Run /openspec-apply immediately after proposal
+Run /opsx:apply immediately after creating artifacts
 ```
 
-### 3. Iterate on Proposals
+### 4. Iterate on Artifacts
 
-Don't hesitate to ask for changes:
+OPSX supports fluid iteration. Don't hesitate to update artifacts:
 
 ```
-The proposal looks good, but please also add a scenario 
+The spec looks good, but please add a scenario
 for the loading state with custom spinner
 ```
 
-### 4. Verify Implementation
+You can update any artifact at any point—the workflow isn't phase-locked.
 
-After `/openspec-apply`, verify the changes:
+### 5. Verify Before Archiving
 
-- Run Storybook to see the component
-- Check all task checkboxes are marked
-- Run format and lint
+After implementation, run verification:
+
+```
+/opsx:verify add-icon-button
+```
+
+This ensures:
+- All tasks are marked complete
+- Requirements are implemented
+- Scenarios are covered
+- Design decisions were followed
+
+Fix any critical issues before archiving.
 
 ## Best Practices
 
 ### For New Developers
 
-1. **Start with small changes** — Get familiar with the workflow on simple tasks
-2. **Read existing specs** — Look at `openspec/specs/` to understand the format
-3. **Ask questions in proposals** — If unclear, the AI will ask for clarification
-4. **Don't skip review** — Always read the proposal before applying
+1. **Run the onboarding** — Use `/opsx:onboard` to learn the workflow with real work
+2. **Start with small changes** — Get familiar with the workflow on simple tasks
+3. **Read existing specs** — Look at `openspec/specs/` to understand the format
+4. **Use explore mode freely** — It's safe for thinking without side effects
+5. **Don't skip review** — Always read artifacts before applying
 
 ### For Experienced Developers
 
-1. **Use proposals for complex refactors** — Even if you know what to do, the spec helps verify scope
+1. **Use explore for complex problems** — Even experts benefit from structured thinking
 2. **Reference existing patterns** — Point the AI to similar components
-3. **Break large changes** — Multiple smaller proposals are better than one huge one
-4. **Archive promptly** — Don't let completed changes linger
+3. **Break large changes** — Multiple smaller changes are better than one huge one
+4. **Verify before archiving** — Use `/opsx:verify` to catch issues
+5. **Archive promptly** — Don't let completed changes linger
 
 ### For Stakeholders
 
 1. **Review proposal.md** — Understand what's changing and why
-2. **Check tasks.md** — See the implementation scope
+2. **Check design.md** — See technical decisions and tradeoffs
 3. **Browse the archive** — Understand project history and decisions
 
 ## Troubleshooting
 
 ### "The AI doesn't understand my request"
 
+- Use explore mode first to think through the problem
 - Be more specific about the component and behavior
 - Reference existing components: "Similar to how Button handles disabled state"
 - Break the request into smaller parts
 
-### "The proposal is missing something"
+### "Artifacts are missing something"
 
+- Update the artifact directly — the workflow isn't phase-locked
 - Ask for modifications: "Please also add [missing requirement]"
 - Point to existing specs: "Include scenarios like in button-component spec"
 
 ### "Implementation doesn't match the spec"
 
+- Run `/opsx:verify` to identify specific issues
 - Review the spec — maybe it needs clarification
-- Re-run apply with more specific instructions
+- Update artifacts and re-run affected tasks
 - Manually adjust and update the spec to match
 
-### "I'm not sure if this needs a proposal"
+### "I'm not sure if this needs a change"
 
-When in doubt, create a proposal. It's quick to create and provides:
+When in doubt, create a change. It's quick to create and provides:
 - Clear documentation of what's changing
 - A review checkpoint before coding
 - A record in the changelog
+
+### "I need to update an artifact after starting implementation"
+
+This is normal and expected. OPSX supports fluid iteration:
+- Update the artifact directly
+- Run `/opsx:verify` to check alignment
+- Continue implementation with updated context
 
 ## Quick Reference
 
@@ -470,24 +604,78 @@ When in doubt, create a proposal. It's quick to create and provides:
 		<tr>
 			<th>Command</th>
 			<th>When to Use</th>
-			<th>Creates</th>
+			<th>Output</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td><code>/openspec-proposal</code></td>
-			<td>Starting new work</td>
-			<td>proposal.md, tasks.md, specs</td>
+			<td><code>/opsx:explore</code></td>
+			<td>Thinking through problems</td>
+			<td>Insights, diagrams, clarity</td>
 		</tr>
 		<tr>
-			<td><code>/openspec-apply</code></td>
-			<td>After proposal approval</td>
+			<td><code>/opsx:new</code></td>
+			<td>Starting work (recommended)</td>
+			<td>Change scaffold + first artifact template</td>
+		</tr>
+		<tr>
+			<td><code>/opsx:continue</code></td>
+			<td>Building next artifact (recommended)</td>
+			<td>Next artifact in sequence</td>
+		</tr>
+		<tr>
+			<td><code>/opsx:ff</code></td>
+			<td>Quick start (use sparingly)</td>
+			<td>All artifacts at once</td>
+		</tr>
+		<tr>
+			<td><code>/opsx:apply</code></td>
+			<td>After artifacts complete</td>
 			<td>Implementation code</td>
 		</tr>
 		<tr>
-			<td><code>/openspec-archive</code></td>
+			<td><code>/opsx:verify</code></td>
+			<td>Before archiving</td>
+			<td>Verification report</td>
+		</tr>
+		<tr>
+			<td><code>/opsx:archive</code></td>
 			<td>After deployment</td>
 			<td>Changelog entry</td>
+		</tr>
+	</tbody>
+</table>
+
+### Artifacts
+
+<table>
+	<thead>
+		<tr>
+			<th>Artifact</th>
+			<th>Purpose</th>
+			<th>Dependencies</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>proposal.md</code></td>
+			<td>Why and what changes</td>
+			<td>None (root)</td>
+		</tr>
+		<tr>
+			<td><code>specs/*.md</code></td>
+			<td>Detailed requirements</td>
+			<td>Proposal</td>
+		</tr>
+		<tr>
+			<td><code>design.md</code></td>
+			<td>Technical decisions</td>
+			<td>Proposal</td>
+		</tr>
+		<tr>
+			<td><code>tasks.md</code></td>
+			<td>Implementation checklist</td>
+			<td>Specs, Design</td>
 		</tr>
 	</tbody>
 </table>
@@ -508,24 +696,52 @@ When in doubt, create a proposal. It's quick to create and provides:
 		</tr>
 		<tr>
 			<td><code>openspec/changes/</code></td>
-			<td>Active proposals — what SHOULD change</td>
+			<td>Active changes — what SHOULD change</td>
 		</tr>
 		<tr>
 			<td><code>openspec/changes/archive/</code></td>
 			<td>Completed changes — project changelog</td>
+		</tr>
+		<tr>
+			<td><code>openspec/config.yaml</code></td>
+			<td>Project configuration and rules</td>
 		</tr>
 	</tbody>
 </table>
 
 > **Remember:** Specs are truth. Changes are proposals. The archive is history. Keep them in sync for a healthy codebase.
 
+## Configuration
+
+Project-level configuration lives in `openspec/config.yaml`:
+
+```yaml
+schema: spec-driven
+
+# Project context injected into all artifacts
+context: |
+  Tech stack: React 17+, TypeScript, CSS Modules
+  We use design tokens for styling
+
+# Per-artifact rules
+rules:
+  proposal:
+    - Keep proposals under 500 words
+    - Always include a "Non-goals" section
+  tasks:
+    - Break tasks into chunks of 3-7 items
+```
+
+Context is shown to AI when creating any artifact. Rules apply only to their matching artifact type.
+
 ## Sources and References
 
 This guide is informed by industry practices in specification-driven and AI-assisted development:
 
+- [OpenSpec OPSX Documentation](https://github.com/Fission-AI/OpenSpec/blob/main/docs/opsx.md) — Official OPSX workflow documentation
+- [OpenSpec Concepts](https://github.com/Fission-AI/OpenSpec/blob/main/docs/concepts.md) — Core principles including brownfield-first philosophy
 - [Spec-Driven Development: Unpacking 2025's Key Engineering Practice](https://www.thoughtworks.com/en-us/insights/blog/agile-engineering-practices/spec-driven-development-unpacking-2025-new-engineering-practices) — Thoughtworks overview of SDD methodology
 - [Exploring Spec-Driven Development Tools](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) — Martin Fowler's analysis of Kiro, spec-kit, and other SDD tools
 - [RFCs and Design Docs at Big Tech Companies](https://blog.pragmaticengineer.com/rfcs-and-design-docs/) — How Google, Uber, and others use design documents
-- [Scaling Engineering Teams via Writing Things Down](https://blog.pragmaticengineer.com/scaling-engineering-teams-via-writing-things-down-rfcs/) — Pragmatic Engineer on RFC processes
 - [My LLM Coding Workflow Going Into 2026](https://addyosmani.com/blog/ai-coding-workflow/) — Addy Osmani's practical AI development workflow
 - [AI-Driven Development Lifecycle](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/) — AWS approach to AI-assisted development

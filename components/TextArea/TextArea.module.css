@@ -23,30 +23,25 @@
 	--reltio-textarea-border-width: 1px;
 	--reltio-textarea-border-width-focus: 2px;
 
-	--_border-color: var(--reltio-textarea-color-border);
-	--_border-width: var(--reltio-textarea-border-width);
-	--_label-color: var(--reltio-textarea-color-label);
-	--_supporting-text-color: var(--reltio-textarea-color-supporting-text);
-
 	font-family: var(--reltio-textarea-font-family);
 	container-type: inline-size;
 }
 
 .root:focus-within {
-	--_border-color: var(--reltio-textarea-color-border-focus);
-	--_border-width: var(--reltio-textarea-border-width-focus);
-	--_label-color: var(--reltio-textarea-color-border-focus);
+	--reltio-textarea-color-border: var(--reltio-textarea-color-border-focus);
+	--reltio-textarea-border-width: var(--reltio-textarea-border-width-focus);
+	--reltio-textarea-color-label: var(--reltio-textarea-color-border-focus);
 }
 
 .root[data-error="true"] {
-	--_border-color: var(--reltio-textarea-color-error);
-	--_label-color: var(--reltio-textarea-color-error);
-	--_supporting-text-color: var(--reltio-textarea-color-error);
+	--reltio-textarea-color-border: var(--reltio-textarea-color-error);
+	--reltio-textarea-color-label: var(--reltio-textarea-color-error);
+	--reltio-textarea-color-supporting-text: var(--reltio-textarea-color-error);
 }
 
 .root[data-error="true"]:focus-within {
-	--_border-color: var(--reltio-textarea-color-error);
-	--_label-color: var(--reltio-textarea-color-error);
+	--reltio-textarea-color-border: var(--reltio-textarea-color-error);
+	--reltio-textarea-color-label: var(--reltio-textarea-color-error);
 }
 
 .root[data-disabled="true"] {
@@ -65,7 +60,7 @@
 	margin: 0;
 	box-sizing: border-box;
 	border-radius: var(--reltio-textarea-border-radius);
-	outline: var(--_border-width) solid var(--_border-color);
+	outline: var(--reltio-textarea-border-width) solid var(--reltio-textarea-color-border);
 	cursor: text;
 	transition:
 		outline-color 0.1s ease,
@@ -118,7 +113,7 @@
 	background-color: var(--reltio-textarea-color-background);
 	padding: 4px 8px;
 	border-radius: var(--reltio-textarea-border-radius);
-	color: var(--_label-color);
+	color: var(--reltio-textarea-color-label);
 	z-index: 2;
 	font-size: var(--reltio-textarea-font-size);
 	font-family: var(--reltio-textarea-font-family);
@@ -140,7 +135,7 @@
 .supportingText {
 	font-size: 12px;
 	padding: 4px var(--reltio-textarea-padding);
-	color: var(--_supporting-text-color);
+	color: var(--reltio-textarea-color-supporting-text);
 	font-family: var(--reltio-textarea-font-family);
 }
 

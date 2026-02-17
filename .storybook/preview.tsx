@@ -7,6 +7,7 @@ import {
 	Subtitle,
 	Title,
 } from "@storybook/addon-docs/blocks";
+import addonThemes, { withThemeByDataAttribute } from "@storybook/addon-themes";
 import { definePreview } from "@storybook/nextjs-vite";
 
 export default definePreview({
@@ -40,5 +41,16 @@ export default definePreview({
 		},
 	},
 
-	addons: [addonDocs(), addonA11y()],
+	decorators: [
+		withThemeByDataAttribute({
+			themes: {
+				Light: "",
+				Dark: "dark",
+			},
+			defaultTheme: "Light",
+			attributeName: "data-theme",
+		}),
+	],
+
+	addons: [addonDocs(), addonA11y(), addonThemes()],
 });

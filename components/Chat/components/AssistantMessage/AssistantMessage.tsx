@@ -38,7 +38,7 @@ export const AssistantMessage = ({
 			style={style}
 			{...rest}
 		>
-			{errorNode && <div className={styles.errorWrapper}>{errorNode}</div>}
+			{errorNode && errorNode}
 			{!errorNode && content && <Markdown>{content}</Markdown>}
 		</div>
 	);
