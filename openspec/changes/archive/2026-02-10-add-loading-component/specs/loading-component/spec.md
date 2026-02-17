@@ -191,7 +191,7 @@ The Loading component SHALL have comprehensive Storybook stories demonstrating l
 - `index.ts` - Public exports
 
 ### Dependencies
-- React 19
+- React 17+
 - TypeScript (strict mode)
 - CSS Modules
 - classNames utility from utils/classNames.ts

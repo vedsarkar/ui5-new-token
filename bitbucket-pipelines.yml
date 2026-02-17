@@ -36,6 +36,8 @@ definitions:
         name: Publish @reltio/design package to NPM
         script:
           - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          - npm ci
+          - npm run build-css
           - cd packages/design
           - npm ci
           - cp -r node_modules ../../
