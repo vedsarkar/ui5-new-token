@@ -15,14 +15,14 @@ export const Chip = ({
 	className,
 	style,
 }: ChipProps) => {
-	const isInteractive = !!onClick;
+	const isClickable = !!onClick;
 
 	const composedClassName = classNames(
 		styles.root,
 		styles[variant],
 		styles[color],
-		size === "small" && styles.small,
-		isInteractive && styles.interactive,
+		styles[size],
+		isClickable && styles.clickable,
 		disabled && styles.disabled,
 		className,
 	);
@@ -48,7 +48,7 @@ export const Chip = ({
 		</>
 	);
 
-	if (isInteractive) {
+	if (isClickable) {
 		return (
 			<button
 				type="button"

@@ -59,7 +59,7 @@
 }
 
 /* Interactive (clickable) */
-.interactive {
+.clickable {
 	cursor: pointer;
 
 	&:hover {
@@ -81,7 +81,7 @@
 	--reltio-chip-background: var(--reltio-color-surface, #eeeeee);
 	--reltio-chip-color: var(--reltio-color-text, #000033);
 
-	&.interactive:hover {
+	&.clickable:hover {
 		--reltio-chip-background: #ededed;
 	}
 }
@@ -90,7 +90,7 @@
 	--reltio-chip-background: rgba(0, 0, 204, 0.08);
 	--reltio-chip-color: var(--reltio-color-primary, #0000cc);
 
-	&.interactive:hover {
+	&.clickable:hover {
 		--reltio-chip-background: rgba(0, 0, 204, 0.14);
 	}
 }
@@ -99,7 +99,7 @@
 	--reltio-chip-background: rgba(68, 153, 119, 0.12);
 	--reltio-chip-color: #449977;
 
-	&.interactive:hover {
+	&.clickable:hover {
 		--reltio-chip-background: rgba(68, 153, 119, 0.2);
 	}
 }
@@ -108,7 +108,7 @@
 	--reltio-chip-background: rgba(238, 102, 17, 0.1);
 	--reltio-chip-color: #ee6611;
 
-	&.interactive:hover {
+	&.clickable:hover {
 		--reltio-chip-background: rgba(238, 102, 17, 0.18);
 	}
 }
@@ -117,7 +117,7 @@
 	--reltio-chip-background: rgba(238, 51, 51, 0.1);
 	--reltio-chip-color: #ee3333;
 
-	&.interactive:hover {
+	&.clickable:hover {
 		--reltio-chip-background: rgba(238, 51, 51, 0.18);
 	}
 }
@@ -128,7 +128,7 @@
 	--reltio-chip-color: var(--reltio-color-text, #000033);
 	--reltio-chip-border-color: #e5e5e5;
 
-	&.interactive:hover {
+	&.clickable:hover {
 		--reltio-chip-background: #f2f2f2;
 	}
 }
@@ -138,7 +138,7 @@
 	--reltio-chip-color: var(--reltio-color-primary, #0000cc);
 	--reltio-chip-border-color: var(--reltio-color-primary, #0000cc);
 
-	&.interactive:hover {
+	&.clickable:hover {
 		--reltio-chip-background: rgba(0, 0, 204, 0.04);
 	}
 }
@@ -148,7 +148,7 @@
 	--reltio-chip-color: #449977;
 	--reltio-chip-border-color: #449977;
 
-	&.interactive:hover {
+	&.clickable:hover {
 		--reltio-chip-background: rgba(68, 153, 119, 0.06);
 	}
 }
@@ -158,7 +158,7 @@
 	--reltio-chip-color: #ee6611;
 	--reltio-chip-border-color: #ee6611;
 
-	&.interactive:hover {
+	&.clickable:hover {
 		--reltio-chip-background: rgba(238, 102, 17, 0.06);
 	}
 }
@@ -168,7 +168,7 @@
 	--reltio-chip-color: #ee3333;
 	--reltio-chip-border-color: #ee3333;
 
-	&.interactive:hover {
+	&.clickable:hover {
 		--reltio-chip-background: rgba(238, 51, 51, 0.06);
 	}
 }
