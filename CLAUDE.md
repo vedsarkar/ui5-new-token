@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Reltio Design System is a React 19 component library with TypeScript, documented in Storybook 10 and visually tested with Chromatic.
+Reltio Design System is a React 17+ component library with TypeScript, documented in Storybook 10 and visually tested with Chromatic.
 
 ## Commands
 

@@ -1,0 +1,220 @@
+.root {
+	--reltio-chip-font-family: var(
+		--reltio-font-family-body,
+		"Libre Franklin",
+		sans-serif
+	);
+	--reltio-chip-font-weight: var(--reltio-font-weight-body, 500);
+	--reltio-chip-letter-spacing: 0.25px;
+	--reltio-chip-border-radius: 8px;
+	--reltio-chip-icon-size: 18px;
+	--reltio-chip-disabled-opacity: 0.38;
+	--reltio-chip-transition-duration: 180ms;
+	--reltio-chip-transition-timing: ease;
+
+	--reltio-chip-font-size: 14px;
+	--reltio-chip-height: 32px;
+	--reltio-chip-padding-x: 12px;
+	--reltio-chip-padding-y: 0;
+	--reltio-chip-gap: 6px;
+
+	--reltio-chip-background: var(--reltio-color-surface, #eeeeee);
+	--reltio-chip-color: var(--reltio-color-text, #000033);
+	--reltio-chip-border-color: transparent;
+
+	display: inline-flex;
+	align-items: center;
+	gap: var(--reltio-chip-gap);
+	height: var(--reltio-chip-height);
+	padding: var(--reltio-chip-padding-y) var(--reltio-chip-padding-x);
+	background-color: var(--reltio-chip-background);
+	color: var(--reltio-chip-color);
+	font-family: var(--reltio-chip-font-family);
+	font-size: var(--reltio-chip-font-size);
+	font-weight: var(--reltio-chip-font-weight);
+	letter-spacing: var(--reltio-chip-letter-spacing);
+	line-height: 1;
+	border-radius: var(--reltio-chip-border-radius);
+	border: 1px solid var(--reltio-chip-border-color);
+	box-sizing: border-box;
+	white-space: nowrap;
+	user-select: none;
+	transition:
+		background-color var(--reltio-chip-transition-duration)
+		var(--reltio-chip-transition-timing),
+		border-color var(--reltio-chip-transition-duration)
+		var(--reltio-chip-transition-timing),
+		box-shadow var(--reltio-chip-transition-duration)
+		var(--reltio-chip-transition-timing);
+}
+
+/* Size: Small */
+.small {
+	--reltio-chip-font-size: 12px;
+	--reltio-chip-height: 26px;
+	--reltio-chip-padding-x: 8px;
+	--reltio-chip-gap: 4px;
+	--reltio-chip-icon-size: 16px;
+	--reltio-chip-border-radius: 6px;
+}
+
+/* Interactive (clickable) */
+.clickable {
+	cursor: pointer;
+
+	&:hover {
+		box-shadow: 0 1px 3px rgba(0, 0, 51, 0.12);
+	}
+
+	&:active {
+		box-shadow: none;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--reltio-color-primary, #0000cc);
+		outline-offset: 1px;
+	}
+}
+
+/* Variant: Filled (default) */
+.filled.default {
+	--reltio-chip-background: var(--reltio-color-surface, #eeeeee);
+	--reltio-chip-color: var(--reltio-color-text, #000033);
+
+	&.clickable:hover {
+		--reltio-chip-background: #ededed;
+	}
+}
+
+.filled.primary {
+	--reltio-chip-background: rgba(0, 0, 204, 0.08);
+	--reltio-chip-color: var(--reltio-color-primary, #0000cc);
+
+	&.clickable:hover {
+		--reltio-chip-background: rgba(0, 0, 204, 0.14);
+	}
+}
+
+.filled.success {
+	--reltio-chip-background: rgba(68, 153, 119, 0.12);
+	--reltio-chip-color: #449977;
+
+	&.clickable:hover {
+		--reltio-chip-background: rgba(68, 153, 119, 0.2);
+	}
+}
+
+.filled.warning {
+	--reltio-chip-background: rgba(238, 102, 17, 0.1);
+	--reltio-chip-color: #ee6611;
+
+	&.clickable:hover {
+		--reltio-chip-background: rgba(238, 102, 17, 0.18);
+	}
+}
+
+.filled.error {
+	--reltio-chip-background: rgba(238, 51, 51, 0.1);
+	--reltio-chip-color: #ee3333;
+
+	&.clickable:hover {
+		--reltio-chip-background: rgba(238, 51, 51, 0.18);
+	}
+}
+
+/* Variant: Outlined */
+.outlined.default {
+	--reltio-chip-background: transparent;
+	--reltio-chip-color: var(--reltio-color-text, #000033);
+	--reltio-chip-border-color: #e5e5e5;
+
+	&.clickable:hover {
+		--reltio-chip-background: #f2f2f2;
+	}
+}
+
+.outlined.primary {
+	--reltio-chip-background: transparent;
+	--reltio-chip-color: var(--reltio-color-primary, #0000cc);
+	--reltio-chip-border-color: var(--reltio-color-primary, #0000cc);
+
+	&.clickable:hover {
+		--reltio-chip-background: rgba(0, 0, 204, 0.04);
+	}
+}
+
+.outlined.success {
+	--reltio-chip-background: transparent;
+	--reltio-chip-color: #449977;
+	--reltio-chip-border-color: #449977;
+
+	&.clickable:hover {
+		--reltio-chip-background: rgba(68, 153, 119, 0.06);
+	}
+}
+
+.outlined.warning {
+	--reltio-chip-background: transparent;
+	--reltio-chip-color: #ee6611;
+	--reltio-chip-border-color: #ee6611;
+
+	&.clickable:hover {
+		--reltio-chip-background: rgba(238, 102, 17, 0.06);
+	}
+}
+
+.outlined.error {
+	--reltio-chip-background: transparent;
+	--reltio-chip-color: #ee3333;
+	--reltio-chip-border-color: #ee3333;
+
+	&.clickable:hover {
+		--reltio-chip-background: rgba(238, 51, 51, 0.06);
+	}
+}
+
+/* Disabled */
+.disabled {
+	opacity: var(--reltio-chip-disabled-opacity);
+	pointer-events: none;
+}
+
+/* Leading icon */
+.leadingIcon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: var(--reltio-chip-icon-size);
+	height: var(--reltio-chip-icon-size);
+}
+
+/* Remove button */
+.removeButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	margin: 0 -2px 0 0;
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: inherit;
+	opacity: 0.7;
+	width: var(--reltio-chip-icon-size);
+	height: var(--reltio-chip-icon-size);
+	flex-shrink: 0;
+	border-radius: 50%;
+	transition: opacity var(--reltio-chip-transition-duration)
+		var(--reltio-chip-transition-timing);
+
+	&:hover {
+		opacity: 1;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--reltio-color-primary, #0000cc);
+		outline-offset: 1px;
+		opacity: 1;
+	}
+}
