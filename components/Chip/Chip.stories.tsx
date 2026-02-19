@@ -5,11 +5,13 @@ import { ErrorCircle } from "@/icons/ErrorCircle";
 import { Person } from "@/icons/Person";
 import { Warning } from "@/icons/Warning";
 import { Chip } from "./Chip";
+import cssClasses from "./Chip.module.css";
 
 const meta = preview.meta({
 	component: Chip,
 	parameters: {
 		layout: "centered",
+		cssClasses,
 	},
 });
 

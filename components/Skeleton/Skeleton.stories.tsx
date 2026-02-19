@@ -1,9 +1,13 @@
 import type React from "react";
 import preview from "@/.storybook/preview";
 import { Skeleton } from "./Skeleton";
+import cssClasses from "./Skeleton.module.css";
 
 const meta = preview.meta({
 	component: Skeleton,
+	parameters: {
+		cssClasses,
+	},
 });
 
 export const OneRow = meta.story({

@@ -1,11 +1,13 @@
 import preview from "@/.storybook/preview";
 import type { Message } from "@/components/Chat";
 import { Chat } from "@/components/Chat";
+import cssClasses from "./Chat.module.css";
 
 const meta = preview.meta({
 	component: Chat,
 	parameters: {
 		layout: "fullscreen",
+		cssClasses,
 	},
 	decorators: [
 		(Story) => (

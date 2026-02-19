@@ -142,22 +142,19 @@
 
 /* ── Tables ── */
 .tableWrapper {
-	font-family: var(--reltio-markdown-base-font, "Roboto Flex", sans-serif);
 	width: 100%;
-	border-collapse: collapse;
-	position: relative;
-	color: var(--reltio-markdown-color-text);
-	background-color: var(--reltio-markdown-color-table-bg);
 	border: 1px solid var(--reltio-markdown-color-table-border);
 	border-radius: 16px;
 	overflow: auto;
-	box-sizing: border-box;
-	font-size: 14px;
 }
 
 .tableWrapper table {
 	width: 100%;
 	border-collapse: collapse;
+	font-family: var(--reltio-markdown-base-font, "Roboto Flex", sans-serif);
+	color: var(--reltio-markdown-color-text);
+	background-color: var(--reltio-markdown-color-table-bg);
+	font-size: 14px;
 }
 
 .tableWrapper thead {

@@ -1,10 +1,12 @@
 import preview from "@/.storybook/preview";
 import { ErrorMessage } from "@/components/ErrorMessage";
+import cssClasses from "./ErrorMessage.module.css";
 
 const meta = preview.meta({
 	component: ErrorMessage,
 	parameters: {
 		layout: "centered",
+		cssClasses,
 	},
 });
 

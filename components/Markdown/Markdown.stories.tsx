@@ -1,8 +1,12 @@
 import preview from "@/.storybook/preview";
 import { Markdown } from "./Markdown";
+import cssClasses from "./Markdown.module.css";
 
 const meta = preview.meta({
 	component: Markdown,
+	parameters: {
+		cssClasses,
+	},
 });
 
 // Basic Markdown rendering

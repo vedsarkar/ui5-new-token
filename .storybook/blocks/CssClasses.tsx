@@ -1,29 +1,17 @@
-/// <reference types="vite/client" />
-import { useState } from "react";
 import { useOf } from "@storybook/addon-docs/blocks";
+import { useState } from "react";
 import styles from "./CssClasses.module.css";
-
-const cssModules = import.meta.glob("../../components/**/*.module.css.json", {
-	eager: true,
-}) as Record<string, { default: Record<string, string> }>;
 
 export const CssClasses = () => {
 	const [copiedClass, setCopiedClass] = useState<string | null>(null);
 	const resolved = useOf("meta");
 	if (resolved.type !== "meta") return null;
 
-	const name =
-		resolved.preparedMeta.component?.displayName ||
-		resolved.preparedMeta.component?.name;
+	const cssMap = resolved.preparedMeta.parameters?.cssClasses as
+		| Record<string, string>
+		| undefined;
+	if (!cssMap) return null;
 
-	if (!name) return null;
-
-	const matchKey = Object.keys(cssModules).find((key) =>
-		key.includes(`/${name}/`),
-	);
-	if (!matchKey) return null;
-
-	const cssMap = cssModules[matchKey].default;
 	const classes = Object.entries(cssMap).map(([local, hashed]) => ({
 		local,
 		stable: `reltio_${hashed.split("__")[0]}`,

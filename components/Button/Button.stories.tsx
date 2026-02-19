@@ -1,11 +1,13 @@
 import { fn } from "storybook/test";
 import preview from "@/.storybook/preview";
 import { Button } from "./Button";
+import cssClasses from "./Button.module.css";
 
 const meta = preview.meta({
 	component: Button,
 	parameters: {
 		layout: "centered",
+		cssClasses,
 	},
 	args: {
 		onClick: fn(),

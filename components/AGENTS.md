@@ -69,6 +69,21 @@ import type { ButtonProps } from "@/components/Button/Button.types";
 
 **Rule of thumb:** If a CSS variable is never reassigned in another selector, remove it and use the value directly.
 
+### Storybook Stories
+
+Every component's stories file MUST import the CSS module and pass it via `parameters.cssClasses`. This enables the CSS Classes documentation table on the component's docs page.
+
+```tsx
+import cssClasses from "./MyComponent.module.css";
+
+const meta = preview.meta({
+  component: MyComponent,
+  parameters: {
+    cssClasses,
+  },
+});
+```
+
 ## Creating a New Component
 
 1. Start with `/opsx:new` to create a change and build artifacts step by step
@@ -76,7 +91,7 @@ import type { ButtonProps } from "@/components/Button/Button.types";
 3. Review each artifact before proceeding to the next
 4. Run `/opsx:apply` to implement the component following all standards
 5. Use the mandatory folder structure above
-6. Create comprehensive [Storybook stories](/?path=/docs/guides-writing-storybook-stories--docs)
+6. Create comprehensive [Storybook stories](/?path=/docs/guides-writing-storybook-stories--docs) with `cssClasses` parameter
 7. Run `npm run format` and ensure `npm run lint` passes
 8. Export only the public API through `index.ts`
 9. Archive the change with `/opsx:archive` after deployment

@@ -3,6 +3,7 @@ import { fn } from "storybook/test";
 import preview from "@/.storybook/preview";
 import { Chip } from "../Chip";
 import { Tabs } from "./Tabs";
+import cssClasses from "./Tabs.module.css";
 
 const defaultItems = [
 	{ value: "tab1", label: "First Tab" },
@@ -14,6 +15,7 @@ const meta = preview.meta({
 	component: Tabs,
 	parameters: {
 		layout: "padded",
+		cssClasses,
 	},
 	args: {
 		items: defaultItems,

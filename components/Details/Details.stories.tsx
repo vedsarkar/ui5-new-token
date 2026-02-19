@@ -1,8 +1,12 @@
 import preview from "@/.storybook/preview";
 import { Details } from "./Details";
+import cssClasses from "./Details.module.css";
 
 const meta = preview.meta({
 	component: Details,
+	parameters: {
+		cssClasses,
+	},
 });
 
 // Default story - no summary element provided (fallback)

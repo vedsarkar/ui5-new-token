@@ -3,11 +3,13 @@ import preview from "../../.storybook/preview";
 import { Attachment, ContentCopy, Share } from "../../icons";
 import { Button } from "../Button";
 import { TextArea } from "./TextArea";
+import cssClasses from "./TextArea.module.css";
 
 const meta = preview.meta({
 	component: TextArea,
 	parameters: {
 		layout: "centered",
+		cssClasses,
 	},
 	args: {
 		onChange: fn(),

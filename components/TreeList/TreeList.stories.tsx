@@ -1,6 +1,7 @@
 import { fn } from "storybook/test";
 import preview from "@/.storybook/preview";
 import { TreeList } from "./TreeList";
+import cssClasses from "./TreeList.module.css";
 import type { TreeItem } from "./TreeList.types";
 
 // -- Data Fixtures --
@@ -207,6 +208,9 @@ const BadgeLabel = ({ data }: { data: TreeItem }) => (
 
 const meta = preview.meta({
 	component: TreeList,
+	parameters: {
+		cssClasses,
+	},
 	args: {
 		data: singleRootData,
 		onExpand: fn(),
