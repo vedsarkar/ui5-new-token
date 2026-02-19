@@ -34,6 +34,7 @@
 		"dev": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
 		"build-css": "node scripts/build-css.mjs",
+		"build-tokens": "node scripts/build-tokens.mjs",
 		"deploy": "chromatic --exit-zero-on-changes --exit-once-uploaded",
 		"lint": "biome check .",
 		"format": "biome format . --write",

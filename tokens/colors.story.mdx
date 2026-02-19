@@ -1,0 +1,14 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { ColorTokens } from "./ColorTokens";
+
+<Meta title="Colors" />
+
+# Colors
+
+All color tokens are auto-generated from Figma design tokens. The mapping between Figma token names and CSS variables is defined in `tokens/token-map.json`.
+
+**Usage:** `var(--reltio-color-{name})` — click any variable name to copy it.
+
+**Regenerate:** `npm run build-tokens`
+
+<ColorTokens />

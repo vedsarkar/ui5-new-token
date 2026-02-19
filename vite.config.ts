@@ -8,7 +8,9 @@ export default defineConfig({
 					.split("/")
 					.pop()
 					?.replace(/\.module\.css$/, "");
-				const hash = Buffer.from(`${filename}${name}`).toString("base64").slice(0, 5);
+				const hash = Buffer.from(`${filename}${name}`)
+					.toString("base64")
+					.slice(0, 5);
 				return `${componentName}_${name}__${hash}`;
 			},
 		},

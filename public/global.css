@@ -4,7 +4,7 @@
 }
 
 [data-theme="dark"] {
-	background-color: var(--reltio-color-surface);
+	background-color: var(--reltio-color-surface-1);
 	color: var(--reltio-color-text);
 }
 

@@ -12,10 +12,10 @@
 	--reltio-button-letter-spacing: var(--reltio-letter-spacing-body, 0.15px);
 
 	/* Color tokens */
-	--reltio-button-color-background: var(--reltio-color-surface-raised);
+	--reltio-button-color-background: var(--reltio-color-surface-2);
 	--reltio-button-color-primary: var(--reltio-color-primary);
 	--reltio-button-color-primary-hover: var(--reltio-color-primary-hover);
-	--reltio-button-color-primary-text: var(--reltio-color-on-primary);
+	--reltio-button-color-primary-text: var(--reltio-color-text-forced-white);
 	--reltio-button-color-text: var(--reltio-color-text);
 
 	/* Spacing tokens */
@@ -118,7 +118,7 @@
 }
 
 :global([data-theme="dark"]) .filled.inherited {
-	border: 1px solid var(--reltio-color-border);
+	border: 1px solid var(--reltio-color-border-2);
 }
 
 /* Outlined + Primary */

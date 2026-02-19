@@ -3,11 +3,13 @@
 	--reltio-chat-padding: 16px;
 	--reltio-chat-message-gap: 16px;
 	--reltio-chat-scroll-button-size: 36px;
-	--reltio-chat-scroll-button-bg: var(--reltio-color-surface);
-	--reltio-chat-scroll-button-shadow: 0 2px 8px var(--reltio-color-shadow);
+	--reltio-chat-scroll-button-bg: var(--reltio-color-surface-1);
+	--reltio-chat-scroll-button-shadow: 0 2px 8px var(--reltio-color-shadow-2);
 	--reltio-chat-scroll-button-color: var(--reltio-color-text-secondary);
-	--reltio-chat-scroll-button-hover-bg: var(--reltio-color-surface-raised);
-	--reltio-chat-scroll-button-focus-color: var(--reltio-color-primary-focus);
+	--reltio-chat-scroll-button-hover-bg: var(--reltio-color-surface-2);
+	--reltio-chat-scroll-button-focus-color: var(
+		--reltio-color-primary-transparent-focus
+	);
 	--reltio-chat-scroll-button-bottom: 16px;
 
 	display: flex;

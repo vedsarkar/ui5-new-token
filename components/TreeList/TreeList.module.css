@@ -4,7 +4,7 @@
 	--reltio-tree-list-text-color: var(--reltio-color-text);
 	--reltio-tree-list-background: transparent;
 	--reltio-tree-list-toggle-color: var(--reltio-color-text-secondary);
-	--reltio-tree-list-line-color: var(--reltio-color-overlay);
+	--reltio-tree-list-line-color: var(--reltio-color-bg-transparent-1);
 	--reltio-tree-list-line-height: inherit;
 	display: block;
 	overflow: auto;

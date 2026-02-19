@@ -1,13 +1,13 @@
 .root {
-	--reltio-details-background-color: var(--reltio-color-surface);
-	--reltio-details-border-color: var(--reltio-color-border);
+	--reltio-details-background-color: var(--reltio-color-surface-1);
+	--reltio-details-border-color: var(--reltio-color-border-2);
 	--reltio-details-text-color: var(--reltio-color-text);
 	--reltio-details-hover-bg: color-mix(
 		in srgb,
 		var(--reltio-color-primary) 12%,
 		transparent
 	);
-	--reltio-details-code-bg: var(--reltio-color-surface-raised);
+	--reltio-details-code-bg: var(--reltio-color-surface-2);
 
 	margin: 1rem 0;
 	background-color: var(--reltio-details-background-color);
@@ -123,11 +123,11 @@
 }
 
 :global([data-theme="dark"]) .root {
-	--reltio-details-background-color: var(--reltio-color-surface-raised);
+	--reltio-details-background-color: var(--reltio-color-surface-2);
 	--reltio-details-code-bg: color-mix(
 		in srgb,
-		var(--reltio-color-border) 40%,
-		var(--reltio-color-surface-raised)
+		var(--reltio-color-border-2) 40%,
+		var(--reltio-color-surface-2)
 	);
 }
 

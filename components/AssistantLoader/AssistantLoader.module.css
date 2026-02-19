@@ -11,10 +11,10 @@
 		var(--reltio-assistant-loader-size, 32px) *
 		0.15625
 	);
-	--reltio-assistant-loader-dot-color: var(--reltio-color-accent);
+	--reltio-assistant-loader-dot-color: var(--reltio-color-primary-soft);
 	--reltio-assistant-loader-dot-color-dimmed: color-mix(
 		in srgb,
-		var(--reltio-color-accent) 20%,
+		var(--reltio-color-primary-soft) 20%,
 		transparent
 	);
 	--reltio-assistant-loader-dot-gap: calc(

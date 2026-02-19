@@ -1,5 +1,5 @@
 .userMessageRoot {
-	--reltio-user-message-background: var(--reltio-color-surface-raised);
+	--reltio-user-message-background: var(--reltio-color-surface-2);
 	--reltio-user-message-border-color: transparent;
 	--reltio-user-message-padding: 12px 16px;
 	--reltio-user-message-border-radius: 12px;
@@ -12,5 +12,5 @@
 }
 
 :global([data-theme="dark"]) .userMessageRoot {
-	--reltio-user-message-border-color: var(--reltio-color-border);
+	--reltio-user-message-border-color: var(--reltio-color-border-2);
 }

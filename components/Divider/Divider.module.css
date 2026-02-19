@@ -1,5 +1,5 @@
 .root {
-	--reltio-divider-color: var(--reltio-color-outline-variant, #c4c4cf);
+	--reltio-divider-color: var(--reltio-color-border-3);
 	--reltio-divider-thickness: 1px;
 	--reltio-divider-spacing: 0px;
 

@@ -1,11 +1,11 @@
 .root {
-	--reltio-icon-library-bg: var(--reltio-color-surface);
-	--reltio-icon-library-border: var(--reltio-color-border);
+	--reltio-icon-library-bg: var(--reltio-color-surface-1);
+	--reltio-icon-library-border: var(--reltio-color-border-2);
 	--reltio-icon-library-text: var(--reltio-color-text);
 	--reltio-icon-library-text-secondary: var(--reltio-color-text-secondary);
-	--reltio-icon-library-hover: var(--reltio-color-surface-raised);
-	--reltio-icon-library-button-bg: var(--reltio-color-surface-raised);
-	--reltio-icon-library-button-hover: var(--reltio-color-border);
+	--reltio-icon-library-hover: var(--reltio-color-surface-2);
+	--reltio-icon-library-button-bg: var(--reltio-color-surface-2);
+	--reltio-icon-library-button-hover: var(--reltio-color-border-2);
 	--reltio-icon-library-focus-border: var(--reltio-color-primary);
 
 	font-family: var(--reltio-font-family-body, "Roboto", sans-serif);

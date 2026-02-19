@@ -7,9 +7,9 @@
 	--reltio-textarea-font-size: var(--reltio-font-size-body, 16px);
 	--reltio-textarea-line-height: var(--reltio-line-height-body, 1.5);
 	--reltio-textarea-color-text: var(--reltio-color-text);
-	--reltio-textarea-color-border: var(--reltio-color-border);
-	--reltio-textarea-color-border-focus: var(--reltio-color-primary-focus);
-	--reltio-textarea-color-background: var(--reltio-color-surface);
+	--reltio-textarea-color-border: var(--reltio-color-border-3);
+	--reltio-textarea-color-border-focus: var(--reltio-color-primary);
+	--reltio-textarea-color-background: var(--reltio-color-surface-1);
 	--reltio-textarea-color-error: var(--reltio-color-error);
 	--reltio-textarea-color-label: var(--reltio-color-text-secondary);
 	--reltio-textarea-color-supporting-text: var(--reltio-color-text-secondary);
@@ -57,7 +57,8 @@
 	margin: 0;
 	box-sizing: border-box;
 	border-radius: var(--reltio-textarea-border-radius);
-	outline: var(--reltio-textarea-border-width) solid var(--reltio-textarea-color-border);
+	outline: var(--reltio-textarea-border-width) solid
+		var(--reltio-textarea-color-border);
 	cursor: text;
 	transition:
 		outline-color 0.1s ease,
