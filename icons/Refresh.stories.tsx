@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Refresh } from "./Refresh";
 import styles from "./IconStories.module.css";
+import { Refresh } from "./Refresh";
 
 const meta: Meta<typeof Refresh> = {
 	component: Refresh,

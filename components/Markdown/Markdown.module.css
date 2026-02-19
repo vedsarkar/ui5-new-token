@@ -6,13 +6,29 @@
 
 /* ── Root ── */
 .root {
+	--reltio-markdown-color-text: var(--reltio-color-text);
+	--reltio-markdown-color-link: var(--reltio-color-primary);
+	--reltio-markdown-color-code-background: var(--reltio-color-surface-2);
+	--reltio-markdown-color-code-block-background: var(--reltio-color-surface-2);
+	--reltio-markdown-color-code-block-border: var(--reltio-color-border-2);
+	--reltio-markdown-color-blockquote-border: var(--reltio-color-border-2);
+	--reltio-markdown-color-blockquote-text: var(--reltio-color-text-secondary);
+	--reltio-markdown-color-del: var(--reltio-color-text-placeholder);
+	--reltio-markdown-color-hr-border: var(--reltio-color-border-2);
+	--reltio-markdown-color-table-bg: var(--reltio-color-surface-1);
+	--reltio-markdown-color-table-border: var(--reltio-color-border-2);
+	--reltio-markdown-color-table-header-bg: var(--reltio-color-surface-2);
+	--reltio-markdown-color-table-cell-background: var(--reltio-color-surface-1);
+	--reltio-markdown-color-table-row-hover: var(--reltio-color-surface-2);
+	--reltio-markdown-color-table-shadow: var(--reltio-color-border-2);
+
 	word-wrap: break-word;
 	line-height: var(--reltio-markdown-line-height, 1.5);
 	font-family: var(--reltio-markdown-font-family, "Roboto Flex", sans-serif);
 	font-size: var(--reltio-markdown-font-size, 14px);
 	font-weight: var(--reltio-markdown-font-weight, 400);
 	letter-spacing: var(--reltio-markdown-letter-spacing, 0.15px);
-	color: var(--reltio-markdown-color-text, #0e0e25);
+	color: var(--reltio-markdown-color-text);
 }
 
 /* ── Paragraphs ── */
@@ -85,18 +101,19 @@
 .root pre {
 	overflow-x: auto;
 	margin: 0;
-	background-color: #e3e3f2;
+	background-color: var(--reltio-markdown-color-code-block-background);
 	border-radius: 8px;
 	padding: 16px;
-	border: 1px solid #e3e3f2;
+	border: 1px solid var(--reltio-markdown-color-code-block-border);
 }
 
 .root code {
 	font-family: var(--reltio-markdown-code-font-family, monospace);
 	font-size: var(--reltio-markdown-code-font-size, 0.9em);
-	background-color: var(--reltio-markdown-color-code-background, #f5f5f5);
+	background-color: var(--reltio-markdown-color-code-background);
 	padding: var(--reltio-markdown-code-padding, 0.2em 0.4em);
 	border-radius: var(--reltio-markdown-code-border-radius, 3px);
+	border: 1px solid var(--reltio-markdown-color-code-block-border);
 }
 
 .root pre code {
@@ -106,7 +123,7 @@
 
 /* ── Links ── */
 .root a {
-	color: var(--reltio-markdown-color-link, #0000cc);
+	color: var(--reltio-markdown-color-link);
 	text-decoration: underline;
 }
 
@@ -117,10 +134,10 @@
 /* ── Blockquote ── */
 .root blockquote {
 	border-left: var(--reltio-markdown-blockquote-border-width, 4px) solid
-		var(--reltio-markdown-color-blockquote-border, #ddd);
+		var(--reltio-markdown-color-blockquote-border);
 	margin: var(--reltio-markdown-blockquote-margin, 1rem 0);
 	padding-left: var(--reltio-markdown-blockquote-padding-left, 1rem);
-	color: var(--reltio-markdown-color-blockquote-text, #666);
+	color: var(--reltio-markdown-color-blockquote-text);
 }
 
 /* ── Tables ── */
@@ -129,9 +146,9 @@
 	width: 100%;
 	border-collapse: collapse;
 	position: relative;
-	color: var(--color-text, #0e0e25);
-	background-color: #ffffff;
-	border: 1px solid #9898b34d;
+	color: var(--reltio-markdown-color-text);
+	background-color: var(--reltio-markdown-color-table-bg);
+	border: 1px solid var(--reltio-markdown-color-table-border);
 	border-radius: 16px;
 	overflow: auto;
 	box-sizing: border-box;
@@ -147,15 +164,15 @@
 	position: sticky;
 	top: 0;
 	z-index: 1;
-	box-shadow: 0 1px 0 #9898b34d;
+	box-shadow: 0 1px 0 var(--reltio-markdown-color-table-shadow);
 }
 
 .tableWrapper th {
 	padding: 16px;
 	font-weight: 600;
 	text-align: left;
-	border-right: 1px solid #9898b34d;
-	background-color: #e3e3f2;
+	border-right: 1px solid var(--reltio-markdown-color-table-border);
+	background-color: var(--reltio-markdown-color-table-header-bg);
 }
 
 .tableWrapper th:last-child {
@@ -164,10 +181,10 @@
 
 .tableWrapper td {
 	padding: 8px 16px;
-	border-bottom: 1px solid #9898b34d;
-	border-right: 1px solid #9898b34d;
+	border-bottom: 1px solid var(--reltio-markdown-color-table-border);
+	border-right: 1px solid var(--reltio-markdown-color-table-border);
 	text-align: left;
-	background-color: var(--reltio-markdown-color-table-cell-background, #ffffff);
+	background-color: var(--reltio-markdown-color-table-cell-background);
 }
 
 .tableWrapper td:last-child {
@@ -175,7 +192,7 @@
 }
 
 .tableWrapper tr:hover td {
-	background-color: var(--color-table-row-hover, #f5f5fa);
+	background-color: var(--reltio-markdown-color-table-row-hover);
 }
 
 .tableWrapper tr:last-child td {
@@ -185,7 +202,7 @@
 /* ── Strikethrough ── */
 .root del {
 	text-decoration: line-through;
-	color: var(--reltio-markdown-color-del, #595972);
+	color: var(--reltio-markdown-color-del);
 }
 
 /* ── Checkboxes ── */
@@ -197,7 +214,7 @@
 /* ── Horizontal rule ── */
 .root hr {
 	border: none;
-	border-top: 1px solid var(--color-border, #ddd);
+	border-top: 1px solid var(--reltio-markdown-color-hr-border);
 	margin: 1.5rem 0;
 }
 

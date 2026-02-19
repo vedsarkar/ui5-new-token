@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Search } from "./Search";
 import styles from "./IconStories.module.css";
+import { Search } from "./Search";
 
 const meta: Meta<typeof Search> = {
 	component: Search,

@@ -18,8 +18,8 @@
 	--reltio-chip-padding-y: 0;
 	--reltio-chip-gap: 6px;
 
-	--reltio-chip-background: var(--reltio-color-surface, #eeeeee);
-	--reltio-chip-color: var(--reltio-color-text, #000033);
+	--reltio-chip-background: var(--reltio-color-bg-transparent-1);
+	--reltio-chip-color: var(--reltio-color-text);
 	--reltio-chip-border-color: transparent;
 
 	display: inline-flex;
@@ -71,15 +71,15 @@
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--reltio-color-primary, #0000cc);
+		outline: 2px solid var(--reltio-color-primary);
 		outline-offset: 1px;
 	}
 }
 
 /* Variant: Filled (default) */
 .filled.default {
-	--reltio-chip-background: var(--reltio-color-surface, #eeeeee);
-	--reltio-chip-color: var(--reltio-color-text, #000033);
+	--reltio-chip-background: var(--reltio-color-bg-transparent-1);
+	--reltio-chip-color: var(--reltio-color-text);
 
 	&.clickable:hover {
 		--reltio-chip-background: #ededed;
@@ -87,46 +87,46 @@
 }
 
 .filled.primary {
-	--reltio-chip-background: rgba(0, 0, 204, 0.08);
-	--reltio-chip-color: var(--reltio-color-primary, #0000cc);
+	--reltio-chip-background: var(--reltio-color-primary-transparent-mild);
+	--reltio-chip-color: var(--reltio-color-primary);
 
 	&.clickable:hover {
-		--reltio-chip-background: rgba(0, 0, 204, 0.14);
+		--reltio-chip-background: var(--reltio-color-primary-transparent-focus);
 	}
 }
 
 .filled.success {
-	--reltio-chip-background: rgba(68, 153, 119, 0.12);
-	--reltio-chip-color: #449977;
+	--reltio-chip-background: var(--reltio-color-success-transparent);
+	--reltio-chip-color: var(--reltio-color-success);
 
 	&.clickable:hover {
-		--reltio-chip-background: rgba(68, 153, 119, 0.2);
+		--reltio-chip-background: var(--reltio-color-success-transparent-hover);
 	}
 }
 
 .filled.warning {
-	--reltio-chip-background: rgba(238, 102, 17, 0.1);
-	--reltio-chip-color: #ee6611;
+	--reltio-chip-background: var(--reltio-color-orange-transparent);
+	--reltio-chip-color: var(--reltio-color-orange);
 
 	&.clickable:hover {
-		--reltio-chip-background: rgba(238, 102, 17, 0.18);
+		--reltio-chip-background: var(--reltio-color-orange-transparent-hover);
 	}
 }
 
 .filled.error {
-	--reltio-chip-background: rgba(238, 51, 51, 0.1);
-	--reltio-chip-color: #ee3333;
+	--reltio-chip-background: var(--reltio-color-error-transparent);
+	--reltio-chip-color: var(--reltio-color-error);
 
 	&.clickable:hover {
-		--reltio-chip-background: rgba(238, 51, 51, 0.18);
+		--reltio-chip-background: var(--reltio-color-error-transparent-hover);
 	}
 }
 
 /* Variant: Outlined */
 .outlined.default {
 	--reltio-chip-background: transparent;
-	--reltio-chip-color: var(--reltio-color-text, #000033);
-	--reltio-chip-border-color: #e5e5e5;
+	--reltio-chip-color: var(--reltio-color-text);
+	--reltio-chip-border-color: var(--reltio-color-border-2);
 
 	&.clickable:hover {
 		--reltio-chip-background: #f2f2f2;
@@ -135,41 +135,41 @@
 
 .outlined.primary {
 	--reltio-chip-background: transparent;
-	--reltio-chip-color: var(--reltio-color-primary, #0000cc);
-	--reltio-chip-border-color: var(--reltio-color-primary, #0000cc);
+	--reltio-chip-color: var(--reltio-color-primary);
+	--reltio-chip-border-color: var(--reltio-color-primary);
 
 	&.clickable:hover {
-		--reltio-chip-background: rgba(0, 0, 204, 0.04);
+		--reltio-chip-background: var(--reltio-color-primary-transparent-mild);
 	}
 }
 
 .outlined.success {
 	--reltio-chip-background: transparent;
-	--reltio-chip-color: #449977;
-	--reltio-chip-border-color: #449977;
+	--reltio-chip-color: var(--reltio-color-success);
+	--reltio-chip-border-color: var(--reltio-color-success);
 
 	&.clickable:hover {
-		--reltio-chip-background: rgba(68, 153, 119, 0.06);
+		--reltio-chip-background: var(--reltio-color-success-transparent);
 	}
 }
 
 .outlined.warning {
 	--reltio-chip-background: transparent;
-	--reltio-chip-color: #ee6611;
-	--reltio-chip-border-color: #ee6611;
+	--reltio-chip-color: var(--reltio-color-orange);
+	--reltio-chip-border-color: var(--reltio-color-orange);
 
 	&.clickable:hover {
-		--reltio-chip-background: rgba(238, 102, 17, 0.06);
+		--reltio-chip-background: var(--reltio-color-orange-transparent);
 	}
 }
 
 .outlined.error {
 	--reltio-chip-background: transparent;
-	--reltio-chip-color: #ee3333;
-	--reltio-chip-border-color: #ee3333;
+	--reltio-chip-color: var(--reltio-color-error);
+	--reltio-chip-border-color: var(--reltio-color-error);
 
 	&.clickable:hover {
-		--reltio-chip-background: rgba(238, 51, 51, 0.06);
+		--reltio-chip-background: var(--reltio-color-error-transparent);
 	}
 }
 
@@ -213,7 +213,7 @@
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--reltio-color-primary, #0000cc);
+		outline: 2px solid var(--reltio-color-primary);
 		outline-offset: 1px;
 		opacity: 1;
 	}

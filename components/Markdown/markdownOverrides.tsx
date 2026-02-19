@@ -1,6 +1,6 @@
 import type { MarkdownToJSX } from "markdown-to-jsx";
-import { Children, isValidElement } from "react";
 import type React from "react";
+import { Children, isValidElement } from "react";
 import { Button } from "@/components/Button";
 import { Details } from "@/components/Details";
 import { classNames } from "@/utils/classNames";

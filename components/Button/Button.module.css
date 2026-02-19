@@ -12,10 +12,11 @@
 	--reltio-button-letter-spacing: var(--reltio-letter-spacing-body, 0.15px);
 
 	/* Color tokens */
-	--reltio-button-color-background: #f5f5fa;
-	--reltio-button-color-primary: var(--reltio-color-primary, #0000cc);
-	--reltio-button-color-primary-text: var(--reltio-color-on-primary, #ffffff);
-	--reltio-button-color-text: var(--reltio-color-text, #0e0e25);
+	--reltio-button-color-background: var(--reltio-color-surface-2);
+	--reltio-button-color-primary: var(--reltio-color-primary);
+	--reltio-button-color-primary-hover: var(--reltio-color-primary-hover);
+	--reltio-button-color-primary-text: var(--reltio-color-text-forced-white);
+	--reltio-button-color-text: var(--reltio-color-text);
 
 	/* Spacing tokens */
 	--reltio-button-padding-x-small: var(--reltio-spacing-sm, 16px);
@@ -103,10 +104,10 @@
 /* Filled + Primary */
 .filled.primary {
 	background-color: var(--reltio-button-color-primary);
-	color: #fff;
+	color: var(--reltio-button-color-primary-text);
 
 	&:hover {
-		background-color: #006;
+		background-color: var(--reltio-button-color-primary-hover);
 	}
 }
 
@@ -114,6 +115,10 @@
 .filled.inherited {
 	background-color: var(--reltio-button-color-background);
 	color: var(--reltio-button-color-text);
+}
+
+:global([data-theme="dark"]) .filled.inherited {
+	border: 1px solid var(--reltio-color-border-2);
 }
 
 /* Outlined + Primary */

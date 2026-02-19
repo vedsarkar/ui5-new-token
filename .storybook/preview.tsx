@@ -44,7 +44,7 @@ export default definePreview({
 	decorators: [
 		withThemeByDataAttribute({
 			themes: {
-				Light: "",
+				Light: "light",
 				Dark: "dark",
 			},
 			defaultTheme: "Light",

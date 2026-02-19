@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Settings } from "./Settings";
 import styles from "./IconStories.module.css";
+import { Settings } from "./Settings";
 
 const meta: Meta<typeof Settings> = {
 	component: Settings,

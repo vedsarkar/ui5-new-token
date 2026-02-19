@@ -12,6 +12,7 @@ Reltio Design System is a React 17+ component library with TypeScript, documente
 ```bash
 npm run dev               # Start Storybook dev server (port 6006)
 npm run build-storybook   # Build Storybook for production
+npm run build-tokens      # Generate public/variables.css from tokens/*.tokens.json
 npm run lint              # Check code with Biome (no auto-fix)
 npm run format            # Format code with Biome (auto-fix)
 npm run deploy            # Deploy to Chromatic for visual testing
@@ -42,17 +43,27 @@ components/ComponentName/
 - ALL className attributes MUST use `classNames()` utility from `@/utils/classNames`
 - ALL CSS custom properties MUST be defined on `.root` class with `--reltio-{component-name}-` prefix
 - Internal elements MUST use ONLY CSS variables, never direct values
-- CSS variables MUST include fallback values: `var(--reltio-button-height, 36px)`
+- Color CSS variables MUST reference global `--reltio-color-*` tokens from `public/variables.css` without fallback values
+- Non-color CSS variables (spacing, typography, sizing) MUST include fallback values: `var(--reltio-button-height, 36px)`
 
 Example pattern:
 ```css
 .root {
   --reltio-button-height: 36px;
-  --reltio-button-bg: #007bff;
+  --reltio-button-bg: var(--reltio-color-primary);
   height: var(--reltio-button-height);
   background: var(--reltio-button-bg);
 }
 ```
+
+### Global Color Tokens
+- `public/variables.css` is auto-generated — do NOT edit manually, run `npm run build-tokens`
+- Source: `tokens/Light.tokens.json`, `tokens/Dark.tokens.json` (from Figma)
+- Mapping: `tokens/token-map.json` maps Figma names (e.g., `"Primary/Base"`) to compact CSS names (e.g., `"primary"`)
+- Token naming: `--reltio-color-{mapped-name}` (e.g., `--reltio-color-primary`, `--reltio-color-text`, `--reltio-color-surface-1`, `--reltio-color-border-2`)
+- Dark mode is activated via `data-theme="dark"` attribute on an ancestor element
+- Component CSS must NOT contain hardcoded hex color values; use global tokens through component-level variables
+- When designers add new tokens, add entries to `token-map.json` and re-run `npm run build-tokens`
 
 ### Storybook
 - Every component MUST have stories demonstrating all variants

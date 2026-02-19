@@ -1,6 +1,8 @@
 .skeletonRoot {
 	--reltio-skeleton-row-height: 16px;
 	--reltio-skeleton-row-gap: 12px;
+	--reltio-skeleton-bg: var(--reltio-color-surface-2);
+	--reltio-skeleton-shimmer: var(--reltio-color-bg-transparent-1);
 	width: 100%;
 	display: flex;
 	flex-direction: column;
@@ -10,7 +12,7 @@
 .row {
 	width: 100%;
 	height: var(--reltio-skeleton-row-height, 16px);
-	background-color: #f5f5fa;
+	background-color: var(--reltio-skeleton-bg);
 	overflow: hidden;
 	position: relative;
 }
@@ -21,7 +23,7 @@
 	top: 0;
 	left: 0;
 	bottom: 0;
-	background-color: #9898b34d;
+	background-color: var(--reltio-skeleton-shimmer);
 	animation: indeterminate1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395)
 		infinite;
 }
@@ -32,7 +34,7 @@
 	top: 0;
 	left: 0;
 	bottom: 0;
-	background-color: #9898b34d;
+	background-color: var(--reltio-skeleton-shimmer);
 	animation: indeterminate2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
 	animation-delay: 1.15s;
 }

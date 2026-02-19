@@ -20,5 +20,5 @@
 .label {
 	grid-row: 2;
 	font-size: 12px;
-	color: #666;
+	color: var(--reltio-color-text-secondary);
 }

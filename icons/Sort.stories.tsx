@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Sort } from "./Sort";
 import styles from "./IconStories.module.css";
+import { Sort } from "./Sort";
 
 const meta: Meta<typeof Sort> = {
 	component: Sort,

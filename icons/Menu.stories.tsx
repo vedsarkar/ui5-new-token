@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Menu } from "./Menu";
 import styles from "./IconStories.module.css";
+import { Menu } from "./Menu";
 
 const meta: Meta<typeof Menu> = {
 	component: Menu,

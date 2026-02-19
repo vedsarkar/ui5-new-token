@@ -3,7 +3,7 @@
 	--reltio-assistant-message-background: transparent;
 	--reltio-assistant-message-padding: 0;
 	--reltio-assistant-message-border-radius: 8px;
-	--reltio-assistant-message-content-color: #0e0e25;
+	--reltio-assistant-message-content-color: var(--reltio-color-text);
 
 	display: flex;
 	flex-direction: column;

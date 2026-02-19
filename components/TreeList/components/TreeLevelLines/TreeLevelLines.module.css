@@ -22,7 +22,7 @@
 	left: calc(var(--reltio-tree-list-indent-size, 16px) - 2px);
 	top: 0;
 	bottom: 0;
-	background-color: var(--reltio-tree-list-line-color, rgba(0, 0, 0, 0.08));
+	background-color: var(--reltio-tree-list-line-color);
 }
 
 .lastLevelLine::after {
@@ -43,5 +43,5 @@
 	position: absolute;
 	top: 50%;
 	left: calc(var(--reltio-tree-list-indent-size, 16px) - 2px);
-	background-color: var(--reltio-tree-list-line-color, rgba(0, 0, 0, 0.08));
+	background-color: var(--reltio-tree-list-line-color);
 }

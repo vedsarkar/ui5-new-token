@@ -1,0 +1,16 @@
+.codeCopied {
+	background: var(--reltio-color-success-soft);
+}
+
+.variableCell {
+	cursor: pointer;
+	transition: background 0.15s;
+
+	&:hover {
+		background: var(--reltio-color-primary-transparent-mild);
+	}
+}
+
+.sampleCell {
+	padding: 0;
+}

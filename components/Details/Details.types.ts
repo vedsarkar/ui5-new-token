@@ -13,6 +13,9 @@ export type DetailsStyleVars = {
 	"--reltio-details-border-width"?: string;
 	"--reltio-details-font-family"?: string;
 	"--reltio-details-font-size"?: string;
+	"--reltio-details-text-color"?: string;
+	"--reltio-details-hover-bg"?: string;
+	"--reltio-details-code-bg"?: string;
 	/* .summary */
 	"--reltio-details-summary-text-color"?: string;
 	"--reltio-details-summary-hover-bg"?: string;

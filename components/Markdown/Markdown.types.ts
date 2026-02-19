@@ -30,9 +30,18 @@ export type MarkdownCSSVariables = {
 	/** Colors */
 	"--reltio-markdown-color-text"?: string;
 	"--reltio-markdown-color-link"?: string;
+	"--reltio-markdown-color-code-block-background"?: string;
+	"--reltio-markdown-color-code-block-border"?: string;
 	"--reltio-markdown-color-blockquote-border"?: string;
 	"--reltio-markdown-color-blockquote-text"?: string;
+	"--reltio-markdown-color-del"?: string;
+	"--reltio-markdown-color-hr-border"?: string;
+	"--reltio-markdown-color-table-bg"?: string;
+	"--reltio-markdown-color-table-border"?: string;
+	"--reltio-markdown-color-table-header-bg"?: string;
 	"--reltio-markdown-color-table-cell-background"?: string;
+	"--reltio-markdown-color-table-row-hover"?: string;
+	"--reltio-markdown-color-table-shadow"?: string;
 
 	/** Spacing */
 	"--reltio-markdown-paragraph-margin-bottom"?: string;

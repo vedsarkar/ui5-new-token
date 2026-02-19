@@ -1,11 +1,12 @@
 .root {
-	--reltio-icon-library-bg: #ffffff;
-	--reltio-icon-library-border: #e0e0e0;
-	--reltio-icon-library-text: #333333;
-	--reltio-icon-library-text-secondary: #666666;
-	--reltio-icon-library-hover: #f5f5f5;
-	--reltio-icon-library-button-bg: #f0f0f0;
-	--reltio-icon-library-button-hover: #e0e0e0;
+	--reltio-icon-library-bg: var(--reltio-color-surface-1);
+	--reltio-icon-library-border: var(--reltio-color-border-2);
+	--reltio-icon-library-text: var(--reltio-color-text);
+	--reltio-icon-library-text-secondary: var(--reltio-color-text-secondary);
+	--reltio-icon-library-hover: var(--reltio-color-surface-2);
+	--reltio-icon-library-button-bg: var(--reltio-color-surface-2);
+	--reltio-icon-library-button-hover: var(--reltio-color-border-2);
+	--reltio-icon-library-focus-border: var(--reltio-color-primary);
 
 	font-family: var(--reltio-font-family-body, "Roboto", sans-serif);
 	display: grid;
@@ -29,7 +30,7 @@
 	transition: border-color 0.2s;
 
 	&:focus {
-		border-color: var(--reltio-color-primary, #0066cc);
+		border-color: var(--reltio-icon-library-focus-border);
 	}
 }
 
