@@ -1,0 +1,12 @@
+.selectorCell {
+	cursor: pointer;
+	transition: background 0.15s;
+
+	&:hover {
+		background: var(--reltio-color-primary-transparent-mild);
+	}
+}
+
+.copied code {
+	background: var(--reltio-color-success-soft);
+}

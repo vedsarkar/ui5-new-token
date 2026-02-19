@@ -1,0 +1,423 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/Component Customization" />
+
+# Component Customization
+
+This guide explains how to customize the appearance of Reltio Design components in your application. It covers the two main customization mechanisms: **stable CSS classes** for targeted overrides and **global CSS custom properties** for system-wide theming.
+
+> **🎯 Key Principle:** Every component exposes stable, prefixed CSS class names that act as public selectors for external styling. Use them to override any CSS property without modifying the component library.
+
+## Business Value
+
+<table>
+  <thead>
+    <tr>
+      <th>Benefit</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>No fork required</td>
+      <td>Customize any component from the consuming application using standard CSS</td>
+    </tr>
+    <tr>
+      <td>Theme consistency</td>
+      <td>Global color tokens ensure all components adapt to light/dark mode together</td>
+    </tr>
+    <tr>
+      <td>Upgrade-safe</td>
+      <td>Stable class names are part of the public API — they do not change between builds</td>
+    </tr>
+    <tr>
+      <td>Familiar workflow</td>
+      <td>Standard CSS specificity rules — no proprietary theming API to learn</td>
+    </tr>
+  </tbody>
+</table>
+
+## Architecture Overview
+
+Reltio Design uses a two-layer styling architecture:
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Mechanism</th>
+      <th>Purpose</th>
+      <th>Scope</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Global tokens</td>
+      <td>CSS custom properties on <code>:root</code></td>
+      <td>Colors, theming, light/dark mode</td>
+      <td>All components</td>
+    </tr>
+    <tr>
+      <td>Stable classes</td>
+      <td>Prefixed CSS class names on every element</td>
+      <td>Targeted per-component overrides</td>
+      <td>Individual elements</td>
+    </tr>
+  </tbody>
+</table>
+
+Components reference global tokens for colors internally, so changing a token propagates to every component that uses it. Stable classes let you override any specific property on a specific element when global tokens are not enough.
+
+## Stable CSS Classes
+
+### How It Works
+
+Every rendered element in a Reltio Design component carries two CSS classes:
+
+1. A **stable class** with `reltio_` prefix — consistent across all builds
+2. A **hashed class** — used internally by CSS Modules for scoping
+
+```html
+<!-- Rendered DOM -->
+<button class="reltio_Tabs_tab Tabs_tab__L1VzZ">
+  First Tab
+</button>
+```
+
+The stable class `reltio_Tabs_tab` is the public selector you target in your CSS. The hashed class `Tabs_tab__L1VzZ` is an implementation detail — never depend on it.
+
+### Discovering Available Classes
+
+Every component's documentation page includes a **CSS Classes** table that lists all available stable selectors. Click any selector to copy it to your clipboard.
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Selector</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>root</code></td>
+      <td><code>.reltio_Tabs_root</code></td>
+    </tr>
+    <tr>
+      <td><code>tab</code></td>
+      <td><code>.reltio_Tabs_tab</code></td>
+    </tr>
+    <tr>
+      <td><code>active</code></td>
+      <td><code>.reltio_Tabs_active</code></td>
+    </tr>
+  </tbody>
+</table>
+
+### Overriding Styles
+
+Target the stable class in your application's CSS:
+
+```css
+/* Change tab text color and font size */
+.reltio_Tabs_tab {
+  color: #333;
+  font-size: 16px;
+}
+
+/* Change the active tab indicator color */
+.reltio_Tabs_active::after {
+  background-color: hotpink;
+}
+```
+
+### Specificity
+
+Component styles use the hashed class selector (single class specificity). Your override with the stable class has the same specificity. The CSS cascade determines which wins — **the stylesheet loaded last takes precedence**.
+
+In most setups, your application's CSS loads after the component library's CSS, so your overrides win naturally.
+
+If you need guaranteed specificity regardless of load order:
+
+**✅ Do:** Double the selector or use a parent context
+
+```css
+.reltio_Tabs_tab.reltio_Tabs_tab {
+  font-size: 16px;
+}
+
+/* or */
+.my-app .reltio_Tabs_tab {
+  font-size: 16px;
+}
+```
+
+**❌ Don't:** Use `!important`
+
+```css
+.reltio_Tabs_tab {
+  font-size: 16px !important;
+}
+```
+
+### Naming Convention
+
+Stable classes follow the pattern `reltio_{ComponentName}_{element}`:
+
+<table>
+  <thead>
+    <tr>
+      <th>Part</th>
+      <th>Example</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>reltio_</code></td>
+      <td></td>
+      <td>Namespace prefix, prevents collisions with your CSS</td>
+    </tr>
+    <tr>
+      <td><code>Tabs_</code></td>
+      <td></td>
+      <td>Component name (PascalCase)</td>
+    </tr>
+    <tr>
+      <td><code>tab</code></td>
+      <td></td>
+      <td>Element or state within the component</td>
+    </tr>
+  </tbody>
+</table>
+
+Underscores are used throughout so the entire class name can be selected with a double-click in any text editor or browser DevTools.
+
+## Global CSS Custom Properties
+
+### Loading the Tokens
+
+Reltio Design publishes all color tokens as CSS custom properties. Include them in your application:
+
+```html
+<!-- From the public CDN -->
+<link rel="stylesheet" href="https://www.reltio.design/variables.css" />
+```
+
+Or import in your CSS/JS:
+
+```css
+@import url("https://www.reltio.design/variables.css");
+```
+
+This stylesheet defines all `--reltio-color-*` variables on `:root` (light mode) and `[data-theme="dark"]` (dark mode).
+
+### Available Token Categories
+
+<table>
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Pattern</th>
+      <th>Examples</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Brand</td>
+      <td><code>--reltio-color-brand-*</code></td>
+      <td><code>brand-blue</code>, <code>brand-cobalt</code>, <code>brand-gold</code></td>
+    </tr>
+    <tr>
+      <td>Surfaces</td>
+      <td><code>--reltio-color-surface-*</code></td>
+      <td><code>surface-1</code> (white), <code>surface-2</code> (grey), <code>surface-3</code></td>
+    </tr>
+    <tr>
+      <td>Backgrounds</td>
+      <td><code>--reltio-color-bg-*</code></td>
+      <td><code>bg-base</code>, <code>bg-tooltip</code>, <code>bg-transparent-1</code></td>
+    </tr>
+    <tr>
+      <td>Borders</td>
+      <td><code>--reltio-color-border-*</code></td>
+      <td><code>border-1</code>, <code>border-2</code>, <code>border-grey-light</code></td>
+    </tr>
+    <tr>
+      <td>Text</td>
+      <td><code>--reltio-color-text-*</code></td>
+      <td><code>text</code>, <code>text-secondary</code>, <code>text-disabled</code></td>
+    </tr>
+    <tr>
+      <td>Primary</td>
+      <td><code>--reltio-color-primary-*</code></td>
+      <td><code>primary</code>, <code>primary-hover</code>, <code>primary-soft</code></td>
+    </tr>
+    <tr>
+      <td>Semantic</td>
+      <td><code>--reltio-color-{status}-*</code></td>
+      <td><code>success</code>, <code>error</code>, <code>warning</code> (+ hover, soft, border, font)</td>
+    </tr>
+    <tr>
+      <td>Shadows</td>
+      <td><code>--reltio-color-shadow-*</code></td>
+      <td><code>shadow-1</code>, <code>shadow-2</code>, <code>shadow-dark</code></td>
+    </tr>
+  </tbody>
+</table>
+
+Browse all tokens with live previews on the [Color Tokens](?path=/docs/tokens-color-tokens--docs) page.
+
+### Using Tokens in Your Application
+
+Reference tokens in your own CSS to stay consistent with the design system:
+
+```css
+.my-card {
+  background: var(--reltio-color-surface-1);
+  border: 1px solid var(--reltio-color-border-2);
+  color: var(--reltio-color-text);
+}
+
+.my-card-title {
+  color: var(--reltio-color-primary);
+}
+```
+
+These styles automatically adapt when the user switches to dark mode.
+
+### Overriding Tokens
+
+Override any token on `:root` to rebrand the entire design system:
+
+```css
+:root {
+  --reltio-color-primary: #e91e63;
+  --reltio-color-primary-hover: #c2185b;
+}
+```
+
+Or scope overrides to a specific section of your page:
+
+```css
+.partner-embed {
+  --reltio-color-primary: #00897b;
+  --reltio-color-primary-hover: #00695c;
+}
+```
+
+Every component inside `.partner-embed` picks up the new primary color through the CSS cascade.
+
+### Dark Mode
+
+Dark mode activates via the `data-theme="dark"` attribute on any ancestor element:
+
+```html
+<!-- Entire page in dark mode -->
+<html data-theme="dark">
+
+<!-- Or a specific section -->
+<div data-theme="dark">
+  <Tabs items={items} value={active} />
+</div>
+```
+
+The `variables.css` stylesheet includes all dark mode overrides under `[data-theme="dark"]`. No additional configuration is needed.
+
+## Combining Both Approaches
+
+For maximum flexibility, combine global tokens with stable class selectors:
+
+```css
+/* Override the primary color for the entire app */
+:root {
+  --reltio-color-primary: #e91e63;
+}
+
+/* Then fine-tune a specific component */
+.reltio_Tabs_tab {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.reltio_Chip_root {
+  border-radius: 4px;
+}
+```
+
+## Quick Reference
+
+<table>
+  <thead>
+    <tr>
+      <th>Goal</th>
+      <th>Approach</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Change all primary-colored elements</td>
+      <td>Override CSS token</td>
+      <td><code>--reltio-color-primary: #e91e63</code></td>
+    </tr>
+    <tr>
+      <td>Change a specific component's style</td>
+      <td>Target stable class</td>
+      <td><code>.reltio_Button_root &#123; ... &#125;</code></td>
+    </tr>
+    <tr>
+      <td>Change styles in one section only</td>
+      <td>Scoped token override</td>
+      <td><code>.sidebar &#123; --reltio-color-primary: teal &#125;</code></td>
+    </tr>
+    <tr>
+      <td>Enable dark mode</td>
+      <td>Data attribute</td>
+      <td><code>data-theme="dark"</code></td>
+    </tr>
+    <tr>
+      <td>Use design tokens in your own CSS</td>
+      <td>Reference tokens</td>
+      <td><code>color: var(--reltio-color-text)</code></td>
+    </tr>
+  </tbody>
+</table>
+
+## Similar Approaches in Popular Libraries
+
+This architecture follows established patterns from major UI libraries:
+
+<table>
+  <thead>
+    <tr>
+      <th>Library</th>
+      <th>Stable Class Pattern</th>
+      <th>Theming Mechanism</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://ant.design/docs/react/customize-theme">Ant Design</a></td>
+      <td><code>.ant-btn</code>, <code>.ant-tabs-tab</code></td>
+      <td>CSS variables via ConfigProvider, <code>:where()</code> for low specificity</td>
+    </tr>
+    <tr>
+      <td><a href="https://mui.com/material-ui/customization/how-to-customize/">Material UI</a></td>
+      <td><code>.MuiButton-root</code>, <code>.MuiTabs-indicator</code></td>
+      <td>Theme object, <code>sx</code> prop, CSS variables</td>
+    </tr>
+    <tr>
+      <td><a href="https://mantine.dev/styles/styles-api">Mantine</a></td>
+      <td><code>.mantine-Button-root</code>, <code>.mantine-Tabs-tab</code></td>
+      <td><code>classNames</code> prop, static selectors, CSS modules</td>
+    </tr>
+  </tbody>
+</table>
+
+## Sources and References
+
+- [Ant Design — Customize Theme](https://ant.design/docs/react/customize-theme) — ConfigProvider theming and CSS variable mode
+- [Material UI — How to Customize](https://mui.com/material-ui/customization/how-to-customize/) — global class names, sx prop, theme overrides
+- [Mantine — Styles API](https://mantine.dev/styles/styles-api) — classNames prop, static selectors, Styles API selectors
+- [CSS Custom Properties: The Complete Guide](https://css-tricks.com/a-complete-guide-to-custom-properties/) — comprehensive reference on CSS variables cascade and inheritance
+- [The Developer's Guide to Design Tokens and CSS Variables](https://penpot.app/blog/the-developers-guide-to-design-tokens-and-css-variables) — design token architecture patterns

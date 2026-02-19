@@ -41,18 +41,23 @@ components/ComponentName/
 
 ### CSS Styling
 - ALL className attributes MUST use `classNames()` utility from `@/utils/classNames`
-- ALL CSS custom properties MUST be defined on `.root` class with `--reltio-{component-name}-` prefix
-- Internal elements MUST use ONLY CSS variables, never direct values
-- Color CSS variables MUST reference global `--reltio-color-*` tokens from `public/variables.css` without fallback values
-- Non-color CSS variables (spacing, typography, sizing) MUST include fallback values: `var(--reltio-button-height, 36px)`
+- `classNames()` automatically adds stable prefixed classes (e.g. `reltio_Tabs_tab`) for external customization
+- Colors MUST reference global `--reltio-color-*` tokens from `public/variables.css` — never hardcode hex values
+- Typography, spacing, sizing — use plain values directly (e.g. `font-size: 14px`, `padding: 8px 16px`)
+- Component-level CSS custom properties (`--reltio-{component}-*`) — use ONLY when a value is reassigned across multiple selectors (variant switching, state management). Do NOT create variables that are used only once
+- External customization is done through stable CSS classes, NOT through component-level CSS variables
 
 Example pattern:
 ```css
-.root {
-  --reltio-button-height: 36px;
-  --reltio-button-bg: var(--reltio-color-primary);
-  height: var(--reltio-button-height);
-  background: var(--reltio-button-bg);
+/* Use global tokens for colors, plain values for everything else */
+.tab {
+  color: var(--reltio-color-text-secondary);
+  font-size: 14px;
+  padding: 8px 16px;
+}
+
+.active {
+  color: var(--reltio-color-primary);
 }
 ```
 
@@ -62,7 +67,7 @@ Example pattern:
 - Mapping: `tokens/token-map.json` maps Figma names (e.g., `"Primary/Base"`) to compact CSS names (e.g., `"primary"`)
 - Token naming: `--reltio-color-{mapped-name}` (e.g., `--reltio-color-primary`, `--reltio-color-text`, `--reltio-color-surface-1`, `--reltio-color-border-2`)
 - Dark mode is activated via `data-theme="dark"` attribute on an ancestor element
-- Component CSS must NOT contain hardcoded hex color values; use global tokens through component-level variables
+- Component CSS must NOT contain hardcoded hex color values; reference global tokens directly
 - When designers add new tokens, add entries to `token-map.json` and re-run `npm run build-tokens`
 
 ### Storybook
@@ -82,9 +87,9 @@ Example pattern:
 
 ## classNames Utility
 
-The `classNames()` utility at `utils/classNames.ts` handles BEM-like naming. For classes with `__` suffix, it automatically adds the base class:
+The `classNames()` utility at `utils/classNames.ts` processes CSS Module hashed classes and adds stable prefixed classes for external customization:
 ```ts
-classNames('a__b', 'c__d') // returns 'a a__b c c__d'
+classNames('Tabs_tab__x1y2z') // returns 'reltio_Tabs_tab Tabs_tab__x1y2z'
 ```
 
 ## OpenSpec Workflow
@@ -111,7 +116,8 @@ openspec validate [item] --strict # Validate changes
 
 - Types in `.types.ts` file using `type` keyword
 - All className attributes use `classNames()` utility
-- CSS custom properties on `.root` with `--reltio-{component}-` prefix
+- Colors use global `--reltio-color-*` tokens, no hardcoded hex values
+- CSS custom properties only where values are reassigned across selectors
 - Storybook stories added (one variant per story)
 - `npm run format` executed
 - `npm run lint` passes

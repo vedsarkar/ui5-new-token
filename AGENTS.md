@@ -28,7 +28,7 @@ Eliminate UI fragmentation across products while accelerating development of new
 ## Architecture & Standards
 
 1. **TypeScript** - Strict mode, `type` over `interface`, separate `.types.ts` files
-2. **Styling** - CSS Modules, `classNames` utility, CSS custom properties on `.root` with `--reltio-{component}-` prefix
+2. **Styling** - CSS Modules, `classNames` utility (generates stable prefixed classes for external customization), global `--reltio-color-*` tokens for colors, component-level CSS variables only for internal variant/state switching
 3. **Documentation** - Storybook stories for all variants, one variant per story
 4. **Code Style** - Biome formatting (tabs, double quotes, organized imports)
 5. **English Language** - All files, comments, documentation in English only

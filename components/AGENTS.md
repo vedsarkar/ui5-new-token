@@ -32,38 +32,42 @@ import { Button } from "@/components/Button/Button";
 import type { ButtonProps } from "@/components/Button/Button.types";
 ```
 
-### CSS Custom Properties
+### CSS Styling
 
-All component styling MUST use CSS custom properties defined on `.root` with the `--reltio-{component}-` prefix. These variables serve as the **public API** for external customization.
+**External customization** is done through stable CSS classes (e.g. `.reltio_Tabs_tab`), NOT through component-level CSS custom properties. The `classNames()` utility automatically generates these stable, prefixed selectors on every rendered element. See the [Component Customization guide](/?path=/docs/guides-component-customization--docs) for details.
 
-**State management:** Public variables are reassigned directly in state selectors (`:focus-within`, `[data-error]`, `[data-disabled]`, etc.) on `.root`. Do NOT create private/internal variables (e.g. `--_border-color`) — they add unnecessary indirection.
+**Colors** — always reference global `--reltio-color-*` tokens from `public/variables.css`. Never hardcode hex color values in component CSS.
 
-**Pattern:**
+**Typography, spacing, sizing** — use plain values directly (e.g. `font-size: 14px`, `padding: 8px 16px`). There are no global tokens for these yet.
+
+**CSS custom properties** — use them ONLY for internal mechanics when a value needs to be reassigned across multiple selectors (e.g. variant switching, state management). Do NOT create component-level variables as a customization API.
+
+**When to use component-level CSS variables:**
 
 ```css
+/* ✅ GOOD — variable is reassigned by variants/states */
 .root {
-  /* Public API — default values */
-  --reltio-button-color-border: var(--reltio-color-border, #79747e);
-  --reltio-button-color-border-focus: var(--reltio-color-primary, #6750a4);
-  --reltio-button-color-error: var(--reltio-color-error, #b3261e);
+  --chip-bg: var(--reltio-color-bg-transparent-1);
 }
-
-/* State switches reassign public variables directly */
-.root:focus-within {
-  --reltio-button-color-border: var(--reltio-button-color-border-focus);
-}
-
-.root[data-error="true"] {
-  --reltio-button-color-border: var(--reltio-button-color-error);
-}
-
-/* Child elements consume public variables — no private aliases */
-.inner {
-  outline: 1px solid var(--reltio-button-color-border);
-}
+.small { --chip-bg: var(--reltio-color-surface-2); }
+.filled.primary { --chip-bg: var(--reltio-color-primary-transparent-mild); }
+.inner { background: var(--chip-bg); }
 ```
 
-**Why:** Each state has its own public variable (`*-border`, `*-border-focus`, `*-error`). Consumers override the specific state they need. No hidden internal layer is required.
+**When NOT to use component-level CSS variables:**
+
+```css
+/* ❌ BAD — variable used once, just an alias */
+.root {
+  --tabs-font-size: 14px;
+}
+.tab { font-size: var(--tabs-font-size); }
+
+/* ✅ GOOD — use the value directly */
+.tab { font-size: 14px; }
+```
+
+**Rule of thumb:** If a CSS variable is never reassigned in another selector, remove it and use the value directly.
 
 ## Creating a New Component
 

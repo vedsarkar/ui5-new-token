@@ -1,10 +1,12 @@
 /**
- * Combines CSS class names into a single string, handling BEM-like naming conventions.
+ * Combines CSS class names into a single string.
  * Filters out falsy values and ensures unique class names.
- * For classes with suffixes (containing '__'), automatically adds the base class.
+ * For hashed CSS Module classes (containing '__'), automatically adds
+ * a stable prefixed class for external customization.
  *
  * @example
- * classNames('a__b', false, 'c__d', 'c__e') // returns 'a a__b c c__d c__e'
+ * classNames('Tabs_tab__x1y2z') // returns 'reltio_Tabs_tab Tabs_tab__x1y2z'
+ * classNames('Tabs_tab__x1y2z', false, 'Tabs_active__a3b4c') // returns 'reltio_Tabs_tab Tabs_tab__x1y2z reltio_Tabs_active Tabs_active__a3b4c'
  *
  * @param cssClasses - Array of CSS class names (strings) or falsy values
  * @returns space-separated string of unique CSS class names
@@ -17,13 +19,11 @@ export const classNames = (
 	cssClasses.forEach((cssClass) => {
 		if (!cssClass) return;
 
-		// Add the class itself
 		uniqueClasses.add(cssClass);
 
-		// If class contains a suffix (__), add the base class
 		const baseClass = cssClass.split("__")[0];
 		if (baseClass && baseClass !== cssClass) {
-			uniqueClasses.add(baseClass);
+			uniqueClasses.add(`reltio_${baseClass}`);
 		}
 	});
 
