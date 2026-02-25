@@ -63,6 +63,7 @@
 		"vitest": "^4.0.14"
 	},
 	"dependencies": {
+		"echarts": "^6.0.0",
 		"markdown-to-jsx": "^9.7.3",
 		"rc-tree": "^5.13.1"
 	}
