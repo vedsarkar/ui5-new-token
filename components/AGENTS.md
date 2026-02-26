@@ -40,34 +40,106 @@ import type { ButtonProps } from "@/components/Button/Button.types";
 
 **Typography, spacing, sizing** — use plain values directly (e.g. `font-size: 14px`, `padding: 8px 16px`). There are no global tokens for these yet.
 
-**CSS custom properties** — use them ONLY for internal mechanics when a value needs to be reassigned across multiple selectors (e.g. variant switching, state management). Do NOT create component-level variables as a customization API.
+**CSS custom properties** — almost never needed in component CSS. Do NOT create component-level variables as a customization API. Prefer direct CSS property overrides.
 
-**When to use component-level CSS variables:**
+**When a variable seems useful but isn't:** If the variable is set and consumed on the **same element**, a property override is always simpler — even when variants reassign it:
 
 ```css
-/* ✅ GOOD — variable is reassigned by variants/states */
-.root {
-  --chip-bg: var(--reltio-color-bg-transparent-1);
-}
-.small { --chip-bg: var(--reltio-color-surface-2); }
+/* ❌ BAD — variable adds indirection for no benefit */
+.root { --chip-height: 32px; height: var(--chip-height); }
+.small { --chip-height: 26px; }
+
+/* ✅ GOOD — direct property override */
+.root { height: 32px; }
+.small { height: 26px; }
+```
+
+```css
+/* ❌ BAD — background variable set and consumed on .root */
+.root { --chip-bg: var(--reltio-color-bg-transparent-1); background: var(--chip-bg); }
 .filled.primary { --chip-bg: var(--reltio-color-primary-transparent-mild); }
-.inner { background: var(--chip-bg); }
+
+/* ✅ GOOD — variants override the property directly */
+.root { background: var(--reltio-color-bg-transparent-1); }
+.filled.primary { background: var(--reltio-color-primary-transparent-mild); }
 ```
 
-**When NOT to use component-level CSS variables:**
+**The only valid case** for a CSS variable is when a parent sets a value that **cascades to multiple child elements** via the DOM:
 
 ```css
-/* ❌ BAD — variable used once, just an alias */
-.root {
-  --tabs-font-size: 14px;
-}
-.tab { font-size: var(--tabs-font-size); }
-
-/* ✅ GOOD — use the value directly */
-.tab { font-size: 14px; }
+/* ✅ GOOD — parent value cascades to two different children */
+.root { --icon-size: 18px; }
+.small { --icon-size: 16px; }
+.leadingIcon { width: var(--icon-size); height: var(--icon-size); }
+.removeButton { width: var(--icon-size); height: var(--icon-size); }
 ```
 
-**Rule of thumb:** If a CSS variable is never reassigned in another selector, remove it and use the value directly.
+Even then, consider whether compound selectors (`.small .leadingIcon`) are simpler:
+
+```css
+/* Also fine — explicit and easy to understand */
+.leadingIcon { width: 18px; height: 18px; }
+.small .leadingIcon { width: 16px; height: 16px; }
+.removeButton { width: 18px; height: 18px; }
+.small .removeButton { width: 16px; height: 16px; }
+```
+
+**Rule of thumb:** Default to no variables. Only introduce one when it demonstrably reduces repetition across multiple child selectors and the direct approach is clearly worse.
+
+**Responsive / media queries** — do NOT add `@media` queries or mobile-specific styles to component CSS. Responsive design guidelines will be developed separately. For now, components target desktop viewports only.
+
+### TypeScript Types (`.types.ts`)
+
+**Base type:** Use `React.ComponentPropsWithoutRef<"tag">` as the standard generic for native element props. It resolves the correct attributes type from the tag name — no need for verbose `React.DetailsHTMLAttributes<HTMLDetailsElement>`.
+
+**Structure:** Custom props first, base HTML type second in the intersection. Do NOT redeclare props that already exist in the base type with the same type — `className`, `children`, `style`, event handlers etc. are inherited automatically:
+
+```typescript
+export type ChipProps = React.ComponentPropsWithoutRef<"button"> & {
+  variant?: ChipVariant;
+  color?: ChipColor;
+  size?: ChipSize;
+};
+```
+
+**`Omit`** — use to remove props the component doesn't support, or to redeclare a native prop that must appear in Storybook docs:
+
+```typescript
+/* Remove unsupported prop */
+export type LoaderProps = Omit<React.ComponentPropsWithoutRef<"div">, "children">;
+
+/* Non-standard children type */
+export type MessageProps = Omit<React.ComponentPropsWithoutRef<"div">, "children"> & {
+  children: string;
+};
+
+/* Native prop redeclared for Storybook docgen visibility */
+export type DetailsProps = Omit<React.ComponentPropsWithoutRef<"details">, "open"> & {
+  /** @default false */
+  open?: boolean;
+};
+```
+
+> **Why `Omit` for native props?** Storybook docgen filters out native HTML attributes from the Props table. If a component only re-uses native props (like `open` on `<details>`), they won't appear in docs unless explicitly `Omit`-ed from the base and redeclared in the custom type.
+
+**Polymorphic components** (e.g. Button renders as `<button>` or `<a>`) use a discriminated union with separate base types:
+
+```typescript
+type ButtonBase = {
+  variant?: "filled" | "outlined";
+};
+
+type AsButton = {
+  href?: never;
+  type?: "button" | "submit" | "reset";
+} & React.ComponentPropsWithoutRef<"button">;
+
+type AsAnchor = {
+  href: string;
+} & React.ComponentPropsWithoutRef<"a">;
+
+export type ButtonProps = ButtonBase & (AsButton | AsAnchor);
+```
 
 ### Storybook Stories
 

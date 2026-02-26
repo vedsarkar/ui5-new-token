@@ -6,9 +6,7 @@ export type ChipColor = "default" | "primary" | "success" | "warning" | "error";
 
 export type ChipSize = "small" | "medium";
 
-export type ChipProps = {
-	/** Chip label content */
-	children: React.ReactNode;
+export type ChipProps = React.ComponentPropsWithoutRef<"button"> & {
 	/** Visual style of the chip */
 	variant?: ChipVariant;
 	/** Color scheme */
@@ -23,19 +21,4 @@ export type ChipProps = {
 	onClick?: () => void;
 	/** Disables the chip and its interactive elements */
 	disabled?: boolean;
-	/** Additional CSS class name */
-	className?: string;
-	/** Inline styles with optional CSS custom property overrides */
-	style?: React.CSSProperties & {
-		"--reltio-chip-background"?: string;
-		"--reltio-chip-color"?: string;
-		"--reltio-chip-border-color"?: string;
-		"--reltio-chip-font-size"?: string;
-		"--reltio-chip-padding-x"?: string;
-		"--reltio-chip-padding-y"?: string;
-		"--reltio-chip-gap"?: string;
-		"--reltio-chip-border-radius"?: string;
-		"--reltio-chip-icon-size"?: string;
-		"--reltio-chip-height"?: string;
-	};
 };

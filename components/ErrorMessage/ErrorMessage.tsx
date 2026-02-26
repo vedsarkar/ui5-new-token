@@ -21,10 +21,10 @@ export const ErrorMessage = ({
 			aria-live="polite"
 			{...rest}
 		>
-			<span className={styles.iconWrapper} aria-hidden="true">
+			<span className={classNames(styles.iconWrapper)} aria-hidden="true">
 				<ErrorCircle size="small" color="error" />
 			</span>
-			<p className={styles.text}>{children || DEFAULT_MESSAGE}</p>
+			<p className={classNames(styles.text)}>{children || DEFAULT_MESSAGE}</p>
 		</div>
 	);
 };

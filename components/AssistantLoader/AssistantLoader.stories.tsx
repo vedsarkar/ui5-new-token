@@ -11,9 +11,3 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({});
-
-export const CustomSize = meta.story({
-	args: {
-		style: { "--reltio-assistant-loader-size": "48px" },
-	},
-});

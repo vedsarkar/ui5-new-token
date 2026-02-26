@@ -7,7 +7,6 @@ const DEFAULT_LABEL = "thinking";
 
 /**
  * Displays a standardized loading indicator for assistant responses using a GIF animation.
- * Size is controlled via the `--reltio-assistant-loader-size` CSS variable (default: 32px).
  * Includes accessibility attributes (aria-busy, aria-label, role="status").
  */
 export const AssistantLoader = ({
@@ -26,7 +25,7 @@ export const AssistantLoader = ({
 			<img
 				src={LOADING_GIF_SRC}
 				alt=""
-				className={styles.indicator}
+				className={classNames(styles.indicator)}
 				aria-hidden="true"
 			/>
 			<div className={classNames(styles.dotFlashing)} aria-hidden="true" />

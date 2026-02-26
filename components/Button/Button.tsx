@@ -19,10 +19,8 @@ export const Button = ({
 	fullWidth = false,
 	children,
 	className,
-	onClick,
 	href,
 	type = "button",
-	"aria-label": ariaLabel,
 	...rest
 }: ButtonProps) => {
 	const buttonRef = useRef<HTMLButtonElement | HTMLAnchorElement>(null);
@@ -38,47 +36,6 @@ export const Button = ({
 		}
 	}, [disabled]);
 
-	// Determine if button is interactive
-	const isInteractive = !disabled;
-
-	// Handle click events
-	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-		if (!isInteractive) {
-			event.preventDefault();
-			return;
-		}
-
-		// Prevent navigation for disabled anchors
-		if (href && disabled) {
-			event.preventDefault();
-			return;
-		}
-
-		onClick?.(event);
-	};
-
-	// Handle keyboard events (Enter and Space)
-	const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
-		if (!isInteractive) {
-			event.preventDefault();
-			return;
-		}
-
-		// Enter and Space activate button
-		if (event.key === "Enter" || event.key === " ") {
-			if (event.key === " ") {
-				event.preventDefault(); // Prevent page scroll
-			}
-			if (href) {
-				// For anchors, trigger click
-				buttonRef.current?.click();
-			} else {
-				// For buttons, trigger onClick
-				onClick?.(event as unknown as React.MouseEvent<HTMLElement>);
-			}
-		}
-	};
-
 	// Compose className using classNames utility
 	const composedClassName = classNames(
 		styles.root,
@@ -90,12 +47,6 @@ export const Button = ({
 		className,
 	);
 
-	// ARIA attributes
-	const ariaAttributes = {
-		"aria-label": ariaLabel,
-		"aria-disabled": disabled ? true : undefined,
-	};
-
 	// Render as anchor if href is provided
 	if (href) {
 		return (
@@ -103,10 +54,8 @@ export const Button = ({
 				ref={buttonRef as React.RefObject<HTMLAnchorElement>}
 				href={disabled ? undefined : href}
 				className={composedClassName}
-				onClick={handleClick}
-				onKeyDown={handleKeyDown}
-				{...ariaAttributes}
-				{...rest}
+				aria-disabled={disabled ? true : undefined}
+				{...(rest as React.ComponentPropsWithoutRef<"a">)}
 			>
 				{children}
 			</a>
@@ -120,10 +69,7 @@ export const Button = ({
 			type={type}
 			disabled={disabled}
 			className={composedClassName}
-			onClick={handleClick}
-			onKeyDown={handleKeyDown}
-			{...ariaAttributes}
-			{...rest}
+			{...(rest as React.ComponentPropsWithoutRef<"button">)}
 		>
 			{children}
 		</button>

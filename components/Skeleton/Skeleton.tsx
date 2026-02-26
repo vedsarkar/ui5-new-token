@@ -30,7 +30,7 @@ export const Skeleton = ({
 				<div
 					// biome-ignore lint/suspicious/noArrayIndexKey: static placeholder list, order never changes
 					key={i}
-					className={styles.row}
+					className={classNames(styles.row)}
 					aria-hidden="true"
 				/>
 			))}

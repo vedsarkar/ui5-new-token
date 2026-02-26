@@ -24,7 +24,9 @@ export const Markdown = ({
 	const composedClassName = classNames(styles.root, className);
 	return (
 		<div className={composedClassName} style={style}>
-			<ErrorBoundary fallback={<pre className={styles.error}>{children}</pre>}>
+			<ErrorBoundary
+				fallback={<pre className={classNames(styles.error)}>{children}</pre>}
+			>
 				<MarkdownToJsx
 					options={{
 						overrides: {

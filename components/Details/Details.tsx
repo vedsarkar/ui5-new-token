@@ -18,17 +18,14 @@ export const Details = ({
 	open: initialOpen = false,
 	children,
 	className,
-	style,
 	...rest
 }: DetailsProps) => {
 	const [isOpen, setIsOpen] = useState(initialOpen);
 
-	// Update internal state when open prop changes
 	useEffect(() => {
 		setIsOpen(initialOpen);
 	}, [initialOpen]);
 
-	// Extract summary from children
 	let summary: React.ReactNode = "Details";
 	const contentChildren: React.ReactNode[] = [];
 
@@ -44,28 +41,23 @@ export const Details = ({
 		}
 	});
 
-	// Handle toggle
 	const handleToggle = (event: React.SyntheticEvent<HTMLDetailsElement>) => {
 		const detailsElement = event.currentTarget;
 		setIsOpen(detailsElement.open);
 	};
 
-	// Compose className using classNames utility
-	const composedClassName = classNames(styles.root, className);
-
 	return (
 		<details
-			className={composedClassName}
-			style={style}
+			className={classNames(styles.root, className)}
 			onToggle={handleToggle}
 			open={initialOpen}
 			{...rest}
 		>
-			<summary className={styles.summary}>
-				<span className={styles.icon} aria-hidden="true">
+			<summary className={classNames(styles.summary)}>
+				<span className={classNames(styles.icon)} aria-hidden="true">
 					<CodeBrackets size="small" />
 				</span>
-				<span className={styles.summaryText}>{summary}</span>
+				<span className={classNames(styles.summaryText)}>{summary}</span>
 				<span
 					className={classNames(styles.chevron, isOpen && styles.chevronOpen)}
 				>
@@ -76,7 +68,7 @@ export const Details = ({
 					)}
 				</span>
 			</summary>
-			<div className={styles.content}>{contentChildren}</div>
+			<div className={classNames(styles.content)}>{contentChildren}</div>
 		</details>
 	);
 };

@@ -131,15 +131,3 @@ export const OutlinedError = meta.story({
 		icon: <ErrorCircle size="small" />,
 	},
 });
-
-export const CustomStyled = meta.story({
-	args: {
-		children: "Custom",
-		onRemove: fn(),
-		style: {
-			"--reltio-chip-background": "#1a1a2e",
-			"--reltio-chip-color": "#ffffff",
-			"--reltio-chip-border-radius": "9999px",
-		},
-	},
-});

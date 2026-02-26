@@ -1,61 +1,34 @@
 .root {
-	--reltio-chip-font-family: var(
-		--reltio-font-family-body,
-		"Libre Franklin",
-		sans-serif
-	);
-	--reltio-chip-font-weight: var(--reltio-font-weight-body, 500);
-	--reltio-chip-letter-spacing: 0.25px;
-	--reltio-chip-border-radius: 8px;
-	--reltio-chip-icon-size: 18px;
-	--reltio-chip-disabled-opacity: 0.38;
-	--reltio-chip-transition-duration: 180ms;
-	--reltio-chip-transition-timing: ease;
-
-	--reltio-chip-font-size: 14px;
-	--reltio-chip-height: 32px;
-	--reltio-chip-padding-x: 12px;
-	--reltio-chip-padding-y: 0;
-	--reltio-chip-gap: 6px;
-
-	--reltio-chip-background: var(--reltio-color-bg-transparent-1);
-	--reltio-chip-color: var(--reltio-color-text);
-	--reltio-chip-border-color: transparent;
-
 	display: inline-flex;
 	align-items: center;
-	gap: var(--reltio-chip-gap);
-	height: var(--reltio-chip-height);
-	padding: var(--reltio-chip-padding-y) var(--reltio-chip-padding-x);
-	background-color: var(--reltio-chip-background);
-	color: var(--reltio-chip-color);
-	font-family: var(--reltio-chip-font-family);
-	font-size: var(--reltio-chip-font-size);
-	font-weight: var(--reltio-chip-font-weight);
-	letter-spacing: var(--reltio-chip-letter-spacing);
+	gap: 6px;
+	height: 32px;
+	padding: 0 12px;
+	background-color: var(--reltio-color-bg-transparent-1);
+	color: var(--reltio-color-text);
+	font-family: "Libre Franklin", sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	letter-spacing: 0.25px;
 	line-height: 1;
-	border-radius: var(--reltio-chip-border-radius);
-	border: 1px solid var(--reltio-chip-border-color);
+	border-radius: 8px;
+	border: 1px solid transparent;
 	box-sizing: border-box;
 	white-space: nowrap;
 	user-select: none;
 	transition:
-		background-color var(--reltio-chip-transition-duration)
-		var(--reltio-chip-transition-timing),
-		border-color var(--reltio-chip-transition-duration)
-		var(--reltio-chip-transition-timing),
-		box-shadow var(--reltio-chip-transition-duration)
-		var(--reltio-chip-transition-timing);
+		background-color 180ms ease,
+		border-color 180ms ease,
+		box-shadow 180ms ease;
 }
 
 /* Size: Small */
 .small {
-	--reltio-chip-font-size: 12px;
-	--reltio-chip-height: 26px;
-	--reltio-chip-padding-x: 8px;
-	--reltio-chip-gap: 4px;
-	--reltio-chip-icon-size: 16px;
-	--reltio-chip-border-radius: 6px;
+	font-size: 12px;
+	height: 26px;
+	padding: 0 8px;
+	gap: 4px;
+	border-radius: 6px;
 }
 
 /* Interactive (clickable) */
@@ -63,7 +36,7 @@
 	cursor: pointer;
 
 	&:hover {
-		box-shadow: 0 1px 3px rgba(0, 0, 51, 0.12);
+		box-shadow: 0 1px 3px var(--reltio-color-shadow-2);
 	}
 
 	&:active {
@@ -78,104 +51,104 @@
 
 /* Variant: Filled (default) */
 .filled.default {
-	--reltio-chip-background: var(--reltio-color-bg-transparent-1);
-	--reltio-chip-color: var(--reltio-color-text);
+	background-color: var(--reltio-color-bg-transparent-1);
+	color: var(--reltio-color-text);
 
 	&.clickable:hover {
-		--reltio-chip-background: #ededed;
+		background-color: var(--reltio-color-bg-transparent-2);
 	}
 }
 
 .filled.primary {
-	--reltio-chip-background: var(--reltio-color-primary-transparent-mild);
-	--reltio-chip-color: var(--reltio-color-primary);
+	background-color: var(--reltio-color-primary-transparent-mild);
+	color: var(--reltio-color-primary);
 
 	&.clickable:hover {
-		--reltio-chip-background: var(--reltio-color-primary-transparent-focus);
+		background-color: var(--reltio-color-primary-transparent-focus);
 	}
 }
 
 .filled.success {
-	--reltio-chip-background: var(--reltio-color-success-transparent);
-	--reltio-chip-color: var(--reltio-color-success);
+	background-color: var(--reltio-color-success-transparent);
+	color: var(--reltio-color-success);
 
 	&.clickable:hover {
-		--reltio-chip-background: var(--reltio-color-success-transparent-hover);
+		background-color: var(--reltio-color-success-transparent-hover);
 	}
 }
 
 .filled.warning {
-	--reltio-chip-background: var(--reltio-color-orange-transparent);
-	--reltio-chip-color: var(--reltio-color-orange);
+	background-color: var(--reltio-color-orange-transparent);
+	color: var(--reltio-color-orange);
 
 	&.clickable:hover {
-		--reltio-chip-background: var(--reltio-color-orange-transparent-hover);
+		background-color: var(--reltio-color-orange-transparent-hover);
 	}
 }
 
 .filled.error {
-	--reltio-chip-background: var(--reltio-color-error-transparent);
-	--reltio-chip-color: var(--reltio-color-error);
+	background-color: var(--reltio-color-error-transparent);
+	color: var(--reltio-color-error);
 
 	&.clickable:hover {
-		--reltio-chip-background: var(--reltio-color-error-transparent-hover);
+		background-color: var(--reltio-color-error-transparent-hover);
 	}
 }
 
 /* Variant: Outlined */
 .outlined.default {
-	--reltio-chip-background: transparent;
-	--reltio-chip-color: var(--reltio-color-text);
-	--reltio-chip-border-color: var(--reltio-color-border-2);
+	background-color: transparent;
+	color: var(--reltio-color-text);
+	border-color: var(--reltio-color-border-2);
 
 	&.clickable:hover {
-		--reltio-chip-background: #f2f2f2;
+		background-color: var(--reltio-color-bg-transparent-1);
 	}
 }
 
 .outlined.primary {
-	--reltio-chip-background: transparent;
-	--reltio-chip-color: var(--reltio-color-primary);
-	--reltio-chip-border-color: var(--reltio-color-primary);
+	background-color: transparent;
+	color: var(--reltio-color-primary);
+	border-color: var(--reltio-color-primary);
 
 	&.clickable:hover {
-		--reltio-chip-background: var(--reltio-color-primary-transparent-mild);
+		background-color: var(--reltio-color-primary-transparent-mild);
 	}
 }
 
 .outlined.success {
-	--reltio-chip-background: transparent;
-	--reltio-chip-color: var(--reltio-color-success);
-	--reltio-chip-border-color: var(--reltio-color-success);
+	background-color: transparent;
+	color: var(--reltio-color-success);
+	border-color: var(--reltio-color-success);
 
 	&.clickable:hover {
-		--reltio-chip-background: var(--reltio-color-success-transparent);
+		background-color: var(--reltio-color-success-transparent);
 	}
 }
 
 .outlined.warning {
-	--reltio-chip-background: transparent;
-	--reltio-chip-color: var(--reltio-color-orange);
-	--reltio-chip-border-color: var(--reltio-color-orange);
+	background-color: transparent;
+	color: var(--reltio-color-orange);
+	border-color: var(--reltio-color-orange);
 
 	&.clickable:hover {
-		--reltio-chip-background: var(--reltio-color-orange-transparent);
+		background-color: var(--reltio-color-orange-transparent);
 	}
 }
 
 .outlined.error {
-	--reltio-chip-background: transparent;
-	--reltio-chip-color: var(--reltio-color-error);
-	--reltio-chip-border-color: var(--reltio-color-error);
+	background-color: transparent;
+	color: var(--reltio-color-error);
+	border-color: var(--reltio-color-error);
 
 	&.clickable:hover {
-		--reltio-chip-background: var(--reltio-color-error-transparent);
+		background-color: var(--reltio-color-error-transparent);
 	}
 }
 
 /* Disabled */
 .disabled {
-	opacity: var(--reltio-chip-disabled-opacity);
+	opacity: 0.38;
 	pointer-events: none;
 }
 
@@ -185,8 +158,13 @@
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	width: var(--reltio-chip-icon-size);
-	height: var(--reltio-chip-icon-size);
+	width: 18px;
+	height: 18px;
+}
+
+.small .leadingIcon {
+	width: 16px;
+	height: 16px;
 }
 
 /* Remove button */
@@ -201,12 +179,11 @@
 	cursor: pointer;
 	color: inherit;
 	opacity: 0.7;
-	width: var(--reltio-chip-icon-size);
-	height: var(--reltio-chip-icon-size);
+	width: 18px;
+	height: 18px;
 	flex-shrink: 0;
 	border-radius: 50%;
-	transition: opacity var(--reltio-chip-transition-duration)
-		var(--reltio-chip-transition-timing);
+	transition: opacity 180ms ease;
 
 	&:hover {
 		opacity: 1;
@@ -217,4 +194,9 @@
 		outline-offset: 1px;
 		opacity: 1;
 	}
+}
+
+.small .removeButton {
+	width: 16px;
+	height: 16px;
 }

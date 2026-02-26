@@ -1,38 +1,24 @@
 .root {
-	--reltio-details-background-color: var(--reltio-color-surface-1);
-	--reltio-details-border-color: var(--reltio-color-border-2);
-	--reltio-details-text-color: var(--reltio-color-text);
-	--reltio-details-hover-bg: color-mix(
-		in srgb,
-		var(--reltio-color-primary) 12%,
-		transparent
-	);
-	--reltio-details-code-bg: var(--reltio-color-surface-2);
-
 	margin: 1rem 0;
-	background-color: var(--reltio-details-background-color);
-	border: var(--reltio-details-border-width, 0.5px) solid
-		var(--reltio-details-border-color);
-	border-radius: var(--reltio-details-border-radius, 12px);
+	background-color: var(--reltio-color-surface-1);
+	border: 0.5px solid var(--reltio-color-border-2);
+	border-radius: 12px;
 	overflow: hidden;
 	padding: 0;
-	font-family: var(--reltio-details-font-family, "Roboto Flex", sans-serif);
-	font-size: var(--reltio-details-font-size, 14px);
+	font-family: "Roboto Flex", sans-serif;
+	font-size: 14px;
 }
 
 .summary {
 	display: flex;
 	align-items: center;
-	gap: var(--reltio-details-summary-gap, 8px);
+	gap: 8px;
 	cursor: pointer;
 	user-select: none;
 	list-style: none;
-	color: var(
-		--reltio-details-summary-text-color,
-		var(--reltio-details-text-color)
-	);
-	line-height: var(--reltio-details-summary-line-height, 1.71);
-	padding: var(--reltio-details-summary-padding, 12px);
+	color: var(--reltio-color-text);
+	line-height: 1.71;
+	padding: 12px;
 	margin: 0;
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
@@ -41,9 +27,10 @@
 }
 
 .summary:hover {
-	background-color: var(
-		--reltio-details-summary-hover-bg,
-		var(--reltio-details-hover-bg)
+	background-color: color-mix(
+		in srgb,
+		var(--reltio-color-primary) 12%,
+		transparent
 	);
 }
 
@@ -65,17 +52,16 @@
 
 .summaryText {
 	flex: 1;
-	font-weight: var(--reltio-details-title-font-weight, 500);
-	letter-spacing: var(--reltio-details-title-letter-spacing, 0.045px);
+	font-weight: 500;
+	letter-spacing: 0.045px;
 }
 
 .chevron {
 	flex-shrink: 0;
-	transition: transform var(--reltio-details-transition-duration, 195ms)
-		var(--reltio-details-transition-ease, cubic-bezier(0.4, 0, 0.2, 1));
-	color: var(--reltio-details-chevron-color, var(--reltio-details-text-color));
-	width: var(--reltio-details-chevron-size, 24px);
-	height: var(--reltio-details-chevron-size, 24px);
+	transition: transform 195ms cubic-bezier(0.4, 0, 0.2, 1);
+	color: var(--reltio-color-text);
+	width: 24px;
+	height: 24px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -86,36 +72,22 @@
 }
 
 .content {
-	padding: 0 var(--reltio-details-content-padding, 12px)
-		var(--reltio-details-content-padding, 12px)
-		var(--reltio-details-content-padding, 12px);
-	color: var(
-		--reltio-details-content-text-color,
-		var(--reltio-details-text-color)
-	);
-	line-height: var(--reltio-details-content-line-height, 1.71);
+	padding: 0 12px 12px 12px;
+	color: var(--reltio-color-text);
+	line-height: 1.71;
 }
 
 .content pre {
 	margin: 0;
-	background-color: var(
-		--reltio-details-code-background-color,
-		var(--reltio-details-code-bg)
-	);
-	border-radius: var(--reltio-details-content-pre-radius, 8px);
-	padding: var(--reltio-details-content-pre-padding, 16px);
-	border: 1px solid var(--reltio-details-border-color);
+	background-color: var(--reltio-color-surface-2);
+	border-radius: 8px;
+	padding: 16px;
+	border: 1px solid var(--reltio-color-border-2);
 }
 
 .content code {
-	color: var(
-		--reltio-details-content-code-color,
-		var(--reltio-details-text-color)
-	);
-	background-color: var(
-		--reltio-details-code-background-color,
-		var(--reltio-details-code-bg)
-	);
+	color: var(--reltio-color-text);
+	background-color: var(--reltio-color-surface-2);
 	padding: 0.2em 0.4em;
 	border-radius: 3px;
 	font-family: monospace;
@@ -123,8 +95,12 @@
 }
 
 :global([data-theme="dark"]) .root {
-	--reltio-details-background-color: var(--reltio-color-surface-2);
-	--reltio-details-code-bg: color-mix(
+	background-color: var(--reltio-color-surface-2);
+}
+
+:global([data-theme="dark"]) .content pre,
+:global([data-theme="dark"]) .content code {
+	background-color: color-mix(
 		in srgb,
 		var(--reltio-color-border-2) 40%,
 		var(--reltio-color-surface-2)
@@ -132,6 +108,6 @@
 }
 
 .content p {
-	margin-top: var(--reltio-details-content-p-margin, 8px);
-	margin-bottom: var(--reltio-details-content-p-margin, 8px);
+	margin-top: 8px;
+	margin-bottom: 8px;
 }

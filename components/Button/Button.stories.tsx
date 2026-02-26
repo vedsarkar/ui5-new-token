@@ -133,40 +133,6 @@ export const AccessibleDisabled = meta.story({
 	},
 });
 
-// User Story 5: Custom Styling and Content
-export const WithCustomClassName = meta.story({
-	args: {
-		className: "custom-button-class",
-		children: "Custom Styled",
-	},
-	render: (args) => (
-		<>
-			<Button {...args} />
-			<style>{`
-				.custom-button-class {
-					background-color: #ff0000 !important;
-					color: #ffffff !important;
-				}
-			`}</style>
-		</>
-	),
-});
-
-export const WithCustomCssVariables = meta.story({
-	args: {
-		style: {
-			"--reltio-button-color-background": "red",
-			"--reltio-button-color-text": "white",
-		},
-		children: "Custom CSS Variables",
-	},
-	render: (args) => (
-		<>
-			<Button {...args} />
-		</>
-	),
-});
-
 export const FullWidth = meta.story({
 	args: {
 		fullWidth: true,

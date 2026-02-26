@@ -1,12 +1,8 @@
 .root {
-	--reltio-divider-color: var(--reltio-color-border-3);
-	--reltio-divider-thickness: 1px;
-	--reltio-divider-spacing: 0px;
-
 	width: 100%;
-	height: var(--reltio-divider-thickness);
-	margin: var(--reltio-divider-spacing) 0;
+	height: 1px;
+	margin: 0;
 	padding: 0;
 	border: none;
-	background-color: var(--reltio-divider-color);
+	background-color: var(--reltio-color-border-3);
 }

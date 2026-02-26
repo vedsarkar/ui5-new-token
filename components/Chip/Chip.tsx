@@ -14,6 +14,7 @@ export const Chip = ({
 	disabled = false,
 	className,
 	style,
+	...rest
 }: ChipProps) => {
 	const isClickable = !!onClick;
 
@@ -56,6 +57,7 @@ export const Chip = ({
 				style={style}
 				onClick={onClick}
 				disabled={disabled}
+				{...rest}
 			>
 				{content}
 			</button>

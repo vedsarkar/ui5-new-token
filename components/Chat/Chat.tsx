@@ -121,7 +121,7 @@ export const Chat = ({
 						/>
 					))}
 					{lastMessages.length > 0 && (
-						<div className={styles.lastMessageWrapper}>
+						<div className={classNames(styles.lastMessageWrapper)}>
 							{lastMessages.map((msg, i) => (
 								<ChatMessage
 									key={msg.messageId ?? `${i}-${msg.role}`}

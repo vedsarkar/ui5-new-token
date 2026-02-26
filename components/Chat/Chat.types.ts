@@ -36,7 +36,7 @@ export type Message = {
 /**
  * Props for the Chat component
  */
-export type ChatProps = {
+export type ChatProps = React.ComponentPropsWithoutRef<"div"> & {
 	/**
 	 * List of messages to display in order. Each message is rendered by type (user → UserMessage, assistant → AssistantMessage).
 	 */
@@ -54,17 +54,4 @@ export type ChatProps = {
 	 * @default false
 	 */
 	initialLoading?: boolean;
-
-	/**
-	 * Additional CSS class names
-	 */
-	className?: string;
-
-	/**
-	 * Inline styles (e.g. for CSS variable overrides)
-	 */
-	style?: React.CSSProperties;
-} & Omit<
-	React.ComponentPropsWithoutRef<"div">,
-	"children" | "className" | "style"
->;
+};

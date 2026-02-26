@@ -81,7 +81,7 @@ components/ComponentName/
 - `classNames()` automatically adds stable prefixed classes (e.g. `reltio_Tabs_tab`) for external customization
 - Colors MUST reference global `--reltio-color-*` tokens from `public/variables.css` — never hardcode hex values
 - Typography, spacing, sizing — use plain values directly (e.g. `font-size: 14px`, `padding: 8px 16px`)
-- Component-level CSS custom properties (`--reltio-{component}-*`) — use ONLY when a value is reassigned across multiple selectors (variant switching, state management). Do NOT create variables that are used only once
+- Component-level CSS custom properties — almost never needed. Do NOT create variables as a customization API. If a value is set and consumed on the same element, override the property directly — even for variant/size switches. Use compound selectors (`.small .icon`) instead of cascading variables
 - External customization is done through stable CSS classes, NOT through component-level CSS variables
 
 Example pattern:
@@ -96,6 +96,10 @@ Example pattern:
 .active {
   color: var(--reltio-color-primary);
 }
+
+/* Variants override properties directly, no variables needed */
+.root { height: 32px; }
+.small { height: 26px; }
 ```
 
 ### Global Color Tokens
@@ -155,7 +159,7 @@ openspec validate [item] --strict # Validate changes
 - Types in `.types.ts` file using `type` keyword
 - All className attributes use `classNames()` utility
 - Colors use global `--reltio-color-*` tokens, no hardcoded hex values
-- CSS custom properties only where values are reassigned across selectors
+- No component-level CSS custom properties (prefer direct property overrides)
 - Storybook stories added (one variant per story)
 - `npm run format` executed
 - `npm run lint` passes
