@@ -12,4 +12,6 @@ export type SkeletonProps = Omit<
 	 * @default 3
 	 */
 	rows?: number;
+	/** Height of each row bar (e.g. "16px", "1rem", "2em"). Defaults to 16px. */
+	size?: string;
 };

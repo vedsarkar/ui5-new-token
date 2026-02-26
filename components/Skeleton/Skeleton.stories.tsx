@@ -20,3 +20,9 @@ export const CustomRowCount = meta.story({
 		rows: 10,
 	},
 });
+
+export const CustomSize = meta.story({
+	args: {
+		size: "32px",
+	},
+});

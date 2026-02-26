@@ -82,7 +82,8 @@ components/ComponentName/
 - Colors MUST reference global `--reltio-color-*` tokens from `public/variables.css` — never hardcode hex values
 - Typography, spacing, sizing — use plain values directly (e.g. `font-size: 14px`, `padding: 8px 16px`)
 - Component-level CSS custom properties — almost never needed. Do NOT create variables as a customization API. If a value is set and consumed on the same element, override the property directly — even for variant/size switches. Use compound selectors (`.small .icon`) instead of cascading variables
-- External customization is done through stable CSS classes, NOT through component-level CSS variables
+- **CSS variable encapsulation** — when a component does use an internal CSS variable, it MUST always be set explicitly on the component root element (including the default value via inline style). This prevents ancestor/global variables with the same name from leaking in. The only CSS variables a component may consume from outside are global `--reltio-color-*` tokens from `public/variables.css`
+- External customization is done through React props, stable CSS classes, and global `--reltio-color-*` tokens — never through component-level CSS variables
 
 Example pattern:
 ```css
@@ -160,7 +161,7 @@ openspec validate [item] --strict # Validate changes
 - Types in `.types.ts` file using `type` keyword
 - All className attributes use `classNames()` utility
 - Colors use global `--reltio-color-*` tokens, no hardcoded hex values
-- No component-level CSS custom properties (prefer direct property overrides)
+- No component-level CSS custom properties unless encapsulated (always set on root with default; prefer inline styles when pseudo-elements are not involved)
 - Storybook stories added (one variant per story; one story per free-form prop)
 - `npm run format` executed
 - `npm run lint` passes

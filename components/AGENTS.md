@@ -86,6 +86,36 @@ Even then, consider whether compound selectors (`.small .leadingIcon`) are simpl
 
 **Rule of thumb:** Default to no variables. Only introduce one when it demonstrably reduces repetition across multiple child selectors and the direct approach is clearly worse.
 
+**Encapsulation — internal CSS variables must never leak:**
+
+When a component uses an internal CSS variable (e.g. for a dynamic prop that cascades to pseudo-elements), the component MUST always set that variable explicitly on its root element — including the default value. This creates a hard boundary that prevents any ancestor or global variable with the same name from leaking in.
+
+The only CSS variables a component may consume from outside are the global `--reltio-color-*` tokens defined in `public/variables.css`. All other customization goes through **React props** and **stable CSS classes**.
+
+```tsx
+/* ✅ GOOD — variable always set on root, no external leak possible */
+const rootStyle = {
+  ...style,
+  "--size": size ?? "32px",
+} as React.CSSProperties;
+
+<div style={rootStyle}>...</div>
+```
+
+```tsx
+/* ❌ BAD — variable set only when prop is provided; fallback in CSS can pick up ancestor values */
+const rootStyle = size
+  ? { ...style, "--size": size }
+  : style;
+```
+
+If the dynamic value only affects regular DOM elements (no pseudo-elements), prefer inline styles directly — no CSS variable needed at all:
+
+```tsx
+/* ✅ GOOD — inline style, fully encapsulated, no variable */
+<div style={size ? { height: size } : undefined} />
+```
+
 **Responsive / media queries** — do NOT add `@media` queries or mobile-specific styles to component CSS. Responsive design guidelines will be developed separately. For now, components target desktop viewports only.
 
 ### TypeScript Types (`.types.ts`)

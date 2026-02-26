@@ -12,10 +12,13 @@ const DEFAULT_ROWS = 3;
  */
 export const Skeleton = ({
 	rows = DEFAULT_ROWS,
+	size,
 	className,
+	style,
 	...rest
 }: SkeletonProps) => {
 	const rowCount = Math.max(1, Math.floor(Number(rows)) || DEFAULT_ROWS);
+	const rowStyle = size ? { height: size } : undefined;
 
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: status role is correct for loading placeholder; output is for calculation results
@@ -24,6 +27,7 @@ export const Skeleton = ({
 			aria-busy="true"
 			aria-label={DEFAULT_LABEL}
 			role="status"
+			style={style}
 			{...rest}
 		>
 			{Array.from({ length: rowCount }, (_, i) => (
@@ -31,6 +35,7 @@ export const Skeleton = ({
 					// biome-ignore lint/suspicious/noArrayIndexKey: static placeholder list, order never changes
 					key={i}
 					className={classNames(styles.row)}
+					style={rowStyle}
 					aria-hidden="true"
 				/>
 			))}

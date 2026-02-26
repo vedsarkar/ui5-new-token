@@ -15,9 +15,10 @@ export const AssistantLoader = ({
 	style,
 	...rest
 }: AssistantLoaderProps) => {
-	const rootStyle = size
-		? ({ ...style, "--size": size } as React.CSSProperties)
-		: style;
+	const rootStyle = {
+		...style,
+		"--size": size ?? "32px",
+	} as React.CSSProperties;
 
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: status role is correct for loading placeholder; output is for calculation results
