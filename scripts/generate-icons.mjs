@@ -52,61 +52,62 @@ export const ${iconName} = ({
 `;
 }
 
-function generateStories(iconName) {
-	return `import type { Meta, StoryObj } from "@storybook/react";
-import { ${iconName} } from "./${iconName}";
+function generateUnifiedStories(icons) {
+	const sortedIcons = [...icons].sort((a, b) => a.name.localeCompare(b.name));
+
+	const firstIcon = sortedIcons[0].name;
+
+	const stories = sortedIcons
+		.map(
+			({ name }) =>
+				`export const ${name}: Story = { args: { name: "${name}" } };`,
+		)
+		.join("\n\n");
+
+	return `import { ArgTypes, Description as Desc, Stories, Subtitle, Title } from "@storybook/addon-docs/blocks";
+import type { Meta, StoryObj } from "@storybook/react";
+import type { IconProps } from "./Icon.types";
+import { IconLibrary } from "./IconLibrary";
+import { ${firstIcon} as IconRef, iconMap } from "./index";
 import styles from "./IconStories.module.css";
 
-const meta: Meta<typeof ${iconName}> = {
-	component: ${iconName},
-	title: "Icons/${iconName}",
+type StoryProps = IconProps & { name: string };
+
+const meta: Meta<StoryProps> = {
+	title: "Icons",
+	component: IconRef as React.FC,
 	parameters: {
 		layout: "centered",
+		docs: {
+			page: () => (
+				<>
+					<Title />
+					<Subtitle />
+					<Desc />
+					<h3>Props</h3>
+					<ArgTypes />
+					<IconLibrary />
+					<Stories />
+				</>
+			),
+		},
+	},
+	render: ({ name }) => {
+		const Icon = iconMap[name];
+		return (
+			<div className={styles.story}>
+				<Icon size="small" color="success" />
+				<Icon />
+				<Icon size="large" color="error" />
+			</div>
+		);
 	},
 };
 
 export default meta;
-type Story = StoryObj<typeof ${iconName}>;
+type Story = StoryObj<StoryProps>;
 
-export const Default: Story = {};
-
-export const Sizes: Story = {
-	render: () => (
-		<div className={\`\${styles.grid} \${styles.sizes}\`}>
-			<span className={styles.icon}><${iconName} size="small" /></span>
-			<span className={styles.label}>small</span>
-			<span className={styles.icon}><${iconName} size="medium" /></span>
-			<span className={styles.label}>medium</span>
-			<span className={styles.icon}><${iconName} size="large" /></span>
-			<span className={styles.label}>large</span>
-			<span className={styles.icon}><${iconName} size="xlarge" /></span>
-			<span className={styles.label}>xlarge</span>
-		</div>
-	),
-};
-
-export const Colors: Story = {
-	render: () => (
-		<div className={\`\${styles.grid} \${styles.colors}\`}>
-			<span className={styles.icon}><${iconName} color="inherited" /></span>
-			<span className={styles.label}>inherited</span>
-			<span className={styles.icon}><${iconName} color="primary" /></span>
-			<span className={styles.label}>primary</span>
-			<span className={styles.icon}><${iconName} color="success" /></span>
-			<span className={styles.label}>success</span>
-			<span className={styles.icon}><${iconName} color="warning" /></span>
-			<span className={styles.label}>warning</span>
-			<span className={styles.icon}><${iconName} color="error" /></span>
-			<span className={styles.label}>error</span>
-		</div>
-	),
-};
-
-export const WithAriaLabel: Story = {
-	args: {
-		"aria-label": "${iconName} icon",
-	},
-};
+${stories}
 `;
 }
 
@@ -183,13 +184,8 @@ async function main() {
 		const viewBox = extractViewBox(svgString);
 
 		const componentCode = generateComponent(iconName, svgContent, viewBox);
-		const storiesCode = generateStories(iconName);
 
 		await writeFile(join(ICONS_OUTPUT_DIR, `${iconName}.tsx`), componentCode);
-		await writeFile(
-			join(ICONS_OUTPUT_DIR, `${iconName}.stories.tsx`),
-			storiesCode,
-		);
 
 		icons.push({ name: iconName, kebabName });
 		console.log(`Generated: ${iconName}`);
@@ -198,6 +194,10 @@ async function main() {
 	const indexCode = generateIndex(icons);
 	await writeFile(join(ICONS_OUTPUT_DIR, "index.ts"), indexCode);
 	console.log("Generated: index.ts");
+
+	const storiesCode = generateUnifiedStories(icons);
+	await writeFile(join(ICONS_OUTPUT_DIR, "Icons.stories.tsx"), storiesCode);
+	console.log("Generated: Icons.stories.tsx");
 
 	const manifestCode = generateManifest(icons);
 	await writeFile(join(ICONS_OUTPUT_DIR, "manifest.json"), manifestCode);

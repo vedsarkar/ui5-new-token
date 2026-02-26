@@ -91,12 +91,6 @@
 			"import": "import { Close } from \"@reltio/design/icons\""
 		},
 		{
-			"name": "CodeBrackets",
-			"kebabName": "code-brackets",
-			"path": "/icons/code-brackets.svg",
-			"import": "import { CodeBrackets } from \"@reltio/design/icons\""
-		},
-		{
 			"name": "Comment",
 			"kebabName": "comment",
 			"path": "/icons/comment.svg",
