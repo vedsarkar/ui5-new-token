@@ -11,8 +11,14 @@ const DEFAULT_LABEL = "thinking";
  */
 export const AssistantLoader = ({
 	className,
+	size,
+	style,
 	...rest
 }: AssistantLoaderProps) => {
+	const rootStyle = size
+		? ({ ...style, "--size": size } as React.CSSProperties)
+		: style;
+
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: status role is correct for loading placeholder; output is for calculation results
 		<div
@@ -20,6 +26,7 @@ export const AssistantLoader = ({
 			aria-busy="true"
 			aria-label={DEFAULT_LABEL}
 			role="status"
+			style={rootStyle}
 			{...rest}
 		>
 			<img

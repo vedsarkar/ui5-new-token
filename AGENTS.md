@@ -115,6 +115,7 @@ Example pattern:
 - Every component MUST have stories demonstrating all variants
 - Each story MUST show only ONE variant (no "All Variants" stories)
 - Stories use "autodocs" tag for auto-documentation
+- **Free-form props** (accepting arbitrary strings, numbers, CSS values) need only ONE story demonstrating usage — do NOT create multiple stories for different values of the same prop (e.g. one `CustomSize` story, not separate `Small` / `Medium` / `Large`). Multiple stories are for **enum-like variants** where each value produces a visually distinct state worth snapshot-testing
 
 ### Code Style (Biome)
 - Tabs for indentation
@@ -160,6 +161,6 @@ openspec validate [item] --strict # Validate changes
 - All className attributes use `classNames()` utility
 - Colors use global `--reltio-color-*` tokens, no hardcoded hex values
 - No component-level CSS custom properties (prefer direct property overrides)
-- Storybook stories added (one variant per story)
+- Storybook stories added (one variant per story; one story per free-form prop)
 - `npm run format` executed
 - `npm run lint` passes

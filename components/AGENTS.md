@@ -145,6 +145,8 @@ export type ButtonProps = ButtonBase & (AsButton | AsAnchor);
 
 Every component's stories file MUST import the CSS module and pass it via `parameters.cssClasses`. This enables the CSS Classes documentation table on the component's docs page.
 
+**Free-form props** (arbitrary strings, numbers, CSS values) need only ONE story demonstrating usage — do NOT create multiple stories for different values of the same prop. Multiple stories are for **enum-like variants** where each value is a distinct visual state worth snapshot-testing.
+
 ```tsx
 import cssClasses from "./MyComponent.module.css";
 

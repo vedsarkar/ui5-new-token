@@ -556,9 +556,14 @@ Use descriptive names that reflect the component state being tested:
       <td>Visual variant of the component</td>
     </tr>
     <tr>
-      <td>Size</td>
+      <td>Size (enum)</td>
       <td><code>Small</code>, <code>Medium</code>, <code>Large</code></td>
-      <td>Size variant</td>
+      <td>Predefined size variant (one per value)</td>
+    </tr>
+    <tr>
+      <td>Size (free-form)</td>
+      <td><code>CustomSize</code></td>
+      <td>Arbitrary size prop — one story is enough</td>
     </tr>
     <tr>
       <td>State</td>
@@ -578,6 +583,42 @@ Use descriptive names that reflect the component state being tested:
   </tbody>
 </table>
 
+## Free-Form Props vs. Enum Variants
+
+Not every prop needs multiple stories. The rule depends on whether the prop has **fixed variants** or accepts **arbitrary values**.
+
+**Enum-like props** (`variant`, `color`, `size` with predefined options like `"small" | "medium" | "large"`) — create a story for each value. Each produces a visually distinct state that Chromatic should snapshot-test independently.
+
+**Free-form props** (`size` as arbitrary CSS string, `width`, `maxHeight`, `label`, `placeholder`, etc.) — create **one** story demonstrating usage. Developers can see the pattern in the source code and apply any value they need. Creating `Small`, `Medium`, and `Large` stories for a prop that accepts `"20px"`, `"2rem"`, or `"100%"` adds noise without testing value.
+
+**✅ Do:** One story for a free-form size prop
+
+```tsx
+export const CustomSize = meta.story({
+  args: {
+    size: "64px",
+  },
+});
+```
+
+**❌ Don't:** Multiple stories for different arbitrary values of the same prop
+
+```tsx
+export const Small = meta.story({
+  args: { size: "20px" },
+});
+
+export const Medium = meta.story({
+  args: { size: "32px" },
+});
+
+export const Large = meta.story({
+  args: { size: "64px" },
+});
+```
+
+> **Rule of thumb:** If the prop value is a union of specific keywords — one story per keyword. If the prop accepts any string/number — one story is enough.
+
 ## Best Practices
 
 ### Story Structure
@@ -586,13 +627,15 @@ Use descriptive names that reflect the component state being tested:
 2. **Minimal args** — only include props relevant to the state being tested
 3. **Descriptive names** — story names should describe what state is being tested
 4. **No documentation** — keep explanatory content in MDX or autodocs
+5. **One story per free-form prop** — don't create multiple stories for different values of the same arbitrary-value prop
 
 ### Testing Focus
 
-1. **Cover all variants** — create stories for each visual variant
+1. **Cover all variants** — create stories for each visual variant (enum-like props)
 2. **Cover all states** — disabled, loading, error, empty, etc.
 3. **Cover edge cases** — long text, missing data, boundary conditions
 4. **Use fn() for callbacks** — enables action logging and interaction testing
+5. **Demonstrate free-form props once** — one story to show the prop works, not multiple value permutations
 
 ### What NOT to Include
 
@@ -600,6 +643,7 @@ Use descriptive names that reflect the component state being tested:
 2. **Multiple components per story** — unless testing composition
 3. **Complex render functions** — keep stories declarative
 4. **Wrapper components** — use decorators for consistent wrappers
+5. **Redundant value permutations** — multiple stories varying only a free-form prop value
 
 ## Quick Reference
 
@@ -667,8 +711,9 @@ The CSS module import returns the class name mapping (e.g. `{ root: "MyComponent
 - [ ] All callback props use `fn()` from `storybook/test`
 - [ ] Complex props use `argTypes.mapping` instead of custom render logic
 - [ ] Story names are descriptive and follow naming conventions
-- [ ] All visual variants have corresponding stories
+- [ ] All visual variants (enum-like props) have corresponding stories
 - [ ] All interactive states (disabled, loading, etc.) have stories
+- [ ] Free-form props have one demonstrative story each, not multiple value permutations
 - [ ] CSS module imported and passed via `parameters.cssClasses`
 
 ## Sources and References

@@ -11,3 +11,9 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story({});
+
+export const CustomSize = meta.story({
+	args: {
+		size: "64px",
+	},
+});
