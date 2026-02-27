@@ -1,65 +1,52 @@
 .root {
-	--reltio-icon-size-small: 16px;
-	--reltio-icon-size-medium: 24px;
-	--reltio-icon-size-large: 32px;
-	--reltio-icon-size-xlarge: 48px;
-
-	--reltio-icon-color-inherited: currentColor;
-	--reltio-icon-color-primary: var(--reltio-color-primary);
-	--reltio-icon-color-secondary: var(--reltio-color-secondary);
-	--reltio-icon-color-success: var(--reltio-color-success);
-	--reltio-icon-color-warning: var(--reltio-color-warning);
-	--reltio-icon-color-error: var(--reltio-color-error);
-
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	width: var(--reltio-icon-size, var(--reltio-icon-size-medium));
-	height: var(--reltio-icon-size, var(--reltio-icon-size-medium));
-	fill: var(--reltio-icon-color, var(--reltio-icon-color-inherited));
+	width: 24px;
+	height: 24px;
 }
 
 .small {
-	width: var(--reltio-icon-size, var(--reltio-icon-size-small));
-	height: var(--reltio-icon-size, var(--reltio-icon-size-small));
+	width: 16px;
+	height: 16px;
 }
 
 .medium {
-	width: var(--reltio-icon-size, var(--reltio-icon-size-medium));
-	height: var(--reltio-icon-size, var(--reltio-icon-size-medium));
+	width: 24px;
+	height: 24px;
 }
 
 .large {
-	width: var(--reltio-icon-size, var(--reltio-icon-size-large));
-	height: var(--reltio-icon-size, var(--reltio-icon-size-large));
+	width: 32px;
+	height: 32px;
 }
 
 .xlarge {
-	width: var(--reltio-icon-size, var(--reltio-icon-size-xlarge));
-	height: var(--reltio-icon-size, var(--reltio-icon-size-xlarge));
+	width: 48px;
+	height: 48px;
 }
 
 .inherited {
-	fill: var(--reltio-icon-color, var(--reltio-icon-color-inherited));
+	color: inherit;
 }
 
 .primary {
-	fill: var(--reltio-icon-color, var(--reltio-icon-color-primary));
+	color: var(--reltio-color-primary);
 }
 
 .secondary {
-	fill: var(--reltio-icon-color, var(--reltio-icon-color-secondary));
+	color: var(--reltio-color-secondary);
 }
 
 .success {
-	fill: var(--reltio-icon-color, var(--reltio-icon-color-success));
+	color: var(--reltio-color-success);
 }
 
 .warning {
-	fill: var(--reltio-icon-color, var(--reltio-icon-color-warning));
+	color: var(--reltio-color-warning);
 }
 
 .error {
-	fill: var(--reltio-icon-color, var(--reltio-icon-color-error));
+	color: var(--reltio-color-error);
 }

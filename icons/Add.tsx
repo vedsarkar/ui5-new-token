@@ -6,8 +6,7 @@ export const Add = ({
 	size = "medium",
 	color = "inherited",
 	className,
-	style,
-	"aria-label": ariaLabel,
+	...props
 }: IconProps) => {
 	return (
 		<svg
@@ -17,13 +16,11 @@ export const Add = ({
 				styles[color],
 				className,
 			)}
-			style={style}
-			viewBox="0 -960 960 960"
-			aria-hidden={!ariaLabel}
-			aria-label={ariaLabel}
-			role={ariaLabel ? "img" : undefined}
+			viewBox="0 0 20 20"
+			fill="currentColor"
+			{...props}
 		>
-			<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+			<path d="M9.25 10.75H3.5V9.25H9.25V3.5H10.75V9.25H16.5V10.75H10.75V16.5H9.25V10.75Z" />
 		</svg>
 	);
 };

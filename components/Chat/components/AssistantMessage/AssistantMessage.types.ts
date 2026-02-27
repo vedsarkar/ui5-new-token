@@ -1,24 +1,18 @@
 import type React from "react";
+import type { HtmlProps } from "@/utils/types";
 
 /**
  * Props for the AssistantMessage component
  */
-export type AssistantMessageProps = {
-	/**
-	 * Error content: string is passed to ErrorMessage; custom ReactNode is rendered as is.
-	 */
-	errorMessage?: React.ReactNode | null;
+export type AssistantMessageProps = HtmlProps<
+	"div",
+	{
+		/**
+		 * Error content: string is passed to ErrorMessage; custom ReactNode is rendered as is.
+		 */
+		errorMessage?: React.ReactNode | null;
 
-	/**
-	 * Additional CSS class names
-	 */
-	className?: string;
-
-	/**
-	 * Inline styles (e.g. for CSS variable overrides)
-	 */
-	style?: React.CSSProperties;
-
-	/** We expect assistant message source as a string */
-	children: string;
-};
+		/** We expect assistant message source as a string */
+		children: string;
+	}
+>;

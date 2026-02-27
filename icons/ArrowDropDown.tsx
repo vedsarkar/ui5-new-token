@@ -6,8 +6,7 @@ export const ArrowDropDown = ({
 	size = "medium",
 	color = "inherited",
 	className,
-	style,
-	"aria-label": ariaLabel,
+	...props
 }: IconProps) => {
 	return (
 		<svg
@@ -17,13 +16,11 @@ export const ArrowDropDown = ({
 				styles[color],
 				className,
 			)}
-			style={style}
-			viewBox="0 -960 960 960"
-			aria-hidden={!ariaLabel}
-			aria-label={ariaLabel}
-			role={ariaLabel ? "img" : undefined}
+			viewBox="0 0 20 20"
+			fill="currentColor"
+			{...props}
 		>
-			<path d="M480-360 280-560h400L480-360Z" />
+			<path d="M9.99994 12.6537L5.59619 8.25H14.4037L9.99994 12.6537Z" />
 		</svg>
 	);
 };

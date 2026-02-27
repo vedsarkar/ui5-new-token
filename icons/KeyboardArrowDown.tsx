@@ -6,8 +6,7 @@ export const KeyboardArrowDown = ({
 	size = "medium",
 	color = "inherited",
 	className,
-	style,
-	"aria-label": ariaLabel,
+	...props
 }: IconProps) => {
 	return (
 		<svg
@@ -17,13 +16,11 @@ export const KeyboardArrowDown = ({
 				styles[color],
 				className,
 			)}
-			style={style}
-			viewBox="0 -960 960 960"
-			aria-hidden={!ariaLabel}
-			aria-label={ariaLabel}
-			role={ariaLabel ? "img" : undefined}
+			viewBox="0 0 20 20"
+			fill="currentColor"
+			{...props}
 		>
-			<path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" />
+			<path d="M9.99994 13.0538L4.34619 7.4L5.39994 6.34625L9.99994 10.9463L14.5999 6.34625L15.6537 7.4L9.99994 13.0538Z" />
 		</svg>
 	);
 };

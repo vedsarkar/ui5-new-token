@@ -6,8 +6,7 @@ export const Close = ({
 	size = "medium",
 	color = "inherited",
 	className,
-	style,
-	"aria-label": ariaLabel,
+	...props
 }: IconProps) => {
 	return (
 		<svg
@@ -17,13 +16,11 @@ export const Close = ({
 				styles[color],
 				className,
 			)}
-			style={style}
-			viewBox="0 -960 960 960"
-			aria-hidden={!ariaLabel}
-			aria-label={ariaLabel}
-			role={ariaLabel ? "img" : undefined}
+			viewBox="0 0 20 20"
+			fill="currentColor"
+			{...props}
 		>
-			<path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+			<path d="M4.39994 16.6538L3.34619 15.6L8.94619 10L3.34619 4.4L4.39994 3.34625L9.99994 8.94625L15.5999 3.34625L16.6537 4.4L11.0537 10L16.6537 15.6L15.5999 16.6538L9.99994 11.0538L4.39994 16.6538Z" />
 		</svg>
 	);
 };

@@ -29,6 +29,8 @@ export const Chart = ({
 	height = DEFAULT_HEIGHT,
 	loading = false,
 	className,
+	style,
+	...rest
 }: ChartProps) => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const chartRef = useRef<echartsCore.ECharts | null>(null);
@@ -79,7 +81,8 @@ export const Chart = ({
 		<div
 			ref={containerRef}
 			className={classNames(styles.root, className)}
-			style={{ height: containerHeight }}
+			style={{ ...style, height: containerHeight }}
+			{...rest}
 		/>
 	);
 };

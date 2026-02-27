@@ -1,4 +1,4 @@
-import type React from "react";
+import type { HtmlProps } from "@/utils/types";
 
 export type IconSize = "small" | "medium" | "large" | "xlarge";
 
@@ -10,13 +10,10 @@ export type IconColor =
 	| "warning"
 	| "error";
 
-export type IconProps = {
-	size?: IconSize;
-	color?: IconColor;
-	className?: string;
-	style?: React.CSSProperties & {
-		"--reltio-icon-size"?: string;
-		"--reltio-icon-color"?: string;
-	};
-	"aria-label"?: string;
-};
+export type IconProps = HtmlProps<
+	"svg",
+	{
+		size?: IconSize;
+		color?: IconColor;
+	}
+>;

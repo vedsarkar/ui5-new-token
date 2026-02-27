@@ -6,8 +6,7 @@ export const ArrowBack = ({
 	size = "medium",
 	color = "inherited",
 	className,
-	style,
-	"aria-label": ariaLabel,
+	...props
 }: IconProps) => {
 	return (
 		<svg
@@ -17,11 +16,9 @@ export const ArrowBack = ({
 				styles[color],
 				className,
 			)}
-			style={style}
 			viewBox="0 -960 960 960"
-			aria-hidden={!ariaLabel}
-			aria-label={ariaLabel}
-			role={ariaLabel ? "img" : undefined}
+			fill="currentColor"
+			{...props}
 		>
 			<path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
 		</svg>

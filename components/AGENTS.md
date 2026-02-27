@@ -120,55 +120,53 @@ If the dynamic value only affects regular DOM elements (no pseudo-elements), pre
 
 ### TypeScript Types (`.types.ts`)
 
-**Base type:** Use `React.ComponentPropsWithoutRef<"tag">` as the standard generic for native element props. It resolves the correct attributes type from the tag name — no need for verbose `React.DetailsHTMLAttributes<HTMLDetailsElement>`.
-
-**Structure:** Custom props first, base HTML type second in the intersection. Do NOT redeclare props that already exist in the base type with the same type — `className`, `children`, `style`, event handlers etc. are inherited automatically:
+**`HtmlProps<Tag, CustomProps>` utility** — the standard way to type component props. Import from `@/utils/types`. It combines custom props with native HTML element attributes, automatically omitting native props that overlap with custom ones. This ensures custom props appear in Storybook's Props table without manual `Omit`:
 
 ```typescript
-export type ChipProps = React.ComponentPropsWithoutRef<"button"> & {
+import type { HtmlProps } from "@/utils/types";
+
+export type ChipProps = HtmlProps<"button", {
   variant?: ChipVariant;
   color?: ChipColor;
   size?: ChipSize;
-};
+  onClick?: () => void;
+}>;
 ```
 
-**`Omit`** — use to remove props the component doesn't support, or to redeclare a native prop that must appear in Storybook docs:
+**Rules:**
+1. Every component with a wrapper HTML element MUST use `HtmlProps<Tag, CustomProps>` (or bare `React.ComponentPropsWithoutRef<"tag">` for pure pass-through with no custom props)
+2. All rest props (`...rest`) MUST be spread onto the wrapper HTML element
+3. Do NOT redeclare native props (`className`, `style`, etc.) in custom props — they are inherited automatically
+4. Only declare a native prop in custom props when the component changes its type or semantics (e.g. `children: string` instead of `ReactNode`, or `open?: boolean` that needs Storybook visibility)
+5. Use `React.ComponentPropsWithoutRef` (not `ComponentProps`) — refs are handled via `React.forwardRef` when needed
+
+**Removing native props** the component doesn't support — wrap with `Omit`:
 
 ```typescript
-/* Remove unsupported prop */
-export type LoaderProps = Omit<React.ComponentPropsWithoutRef<"div">, "children">;
-
-/* Non-standard children type */
-export type MessageProps = Omit<React.ComponentPropsWithoutRef<"div">, "children"> & {
-  children: string;
-};
-
-/* Native prop redeclared for Storybook docgen visibility */
-export type DetailsProps = Omit<React.ComponentPropsWithoutRef<"details">, "open"> & {
-  /** @default false */
-  open?: boolean;
-};
+export type SkeletonProps = Omit<HtmlProps<"div", {
+  rows?: number;
+  size?: string;
+}>, "children">;
 ```
 
-> **Why `Omit` for native props?** Storybook docgen filters out native HTML attributes from the Props table. If a component only re-uses native props (like `open` on `<details>`), they won't appear in docs unless explicitly `Omit`-ed from the base and redeclared in the custom type.
-
-**Polymorphic components** (e.g. Button renders as `<button>` or `<a>`) use a discriminated union with separate base types:
+**Polymorphic components** (e.g. Button renders as `<button>` or `<a>`) use a discriminated union with `HtmlProps` per branch:
 
 ```typescript
 type ButtonBase = {
   variant?: "filled" | "outlined";
+  size?: ButtonSize;
 };
 
-type AsButton = {
+type AsButton = HtmlProps<"button", ButtonBase & {
   href?: never;
   type?: "button" | "submit" | "reset";
-} & React.ComponentPropsWithoutRef<"button">;
+}>;
 
-type AsAnchor = {
+type AsAnchor = HtmlProps<"a", ButtonBase & {
   href: string;
-} & React.ComponentPropsWithoutRef<"a">;
+}>;
 
-export type ButtonProps = ButtonBase & (AsButton | AsAnchor);
+export type ButtonProps = AsButton | AsAnchor;
 ```
 
 ### Storybook Stories

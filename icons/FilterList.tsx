@@ -6,8 +6,7 @@ export const FilterList = ({
 	size = "medium",
 	color = "inherited",
 	className,
-	style,
-	"aria-label": ariaLabel,
+	...props
 }: IconProps) => {
 	return (
 		<svg
@@ -17,13 +16,11 @@ export const FilterList = ({
 				styles[color],
 				className,
 			)}
-			style={style}
-			viewBox="0 -960 960 960"
-			aria-hidden={!ariaLabel}
-			aria-label={ariaLabel}
-			role={ariaLabel ? "img" : undefined}
+			viewBox="0 0 20 20"
+			fill="currentColor"
+			{...props}
 		>
-			<path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z" />
+			<path d="M8.27875 15.5V14H11.7115V15.5H8.27875ZM4.404 10.75V9.25H15.5865V10.75H4.404ZM1.5 6V4.5H18.5V6H1.5Z" />
 		</svg>
 	);
 };

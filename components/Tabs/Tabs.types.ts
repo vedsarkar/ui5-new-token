@@ -1,4 +1,5 @@
 import type React from "react";
+import type { HtmlProps } from "@/utils/types";
 
 export type TabItem = {
 	value: string;
@@ -6,8 +7,11 @@ export type TabItem = {
 	disabled?: boolean;
 };
 
-export type TabsProps = React.ComponentProps<"div"> & {
-	items: TabItem[];
-	value?: string;
-	onValueChange?: (value: string) => void;
-};
+export type TabsProps = HtmlProps<
+	"div",
+	{
+		items: TabItem[];
+		value?: string;
+		onValueChange?: (value: string) => void;
+	}
+>;

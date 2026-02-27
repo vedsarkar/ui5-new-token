@@ -1,0 +1,296 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/Component Typing" />
+
+# Component Typing
+
+This guide explains how to type React component props in the Reltio Design Platform. It covers the `HtmlProps` utility, rest-prop forwarding, Storybook integration, and patterns for common scenarios like polymorphic components.
+
+> **🎯 Key Principle:** Declare custom props once. Let `HtmlProps` handle the rest — native HTML attributes, `Omit` conflicts, and Storybook visibility.
+
+## Business Value
+
+<table>
+  <thead>
+    <tr>
+      <th>Benefit</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Less Boilerplate</td>
+      <td>No manual <code>Omit</code> when custom props overlap with native attributes</td>
+    </tr>
+    <tr>
+      <td>Storybook Accuracy</td>
+      <td>Props table automatically shows custom props and hides native HTML attributes</td>
+    </tr>
+    <tr>
+      <td>Consistent API Surface</td>
+      <td>Every component accepts native HTML attributes and forwards them to the root element</td>
+    </tr>
+    <tr>
+      <td>Type Safety</td>
+      <td>Custom prop types override native ones — no silent <code>never</code> intersections</td>
+    </tr>
+  </tbody>
+</table>
+
+## The `HtmlProps` Utility
+
+`HtmlProps` is defined in `utils/types.ts` and exported from `@/utils/types`. It takes two generic arguments:
+
+```tsx
+import type { HtmlProps } from "@/utils/types";
+
+type HtmlProps<
+  Tag extends keyof React.JSX.IntrinsicElements,
+  CustomProps extends Record<string, unknown>,
+> = CustomProps & Omit<React.ComponentPropsWithoutRef<Tag>, keyof CustomProps>;
+```
+
+**How it works:**
+1. `Tag` selects the HTML element (`"div"`, `"button"`, `"details"`, etc.)
+2. `CustomProps` is the object type with your component-specific props
+3. Native attributes matching any key in `CustomProps` are automatically removed via `Omit`
+4. The result is `CustomProps` intersected with the remaining native attributes
+
+This means `className`, `style`, `id`, event handlers, and all other standard attributes are available without declaring them — and custom props with the same name as a native attribute always take precedence.
+
+## Standard Pattern
+
+Every component with a wrapper HTML element follows this structure:
+
+### Type file
+
+```tsx
+// ComponentName.types.ts
+import type { HtmlProps } from "@/utils/types";
+
+export type ComponentNameProps = HtmlProps<"div", {
+  /** Description for Storybook docs */
+  customProp?: string;
+}>;
+```
+
+### Component file
+
+```tsx
+// ComponentName.tsx
+export const ComponentName = ({
+  customProp,
+  className,
+  ...rest
+}: ComponentNameProps) => {
+  return (
+    <div className={classNames(styles.root, className)} {...rest}>
+      {/* content */}
+    </div>
+  );
+};
+```
+
+**Key rules:**
+- Destructure only the props you use explicitly
+- Spread `...rest` onto the wrapper HTML element
+- The `Tag` in `HtmlProps` must match the actual wrapper element tag
+
+## Practical Examples
+
+### Simple component (no overlap)
+
+Custom props have unique names — no conflict with native attributes.
+
+```tsx
+export type AssistantLoaderProps = HtmlProps<"div", {
+  /** Overall size of the loader (e.g. "32px", "2rem"). Defaults to 32px. */
+  size?: string;
+}>;
+```
+
+### Native prop with custom semantics
+
+The `open` attribute exists natively on `<details>`. Declaring it in custom props automatically removes it from the native type, making it visible in Storybook's Props table.
+
+**✅ Do:** Declare the prop in `HtmlProps` custom type
+
+```tsx
+export type DetailsProps = HtmlProps<"details", {
+  /** @default false */
+  open?: boolean;
+}>;
+```
+
+**❌ Don't:** Manually `Omit` and re-declare
+
+```tsx
+export type DetailsProps = {
+  open?: boolean;
+} & Omit<React.ComponentPropsWithoutRef<"details">, "open">;
+```
+
+### Narrowing a native prop type
+
+When a custom prop has a different type from the native attribute (e.g. `size` on `<button>` is `number` natively, but your component uses string literals), `HtmlProps` prevents a silent `never` intersection.
+
+```tsx
+export type ChipProps = HtmlProps<"button", {
+  variant?: "filled" | "outlined";
+  size?: "small" | "medium";
+  onClick?: () => void;
+  disabled?: boolean;
+}>;
+```
+
+Without `HtmlProps`, `size?: ("small" | "medium") & number` resolves to `never`. With `HtmlProps`, the native `size` is omitted and only the custom type applies.
+
+### Removing a native prop
+
+When a component does not support a native prop (e.g. `children`), wrap with `Omit` on the outside:
+
+```tsx
+export type SkeletonProps = Omit<HtmlProps<"div", {
+  rows?: number;
+  size?: string;
+}>, "children">;
+```
+
+### Pure pass-through (no custom props)
+
+Components that add no custom props use `React.ComponentPropsWithoutRef` directly:
+
+```tsx
+export type DividerProps = React.ComponentPropsWithoutRef<"hr">;
+```
+
+### Polymorphic component
+
+Components that render different elements based on props use a discriminated union with `HtmlProps` for each branch:
+
+```tsx
+type BaseButtonProps = {
+  variant?: "filled" | "outlined" | "text";
+  size?: "small" | "medium" | "large";
+  disabled?: boolean;
+};
+
+type AsButton = HtmlProps<"button", BaseButtonProps & {
+  href?: never;
+  type?: "button" | "submit" | "reset";
+}>;
+
+type AsAnchor = HtmlProps<"a", BaseButtonProps & {
+  href: string;
+}>;
+
+export type ButtonProps = AsButton | AsAnchor;
+```
+
+Each branch gets its own `HtmlProps` call. `BaseButtonProps` is shared and spread into both — ensuring `size` and `disabled` are properly omitted from the native types of both `<button>` and `<a>`.
+
+## What Not to Declare in Custom Props
+
+Native attributes that keep their standard type and semantics should **not** be re-declared:
+
+<table>
+  <thead>
+    <tr>
+      <th>Prop</th>
+      <th>Declare in custom?</th>
+      <th>Why</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>className</code></td>
+      <td>No</td>
+      <td>Inherited from native type automatically</td>
+    </tr>
+    <tr>
+      <td><code>style</code></td>
+      <td>No</td>
+      <td>Inherited from native type automatically</td>
+    </tr>
+    <tr>
+      <td><code>id</code></td>
+      <td>No</td>
+      <td>Inherited from native type automatically</td>
+    </tr>
+    <tr>
+      <td><code>children</code></td>
+      <td>Only if type changes</td>
+      <td>Declare if restricting to <code>string</code> or making required</td>
+    </tr>
+    <tr>
+      <td><code>onClick</code></td>
+      <td>Only if type changes</td>
+      <td>Declare if narrowing to <code>() => void</code> (no event arg)</td>
+    </tr>
+    <tr>
+      <td><code>open</code></td>
+      <td>Yes</td>
+      <td>Needs Storybook visibility and JSDoc</td>
+    </tr>
+  </tbody>
+</table>
+
+**Rule of thumb:** declare a native prop in custom props only when you change its type, restrict its values, or need it visible in Storybook with custom documentation.
+
+## Storybook Props Table
+
+`react-docgen-typescript` determines which props appear in the Storybook Props table based on where they are declared:
+
+- Props declared in `@types/react` (node_modules) are **hidden**
+- Props declared in your `.types.ts` file are **shown**
+
+`HtmlProps` ensures this works correctly:
+- Custom props are always declared in the component's `.types.ts` file — they appear in the table
+- Native-only props come from `@types/react` — they are hidden
+- When a custom prop name matches a native attribute, the native one is `Omit`-ed, so only the custom declaration exists — it appears in the table
+
+No additional Storybook configuration is required.
+
+## Quick Reference
+
+<table>
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>Pattern</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Standard component</td>
+      <td><code>HtmlProps&lt;"div", &#123; custom props &#125;&gt;</code></td>
+    </tr>
+    <tr>
+      <td>No custom props</td>
+      <td><code>React.ComponentPropsWithoutRef&lt;"hr"&gt;</code></td>
+    </tr>
+    <tr>
+      <td>Remove native prop</td>
+      <td><code>Omit&lt;HtmlProps&lt;"div", &#123;...&#125;&gt;, "children"&gt;</code></td>
+    </tr>
+    <tr>
+      <td>Polymorphic</td>
+      <td>Discriminated union with <code>HtmlProps</code> per branch</td>
+    </tr>
+    <tr>
+      <td>Rest spreading</td>
+      <td>Always spread <code>...rest</code> onto wrapper element</td>
+    </tr>
+    <tr>
+      <td>Import</td>
+      <td><code>import type &#123; HtmlProps &#125; from "@/utils/types"</code></td>
+    </tr>
+  </tbody>
+</table>
+
+## Sources and References
+
+- [React TypeScript Cheatsheet — Component Props](https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/basic_type_example/) — community patterns for typing React components
+- [React Official Docs — TypeScript](https://react.dev/learn/typescript) — React's own TypeScript guide
+- [Storybook Docs — react-docgen-typescript](https://storybook.js.org/docs/writing-docs/autodocs) — how Storybook extracts and displays component props
+- [TypeScript Handbook — Utility Types](https://www.typescriptlang.org/docs/handbook/utility-types.html) — `Omit`, `Pick`, and other built-in type utilities

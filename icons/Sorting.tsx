@@ -1,0 +1,26 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const Sorting = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 20 20"
+			fill="currentColor"
+			{...props}
+		>
+			<path d="M0.307861 14.7885L4.03861 5.21152H5.63086L9.34236 14.7885H7.75386L6.88486 12.4078H2.76536L1.88861 14.7885H0.307861ZM3.23086 11.1115H6.36936L4.88086 6.93851H4.75011L3.23086 11.1115ZM11.9116 14.7885V13.3693L17.0386 6.56927H12.1116V5.21152H18.7386V6.63076L13.6424 13.4308H18.7886V14.7885H11.9116ZM7.23086 2.90377L10.0001 0.134766L12.7694 2.90377H7.23086ZM10.0001 19.8653L7.23086 17.0963H12.7694L10.0001 19.8653Z" />
+		</svg>
+	);
+};

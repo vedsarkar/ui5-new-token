@@ -17,13 +17,14 @@ export const Markdown = ({
 	children,
 	className,
 	style,
-}: React.PropsWithChildren<MarkdownProps>) => {
+	...rest
+}: MarkdownProps) => {
 	if (children === null || children === undefined) {
 		return null;
 	}
 	const composedClassName = classNames(styles.root, className);
 	return (
-		<div className={composedClassName} style={style}>
+		<div className={composedClassName} style={style} {...rest}>
 			<ErrorBoundary
 				fallback={<pre className={classNames(styles.error)}>{children}</pre>}
 			>

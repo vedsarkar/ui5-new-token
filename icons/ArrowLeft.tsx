@@ -6,8 +6,7 @@ export const ArrowLeft = ({
 	size = "medium",
 	color = "inherited",
 	className,
-	style,
-	"aria-label": ariaLabel,
+	...props
 }: IconProps) => {
 	return (
 		<svg
@@ -17,13 +16,11 @@ export const ArrowLeft = ({
 				styles[color],
 				className,
 			)}
-			style={style}
-			viewBox="0 -960 960 960"
-			aria-hidden={!ariaLabel}
-			aria-label={ariaLabel}
-			role={ariaLabel ? "img" : undefined}
+			viewBox="0 0 20 20"
+			fill="currentColor"
+			{...props}
 		>
-			<path d="M560-280 360-480l200-200v400Z" />
+			<path d="M11.7499 14.4038L7.34619 10L11.7499 5.59625V14.4038Z" />
 		</svg>
 	);
 };

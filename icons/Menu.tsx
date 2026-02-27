@@ -6,8 +6,7 @@ export const Menu = ({
 	size = "medium",
 	color = "inherited",
 	className,
-	style,
-	"aria-label": ariaLabel,
+	...props
 }: IconProps) => {
 	return (
 		<svg
@@ -17,13 +16,11 @@ export const Menu = ({
 				styles[color],
 				className,
 			)}
-			style={style}
-			viewBox="0 -960 960 960"
-			aria-hidden={!ariaLabel}
-			aria-label={ariaLabel}
-			role={ariaLabel ? "img" : undefined}
+			viewBox="0 0 20 20"
+			fill="currentColor"
+			{...props}
 		>
-			<path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+			<path d="M1.5 15.6345V14.1348H18.5V15.6345H1.5ZM1.5 10.75V9.25001H18.5V10.75H1.5ZM1.5 5.86526V4.36551H18.5V5.86526H1.5Z" />
 		</svg>
 	);
 };

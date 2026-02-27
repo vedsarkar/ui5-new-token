@@ -75,6 +75,10 @@ components/ComponentName/
 - Use `type` keyword ONLY, never `interface`
 - All types MUST be in separate `.types.ts` files
 - Strict mode enabled, no `any` without justification
+- Component props MUST use `HtmlProps<Tag, CustomProps>` from `@/utils/types` to combine custom props with native HTML element attributes (see `components/AGENTS.md` for details)
+- All rest props (`...rest`) MUST be spread onto the wrapper HTML element
+- Component props MUST use `HtmlProps<Tag, CustomProps>` from `@/utils/types` to combine custom props with native HTML element attributes (see `components/AGENTS.md` for details)
+- All rest props (`...rest`) MUST be spread onto the wrapper HTML element
 
 ### CSS Styling
 - ALL className attributes MUST use `classNames()` utility from `@/utils/classNames`

@@ -28,7 +28,7 @@ export const AssistantMessage = ({
 	className,
 	style,
 	...rest
-}: React.PropsWithChildren<AssistantMessageProps>) => {
+}: AssistantMessageProps) => {
 	const errorNode = normalizeError(errorMessage);
 	const content = children.trim();
 

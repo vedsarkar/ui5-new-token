@@ -1,4 +1,4 @@
-import type React from "react";
+import type { HtmlProps } from "@/utils/types";
 
 /**
  * User message payload for Chat. Renders via UserMessage component.
@@ -36,22 +36,25 @@ export type Message = {
 /**
  * Props for the Chat component
  */
-export type ChatProps = React.ComponentPropsWithoutRef<"div"> & {
-	/**
-	 * List of messages to display in order. Each message is rendered by type (user → UserMessage, assistant → AssistantMessage).
-	 */
-	messages: Message[];
+export type ChatProps = HtmlProps<
+	"div",
+	{
+		/**
+		 * List of messages to display in order. Each message is rendered by type (user → UserMessage, assistant → AssistantMessage).
+		 */
+		messages: Message[];
 
-	/**
-	 * When true, shows the AssistantLoader below the message list to indicate the assistant is generating a response.
-	 * Fully controlled from outside — no internal logic derives this state.
-	 * @default false
-	 */
-	thinking?: boolean;
+		/**
+		 * When true, shows the AssistantLoader below the message list to indicate the assistant is generating a response.
+		 * Fully controlled from outside — no internal logic derives this state.
+		 * @default false
+		 */
+		thinking?: boolean;
 
-	/**
-	 * When true, chat data is initially loading. The Skeleton component is shown in place of the message list until data is available.
-	 * @default false
-	 */
-	initialLoading?: boolean;
-};
+		/**
+		 * When true, chat data is initially loading. The Skeleton component is shown in place of the message list until data is available.
+		 * @default false
+		 */
+		initialLoading?: boolean;
+	}
+>;

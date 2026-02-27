@@ -1,4 +1,4 @@
-import type React from "react";
+import type { HtmlProps } from "@/utils/types";
 
 /**
  * Visual variant for the button
@@ -16,7 +16,7 @@ export type ButtonColor = "primary" | "inherited";
 export type ButtonSize = "small" | "medium" | "large";
 
 /**
- * Base button props (without element-specific attributes)
+ * Base button props shared between button and anchor renderings
  */
 type BaseButtonProps = {
 	/**
@@ -53,8 +53,9 @@ type BaseButtonProps = {
 /**
  * Button props when rendered as button element (no href)
  */
-type ButtonElementProps = BaseButtonProps &
-	React.ComponentPropsWithoutRef<"button"> & {
+type ButtonElementProps = HtmlProps<
+	"button",
+	BaseButtonProps & {
 		/**
 		 * If href is provided, component renders as anchor element
 		 * If href is not provided, component renders as button element
@@ -66,13 +67,15 @@ type ButtonElementProps = BaseButtonProps &
 		 * @default "button"
 		 */
 		type?: "button" | "submit" | "reset";
-	};
+	}
+>;
 
 /**
  * Anchor props when rendered as anchor element (with href)
  */
-type AnchorElementProps = BaseButtonProps &
-	React.ComponentPropsWithoutRef<"a"> & {
+type AnchorElementProps = HtmlProps<
+	"a",
+	BaseButtonProps & {
 		/**
 		 * URL to navigate to (causes component to render as anchor)
 		 */
@@ -92,7 +95,8 @@ type AnchorElementProps = BaseButtonProps &
 		 * Rel attribute for anchor (e.g., "noopener noreferrer")
 		 */
 		rel?: string;
-	};
+	}
+>;
 
 /**
  * Union type for Button component props

@@ -6,8 +6,7 @@ export const Sort = ({
 	size = "medium",
 	color = "inherited",
 	className,
-	style,
-	"aria-label": ariaLabel,
+	...props
 }: IconProps) => {
 	return (
 		<svg
@@ -17,11 +16,9 @@ export const Sort = ({
 				styles[color],
 				className,
 			)}
-			style={style}
 			viewBox="0 -960 960 960"
-			aria-hidden={!ariaLabel}
-			aria-label={ariaLabel}
-			role={ariaLabel ? "img" : undefined}
+			fill="currentColor"
+			{...props}
 		>
 			<path d="M120-240v-80h240v80H120Zm0-200v-80h480v80H120Zm0-200v-80h720v80H120Z" />
 		</svg>

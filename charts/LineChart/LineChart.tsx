@@ -88,6 +88,7 @@ export const LineChart = ({
 	loading = false,
 	error,
 	className,
+	...rest
 }: LineChartProps) => {
 	const hasData = Array.isArray(data) && data.length > 0;
 	const option =
@@ -104,7 +105,7 @@ export const LineChart = ({
 	) : null;
 
 	return (
-		<div className={classNames(styles.root, className)}>
+		<div className={classNames(styles.root, className)} {...rest}>
 			{overlay}
 			<Chart option={option} height={height} loading={loading} />
 		</div>

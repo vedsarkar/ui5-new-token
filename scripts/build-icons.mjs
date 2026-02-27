@@ -1,10 +1,47 @@
 import { execSync } from "node:child_process";
 import { existsSync } from "node:fs";
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 
 const ICONS_SOURCE_DIR = "public/icons";
 const ICONS_OUTPUT_DIR = "icons";
+
+function toKebabCase(name) {
+	return name
+		.toLowerCase()
+		.replace(/[()]/g, "")
+		.replace(/[_\s]+/g, "-")
+		.replace(/-+/g, "-")
+		.replace(/^-|-$/g, "");
+}
+
+async function normalizeIconFilenames() {
+	const files = await readdir(ICONS_SOURCE_DIR);
+	const svgFiles = files.filter(
+		(file) => file.endsWith(".svg") && !file.startsWith("."),
+	);
+
+	let renamed = 0;
+
+	for (const file of svgFiles) {
+		const name = basename(file, ".svg");
+		const kebabName = toKebabCase(name);
+		const targetFile = `${kebabName}.svg`;
+
+		if (file === targetFile) continue;
+
+		await rename(
+			join(ICONS_SOURCE_DIR, file),
+			join(ICONS_SOURCE_DIR, targetFile),
+		);
+		renamed++;
+		console.log(`Renamed: "${file}" → "${targetFile}"`);
+	}
+
+	if (renamed > 0) {
+		console.log(`\nNormalized ${renamed} icon filenames to kebab-case\n`);
+	}
+}
 
 function kebabToPascal(str) {
 	return str
@@ -13,10 +50,42 @@ function kebabToPascal(str) {
 		.join("");
 }
 
+function convertStyleAttributes(content) {
+	return content.replace(/style="([^"]*)"/g, (_, styleString) => {
+		const properties = styleString
+			.split(";")
+			.filter(Boolean)
+			.map((prop) => {
+				const colonIdx = prop.indexOf(":");
+				const key = prop.slice(0, colonIdx).trim();
+				const value = prop.slice(colonIdx + 1).trim();
+				const camelKey = key.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+				return `${camelKey}: "${value}"`;
+			})
+			.join(", ");
+		return `style={{${properties}}}`;
+	});
+}
+
+const PRESERVED_FILLS = new Set([
+	"#fff",
+	"#ffff",
+	"#ffffff",
+	"#ffffffff",
+	"#d9d9d9",
+]);
+
+function removeHardcodedFills(content) {
+	return content.replace(/\s*fill="(#[0-9a-fA-F]{3,8})"/g, (match, hex) => {
+		if (PRESERVED_FILLS.has(hex.toLowerCase())) return match;
+		return "";
+	});
+}
+
 function extractSvgContent(svgString) {
 	const match = svgString.match(/<svg[^>]*>([\s\S]*?)<\/svg>/i);
 	if (!match) return "";
-	return match[1].trim();
+	return removeHardcodedFills(convertStyleAttributes(match[1].trim()));
 }
 
 function extractViewBox(svgString) {
@@ -33,17 +102,14 @@ export const ${iconName} = ({
 	size = "medium",
 	color = "inherited",
 	className,
-	style,
-	"aria-label": ariaLabel,
+	...props
 }: IconProps) => {
 	return (
 		<svg
 			className={classNames(styles.root, styles[size], styles[color], className)}
-			style={style}
 			viewBox="${viewBox}"
-			aria-hidden={!ariaLabel}
-			aria-label={ariaLabel}
-			role={ariaLabel ? "img" : undefined}
+			fill="currentColor"
+			{...props}
 		>
 			${svgContent}
 		</svg>
@@ -76,6 +142,12 @@ type StoryProps = IconProps & { name: string };
 const meta: Meta<StoryProps> = {
 	title: "Icons",
 	component: IconRef as React.FC,
+	argTypes: {
+		color: {
+			control: "select",
+			options: ["inherited", "primary", "secondary", "success", "warning", "error"],
+		},
+	},
 	parameters: {
 		layout: "centered",
 		docs: {
@@ -87,8 +159,7 @@ const meta: Meta<StoryProps> = {
 					<h3>Props</h3>
 					<ArgTypes />
 					<IconLibrary />
-					<Stories />
-				</>
+        </>
 			),
 		},
 	},
@@ -162,6 +233,8 @@ async function main() {
 	if (!existsSync(ICONS_OUTPUT_DIR)) {
 		await mkdir(ICONS_OUTPUT_DIR, { recursive: true });
 	}
+
+	await normalizeIconFilenames();
 
 	const files = await readdir(ICONS_SOURCE_DIR);
 	const svgFiles = files.filter(

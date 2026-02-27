@@ -6,8 +6,7 @@ export const ArrowDropUp = ({
 	size = "medium",
 	color = "inherited",
 	className,
-	style,
-	"aria-label": ariaLabel,
+	...props
 }: IconProps) => {
 	return (
 		<svg
@@ -17,13 +16,11 @@ export const ArrowDropUp = ({
 				styles[color],
 				className,
 			)}
-			style={style}
-			viewBox="0 -960 960 960"
-			aria-hidden={!ariaLabel}
-			aria-label={ariaLabel}
-			role={ariaLabel ? "img" : undefined}
+			viewBox="0 0 20 20"
+			fill="currentColor"
+			{...props}
 		>
-			<path d="m280-400 200-200 200 200H280Z" />
+			<path d="M5.59619 11.75L9.99994 7.34625L14.4037 11.75H5.59619Z" />
 		</svg>
 	);
 };

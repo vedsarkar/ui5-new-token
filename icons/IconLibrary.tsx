@@ -33,13 +33,6 @@ export const IconLibrary = () => {
 			</div>
 
 			<table>
-				<thead>
-					<tr>
-						<th style={{ width: "10%" }}></th>
-						<th style={{ width: "55%" }}>Import</th>
-						<th style={{ width: "35%" }}>URL</th>
-					</tr>
-				</thead>
 				<tbody>
 					{filteredIcons.map((icon) => {
 						const IconComponent = iconMap[icon.name];
@@ -49,7 +42,7 @@ export const IconLibrary = () => {
 						const isUrlCopied = copiedId === `url-${icon.name}`;
 						return (
 							<tr key={icon.name}>
-								<td className={styles.iconCell}>
+								<td className={styles.iconCell} style={{ width: "1px" }}>
 									<IconComponent size="medium" />
 								</td>
 								<td

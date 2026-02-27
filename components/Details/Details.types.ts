@@ -1,9 +1,12 @@
-import type React from "react";
+import type { HtmlProps } from "@/utils/types";
 
 /**
  * Props for the Details component
  */
-export type DetailsProps = {
-	/** @default false */
-	open?: boolean;
-} & Omit<React.ComponentPropsWithoutRef<"details">, "open">;
+export type DetailsProps = HtmlProps<
+	"details",
+	{
+		/** @default false */
+		open?: boolean;
+	}
+>;

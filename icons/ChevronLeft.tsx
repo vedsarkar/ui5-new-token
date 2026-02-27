@@ -6,8 +6,7 @@ export const ChevronLeft = ({
 	size = "medium",
 	color = "inherited",
 	className,
-	style,
-	"aria-label": ariaLabel,
+	...props
 }: IconProps) => {
 	return (
 		<svg
@@ -17,11 +16,9 @@ export const ChevronLeft = ({
 				styles[color],
 				className,
 			)}
-			style={style}
 			viewBox="0 -960 960 960"
-			aria-hidden={!ariaLabel}
-			aria-label={ariaLabel}
-			role={ariaLabel ? "img" : undefined}
+			fill="currentColor"
+			{...props}
 		>
 			<path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
 		</svg>

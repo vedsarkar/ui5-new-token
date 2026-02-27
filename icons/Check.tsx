@@ -6,8 +6,7 @@ export const Check = ({
 	size = "medium",
 	color = "inherited",
 	className,
-	style,
-	"aria-label": ariaLabel,
+	...props
 }: IconProps) => {
 	return (
 		<svg
@@ -17,13 +16,11 @@ export const Check = ({
 				styles[color],
 				className,
 			)}
-			style={style}
-			viewBox="0 -960 960 960"
-			aria-hidden={!ariaLabel}
-			aria-label={ariaLabel}
-			role={ariaLabel ? "img" : undefined}
+			viewBox="0 0 20 20"
+			fill="currentColor"
+			{...props}
 		>
-			<path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
+			<path d="M7.54995 15.6538L2.21545 10.3193L3.28445 9.25001L7.54995 13.5155L16.7155 4.35001L17.7845 5.41926L7.54995 15.6538Z" />
 		</svg>
 	);
 };
