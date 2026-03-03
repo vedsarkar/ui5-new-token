@@ -75,6 +75,10 @@ const manyMessages: Message[] = Array.from({ length: 100 }, (_, i) =>
 			},
 );
 
+const singleMessage: Message[] = [
+	{ role: "user" as const, content: "User message" },
+];
+
 export const ManyMessages = meta.story({
 	args: {
 		messages: manyMessages,
@@ -84,6 +88,13 @@ export const ManyMessages = meta.story({
 export const EmptyMessages = meta.story({
 	args: {
 		messages: [],
+	},
+});
+
+export const SingleMessage = meta.story({
+	args: {
+		messages: singleMessage,
+		thinking: true,
 	},
 });
 

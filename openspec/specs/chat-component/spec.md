@@ -69,7 +69,6 @@ The Chat component SHALL accept a `thinking` prop (boolean, default `false`) tha
 
 #### Scenario: Thinking indicator shown
 - **WHEN** `thinking` prop is `true`
-- **AND** there are messages with a last message wrapper
 - **THEN** the AssistantLoader component is rendered inside the `lastMessageWrapper` after the last messages
 - **AND** the chat automatically smooth-scrolls to the bottom
 

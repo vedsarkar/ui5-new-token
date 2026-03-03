@@ -91,7 +91,6 @@ export const Chat = ({
 	}, [thinking, scrollToBottom]);
 
 	const [topMessages, lastMessages] = useMemo(() => {
-		if (messages.length <= 2) return [messages, []];
 		const lastUserMessageIndex = messages.findLastIndex(isUserMessage);
 		return [
 			messages.slice(0, lastUserMessageIndex),
