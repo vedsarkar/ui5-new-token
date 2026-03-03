@@ -40,7 +40,6 @@ definitions:
           - npm run build-css
           - cd packages/design
           - npm ci
-          - cp -r node_modules ../../
           - npm run build
           - cd dist
           - if [ "${BITBUCKET_BRANCH}" != "main" ]; then npm version 0.0.0-${BITBUCKET_BUILD_NUMBER}; fi

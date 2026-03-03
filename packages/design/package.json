@@ -1,6 +1,6 @@
 {
 	"name": "@reltio/design",
-	"version": "0.1.2",
+	"version": "0.2.0",
 	"description": "Reltio Design Platform",
 	"peerDependencies": {
 		"react": ">=17 <20",
@@ -16,8 +16,6 @@
 		"postbuild": "cp package.json dist/ && cp README.md dist/"
 	},
 	"devDependencies": {
-		"@types/react": "^17",
-		"@types/react-dom": "^17",
 		"tsc-alias": "^1.8.10",
 		"typescript": "^5.7.2"
 	}

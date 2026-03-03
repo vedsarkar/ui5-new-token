@@ -65,6 +65,7 @@
 	"dependencies": {
 		"echarts": "^6.0.0",
 		"markdown-to-jsx": "^9.7.3",
-		"rc-tree": "^5.13.1"
+		"rc-tree": "^5.13.1",
+		"style-inject": "^0.3.0"
 	}
 }

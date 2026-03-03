@@ -1,11 +1,14 @@
 "use client";
 
+import type React from "react";
 import { forwardRef } from "react";
 import { classNames } from "@/utils/classNames";
 import styles from "./TextArea.module.css";
 import type { TextAreaProps } from "./TextArea.types";
 
-export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
+export const TextArea: React.ForwardRefExoticComponent<
+	TextAreaProps & React.RefAttributes<HTMLTextAreaElement>
+> = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 	({ label, error, supportingText, toolbar, className, ...rest }, ref) => {
 		const hasValue = String(rest.value ?? rest.defaultValue ?? "").length > 0;
 
