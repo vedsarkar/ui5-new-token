@@ -1,7 +1,10 @@
+import { faker } from "@faker-js/faker";
 import preview from "@/.storybook/preview";
 import type { Message } from "@/components/Chat";
 import { Chat } from "@/components/Chat";
 import cssClasses from "./Chat.module.css";
+
+faker.seed(42);
 
 const meta = preview.meta({
 	component: Chat,
@@ -68,15 +71,15 @@ export const InitialLoading = meta.story({
 
 const manyMessages: Message[] = Array.from({ length: 100 }, (_, i) =>
 	i % 2 === 0
-		? { role: "user" as const, content: `User message ${i + 1}` }
+		? { role: "user" as const, content: faker.lorem.sentence() }
 		: {
 				role: "assistant" as const,
-				content: `Assistant reply ${i + 1}.\nThis is longer content so each assistant message spans at least two lines in the chat.`,
+				content: faker.lorem.paragraphs({ min: 1, max: 3 }, "\n\n"),
 			},
 );
 
 const singleMessage: Message[] = [
-	{ role: "user" as const, content: "User message" },
+	{ role: "user" as const, content: faker.lorem.sentence() },
 ];
 
 export const ManyMessages = meta.story({

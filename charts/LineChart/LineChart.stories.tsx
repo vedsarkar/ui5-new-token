@@ -1,6 +1,9 @@
+import { faker } from "@faker-js/faker";
 import preview from "@/.storybook/preview";
 import { LineChart } from "./LineChart";
 import cssClasses from "./LineChart.module.css";
+
+faker.seed(42);
 
 const sampleData = [
 	{ month: "Jan", sales: 820, returns: 120, profit: 700 },
@@ -103,6 +106,34 @@ export const ErrorState = meta.story({
 
 export const CustomHeight = meta.story({
 	args: {
+		height: 500,
+	},
+});
+
+const DAY_MS = 86_400_000;
+const denseData = Array.from({ length: 90 }, (_, i) => ({
+	date: new Date(Date.UTC(2025, 0, 1) + i * DAY_MS).toLocaleDateString(
+		"en-US",
+		{ month: "short", day: "numeric" },
+	),
+	requests: faker.number.int({ min: 800, max: 5000 }),
+	errors: faker.number.int({ min: 10, max: 300 }),
+	latency: faker.number.int({ min: 50, max: 400 }),
+	throughput: faker.number.int({ min: 200, max: 1500 }),
+	activeUsers: faker.number.int({ min: 100, max: 2000 }),
+}));
+
+export const DenseData = meta.story({
+	args: {
+		data: denseData,
+		xKey: "date",
+		series: [
+			{ key: "requests", name: "Requests" },
+			{ key: "errors", name: "Errors" },
+			{ key: "latency", name: "Latency" },
+			{ key: "throughput", name: "Throughput" },
+			{ key: "activeUsers", name: "Active Users" },
+		],
 		height: 500,
 	},
 });

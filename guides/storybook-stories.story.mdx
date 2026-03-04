@@ -619,6 +619,180 @@ export const Large = meta.story({
 
 > **Rule of thumb:** If the prop value is a union of specific keywords — one story per keyword. If the prop accepts any string/number — one story is enough.
 
+## Test Data with Faker.js
+
+For stories that require large volumes of realistic data, use [`@faker-js/faker`](https://fakerjs.dev/) with a **fixed seed** to generate deterministic, reproducible content.
+
+> **🎯 Key Principle:** Faker is for volume and realism, not for replacing intentionally curated data. Always use a fixed seed to keep Chromatic snapshots stable.
+
+### When to Use Faker
+
+<table>
+  <thead>
+    <tr>
+      <th>Use Faker</th>
+      <th>Keep Curated Data</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Large lists, tables, or feeds (10+ items)</td>
+      <td>Labels describing the story variant (<code>"Filled Button"</code>, <code>"Disabled"</code>)</td>
+    </tr>
+    <tr>
+      <td>Stress-test / dense-data stories</td>
+      <td>Semantic content tied to color/state (<code>"Approved"</code> on success chip)</td>
+    </tr>
+    <tr>
+      <td>Repeated content that would be tedious to write by hand</td>
+      <td>Structural test data (markdown syntax, code blocks)</td>
+    </tr>
+    <tr>
+      <td>Realistic names, emails, dates, numbers in bulk</td>
+      <td>UX copy (placeholders, error messages, supporting text)</td>
+    </tr>
+    <tr>
+      <td>Filler text for chat messages, comments, descriptions</td>
+      <td>Small, hand-picked datasets that create a specific visual effect (chart trends)</td>
+    </tr>
+  </tbody>
+</table>
+
+### Setup
+
+Import faker and set a fixed seed **at the top of the file**, before any data generation:
+
+```tsx
+import { faker } from "@faker-js/faker";
+
+faker.seed(42);
+```
+
+The seed ensures every build produces identical data — no false positives in Chromatic visual regression tests.
+
+### Examples
+
+**✅ Do:** Use faker for large generated datasets
+
+```tsx
+import { faker } from "@faker-js/faker";
+
+faker.seed(42);
+
+const manyMessages = Array.from({ length: 100 }, (_, i) =>
+  i % 2 === 0
+    ? { role: "user" as const, content: faker.lorem.sentence() }
+    : {
+        role: "assistant" as const,
+        content: faker.lorem.paragraphs({ min: 1, max: 3 }, "\n\n"),
+      },
+);
+
+export const ManyMessages = meta.story({
+  args: { messages: manyMessages },
+});
+```
+
+**✅ Do:** Use faker for dense chart data
+
+```tsx
+const denseData = Array.from({ length: 90 }, (_, i) => ({
+  date: new Date(Date.UTC(2025, 0, 1) + i * 86_400_000)
+    .toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+  requests: faker.number.int({ min: 800, max: 5000 }),
+  errors: faker.number.int({ min: 10, max: 300 }),
+}));
+```
+
+**❌ Don't:** Use faker for variant labels or semantic content
+
+```tsx
+// Bad: random text obscures what the story is testing
+export const FilledPrimary = meta.story({
+  args: {
+    variant: "filled",
+    color: "primary",
+    children: faker.word.verb(), // "Navigate" — what variant is this?
+  },
+});
+
+// Good: label describes the variant
+export const FilledPrimary = meta.story({
+  args: {
+    variant: "filled",
+    color: "primary",
+    children: "Filled Primary",
+  },
+});
+```
+
+**❌ Don't:** Use faker without a fixed seed
+
+```tsx
+// Bad: different data on every render — Chromatic snapshots will always differ
+import { faker } from "@faker-js/faker";
+
+const messages = Array.from({ length: 50 }, () => ({
+  content: faker.lorem.sentence(), // random every time
+}));
+```
+
+### Useful Faker Methods
+
+<table>
+  <thead>
+    <tr>
+      <th>Data Type</th>
+      <th>Method</th>
+      <th>Example Output</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Sentence</td>
+      <td><code>faker.lorem.sentence()</code></td>
+      <td>"Voluptas quaerat quia dolor."</td>
+    </tr>
+    <tr>
+      <td>Paragraphs</td>
+      <td><code>faker.lorem.paragraphs(&#123; min: 1, max: 3 &#125;)</code></td>
+      <td>1–3 paragraphs of lorem text</td>
+    </tr>
+    <tr>
+      <td>Full name</td>
+      <td><code>faker.person.fullName()</code></td>
+      <td>"John Smith"</td>
+    </tr>
+    <tr>
+      <td>Email</td>
+      <td><code>faker.internet.email()</code></td>
+      <td>"john.smith@example.com"</td>
+    </tr>
+    <tr>
+      <td>Integer in range</td>
+      <td><code>faker.number.int(&#123; min: 0, max: 100 &#125;)</code></td>
+      <td>42</td>
+    </tr>
+    <tr>
+      <td>UUID</td>
+      <td><code>faker.string.uuid()</code></td>
+      <td>"a1b2c3d4-..."</td>
+    </tr>
+    <tr>
+      <td>Date</td>
+      <td><code>faker.date.recent()</code></td>
+      <td>Date object from last few days</td>
+    </tr>
+    <tr>
+      <td>Company name</td>
+      <td><code>faker.company.name()</code></td>
+      <td>"Acme Corp"</td>
+    </tr>
+  </tbody>
+</table>
+
+> **💡 Tip:** Use specific ranges in `faker.number.int()` that match the data domain. For example, `{ min: 50, max: 400 }` for latency in ms, or `{ min: 800, max: 5000 }` for request counts — this produces more realistic-looking charts and tables.
+
 ## Best Practices
 
 ### Story Structure
@@ -715,6 +889,7 @@ The CSS module import returns the class name mapping (e.g. `{ root: "MyComponent
 - [ ] All interactive states (disabled, loading, etc.) have stories
 - [ ] Free-form props have one demonstrative story each, not multiple value permutations
 - [ ] CSS module imported and passed via `parameters.cssClasses`
+- [ ] Faker.js used with a fixed seed for large/generated datasets; curated data for variant labels and semantic content
 
 ## Sources and References
 
@@ -726,3 +901,4 @@ The CSS module import returns the class name mapping (e.g. `{ root: "MyComponent
 - [Storybook Autodocs](https://storybook.js.org/docs/writing-docs/autodocs) — automatic documentation generation
 - [ArgTypes Mapping](https://storybook.js.org/docs/api/arg-types#mapping) — handling complex props in controls
 - [How to Write Stories](https://storybook.js.org/docs/writing-stories) — official Storybook guide
+- [Faker.js Documentation](https://fakerjs.dev/) — deterministic fake data generation for tests and stories
