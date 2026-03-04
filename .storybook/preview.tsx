@@ -10,6 +10,7 @@ import {
 import addonThemes, { withThemeByDataAttribute } from "@storybook/addon-themes";
 import { definePreview } from "@storybook/nextjs-vite";
 import { CssClasses } from "./blocks/CssClasses";
+import { ImportExample } from "./blocks/ImportExample";
 
 export default definePreview({
 	tags: ["autodocs"],
@@ -20,6 +21,7 @@ export default definePreview({
 				<>
 					<Title />
 					<Subtitle />
+					<ImportExample />
 					<Description />
 					<h3>Props</h3>
 					<ArgTypes />

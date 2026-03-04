@@ -1,0 +1,27 @@
+.root {
+	padding-bottom: 16px;
+}
+
+.code {
+	cursor: pointer;
+	padding: 8px;
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.04);
+	border: none;
+	transition: background 0.15s;
+	user-select: none;
+	font-family:
+		"SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+	font-size: 13px;
+	line-height: 1.5;
+
+	&:hover {
+		background: rgba(0, 0, 0, 0.08);
+	}
+}
+
+.copied {
+	& code {
+		color: var(--reltio-color-success, #2e7d32);
+	}
+}
