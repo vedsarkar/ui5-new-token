@@ -1,0 +1,127 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	max-width: min(640px, calc(100vw - 48px));
+	max-height: min(480px, calc(100vh - 48px));
+	padding: 16px;
+	gap: 12px;
+	border: 1px solid var(--reltio-color-border-2);
+	border-radius: 16px;
+	background: var(--reltio-color-surface-2);
+	color: var(--reltio-color-text);
+	box-shadow:
+		0 8px 32px var(--reltio-color-shadow-4),
+		0 2px 8px var(--reltio-color-shadow-2);
+	opacity: 0;
+	pointer-events: none;
+}
+
+.root:open {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.root::backdrop {
+	background: var(--reltio-color-bg-modal);
+	opacity: 0;
+	pointer-events: none;
+}
+
+.root:open::backdrop {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.animated {
+	transform: scale(0.97);
+	transition:
+		opacity 200ms ease-out,
+		transform 200ms ease-out,
+		overlay 200ms allow-discrete,
+		display 200ms allow-discrete;
+}
+
+.animated:open {
+	transform: scale(1);
+}
+
+@starting-style {
+	.animated:open {
+		opacity: 0;
+		transform: scale(0.97);
+	}
+}
+
+.animated::backdrop {
+	transition:
+		opacity 200ms ease-out,
+		display 200ms allow-discrete,
+		overlay 200ms allow-discrete;
+}
+
+@starting-style {
+	.animated:open::backdrop {
+		opacity: 0;
+	}
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding-left: 8px;
+	flex-shrink: 0;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.headerContent {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.closeButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	margin: 0;
+	border: none;
+	border-radius: 8px;
+	background: transparent;
+	color: var(--reltio-color-text-secondary);
+	cursor: pointer;
+	transition: background-color 150ms ease;
+
+	&:hover {
+		background: var(--reltio-color-bg-transparent-1);
+		color: var(--reltio-color-text);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--reltio-color-primary);
+		outline-offset: 1px;
+	}
+}
+
+.footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+	flex-shrink: 0;
+	font-size: 14px;
+}
+
+.body {
+	flex: 1 1 auto;
+	overflow-y: auto;
+	padding: 24px;
+	background: var(--reltio-color-surface-1);
+	border-radius: 12px;
+	border: 1px solid var(--reltio-color-border-1);
+}
