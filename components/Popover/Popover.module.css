@@ -1,0 +1,57 @@
+.root {
+	display: inline-flex;
+	width: fit-content;
+	anchor-scope: --trigger;
+	anchor-name: --trigger;
+}
+
+.container {
+	position-anchor: --trigger;
+	box-sizing: border-box;
+	margin: 8px;
+	padding: 0;
+	border: 1px solid var(--reltio-color-border-2);
+	border-radius: 12px;
+	background: var(--reltio-color-surface-1);
+	color: var(--reltio-color-text);
+	box-shadow:
+		0 4px 16px var(--reltio-color-shadow-2),
+		0 1px 4px var(--reltio-color-shadow-1);
+	inset: auto;
+	max-width: calc(100vw - 16px);
+	max-height: calc(100vh - 16px);
+}
+
+.container:popover-open {
+	display: flex;
+	flex-direction: column;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 4px 12px;
+	border-bottom: 1px solid var(--reltio-color-border-1);
+	font-weight: 600;
+	font-size: 14px;
+	flex-shrink: 0;
+	min-height: 32px;
+}
+
+.body {
+	flex: 1 1 auto;
+	overflow-y: auto;
+	min-height: 0;
+	padding: 0;
+}
+
+.footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+	padding: 12px;
+	border-top: 1px solid var(--reltio-color-border-1);
+	flex-shrink: 0;
+}

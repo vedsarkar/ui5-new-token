@@ -811,6 +811,51 @@ const messages = Array.from({ length: 50 }, () => ({
 4. **Use fn() for callbacks** — enables action logging and interaction testing
 5. **Demonstrate free-form props once** — one story to show the prop works, not multiple value permutations
 
+### Styling in Stories
+
+When stories need custom layout or styling for demo content (not the component itself), prefer extracting styles to a **separate CSS Module** rather than using inline `style={{}}` objects.
+
+**✅ Do:** Use a dedicated CSS Module for story styles
+
+```tsx
+import styles from "./Stories.module.css";
+
+export const MenuContent = meta.story({
+  render: () => (
+    <Popover trigger={<Button>Actions</Button>}>
+      <div role="menu" className={styles.menu}>
+        <button role="menuitem" className={styles.menuItem}>Edit</button>
+        <button role="menuitem" className={styles.menuItem}>Delete</button>
+      </div>
+    </Popover>
+  ),
+});
+```
+
+**❌ Don't:** Scatter inline styles across complex stories
+
+```tsx
+export const MenuContent = meta.story({
+  render: () => (
+    <Popover trigger={<Button>Actions</Button>}>
+      <div role="menu" style={{ display: "flex", flexDirection: "column", minWidth: 160 }}>
+        <button style={{ all: "unset", padding: "8px 12px", cursor: "pointer" }}>Edit</button>
+        <button style={{ all: "unset", padding: "8px 12px", cursor: "pointer" }}>Delete</button>
+      </div>
+    </Popover>
+  ),
+});
+```
+
+**When to use a story CSS Module:**
+- Stories with `render` functions that build custom layouts (menus, panels, lists)
+- Multiple stories sharing the same demo structure
+- Complex demo content with many styled elements
+
+**Naming convention:** `Stories.module.css` — placed alongside the stories file. Do **not** use compound suffixes like `ComponentName.stories.module.css` — only `.module.css` is recognized as a CSS Module by the bundler.
+
+> **💡 Tip:** Simple stories using only `args` rarely need custom styles. This pattern is most useful for `render`-based stories that compose multiple elements.
+
 ### What NOT to Include
 
 1. **Inline documentation** — use autodocs or MDX instead
@@ -890,6 +935,7 @@ The CSS module import returns the class name mapping (e.g. `{ root: "MyComponent
 - [ ] Free-form props have one demonstrative story each, not multiple value permutations
 - [ ] CSS module imported and passed via `parameters.cssClasses`
 - [ ] Faker.js used with a fixed seed for large/generated datasets; curated data for variant labels and semantic content
+- [ ] Complex story styles extracted to `Stories.module.css` instead of inline `style={{}}`
 
 ## Sources and References
 
