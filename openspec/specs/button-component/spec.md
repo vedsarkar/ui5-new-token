@@ -220,7 +220,7 @@ The Button component SHALL define all design tokens as CSS custom properties on 
 
 ### Requirement: className Utility Usage
 
-The Button component SHALL use the classNames utility from utils/classNames.ts for all className composition, providing stable base classes for external customization.
+The Button component SHALL use the classNames utility from utils/classNames.ts for all className composition, providing stable base classes for external customization. The composition SHALL include the `iconOnly` class when icon-only mode is detected.
 
 #### Scenario: classNames utility composes CSS modules
 - **WHEN** button is rendered
@@ -233,6 +233,11 @@ The Button component SHALL use the classNames utility from utils/classNames.ts f
 - **THEN** custom classes are added to button element
 - **AND** CSS modules classes are preserved
 - **AND** no class name conflicts occur
+
+#### Scenario: iconOnly class added when icon-only mode detected
+- **WHEN** children is a single React component element
+- **THEN** classNames composition includes the `iconOnly` CSS module class
+- **AND** the stable class `reltio_Button_iconOnly` is available for external customization
 
 ### Requirement: Full Width Layout Support
 
@@ -298,7 +303,7 @@ The Button component SHALL be fully typed with TypeScript using strict mode, wit
 
 ### Requirement: Storybook Documentation
 
-The Button component SHALL have comprehensive Storybook stories demonstrating all variants, states, and use cases, with each story showing only ONE variant.
+The Button component SHALL have comprehensive Storybook stories demonstrating all variants, states, and use cases, with each story showing only ONE variant. This includes icon-only mode stories.
 
 #### Scenario: Stories for all visual variants
 - **WHEN** viewing Storybook
@@ -341,6 +346,12 @@ The Button component SHALL have comprehensive Storybook stories demonstrating al
 - **THEN** stories demonstrate CSS variable customization
 - **AND** stories show className prop usage
 - **AND** stories demonstrate fullWidth option
+
+#### Scenario: Stories for icon-only mode
+- **WHEN** viewing Storybook
+- **THEN** stories exist for icon-only buttons across variants
+- **AND** each story shows a single circular icon-only button
+- **AND** icon-only stories demonstrate variant and color combinations
 
 ## Technical Implementation
 

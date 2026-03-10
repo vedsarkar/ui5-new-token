@@ -1,5 +1,7 @@
 import { fn } from "storybook/test";
 import preview from "@/.storybook/preview";
+import { ArrowDropDown } from "@/icons/ArrowDropDown";
+import { StarSelected } from "@/icons/StarSelected";
 import { Button } from "./Button";
 import cssClasses from "./Button.module.css";
 
@@ -166,5 +168,61 @@ export const DisabledLink = meta.story({
 		href: "/disabled",
 		disabled: true,
 		children: "Disabled Link",
+	},
+});
+
+export const WithIcons = meta.story({
+	args: {
+		variant: "filled",
+		color: "primary",
+		children: (
+			<>
+				<StarSelected />
+				Label
+				<ArrowDropDown />
+			</>
+		),
+	},
+});
+
+export const IconOnly = meta.story({
+	args: {
+		children: <StarSelected />,
+		"aria-label": "Favorite",
+	},
+});
+
+export const IconOnlyFilledPrimary = meta.story({
+	args: {
+		variant: "filled",
+		color: "primary",
+		children: <StarSelected />,
+		"aria-label": "Favorite",
+	},
+});
+
+export const IconOnlyOutlinedPrimary = meta.story({
+	args: {
+		variant: "outlined",
+		color: "primary",
+		children: <StarSelected />,
+		"aria-label": "Favorite",
+	},
+});
+
+export const IconOnlyTextPrimary = meta.story({
+	args: {
+		variant: "text",
+		color: "primary",
+		children: <StarSelected />,
+		"aria-label": "Favorite",
+	},
+});
+
+export const IconOnlyDisabled = meta.story({
+	args: {
+		disabled: true,
+		children: <StarSelected />,
+		"aria-label": "Favorite",
 	},
 });

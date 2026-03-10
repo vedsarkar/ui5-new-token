@@ -112,26 +112,32 @@
 /* Size: Small */
 .small {
 	min-height: 32px;
-	padding: 8px 16px;
+	padding: 8px 12px;
 	font-size: 0.875rem;
 }
 
 /* Size: Medium */
 .medium {
 	min-height: 40px;
-	padding: 12px 20px;
+	padding: 12px 18px;
 }
 
 /* Size: Large */
 .large {
 	min-height: 48px;
-	padding: 16px 32px;
+	padding: 16px 24px;
 }
 
 /* State: Disabled */
 .disabled {
 	opacity: 0.38;
 	cursor: not-allowed;
+}
+
+/* Icon Only */
+.iconOnly {
+	aspect-ratio: 1;
+	padding: 0;
 }
 
 /* Full Width */

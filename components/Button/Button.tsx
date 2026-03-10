@@ -1,5 +1,4 @@
-import type React from "react";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { classNames } from "@/utils/classNames";
 import styles from "./Button.module.css";
 import type { ButtonProps } from "./Button.types";
@@ -10,6 +9,9 @@ import type { ButtonProps } from "./Button.types";
  * A flexible, accessible button component that supports multiple variants
  * (filled, outlined, text), color options (primary, secondary, inherited),
  * sizes, states, and can render as either a button or anchor element.
+ *
+ * Automatically switches to circular icon-only layout when children
+ * is a single React component element.
  */
 export const Button = ({
 	variant = "filled",
@@ -36,7 +38,12 @@ export const Button = ({
 		}
 	}, [disabled]);
 
-	// Compose className using classNames utility
+	const isIconOnly =
+		React.Children.count(children) === 1 &&
+		React.isValidElement(children) &&
+		typeof children.type !== "string" &&
+		children.type !== React.Fragment;
+
 	const composedClassName = classNames(
 		styles.root,
 		styles[variant],
@@ -44,6 +51,7 @@ export const Button = ({
 		styles[size],
 		disabled && styles.disabled,
 		fullWidth && styles.fullWidth,
+		isIconOnly && styles.iconOnly,
 		className,
 	);
 
