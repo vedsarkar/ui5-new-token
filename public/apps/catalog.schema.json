@@ -22,14 +22,19 @@
 					"name": {
 						"type": "string",
 						"minLength": 1,
-						"description": "Unique human-readable display name of the application. Used as the primary key for integrations and automation."
+						"description": "Unique human-readable identifier of the application. Remains constant and serves as the primary key for integrations and automation. Also used as the display name when 'label' is not provided."
+					},
+					"label": {
+						"type": "string",
+						"minLength": 1,
+						"description": "Optional configurable display name shown in the UI. Can be changed independently of 'name'. When omitted, 'name' is used for display."
 					},
 					"description": {
 						"type": "string",
 						"minLength": 1,
 						"description": "Brief description of the application's purpose and capabilities."
 					},
-	"icon": {
+					"icon": {
 						"type": "string",
 						"format": "uri",
 						"description": "Absolute URL to the application icon (SVG)."
@@ -37,9 +42,9 @@
 					"category": {
 						"type": "string",
 						"enum": [
-							"AI",
-							"Applications",
+							"Agentflow",
 							"Configuration",
+							"Data Cloud",
 							"Resources",
 							"Security",
 							"Tenant Management"
