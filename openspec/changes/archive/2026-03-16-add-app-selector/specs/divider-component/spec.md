@@ -1,8 +1,5 @@
-# divider-component Specification
+## MODIFIED Requirements
 
-## Purpose
-TBD - created by archiving change add-divider-component. Update Purpose after archive.
-## Requirements
 ### Requirement: Horizontal Rendering
 
 The Divider component SHALL render as a `<div>` element with `role="separator"` to provide semantic meaning as a thematic break between content sections. When no `children` are provided, it SHALL display as a single horizontal line. When `children` are provided, it SHALL display the children with lines on either side according to the `align` prop.
@@ -74,40 +71,6 @@ The Divider component SHALL NOT use component-level CSS custom properties. Color
 - **WHEN** the Divider component is rendered
 - **THEN** the line color uses a global `--reltio-color-border-*` token
 - **AND** no component-level CSS variables are defined
-
-### Requirement: className Utility Usage
-
-The Divider component SHALL use the `classNames` utility from `@/utils/classNames` for all className composition, providing stable base classes for external customization.
-
-#### Scenario: classNames utility composes CSS modules
-
-- **WHEN** the Divider component is rendered
-- **THEN** the `classNames` utility combines all applicable CSS module classes
-- **AND** filters out falsy values
-
-#### Scenario: Custom className support
-
-- **WHEN** a developer provides a `className` prop
-- **THEN** custom classes are added to the divider element
-- **AND** CSS module classes are preserved
-- **AND** no class name conflicts occur
-
-### Requirement: TypeScript Type Safety
-
-The Divider component SHALL be fully typed with TypeScript using strict mode. All types MUST be defined in a separate `Divider.types.ts` file using the `type` keyword exclusively (never `interface`).
-
-#### Scenario: Component props fully typed
-
-- **WHEN** a developer uses the Divider component
-- **THEN** all props have proper TypeScript types
-- **AND** TypeScript provides autocomplete for props
-- **AND** invalid prop values are caught at compile time
-
-#### Scenario: Types exported alongside component
-
-- **WHEN** a developer imports Divider
-- **THEN** `DividerProps` type can be imported from the same path
-- **AND** all types use the `type` keyword
 
 ### Requirement: Storybook Documentation
 

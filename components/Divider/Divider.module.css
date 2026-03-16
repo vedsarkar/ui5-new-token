@@ -1,8 +1,35 @@
 .root {
 	width: 100%;
-	height: 1px;
 	margin: 0;
 	padding: 0;
-	border: none;
-	background-color: var(--reltio-color-border-3);
+}
+
+.plain {
+	height: 1px;
+	background-color: var(--reltio-color-surface-3);
+}
+
+.labeled {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--reltio-color-text-secondary);
+}
+
+.labeled::before,
+.labeled::after {
+	content: "";
+	flex: 1;
+	height: 1px;
+	background-color: var(--reltio-color-surface-3);
+}
+
+.start::before {
+	display: none;
+}
+
+.end::after {
+	display: none;
 }
