@@ -2,210 +2,158 @@
 	"$schema": "https://reltio.design/apps/catalog.schema.json",
 	"apps": [
 		{
-			"id": "agentflow",
 			"name": "AgentFlow",
 			"description": "Conversational interface for exploring, validating, and managing master data through AI-powered chat interactions.",
-			"basePath": "/agent-flow",
 			"icon": "https://reltio.design/apps/icons/agentflow.svg",
 			"category": "AI"
 		},
 		{
-			"id": "af-quality",
 			"name": "AF Quality",
 			"description": "Data quality application with an embedded AgentFlow chat for AI-assisted data quality management.",
-			"basePath": "/af-quality",
 			"icon": "https://reltio.design/apps/icons/af-quality.svg",
 			"category": "AI"
 		},
 		{
-			"id": "mdm",
 			"name": "Hub",
 			"description": "Central workspace for searching, viewing, and managing unified data profiles, resolving duplicates, and monitoring data quality.",
-			"basePath": "/mdm",
 			"icon": "https://reltio.design/apps/icons/mdm.svg",
 			"category": "Applications"
 		},
 		{
-			"id": "rdm",
 			"name": "RDM",
 			"description": "Reference data management application for maintaining standardized codes, classifications, and hierarchies across systems.",
-			"basePath": "/rdm",
 			"icon": "https://reltio.design/apps/icons/rdm.svg",
 			"category": "Applications"
 		},
 		{
-			"id": "external-match",
 			"name": "External Match",
 			"description": "Application for matching records from external files with entities in the Reltio platform using rule-based and AI-powered matching.",
-			"basePath": "/external-match",
 			"icon": "https://reltio.design/apps/icons/external-match.svg",
 			"category": "Tenant Management"
 		},
 		{
-			"id": "console",
 			"name": "Console",
 			"description": "Self-service tool for configuring data models, setting up integrations, and managing user roles and permissions.",
-			"basePath": "/console",
 			"icon": "https://reltio.design/apps/icons/console.svg",
 			"category": "Applications"
 		},
 		{
-			"id": "account-settings",
 			"name": "Account Settings",
 			"description": "Application for managing personal account preferences and settings.",
-			"basePath": "/account-settings",
 			"icon": "https://reltio.design/apps/icons/account-settings.svg",
 			"category": "Security"
 		},
 		{
-			"id": "user-management",
 			"name": "User Management",
 			"description": "Application for managing users, roles, and access permissions within tenants.",
-			"basePath": "/user-management",
 			"icon": "https://reltio.design/apps/icons/user-management.svg",
 			"category": "Security"
 		},
 		{
-			"id": "client-credentials",
 			"name": "Client Credentials",
 			"description": "Application for managing Client ID and Client Secret credentials for machine-to-machine authentication.",
-			"basePath": "/client-credentials",
 			"icon": "https://reltio.design/apps/icons/client-credentials.svg",
 			"category": "Security"
 		},
 		{
-			"id": "sso-configuration",
 			"name": "SSO Configuration",
 			"description": "Application for configuring Single Sign-On authentication using SAML or OpenID Connect protocols.",
-			"basePath": "/sso-configuration",
 			"icon": "https://reltio.design/apps/icons/sso-configuration.svg",
 			"category": "Security"
 		},
 		{
-			"id": "tenant-management",
 			"name": "Tenant Management",
 			"description": "Application for viewing tenant statistics, executing management jobs, and monitoring internal and external queues.",
-			"basePath": "/tenant-management",
 			"icon": "https://reltio.design/apps/icons/tenant-management.svg",
 			"category": "Tenant Management"
 		},
 		{
-			"id": "performance-monitoring",
 			"name": "Performance Monitoring",
 			"description": "Application for monitoring and analyzing API performance with dashboards, metrics, and usage patterns.",
-			"basePath": "/performance-monitoring",
 			"icon": "https://reltio.design/apps/icons/performance-monitoring.svg",
 			"category": "Tenant Management"
 		},
 		{
-			"id": "notification-management",
 			"name": "Notification Management",
 			"description": "Application for configuring notification services and assigning recipients for system events and alerts.",
-			"basePath": "/notification-management",
 			"icon": "https://reltio.design/apps/icons/notification-management.svg",
 			"category": "Configuration"
 		},
 		{
-			"id": "usage-reporting",
 			"name": "Usage Reporting",
 			"description": "Application for viewing and analyzing platform usage statistics and reports.",
-			"basePath": "/usage-reporting",
 			"icon": "https://reltio.design/apps/icons/usage-reporting.svg",
 			"category": "Tenant Management"
 		},
 		{
-			"id": "data-loader",
 			"name": "Data Loader",
 			"description": "Application for loading data from various sources and formats with visual mapping and transformation capabilities.",
-			"basePath": "/data-loader",
 			"icon": "https://reltio.design/apps/icons/data-loader.svg",
 			"category": "Tenant Management"
 		},
 		{
-			"id": "export",
 			"name": "Export",
 			"description": "Application for creating export jobs, viewing export statistics, and downloading exported data files.",
-			"basePath": "/export",
 			"icon": "https://reltio.design/apps/icons/export.svg",
 			"category": "Tenant Management"
 		},
 		{
-			"id": "integration-hub",
 			"name": "Integration Hub",
 			"description": "Data integration service with 1,000+ prebuilt connectors and a low-code/no-code platform for custom integrations.",
-			"basePath": "/integration-hub",
 			"icon": "https://reltio.design/apps/icons/integration-hub.svg",
 			"category": "Configuration"
 		},
 		{
-			"id": "data-sharing",
 			"name": "Data Sharing",
 			"description": "Application for securely sharing AI-ready data through zero-copy access or export pipelines to cloud data warehouses.",
-			"basePath": "/data-sharing",
 			"icon": "https://reltio.design/apps/icons/data-sharing.svg",
 			"category": "Configuration"
 		},
 		{
-			"id": "data-modeler",
 			"name": "Data Modeler",
 			"description": "Application for viewing and configuring entities, relationships, and sources in the tenant data model.",
-			"basePath": "/data-modeler",
 			"icon": "https://reltio.design/apps/icons/data-modeler.svg",
 			"category": "Configuration"
 		},
 		{
-			"id": "ui-modeler",
 			"name": "UI Modeler",
 			"description": "Application for designing dashboard and profile page layouts with customizable charts, maps, and graphs.",
-			"basePath": "/ui-modeler",
 			"icon": "https://reltio.design/apps/icons/ui-modeler.svg",
 			"category": "Configuration"
 		},
 		{
-			"id": "workflow-modeler",
 			"name": "Workflow Modeler",
 			"description": "Application for designing and configuring workflow processes and approval chains.",
-			"basePath": "/workflow-modeler",
 			"icon": "https://reltio.design/apps/icons/workflow-modeler.svg",
 			"category": "Configuration"
 		},
 		{
-			"id": "inbox",
 			"name": "Inbox",
 			"description": "Centralized hub for viewing and managing workflow tasks including authoring, data change requests, and match reviews.",
-			"basePath": "/inbox",
 			"icon": "https://reltio.design/apps/icons/inbox.svg",
 			"category": "Applications"
 		},
 		{
-			"id": "developer-portal",
-			"name": "Developer Portal",
+			"name": "Reltio Developer Portal",
 			"description": "API documentation, SDKs, and developer tools for integrating with the Reltio platform.",
-			"basePath": "/developer-portal",
 			"icon": "https://reltio.design/apps/icons/developer-portal.svg",
 			"category": "Resources"
 		},
 		{
-			"id": "reltio-documentation",
-			"name": "Reltio Documentation",
+			"name": "Reltio Documentation Portal",
 			"description": "Product documentation with guides, references, and best practices for the Reltio platform.",
-			"basePath": "/reltio-documentation",
 			"icon": "https://reltio.design/apps/icons/reltio-documentation.svg",
 			"category": "Resources"
 		},
 		{
-			"id": "reltio-community",
 			"name": "Reltio Community",
 			"description": "Community forum for discussions, knowledge sharing, and support among Reltio users and partners.",
-			"basePath": "/reltio-community",
 			"icon": "https://reltio.design/apps/icons/reltio-community.svg",
 			"category": "Resources"
 		},
 		{
-			"id": "reltio-learn",
 			"name": "Reltio Learn",
 			"description": "Training and learning platform with courses and certifications for the Reltio platform.",
-			"basePath": "/reltio-learn",
 			"icon": "https://reltio.design/apps/icons/reltio-learn.svg",
 			"category": "Resources"
 		}

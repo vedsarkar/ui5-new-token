@@ -16,30 +16,20 @@
 			"description": "List of available applications.",
 			"items": {
 				"type": "object",
-				"required": ["id", "name", "description", "basePath", "icon", "category"],
+				"required": ["name", "description", "icon", "category"],
 				"additionalProperties": false,
 				"properties": {
-					"id": {
-						"type": "string",
-						"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
-						"description": "Unique stable identifier in kebab-case. Used as a key for integrations and automation."
-					},
 					"name": {
 						"type": "string",
 						"minLength": 1,
-						"description": "Human-readable display name of the application."
+						"description": "Unique human-readable display name of the application. Used as the primary key for integrations and automation."
 					},
 					"description": {
 						"type": "string",
 						"minLength": 1,
 						"description": "Brief description of the application's purpose and capabilities."
 					},
-					"basePath": {
-						"type": "string",
-						"pattern": "^/",
-						"description": "Base path for the application in the Next.js multi-zones architecture."
-					},
-					"icon": {
+	"icon": {
 						"type": "string",
 						"format": "uri",
 						"description": "Absolute URL to the application icon (SVG)."
