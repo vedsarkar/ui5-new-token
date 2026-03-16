@@ -2,28 +2,30 @@
 	"$schema": "https://reltio.design/apps/catalog.schema.json",
 	"apps": [
 		{
-			"name": "AgentFlow",
+			"name": "Agentflow",
+			"label": "Agents",
 			"description": "Conversational interface for exploring, validating, and managing master data through AI-powered chat interactions.",
 			"icon": "https://reltio.design/apps/icons/agentflow.svg",
-			"category": "AI"
+			"category": "Agentflow"
 		},
 		{
-			"name": "AF Quality",
+			"name": "Agentflow Quality",
+			"label": "Quality",
 			"description": "Data quality application with an embedded AgentFlow chat for AI-assisted data quality management.",
 			"icon": "https://reltio.design/apps/icons/af-quality.svg",
-			"category": "AI"
+			"category": "Agentflow"
 		},
 		{
 			"name": "Hub",
 			"description": "Central workspace for searching, viewing, and managing unified data profiles, resolving duplicates, and monitoring data quality.",
 			"icon": "https://reltio.design/apps/icons/mdm.svg",
-			"category": "Applications"
+			"category": "Data Cloud"
 		},
 		{
 			"name": "RDM",
 			"description": "Reference data management application for maintaining standardized codes, classifications, and hierarchies across systems.",
 			"icon": "https://reltio.design/apps/icons/rdm.svg",
-			"category": "Applications"
+			"category": "Data Cloud"
 		},
 		{
 			"name": "External Match",
@@ -35,7 +37,7 @@
 			"name": "Console",
 			"description": "Self-service tool for configuring data models, setting up integrations, and managing user roles and permissions.",
 			"icon": "https://reltio.design/apps/icons/console.svg",
-			"category": "Applications"
+			"category": "Data Cloud"
 		},
 		{
 			"name": "Account Settings",
@@ -101,7 +103,7 @@
 			"name": "Integration Hub",
 			"description": "Data integration service with 1,000+ prebuilt connectors and a low-code/no-code platform for custom integrations.",
 			"icon": "https://reltio.design/apps/icons/integration-hub.svg",
-			"category": "Configuration"
+			"category": "Data Cloud"
 		},
 		{
 			"name": "Data Sharing",
@@ -131,7 +133,7 @@
 			"name": "Inbox",
 			"description": "Centralized hub for viewing and managing workflow tasks including authoring, data change requests, and match reviews.",
 			"icon": "https://reltio.design/apps/icons/inbox.svg",
-			"category": "Applications"
+			"category": "Data Cloud"
 		},
 		{
 			"name": "Reltio Developer Portal",
