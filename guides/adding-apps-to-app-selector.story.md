@@ -43,17 +43,11 @@ Add a new entry to the `apps` array in [`public/apps/catalog.json`](https://relt
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `name` | string | Unique identifier of the app. Remains constant and serves as the primary key. Also used as the display name when `label` is not provided. |
+| `name` | string | Human-readable display name of the application. |
 | `description` | string | Brief description of the app's purpose. |
 | `icon` | string (URL) | Absolute URL to the SVG icon hosted on `reltio.design`. |
 | `category` | string (enum) | One of: `Agentflow`, `Applications`, `Configuration`, `Resources`, `Security`, `Tenant Management`. |
 | `uri` | string (URL) | Application URL. Can use `${environment}` and `${tenant}` placeholders. |
-
-**Optional fields:**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `label` | string | Custom display name. When provided, shown in the UI instead of `name`. Useful when the display name needs to differ from the stable identifier. |
 
 ### 1.3 Choose the Right Category
 
@@ -360,11 +354,10 @@ For detailed rollout procedures, see [Rollout Stories, Sign-offs, and Jira Hygie
 
 | Field | Type | Required | In Config | In Catalog | Description |
 |-------|------|----------|-----------|------------|-------------|
-| `name` | string | Yes | Yes | Yes | Stable app identifier and default display name |
+| `name` | string | Yes | Yes | Yes | Human-readable display name |
 | `uri` | string | Yes | Yes | Yes | App URL with optional `${environment}` / `${tenant}` placeholders |
 | `icon` | string | Yes | Yes | Yes | Absolute URL to SVG icon |
 | `category` | string | No | No | Yes | Grouping category. Defaults to "Applications" if omitted |
-| `label` | string | No | No | Yes | Optional display name override |
 | `description` | string | No | No | Yes | App description (catalog only) |
 
 ### Minimal Config Service Entry

@@ -27,12 +27,7 @@
 					"name": {
 						"type": "string",
 						"minLength": 1,
-						"description": "Unique human-readable identifier of the application. Remains constant and serves as the primary key for integrations and automation. Also used as the display name when 'label' is not provided."
-					},
-					"label": {
-						"type": "string",
-						"minLength": 1,
-						"description": "Optional configurable display name shown in the UI. Can be changed independently of 'name'. When omitted, 'name' is used for display."
+						"description": "Human-readable display name of the application."
 					},
 					"description": {
 						"type": "string",
