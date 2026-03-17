@@ -78,5 +78,5 @@ const resolveUri = (
 	tenant: string | undefined,
 ): string | undefined =>
 	uri
-		?.replaceAll("${env}", String(env))
+		?.replaceAll("${environment}", String(env))
 		.replaceAll("${tenant}", String(tenant));

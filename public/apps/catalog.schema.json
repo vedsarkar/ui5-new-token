@@ -16,9 +16,14 @@
 			"description": "List of available applications.",
 			"items": {
 				"type": "object",
-				"required": ["name", "description", "icon", "category"],
+				"required": ["name", "description", "icon", "category", "uri"],
 				"additionalProperties": false,
 				"properties": {
+					"uri": {
+						"type": "string",
+						"format": "uri",
+						"description": "Absolute URL to the application. Can use `${environment}` and `${tenant}` placeholders for dynamic URLs."
+					},
 					"name": {
 						"type": "string",
 						"minLength": 1,
@@ -43,8 +48,8 @@
 						"type": "string",
 						"enum": [
 							"Agentflow",
+							"Applications",
 							"Configuration",
-							"Data Cloud",
 							"Resources",
 							"Security",
 							"Tenant Management"

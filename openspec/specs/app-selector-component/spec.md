@@ -68,23 +68,23 @@ The AppSelector component SHALL apply sensible defaults for optional fields in `
 
 ### Requirement: URI Templates
 
-The AppSelector component SHALL support URI templates with `${env}` and `${tenant}` placeholders in `AppEntry.uri`. Optional `env` and `tenant` props provide the values for substitution. When a prop is not provided, `"undefined"` is substituted.
+The AppSelector component SHALL support URI templates with `${environment}` and `${tenant}` placeholders in `AppEntry.uri`. Optional `env` and `tenant` props provide the values for substitution. When a prop is not provided, `"undefined"` is substituted.
 
 #### Scenario: Placeholders resolved with provided values
 
 - **WHEN** `env="us-prod"` and `tenant="acme-corp"` are provided
-- **AND** an app entry has `uri="https://console.reltio.com/?env=${env}&tenant=${tenant}"`
+- **AND** an app entry has `uri="https://console.reltio.com/?env=${environment}&tenant=${tenant}"`
 - **THEN** the rendered link href is `"https://console.reltio.com/?env=us-prod&tenant=acme-corp"`
 
 #### Scenario: Placeholders resolved without provided values
 
 - **WHEN** `env` and `tenant` props are not provided
-- **AND** an app entry has `uri="https://console.reltio.com/?env=${env}&tenant=${tenant}"`
+- **AND** an app entry has `uri="https://console.reltio.com/?env=${environment}&tenant=${tenant}"`
 - **THEN** the rendered link href is `"https://console.reltio.com/?env=undefined&tenant=undefined"`
 
 #### Scenario: URI without placeholders
 
-- **WHEN** an app entry has a plain URI without `${env}` or `${tenant}` placeholders
+- **WHEN** an app entry has a plain URI without `${environment}` or `${tenant}` placeholders
 - **THEN** the URI is used as-is regardless of whether `env` and `tenant` props are provided
 
 ### Requirement: Category Grouping
@@ -188,7 +188,7 @@ The AppSelector component SHALL have Storybook stories demonstrating its usage. 
 #### Scenario: UriTemplates story demonstrates template resolution
 
 - **WHEN** viewing the UriTemplates story in Storybook
-- **THEN** the apps have URIs with `${env}` and `${tenant}` placeholders resolved using provided prop values
+- **THEN** the apps have URIs with `${environment}` and `${tenant}` placeholders resolved using provided prop values
 
 #### Scenario: OptionalFields story demonstrates defaults
 

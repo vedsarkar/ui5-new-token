@@ -4,7 +4,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Spec-Driven Development Guide
 
-Welcome to the Reltio Design Platform's spec-driven development workflow. This guide explains how we use **OpenSpec (OPSX)** integrated with **Cursor IDE** to ensure predictable, high-quality component development.
+Welcome to the Reltio Design Platform's spec-driven development workflow. This guide explains how we use **OpenSpec (OPSX)** with **Claude Skills** to ensure predictable, high-quality component development. The skills work across both **Cursor IDE** and **Claude Code**, giving every AI agent the same workflow capabilities.
 
 ## What is Spec-Driven Development?
 
@@ -194,7 +194,7 @@ One of the most important principles in spec-driven development is **decompositi
 **❌ Don't:** Create one massive change
 
 ```
-/opsx:new create a Product Page with header, image gallery,
+/openspec-new-change create a Product Page with header, image gallery,
 price section, add-to-cart button, reviews section, and related products
 ```
 
@@ -205,7 +205,7 @@ This creates a massive change that is hard for AI to implement correctly, takes 
 First, use explore mode to help decompose:
 
 ```
-/opsx:explore Help me decompose a Product Page into individual component changes.
+/openspec-explore Help me decompose a Product Page into individual component changes.
 I need: header, image gallery, price, cart button, reviews, related products.
 ```
 
@@ -213,18 +213,18 @@ Then create changes in order, from specific to general:
 
 ```
 # Phase 1: Foundation components (can run in parallel)
-/opsx:new add-product-image
-/opsx:new add-price-display
-/opsx:new add-cart-button
-/opsx:new add-star-rating
+/openspec-new-change add-product-image
+/openspec-new-change add-price-display
+/openspec-new-change add-cart-button
+/openspec-new-change add-star-rating
 
 # Phase 2: Composite components (after Phase 1)
-/opsx:new add-image-gallery
-/opsx:new add-review-card
-/opsx:new add-reviews-list
+/openspec-new-change add-image-gallery
+/openspec-new-change add-review-card
+/openspec-new-change add-reviews-list
 
 # Phase 3: Page assembly (after Phase 2)
-/opsx:new add-product-page
+/openspec-new-change add-product-page
 ```
 
 **Result:** 8 simple changes instead of 1 complex one. Each can be:
@@ -255,7 +255,7 @@ Then create changes in order, from specific to general:
 Use explore mode to help with decomposition:
 
 ```
-/opsx:explore I want to build [feature]. Help me break it down into the smallest
+/openspec-explore I want to build [feature]. Help me break it down into the smallest
 possible independent components that I can create as separate changes.
 Order them from most fundamental (no dependencies) to most composite.
 ```
@@ -276,19 +276,53 @@ Order them from most fundamental (no dependencies) to most composite.
 
 > **Remember:** The goal is not to create more work, but to create *manageable* work. Ten simple changes are less total effort than one complex change that requires multiple rewrites.
 
-## Cursor IDE Integration
+## Claude Skills Integration
 
-Cursor is our corporate IDE for UI development. We use custom slash commands to work with OpenSpec.
+OpenSpec uses **Claude Skills** (`SKILL.md` files) to power the workflow. Skills are stored in `.claude/skills/` and are compatible with both **Cursor IDE** and **Claude Code** — any AI agent with access to the repository automatically gains the full OpenSpec workflow.
 
-### Core Commands
+### How Skills Work
 
-#### `/opsx:explore` — Think Through Problems
-
-Use this command when you need to think through an idea, investigate a problem, or clarify requirements before starting work.
+Every skill can be invoked via a **slash command** — this is the recommended approach for reliability and predictability. You can also describe your intent in natural language, and the AI agent will select the appropriate skill automatically.
 
 ```
-/opsx:explore real-time collaboration
-# Think through ideas with no fixed structure
+# Recommended: explicit command invocation
+/openspec-explore real-time collaboration
+/openspec-new-change add-icon-button
+/openspec-continue-change add-icon-button
+/openspec-ff-change add-icon-button
+/openspec-apply-change add-icon-button
+/openspec-verify-change add-icon-button
+/openspec-archive-change add-icon-button
+```
+
+> **Recommended:** Use slash commands for consistent, predictable behavior. Natural language works too — the AI will match your intent to the right skill — but explicit commands remove ambiguity.
+
+### Skill Architecture
+
+Skills live in `.claude/skills/` and each has a `SKILL.md` file that instructs the AI agent how to perform the action:
+
+```
+.claude/skills/
+├── openspec-explore/SKILL.md
+├── openspec-new-change/SKILL.md
+├── openspec-continue-change/SKILL.md
+├── openspec-ff-change/SKILL.md
+├── openspec-apply-change/SKILL.md
+├── openspec-verify-change/SKILL.md
+├── openspec-archive-change/SKILL.md
+├── openspec-sync-specs/SKILL.md
+├── openspec-bulk-archive-change/SKILL.md
+└── openspec-onboard/SKILL.md
+```
+
+### Core Skills
+
+#### Explore — Think Through Problems
+
+Use when you need to think through an idea, investigate a problem, or clarify requirements before starting work.
+
+```
+/openspec-explore real-time collaboration
 ```
 
 **What happens:**
@@ -299,41 +333,38 @@ Use this command when you need to think through an idea, investigate a problem, 
 
 Explore mode is for thinking, not implementing. You can exit anytime and transition to creating a change when ready.
 
-#### `/opsx:new` + `/opsx:continue` — Recommended Workflow
+#### New + Continue — Recommended Workflow
 
 This is the primary workflow for creating changes. It builds artifacts one at a time, giving you the opportunity to review and refine each one before moving forward.
 
 **Start a new change:**
 
 ```
-/opsx:new add-icon-button
-# Create a change and see the first artifact template
+/openspec-new-change add-icon-button
 ```
 
 **Continue building artifacts:**
 
 ```
-/opsx:continue add-icon-button
-# Create the next artifact in sequence
+/openspec-continue-change add-icon-button
 ```
 
 **What happens:**
-1. `/opsx:new` creates the change directory and shows the proposal template
+1. `/openspec-new-change` creates the change directory and shows the proposal template
 2. You review and refine each artifact before proceeding
-3. `/opsx:continue` creates the next artifact based on dependencies
+3. `/openspec-continue-change` creates the next artifact based on dependencies
 4. Repeat until all artifacts are complete
 
 This deliberate pace ensures each artifact gets proper attention. Specs inform design, design informs tasks — reviewing at each step catches issues early.
 
 > **Recommended:** Use this workflow for all changes. The few extra minutes spent reviewing artifacts saves hours of rework during implementation.
 
-#### `/opsx:ff` — Fast-Forward (Use Sparingly)
+#### Fast-Forward (Use Sparingly)
 
 Generates all planning artifacts at once. Useful when you have a very clear picture of what you want and need to move quickly.
 
 ```
-/opsx:ff add-icon-button
-# Create all artifacts in one go
+/openspec-ff-change add-icon-button
 ```
 
 **When to use:**
@@ -346,15 +377,14 @@ Generates all planning artifacts at once. Useful when you have a very clear pict
 - Changes that affect existing behavior
 - When requirements need discussion
 
-> **Caution:** Skipping artifact review can lead to misaligned implementation. If you use `/opsx:ff`, take time to review the generated artifacts before running `/opsx:apply`.
+> **Caution:** Skipping artifact review can lead to misaligned implementation. If you use `/openspec-ff-change`, take time to review the generated artifacts before running `/openspec-apply-change`.
 
-#### `/opsx:apply` — Implement Tasks
+#### Apply — Implement Tasks
 
-Use this command after artifacts are complete and you're ready to generate code.
+Use after artifacts are complete and you're ready to generate code.
 
 ```
-/opsx:apply add-icon-button
-# Implement tasks from the change
+/openspec-apply-change add-icon-button
 ```
 
 **What happens:**
@@ -363,15 +393,14 @@ Use this command after artifacts are complete and you're ready to generate code.
 3. Marks checkboxes as work completes
 4. Pauses on blockers or unclear requirements
 
-> **Important:** Always review artifacts before running apply. The AI implements exactly what's specified.
+> **Important:** Always review artifacts before running `/openspec-apply-change`. The AI implements exactly what's specified.
 
-#### `/opsx:verify` — Validate Implementation
+#### Verify — Validate Implementation
 
-Use this command before archiving to ensure implementation matches specifications.
+Use before archiving to ensure implementation matches specifications.
 
 ```
-/opsx:verify add-icon-button
-# Check completeness, correctness, and coherence
+/openspec-verify-change add-icon-button
 ```
 
 **What happens:**
@@ -381,13 +410,12 @@ Use this command before archiving to ensure implementation matches specification
 4. Validates design decisions were followed
 5. Reports issues by priority (critical, warning, suggestion)
 
-#### `/opsx:archive` — Complete the Change
+#### Archive — Complete the Change
 
-Use this command after implementation is verified and deployed.
+Use after implementation is verified and deployed.
 
 ```
-/opsx:archive add-icon-button
-# Archive to project changelog
+/openspec-archive-change add-icon-button
 ```
 
 **What happens:**
@@ -407,15 +435,15 @@ Use this command after implementation is verified and deployed.
 	</thead>
 	<tbody>
 		<tr>
-			<td><code>/opsx:sync</code></td>
+			<td><code>/openspec-sync-specs</code></td>
 			<td>Preview and sync specs without archiving</td>
 		</tr>
 		<tr>
-			<td><code>/opsx:bulk-archive</code></td>
+			<td><code>/openspec-bulk-archive-change</code></td>
 			<td>Archive multiple completed changes at once</td>
 		</tr>
 		<tr>
-			<td><code>/opsx:onboard</code></td>
+			<td><code>/openspec-onboard</code></td>
 			<td>Guided tutorial through a complete workflow cycle</td>
 		</tr>
 	</tbody>
@@ -448,7 +476,7 @@ Working with AI follows a collaborative pattern:
 When facing unclear requirements or complex problems, start with explore mode:
 
 ```
-/opsx:explore I want to add real-time collaboration to the editor.
+/openspec-explore I want to add real-time collaboration to the editor.
 What approaches should I consider?
 ```
 
@@ -465,14 +493,14 @@ Be specific about what you want. Good prompts include:
 **✅ Do:** Write focused, specific prompts
 
 ```
-/opsx:new add-icon-button
+/openspec-new-change add-icon-button
 # Then describe: "IconButton extends Button with left/right icon positions"
 ```
 
 **❌ Don't:** Write vague, broad prompts
 
 ```
-/opsx:new make-button-better
+/openspec-new-change make-button-better
 ```
 
 **✅ Do:** Reference existing patterns
@@ -499,13 +527,13 @@ Always review AI-generated artifacts before running apply:
 **✅ Do:** Review artifacts before applying
 
 ```
-Read proposal.md → Check specs/ → Review design.md → Run /opsx:apply
+Read proposal.md → Check specs/ → Review design.md → Run /openspec-apply-change
 ```
 
 **❌ Don't:** Apply without review
 
 ```
-Run /opsx:apply immediately after creating artifacts
+Run /openspec-apply-change immediately after creating artifacts
 ```
 
 ### 4. Iterate on Artifacts
@@ -524,7 +552,7 @@ You can update any artifact at any point—the workflow isn't phase-locked.
 After implementation, run verification:
 
 ```
-/opsx:verify add-icon-button
+/openspec-verify-change add-icon-button
 ```
 
 This ensures:
@@ -539,7 +567,7 @@ Fix any critical issues before archiving.
 
 ### For New Developers
 
-1. **Run the onboarding** — Use `/opsx:onboard` to learn the workflow with real work
+1. **Run the onboarding** — Use `/openspec-onboard` to learn the workflow with real work
 2. **Start with small changes** — Get familiar with the workflow on simple tasks
 3. **Read existing specs** — Look at `openspec/specs/` to understand the format
 4. **Use explore mode freely** — It's safe for thinking without side effects
@@ -550,7 +578,7 @@ Fix any critical issues before archiving.
 1. **Use explore for complex problems** — Even experts benefit from structured thinking
 2. **Reference existing patterns** — Point the AI to similar components
 3. **Break large changes** — Multiple smaller changes are better than one huge one
-4. **Verify before archiving** — Use `/opsx:verify` to catch issues
+4. **Verify before archiving** — Use `/openspec-verify-change` to catch issues
 5. **Archive promptly** — Don't let completed changes linger
 
 ### For Stakeholders
@@ -576,7 +604,7 @@ Fix any critical issues before archiving.
 
 ### "Implementation doesn't match the spec"
 
-- Run `/opsx:verify` to identify specific issues
+- Run `/openspec-verify-change` to identify specific issues
 - Review the spec — maybe it needs clarification
 - Update artifacts and re-run affected tasks
 - Manually adjust and update the spec to match
@@ -592,12 +620,12 @@ When in doubt, create a change. It's quick to create and provides:
 
 This is normal and expected. OPSX supports fluid iteration:
 - Update the artifact directly
-- Run `/opsx:verify` to check alignment
+- Run `/openspec-verify-change` to check alignment
 - Continue implementation with updated context
 
 ## Quick Reference
 
-### Commands
+### Skills
 
 <table>
 	<thead>
@@ -609,37 +637,37 @@ This is normal and expected. OPSX supports fluid iteration:
 	</thead>
 	<tbody>
 		<tr>
-			<td><code>/opsx:explore</code></td>
+			<td><code>/openspec-explore</code></td>
 			<td>Thinking through problems</td>
 			<td>Insights, diagrams, clarity</td>
 		</tr>
 		<tr>
-			<td><code>/opsx:new</code></td>
+			<td><code>/openspec-new-change</code></td>
 			<td>Starting work (recommended)</td>
 			<td>Change scaffold + first artifact template</td>
 		</tr>
 		<tr>
-			<td><code>/opsx:continue</code></td>
+			<td><code>/openspec-continue-change</code></td>
 			<td>Building next artifact (recommended)</td>
 			<td>Next artifact in sequence</td>
 		</tr>
 		<tr>
-			<td><code>/opsx:ff</code></td>
+			<td><code>/openspec-ff-change</code></td>
 			<td>Quick start (use sparingly)</td>
 			<td>All artifacts at once</td>
 		</tr>
 		<tr>
-			<td><code>/opsx:apply</code></td>
+			<td><code>/openspec-apply-change</code></td>
 			<td>After artifacts complete</td>
 			<td>Implementation code</td>
 		</tr>
 		<tr>
-			<td><code>/opsx:verify</code></td>
+			<td><code>/openspec-verify-change</code></td>
 			<td>Before archiving</td>
 			<td>Verification report</td>
 		</tr>
 		<tr>
-			<td><code>/opsx:archive</code></td>
+			<td><code>/openspec-archive-change</code></td>
 			<td>After deployment</td>
 			<td>Changelog entry</td>
 		</tr>
@@ -691,6 +719,10 @@ This is normal and expected. OPSX supports fluid iteration:
 	</thead>
 	<tbody>
 		<tr>
+			<td><code>.claude/skills/</code></td>
+			<td>OpenSpec skill definitions — AI agent instructions</td>
+		</tr>
+		<tr>
 			<td><code>openspec/specs/</code></td>
 			<td>Current truth — what IS built</td>
 		</tr>
@@ -740,6 +772,7 @@ This guide is informed by industry practices in specification-driven and AI-assi
 
 - [OpenSpec OPSX Documentation](https://github.com/Fission-AI/OpenSpec/blob/main/docs/opsx.md) — Official OPSX workflow documentation
 - [OpenSpec Concepts](https://github.com/Fission-AI/OpenSpec/blob/main/docs/concepts.md) — Core principles including brownfield-first philosophy
+- [Claude Code Agent Skills](https://docs.anthropic.com/en/docs/claude-code/skills) — How SKILL.md files work across AI agents
 - [Spec-Driven Development: Unpacking 2025's Key Engineering Practice](https://www.thoughtworks.com/en-us/insights/blog/agile-engineering-practices/spec-driven-development-unpacking-2025-new-engineering-practices) — Thoughtworks overview of SDD methodology
 - [Exploring Spec-Driven Development Tools](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) — Martin Fowler's analysis of Kiro, spec-kit, and other SDD tools
 - [RFCs and Design Docs at Big Tech Companies](https://blog.pragmaticengineer.com/rfcs-and-design-docs/) — How Google, Uber, and others use design documents

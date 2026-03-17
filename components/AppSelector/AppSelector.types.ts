@@ -22,7 +22,7 @@ export type AppSelectorProps = HtmlProps<
 		 * can be retrieved from Reltio Config Service.
 		 */
 		apps: AppEntry[];
-		/** Environment identifier substituted into URI templates (`${env}`). */
+		/** Environment identifier substituted into URI templates (`${environment}`). */
 		env?: string;
 		/** Tenant identifier substituted into URI templates (`${tenant}`). */
 		tenant?: string;
