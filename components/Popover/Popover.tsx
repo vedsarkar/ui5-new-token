@@ -77,7 +77,6 @@ export const Popover = ({
 			{trigger}
 			<div
 				ref={contentRef}
-				// @ts-expect-error popover is not yet in React's type definitions
 				popover="auto"
 				className={classNames(styles.container, className)}
 				style={{ ...style, positionArea } as React.CSSProperties}
