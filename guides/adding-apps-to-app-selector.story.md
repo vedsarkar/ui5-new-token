@@ -200,9 +200,8 @@ curl --request GET \
 When Config Service receives a request with `&default=true`, it searches for the first available configuration in this order:
 
 1. Exact match: `tenant={TENANT}` + `environment={ENV}`
-2. Tenant default: `tenant={TENANT}` + `environment=default`
-3. Environment default: `tenant=default` + `environment={ENV}`
-4. Global default: `tenant=default` + `environment=default`
+2. Environment default: `tenant=default` + `environment={ENV}`
+3. Global default: `tenant=default` + `environment=default`
 
 ### 2.5 Add Your App to the Configuration
 
