@@ -9,13 +9,13 @@ export default defineMain({
 	],
 
 	addons: [
-        "@chromatic-com/storybook",
-        "@storybook/addon-docs",
-        "@storybook/addon-a11y",
-        "@storybook/addon-vitest",
-        "@storybook/addon-themes",
-        "@storybook/addon-mcp"
-    ],
+		"@chromatic-com/storybook",
+		"@storybook/addon-docs",
+		"@storybook/addon-a11y",
+		"@storybook/addon-vitest",
+		"@storybook/addon-themes",
+		"@storybook/addon-mcp",
+	],
 
 	staticDirs: ["../public"],
 
