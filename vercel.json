@@ -1,0 +1,8 @@
+{
+	"framework": null,
+	"buildCommand": "npm run build-storybook",
+	"outputDirectory": "storybook-static",
+	"rewrites": [
+		{ "source": "/mcp", "destination": "/api/mcp" }
+	]
+}
