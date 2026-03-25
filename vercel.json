@@ -1,8 +1,8 @@
 {
-	"framework": null,
-	"buildCommand": "npm run build-storybook",
-	"outputDirectory": "storybook-static",
 	"rewrites": [
-		{ "source": "/mcp", "destination": "/api/mcp" }
+		{
+			"source": "/mcp",
+			"destination": "https://690ca858e8b7a13516b41c1a-cibsnzjipr.chromatic.com/mcp"
+		}
 	]
 }
