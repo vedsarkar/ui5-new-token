@@ -1,0 +1,24 @@
+.circle {
+	stroke-width: 2px;
+	fill: var(--reltio-color-surface-3);
+	stroke: var(--reltio-color-surface-3);
+	transition: fill ease-in-out 0.3s;
+}
+
+.activeCircle {
+	fill: var(--reltio-color-brand-blue);
+}
+
+.dimmedCircle {
+	fill: var(--reltio-color-border-3);
+}
+
+.link {
+	stroke: var(--reltio-color-brand-blue);
+	stroke-width: 2px;
+	transition: stroke ease-in-out 0.3s;
+}
+
+.dimmedLine {
+	stroke: var(--reltio-color-border-3);
+}

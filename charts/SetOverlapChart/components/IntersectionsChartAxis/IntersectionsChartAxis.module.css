@@ -1,0 +1,31 @@
+.axis {
+	stroke: var(--reltio-color-border-black);
+	stroke-width: 1px;
+}
+
+.axisLabel {
+	fill: var(--reltio-color-text);
+	opacity: 0.54;
+	font-size: 12px;
+	text-anchor: middle;
+}
+
+.axisTickLabel {
+	font-size: var(--axis-tick-label-size);
+	fill: var(--reltio-color-text);
+	opacity: 0.54;
+	text-anchor: end;
+}
+
+.verticalGrid {
+	stroke: var(--reltio-color-border-black);
+	opacity: 0.04;
+	stroke-width: 1px;
+	stroke-dasharray: 2;
+}
+
+.horizontalGrid {
+	stroke: var(--reltio-color-border-black);
+	opacity: 0.04;
+	stroke-width: 1px;
+}

@@ -1,0 +1,1 @@
+export { IntersectionsChartAxis } from "./IntersectionsChartAxis";

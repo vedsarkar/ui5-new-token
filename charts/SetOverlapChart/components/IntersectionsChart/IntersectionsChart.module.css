@@ -1,0 +1,35 @@
+.bar {
+	fill: var(--reltio-color-brand-blue);
+	transition:
+		y ease-in-out 0.3s,
+		height ease-in-out 0.3s;
+}
+
+.barBackground {
+	fill: var(--reltio-color-brand-blue);
+	opacity: 0.2;
+	transition:
+		y ease-in-out 0.3s,
+		height ease-in-out 0.3s;
+}
+
+.barLabel {
+	fill: var(--reltio-color-text);
+	font-size: 12px;
+	text-anchor: middle;
+}
+
+.hoverBar {
+	fill: transparent;
+	stroke: var(--reltio-color-brand-blue);
+	stroke-width: 1px;
+	cursor: pointer;
+	transition: opacity ease-in-out 0.3s;
+	opacity: 0;
+	outline: none;
+
+	&:hover,
+	&:focus-visible {
+		opacity: 1;
+	}
+}

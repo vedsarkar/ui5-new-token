@@ -51,6 +51,7 @@
 		"@storybook/addon-themes": "^10.3.3",
 		"@storybook/addon-vitest": "^10.3.3",
 		"@storybook/nextjs-vite": "^10.3.3",
+		"@types/d3-scale": "^4.0.9",
 		"@types/node": "^22.0.0",
 		"@vitest/browser-playwright": "^4.0.14",
 		"@vitest/coverage-v8": "^4.0.14",
@@ -66,6 +67,7 @@
 	},
 	"dependencies": {
 		"@storybook/mcp": "^0.6.1",
+		"d3-scale": "^4.0.2",
 		"echarts": "^6.0.0",
 		"markdown-to-jsx": "^9.7.3",
 		"rc-tree": "^5.13.1",
