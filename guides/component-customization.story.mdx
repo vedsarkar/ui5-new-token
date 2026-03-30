@@ -198,14 +198,18 @@ Underscores are used throughout so the entire class name can be selected with a 
 
 Reltio Design publishes all color tokens as CSS custom properties. Include them in your application:
 
+```js
+// From the npm package (recommended)
+import "@reltio/design/variables.css";
+```
+
 ```html
-<!-- From the public CDN -->
+<!-- Or from the public CDN -->
 <link rel="stylesheet" href="https://www.reltio.design/variables.css" />
 ```
 
-Or import in your CSS/JS:
-
 ```css
+/* Or import in CSS */
 @import url("https://www.reltio.design/variables.css");
 ```
 

@@ -1,6 +1,6 @@
 {
 	"name": "@reltio/design",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "Reltio Design Platform",
 	"peerDependencies": {
 		"react": ">=17 <20",
@@ -12,9 +12,12 @@
 		"markdown-to-jsx": "^9.7.3",
 		"d3-scale": "^4.0.2"
 	},
+	"exports": {
+		"./variables.css": "./variables.css"
+	},
 	"scripts": {
 		"build": "tsc && tsc-alias",
-		"postbuild": "cp package.json dist/ && cp README.md dist/"
+		"postbuild": "cp package.json dist/ && cp README.md dist/ && cp ../../public/variables.css dist/"
 	},
 	"devDependencies": {
 		"tsc-alias": "^1.8.10",

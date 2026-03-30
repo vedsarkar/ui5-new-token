@@ -28,6 +28,16 @@ export default App;
 
 **Important:** React is listed as peer dependencies. Make sure it's added to your project.
 
+### Design Tokens
+
+To use Reltio color tokens (CSS custom properties for theming and dark mode), import the variables stylesheet:
+
+```js
+import "@reltio/design/variables.css";
+```
+
+This provides all `--reltio-color-*` variables on `:root` (light mode) and `[data-theme="dark"]` (dark mode). See the [Component Customization](https://reltio.design/?path=/docs/guides-component-customization--docs) guide for details.
+
 ## Target Audience
 
 The library is designed for Reltio internal teams developing applications.
