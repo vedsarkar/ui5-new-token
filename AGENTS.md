@@ -160,6 +160,19 @@ openspec list --specs            # View existing capabilities
 openspec validate [item] --strict # Validate changes
 ```
 
+## Agent Skills
+
+This project uses the [Agent Skills](https://github.com/vercel-labs/skills) standard for extending AI agent capabilities. Skills are stored in `.agents/skills/` (shared across all AI agents) with symlinks in `.claude/skills/` for Claude Code.
+
+**MANDATORY: Always use the `npx skills` CLI for skill management. Never manually create, copy, or write skill files.**
+
+```bash
+npx skills add <repo>           # Install skills from a GitHub repository
+npx skills search <query>       # Search for available skills
+npx skills list                 # List installed skills
+npx skills remove <name>        # Remove a skill
+```
+
 ## Pre-Commit Checklist
 
 - Types in `.types.ts` file using `type` keyword
