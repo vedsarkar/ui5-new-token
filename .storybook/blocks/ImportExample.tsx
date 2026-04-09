@@ -7,15 +7,27 @@ export const ImportExample = () => {
 	const resolved = useOf("meta");
 	if (resolved.type !== "meta") return null;
 
-	const component = resolved.preparedMeta.component as
-		| ((...args: unknown[]) => unknown)
-		| undefined;
-	if (!component) return null;
+	const sourceCode = (
+		resolved.preparedMeta.parameters?.docs as
+			| { source?: { code?: string } }
+			| undefined
+	)?.source?.code;
 
-	const name = component.displayName || component.name;
-	if (!name) return null;
+	let importStatement: string;
 
-	const importStatement = `import { ${name} } from "@reltio/design/components"`;
+	if (sourceCode) {
+		importStatement = sourceCode;
+	} else {
+		const component = resolved.preparedMeta.component as
+			| (((...args: unknown[]) => unknown) & { displayName?: string })
+			| undefined;
+		if (!component) return null;
+
+		const name = component.displayName || component.name;
+		if (!name) return null;
+
+		importStatement = `import { ${name} } from "@reltio/design/components"`;
+	}
 
 	const copy = async () => {
 		await navigator.clipboard.writeText(importStatement);

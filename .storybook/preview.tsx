@@ -8,14 +8,23 @@ import {
 	Title,
 } from "@storybook/addon-docs/blocks";
 import addonThemes, { withThemeByDataAttribute } from "@storybook/addon-themes";
-import { definePreview } from "@storybook/nextjs-vite";
+import { definePreview } from "@storybook/react-vite";
+import { initialize, mswLoader } from "msw-storybook-addon";
 import { CssClasses } from "./blocks/CssClasses";
 import { ImportExample } from "./blocks/ImportExample";
+
+initialize({ onUnhandledRequest: "bypass" });
 
 export default definePreview({
 	tags: ["autodocs"],
 
+	loaders: [mswLoader],
+
 	parameters: {
+		msw: {
+			handlers: [],
+		},
+
 		docs: {
 			page: () => (
 				<>
@@ -23,7 +32,6 @@ export default definePreview({
 					<Subtitle />
 					<ImportExample />
 					<Description />
-					<h3>Props</h3>
 					<ArgTypes />
 					<CssClasses />
 					<Stories />

@@ -1,6 +1,6 @@
-import { defineMain } from "@storybook/nextjs-vite/node";
+import { defineMain } from "@storybook/react-vite/node";
 export default defineMain({
-	framework: "@storybook/nextjs-vite",
+	framework: "@storybook/react-vite",
 
 	stories: [
 		"../Welcome.story.mdx",
@@ -23,6 +23,7 @@ export default defineMain({
 		reactDocgen: "react-docgen-typescript",
 		reactDocgenTypescriptOptions: {
 			shouldExtractLiteralValuesFromEnum: true,
+			include: ["../components/**/*.tsx", "../charts/**/*.tsx"],
 		},
 	},
 });

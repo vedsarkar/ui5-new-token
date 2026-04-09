@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
@@ -21,9 +22,12 @@ export default defineConfig({
 						provider: playwright({}),
 						instances: [{ browser: "chromium" }],
 					},
-					setupFiles: [".storybook/vitest.setup.ts"],
+
 					// Exclude Storybook template files from tests
 					exclude: ["**/node_modules/**"],
+				},
+				optimizeDeps: {
+					include: ["react/jsx-dev-runtime"],
 				},
 			},
 		],
@@ -38,6 +42,9 @@ export default defineConfig({
 		},
 	},
 	resolve: {
+		alias: {
+			"@": fileURLToPath(new URL(".", import.meta.url)),
+		},
 		conditions: ["import", "module", "browser", "default"],
 	},
 });
