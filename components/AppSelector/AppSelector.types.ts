@@ -26,6 +26,10 @@ export type AppSelectorProps = HtmlProps<
 		env?: string;
 		/** Tenant identifier substituted into URI templates (`${tenant}`). */
 		tenant?: string;
+		/** Text label displayed next to the trigger icon.
+		 * When omitted, the trigger renders as an icon-only button.
+		 */
+		label?: string;
 		/** CSS `position-area` value controlling popover placement relative to the trigger.
 		 * @default "right span-top"
 		 */

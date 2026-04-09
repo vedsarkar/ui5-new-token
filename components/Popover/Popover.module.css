@@ -12,7 +12,7 @@
 	padding: 0;
 	border: 1px solid var(--reltio-color-border-2);
 	border-radius: 12px;
-	background: var(--reltio-color-surface-1);
+	background: var(--reltio-color-surface-4);
 	color: var(--reltio-color-text);
 	box-shadow:
 		0 4px 16px var(--reltio-color-shadow-2),

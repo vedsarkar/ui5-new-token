@@ -16,6 +16,7 @@ export const AppSelector = ({
 	apps,
 	env,
 	tenant,
+	label,
 	className,
 	positionArea = "right span-top",
 	...rest
@@ -30,9 +31,15 @@ export const AppSelector = ({
 		<nav className={classNames(className)} aria-label="Applications" {...rest}>
 			<Popover
 				trigger={
-					<Button variant="text" aria-label="Applications">
-						<Applications />
-					</Button>
+					label ? (
+						<Button variant="text">
+							<Applications /> {label}
+						</Button>
+					) : (
+						<Button variant="text" aria-label="Applications">
+							<Applications />
+						</Button>
+					)
 				}
 				positionArea={positionArea}
 			>
