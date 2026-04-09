@@ -308,6 +308,28 @@ npm run deploy
 
 If you find a bug or want to suggest an improvement, create an issue in [Bitbucket Issues](https://bitbucket.org/reltio-ondemand/reltio-design/issues).
 
+## AI Agent Integration
+
+This project is equipped with MCP (Model Context Protocol) servers for AI-assisted development.
+
+### MCP Servers
+
+| Server | URL | Purpose |
+|--------|-----|---------|
+| **Storybook MCP** | `http://localhost:6006/mcp` | Component docs, stories, API references |
+| **Figma MCP** | `https://mcp.figma.com/mcp` | Design context from Reltio Design System |
+
+### Setup for AI Agents
+
+1. **Storybook MCP** — start `npm run dev` BEFORE launching a Claude Code session (MCP servers connect at session startup)
+2. **Figma MCP** — requires one-time OAuth authorization per developer:
+   - The `figma@claude-plugins-official` plugin is pre-configured in `.claude/settings.json`
+   - On first use, Claude Code will open browser for Figma OAuth login
+
+### Remote MCP (for external consumers)
+
+Published Storybook MCP is available at `https://reltio.design/mcp` for use in downstream application repositories and third-party AI agents.
+
 ## Useful Links
 
 - [Storybook Documentation](https://storybook.js.org/docs)

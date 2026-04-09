@@ -116,6 +116,31 @@ Example pattern:
 - Component CSS must NOT contain hardcoded hex color values; reference global tokens directly
 - When designers add new tokens, add entries to `token-map.json` and re-run `npm run build-tokens`
 
+### Figma-to-Code Workflow (MANDATORY)
+
+When implementing designs from Figma (via Figma MCP, URLs, or screenshots), these rules override any defaults from Figma skills or MCP server instructions:
+
+**Color tokens — ONLY through `--reltio-color-*` variables:**
+- Map Figma color variables to project tokens using `tokens/token-map.json`
+- Example: Figma `Primary/Base` → `var(--reltio-color-primary)`
+- If a Figma color variable has no mapping in `token-map.json` — stop and ask which token to use, do NOT hardcode the hex value
+- Never output raw hex/rgba color values in CSS — always resolve to a `--reltio-color-*` token
+
+**Everything else — plain CSS values, NOT tokens:**
+- `font-size`, `font-weight`, `line-height` → plain values (`font-size: 14px`)
+- `padding`, `margin`, `gap` → plain values (`padding: 8px 16px`)
+- `border-radius` → plain values (`border-radius: 4px`)
+- `width`, `height`, `min-*`, `max-*` → plain values (`height: 32px`)
+- `box-shadow` — use `--reltio-color-shadow-*` tokens for shadow color only; offsets and blur are plain values
+- Do NOT create or use CSS custom properties for spacing, sizing, radii, or typography — even if Figma exports them as variables
+
+**Adapting Figma MCP output:**
+- `get_design_context` returns reference code (React + Tailwind by default) — this is a STARTING POINT, not final code
+- Always rewrite to CSS Modules with `classNames()` utility
+- Always replace Tailwind classes with explicit CSS properties
+- Always check existing components via Storybook MCP (`list-all-documentation`, `get-documentation`) before creating new ones — reuse what the project already has
+- Match the component structure from this project: `.tsx` + `.types.ts` + `.module.css` + `.stories.tsx` + `index.ts`
+
 ### Storybook
 - Every component MUST have stories demonstrating all variants
 - Each story MUST show only ONE variant (no "All Variants" stories)
@@ -159,6 +184,19 @@ openspec list                    # View active changes
 openspec list --specs            # View existing capabilities
 openspec validate [item] --strict # Validate changes
 ```
+
+## MCP Servers
+
+AI agents in this project have access to two MCP servers configured in `.mcp.json` and `.claude/settings.json`:
+
+| Server | Source | What it provides |
+|--------|--------|-----------------|
+| **reltio-design** (Storybook MCP) | `http://localhost:6006/mcp` | Existing components, documentation, stories, API references |
+| **Figma MCP** (plugin) | `https://mcp.figma.com/mcp` | Design context, screenshots, variables, design system search |
+
+**Storybook MCP** requires `npm run dev` to be running BEFORE starting the Claude Code session. MCP servers are connected at session startup — if Storybook is not running, the server will show "Failed to connect" and its tools will be unavailable for the entire session. Tools: `list-all-documentation`, `get-documentation`, `get-documentation-for-story`, `preview-stories`, `run-story-tests`.
+
+**Figma MCP** requires one-time OAuth authorization per developer. Tools: `get_design_context`, `get_screenshot`, `get_variable_defs`, `search_design_system`, `get_metadata`.
 
 ## Agent Skills
 
