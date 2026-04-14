@@ -70,6 +70,12 @@ export function buildTheme(element: HTMLElement) {
 			},
 		},
 
+		visualMap: {
+			textStyle: {
+				color: getToken(styles, "text-secondary"),
+			},
+		},
+
 		valueAxis: {
 			axisLine: {
 				lineStyle: {
