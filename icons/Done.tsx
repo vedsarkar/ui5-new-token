@@ -18,6 +18,7 @@ export const Done = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M7.99996 14.0442L4.35571 10.4L5.39996 9.35574L7.99996 11.9557L14.6 5.35574L15.6442 6.39999L7.99996 14.0442Z" />

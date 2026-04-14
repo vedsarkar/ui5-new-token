@@ -18,6 +18,7 @@ export const Flag = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M3.5 18.75V2.5H11.596L11.996 4.5H17.5V13.5H11.404L11.004 11.5H5V18.75H3.5Z" />

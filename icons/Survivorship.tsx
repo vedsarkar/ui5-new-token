@@ -18,6 +18,7 @@ export const Survivorship = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M15.6345 14.4423H8V12.9423H15.6345V14.4423Z" />

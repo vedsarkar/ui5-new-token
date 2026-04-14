@@ -18,6 +18,7 @@ export const ViewChart = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M1.5 18.5H6V17H3V14H1.5V18.5Z" />

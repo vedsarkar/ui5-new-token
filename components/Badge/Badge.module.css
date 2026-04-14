@@ -1,0 +1,45 @@
+.root {
+	position: relative;
+	display: inline-flex;
+}
+
+.indicator {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--reltio-color-surface-1);
+	border-radius: 10px;
+	min-width: 20px;
+	height: 20px;
+	padding: 0 6px;
+	box-sizing: border-box;
+	line-height: 1;
+	white-space: nowrap;
+	position: absolute;
+	top: 0;
+	right: 0;
+	transform: translate(50%, -50%);
+}
+
+.dot {
+	width: 8px;
+	height: 8px;
+	min-width: unset;
+	padding: 0;
+	border-radius: 50%;
+}
+
+.error {
+	background-color: var(--reltio-color-error);
+}
+
+.primary {
+	background-color: var(--reltio-color-primary);
+}
+
+.standalone .indicator {
+	position: static;
+	transform: none;
+}

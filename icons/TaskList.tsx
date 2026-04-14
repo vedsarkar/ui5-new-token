@@ -18,6 +18,7 @@ export const TaskList = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M8.5 17V15.4444H18.5V17H8.5ZM8.5 10.7778V9.22222H18.5V10.7778H8.5ZM8.5 4.55556V3H18.5V4.55556H8.5Z" />

@@ -18,6 +18,7 @@ export const Attribute = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M4.5 15.5V4.5H15.5V15.5H4.5ZM6 14H14V6H6V14Z" />

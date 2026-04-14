@@ -18,6 +18,7 @@ export const Remove = ({
 			)}
 			viewBox="0 -960 960 960"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M200-440v-80h560v80H200Z" />

@@ -1,0 +1,130 @@
+/* Root */
+.root {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 12px 16px;
+	border-radius: 8px;
+	border: 1px solid transparent;
+	font-family: "Libre Franklin", sans-serif;
+	box-sizing: border-box;
+}
+
+/* Icon */
+.icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 20px;
+	height: 20px;
+}
+
+/* Content */
+.content {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-width: 0;
+	gap: 2px;
+}
+
+/* Title */
+.title {
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+}
+
+/* Description */
+.description {
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 20px;
+	color: var(--reltio-color-text);
+}
+
+/* Close button */
+.closeButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 20px;
+	height: 20px;
+	padding: 0;
+	margin: 0;
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: var(--reltio-color-text-secondary);
+	opacity: 0.6;
+	border-radius: 50%;
+	transition: opacity 150ms ease;
+}
+
+.closeButton:hover {
+	opacity: 1;
+}
+
+.closeButton:focus-visible {
+	outline: 2px solid var(--reltio-color-primary);
+	outline-offset: 1px;
+	opacity: 1;
+}
+
+/* Color variant: Info */
+.info {
+	background-color: var(--reltio-color-primary-transparent-mild);
+	border-color: var(--reltio-color-primary-transparent-focus);
+}
+
+.info .icon {
+	color: var(--reltio-color-primary);
+}
+
+.info .title {
+	color: var(--reltio-color-primary);
+}
+
+/* Color variant: Success */
+.success {
+	background-color: var(--reltio-color-success-transparent);
+	border-color: var(--reltio-color-success-transparent-hover);
+}
+
+.success .icon {
+	color: var(--reltio-color-success);
+}
+
+.success .title {
+	color: var(--reltio-color-success);
+}
+
+/* Color variant: Warning */
+.warning {
+	background-color: var(--reltio-color-orange-transparent);
+	border-color: var(--reltio-color-orange-transparent-hover);
+}
+
+.warning .icon {
+	color: var(--reltio-color-orange);
+}
+
+.warning .title {
+	color: var(--reltio-color-orange);
+}
+
+/* Color variant: Error */
+.error {
+	background-color: var(--reltio-color-error-transparent);
+	border-color: var(--reltio-color-error-transparent-hover);
+}
+
+.error .icon {
+	color: var(--reltio-color-error);
+}
+
+.error .title {
+	color: var(--reltio-color-error);
+}

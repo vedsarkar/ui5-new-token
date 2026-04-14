@@ -18,6 +18,7 @@ export const OvMarker = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M9.03648 8.24996L5.9115 2H7.58855L9.96353 6.74996H10.0365L12.4115 2H14.0885L10.9635 8.24996H9.03648Z" />

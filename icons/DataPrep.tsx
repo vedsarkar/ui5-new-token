@@ -18,6 +18,7 @@ export const DataPrep = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M12.5 3C12.5 4.38071 11.3807 5.5 10 5.5C8.61929 5.5 7.5 4.38071 7.5 3C7.5 1.61929 8.61929 0.5 10 0.5C11.3807 0.5 12.5 1.61929 12.5 3Z" />

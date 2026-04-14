@@ -1,0 +1,83 @@
+/* Slider styled to match Reltio DS 3.1 */
+.root {
+	-webkit-appearance: none;
+	appearance: none;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	height: 36px;
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	cursor: pointer;
+	outline: none;
+}
+
+/* ── WebKit Track — 12px fully rounded ── */
+.root::-webkit-slider-runnable-track {
+	height: 12px;
+	border-radius: 6px;
+	background: linear-gradient(
+		to right,
+		var(--reltio-color-primary) var(--slider-progress),
+		var(--reltio-color-border-2) var(--slider-progress)
+	);
+}
+
+/* ── WebKit Thumb — 36x4 vertical bar ── */
+.root::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 4px;
+	height: 36px;
+	border-radius: 2px;
+	background: var(--reltio-color-primary);
+	border-left: 6px solid var(--reltio-color-surface-1);
+	border-right: 6px solid var(--reltio-color-surface-1);
+	box-sizing: content-box;
+	cursor: pointer;
+	margin-top: -12px;
+}
+
+.root:focus-visible::-webkit-slider-thumb {
+	outline: 2px solid var(--reltio-color-primary);
+	outline-offset: 2px;
+}
+
+/* ── Firefox Track ── */
+.root::-moz-range-track {
+	height: 12px;
+	border-radius: 6px;
+	background: var(--reltio-color-border-2);
+	border: none;
+}
+
+.root::-moz-range-progress {
+	height: 12px;
+	border-radius: 6px;
+	background: var(--reltio-color-primary);
+}
+
+/* ── Firefox Thumb ── */
+.root::-moz-range-thumb {
+	width: 4px;
+	height: 36px;
+	border-radius: 2px;
+	background: var(--reltio-color-primary);
+	border-left: 6px solid var(--reltio-color-surface-1);
+	border-right: 6px solid var(--reltio-color-surface-1);
+	box-sizing: content-box;
+	cursor: pointer;
+}
+
+.root:focus-visible::-moz-range-thumb {
+	outline: 2px solid var(--reltio-color-primary);
+	outline-offset: 2px;
+}
+
+/* ── Disabled ── */
+.disabled {
+	opacity: 0.38;
+	cursor: not-allowed;
+	pointer-events: none;
+}

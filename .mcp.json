@@ -1,8 +1,8 @@
 {
-  "mcpServers": {
-    "reltio-design": {
-      "type": "http",
-      "url": "http://localhost:6006/mcp"
-    }
-  }
+	"mcpServers": {
+		"reltio-design": {
+			"type": "http",
+			"url": "http://localhost:6006/mcp"
+		}
+	}
 }

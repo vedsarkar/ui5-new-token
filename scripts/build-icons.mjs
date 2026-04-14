@@ -109,6 +109,7 @@ export const ${iconName} = ({
 			className={classNames(styles.root, styles[size], styles[color], className)}
 			viewBox="${viewBox}"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			${svgContent}

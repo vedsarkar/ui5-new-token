@@ -18,6 +18,7 @@ export const PasswordExpired = ({
 			)}
 			viewBox="0 0 22 22"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path

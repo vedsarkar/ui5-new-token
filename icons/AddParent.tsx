@@ -18,6 +18,7 @@ export const AddParent = ({
 			)}
 			viewBox="0 0 20 21"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M5.25 6.25L3.25 6.25L3.25 4.75L5.25 4.75L5.25 2.75L6.75 2.75L6.75 4.75L8.75 4.75L8.75 6.25L6.75 6.25L6.75 8.25L5.25 8.25L5.25 6.25Z" />

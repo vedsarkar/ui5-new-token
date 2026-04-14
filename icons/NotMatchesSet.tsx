@@ -18,6 +18,7 @@ export const NotMatchesSet = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M8.25 10.4558L10.35 8.35575L11.3942 9.4L9.29425 11.5L11.3942 13.6L10.35 14.6443L8.25 12.5443L6.15 14.6443L5.10575 13.6L7.20575 11.5L5.10575 9.4L6.15 8.35575L8.25 10.4558Z" />

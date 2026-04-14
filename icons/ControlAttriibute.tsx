@@ -18,6 +18,7 @@ export const ControlAttriibute = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M9.04283 17.4815C5.81123 17.0722 3.21733 14.6179 2.59881 11.4563H1.06655C1.71305 15.4529 4.97692 18.5726 9.04283 19V17.4815Z" />

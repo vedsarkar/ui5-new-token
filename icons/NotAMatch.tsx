@@ -18,6 +18,7 @@ export const NotAMatch = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M17.3 3.31H12V4.91H14.5686L5.38994 14.0887H2V15.6887H6.05268L15.7 6.04137V8.61H17.3V3.31Z" />

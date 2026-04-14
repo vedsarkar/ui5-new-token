@@ -18,6 +18,7 @@ export const Roles = ({
 			)}
 			viewBox="0 0 23 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M17.5 18.5H23V3.5H17.5V5L21.5 5V17H17.5V18.5Z" />

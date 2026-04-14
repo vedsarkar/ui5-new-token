@@ -18,6 +18,7 @@ export const Send = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M1.5 17.25V2.75L18.7115 10L1.5 17.25ZM3 15L14.85 10L3 5V8.69225L8.423 10L3 11.3077V15Z" />

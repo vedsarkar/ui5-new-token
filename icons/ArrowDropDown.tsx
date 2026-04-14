@@ -18,6 +18,7 @@ export const ArrowDropDown = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M9.99994 12.6537L5.59619 8.25H14.4037L9.99994 12.6537Z" />

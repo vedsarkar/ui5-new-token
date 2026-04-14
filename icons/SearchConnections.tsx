@@ -18,6 +18,7 @@ export const SearchConnections = ({
 			)}
 			viewBox="0 0 22 23"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path

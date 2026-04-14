@@ -1,0 +1,99 @@
+.root {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	background-color: var(--reltio-color-bg-transparent-2);
+	color: var(--reltio-color-text-secondary);
+	font-family: "Libre Franklin", sans-serif;
+	font-weight: 500;
+	text-transform: uppercase;
+	line-height: 1;
+	box-sizing: border-box;
+	flex-shrink: 0;
+	user-select: none;
+}
+
+/* Shape: Circle (default) */
+.circle {
+	border-radius: 50%;
+}
+
+/* Shape: Square */
+.square {
+	border-radius: 4px;
+}
+
+/* Size: Extra Small */
+.xs {
+	width: 20px;
+	height: 20px;
+	font-size: 10px;
+}
+
+/* Size: Small */
+.sm {
+	width: 24px;
+	height: 24px;
+	font-size: 11px;
+}
+
+/* Size: Medium (default) */
+.md {
+	width: 32px;
+	height: 32px;
+	font-size: 13px;
+}
+
+/* Size: Large */
+.lg {
+	width: 40px;
+	height: 40px;
+	font-size: 16px;
+}
+
+/* Size: Extra Large */
+.xl {
+	width: 56px;
+	height: 56px;
+	font-size: 22px;
+}
+
+/* Image */
+.image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* Icon sizing */
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.xs .icon {
+	width: 10px;
+	height: 10px;
+}
+
+.sm .icon {
+	width: 11px;
+	height: 11px;
+}
+
+.md .icon {
+	width: 13px;
+	height: 13px;
+}
+
+.lg .icon {
+	width: 16px;
+	height: 16px;
+}
+
+.xl .icon {
+	width: 22px;
+	height: 22px;
+}

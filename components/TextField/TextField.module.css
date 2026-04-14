@@ -1,0 +1,168 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	font-family: "Libre Franklin", sans-serif;
+	cursor: text;
+}
+
+/* Label */
+.label {
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 20px;
+	letter-spacing: 0.15px;
+	color: var(--reltio-color-text-secondary);
+	cursor: inherit;
+}
+
+.required .label::after {
+	content: " *";
+	color: var(--reltio-color-error);
+}
+
+.error .label {
+	color: var(--reltio-color-error);
+}
+
+/* Input container — pill shape */
+.inputContainer {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 4px;
+	min-height: 40px;
+	border: 1px solid var(--reltio-color-border-3);
+	border-radius: 20px;
+	background: transparent;
+	padding: 8px 12px;
+	box-sizing: border-box;
+	overflow: clip;
+	transition:
+		border-color 150ms ease,
+		background-color 150ms ease,
+		box-shadow 150ms ease;
+}
+
+/* Hover */
+.root:hover:not(.disabled):not(.readOnly) .inputContainer {
+	background-color: var(--reltio-color-surface-2);
+	border-color: var(--reltio-color-border-3);
+}
+
+/* Focus — glow shadow */
+.root:focus-within:not(.disabled) .inputContainer {
+	border-color: var(--reltio-color-primary-transparent-focus);
+	box-shadow:
+		0 0 0 2px var(--reltio-color-surface-1),
+		0 0 7px 1px var(--reltio-color-primary);
+}
+
+/* Error */
+.error .inputContainer {
+	background-color: var(--reltio-color-error-transparent);
+	border-color: var(--reltio-color-error-border);
+}
+
+.error:focus-within .inputContainer {
+	border-color: var(--reltio-color-error-border);
+	box-shadow:
+		0 0 0 2px var(--reltio-color-surface-1),
+		0 0 7px 1px var(--reltio-color-error);
+}
+
+/* Readonly */
+.readOnly .inputContainer {
+	border-style: dashed;
+}
+
+/* Disabled */
+.disabled {
+	cursor: not-allowed;
+}
+
+.disabled .inputContainer {
+	background-color: var(--reltio-color-surface-3);
+	border-color: var(--reltio-color-border-3);
+	cursor: not-allowed;
+}
+
+/* Native input */
+.input {
+	flex: 1;
+	min-width: 0;
+	border: none;
+	outline: none;
+	background: transparent;
+	font-size: 14px;
+	line-height: 20px;
+	letter-spacing: 0.17px;
+	font-family: inherit;
+	color: var(--reltio-color-text);
+	padding: 2px 0;
+	cursor: inherit;
+}
+
+.input::placeholder {
+	color: var(--reltio-color-text-placeholder);
+}
+
+.input:disabled {
+	cursor: not-allowed;
+}
+
+/* Start / End content */
+.startContent {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	color: var(--reltio-color-text-secondary);
+}
+
+.endContent {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	color: var(--reltio-color-text-secondary);
+}
+
+/* Clear button */
+.clearButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 20px;
+	height: 20px;
+	padding: 0;
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: var(--reltio-color-text-secondary);
+	opacity: 0.5;
+	border-radius: 50%;
+	transition: opacity 150ms ease;
+}
+
+.clearButton:hover {
+	opacity: 0.8;
+}
+
+.clearButton:focus-visible {
+	outline: 2px solid var(--reltio-color-primary);
+	outline-offset: 1px;
+	opacity: 0.8;
+}
+
+/* Helper text */
+.helperText {
+	font-size: 12px;
+	line-height: 16px;
+	color: var(--reltio-color-text-placeholder);
+}
+
+.error .helperText {
+	color: var(--reltio-color-error);
+}

@@ -18,6 +18,7 @@ export const KeyboardArrowRight = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M10.9462 10L6.34619 5.4L7.39994 4.34625L13.0537 10L7.39994 15.6538L6.34619 14.6L10.9462 10Z" />

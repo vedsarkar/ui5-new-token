@@ -1,0 +1,88 @@
+/* Root label wrapper */
+.root {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	cursor: pointer;
+	position: relative;
+	font-family: "Libre Franklin", sans-serif;
+	font-size: 14px;
+	line-height: 1.4;
+	color: var(--reltio-color-text);
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+/* Visually hidden native input */
+.input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* Track */
+.track {
+	display: inline-flex;
+	align-items: center;
+	flex-shrink: 0;
+	width: 36px;
+	height: 20px;
+	border-radius: 10px;
+	background-color: var(--reltio-color-border-2);
+	box-sizing: border-box;
+	position: relative;
+	transition: background-color 150ms ease;
+}
+
+/* Hover on track */
+.root:hover .track {
+	background-color: var(--reltio-color-border-3);
+}
+
+/* Focus-visible: outline on track when input is keyboard-focused */
+.input:focus-visible ~ .track {
+	outline: 2px solid var(--reltio-color-primary);
+	outline-offset: 2px;
+}
+
+/* Checked track */
+.checked .track {
+	background-color: var(--reltio-color-primary);
+}
+
+.checked.root:hover .track {
+	background-color: var(--reltio-color-primary-hover);
+}
+
+/* Handle */
+.handle {
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background-color: var(--reltio-color-surface-1);
+	transform: translateX(2px);
+	transition: transform 150ms ease;
+}
+
+/* Checked handle */
+.checked .handle {
+	transform: translateX(18px);
+}
+
+/* Disabled state */
+.disabled {
+	opacity: 0.38;
+	pointer-events: none;
+}
+
+/* Label text */
+.label {
+	font-size: 14px;
+	line-height: 1.4;
+}
