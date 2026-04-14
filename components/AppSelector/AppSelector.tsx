@@ -85,5 +85,7 @@ const resolveUri = (
 	tenant: string | undefined,
 ): string | undefined =>
 	uri
+		// biome-ignore lint/suspicious/noTemplateCurlyInString: intentional URI template placeholders
 		?.replaceAll("${environment}", String(env))
+		// biome-ignore lint/suspicious/noTemplateCurlyInString: intentional URI template placeholders
 		.replaceAll("${tenant}", String(tenant));

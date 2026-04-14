@@ -18,6 +18,7 @@ export const MenuCopy = ({
 			)}
 			viewBox="0 0 20 20"
 			fill="currentColor"
+			aria-hidden="true"
 			{...props}
 		>
 			<path d="M1.5 15.6345V14.1348H18.5V15.6345H1.5ZM1.5 10.75V9.25001H18.5V10.75H1.5ZM1.5 5.86526V4.36551H18.5V5.86526H1.5Z" />

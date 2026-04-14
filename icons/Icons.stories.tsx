@@ -1,15 +1,14 @@
 import {
 	ArgTypes,
 	Description as Desc,
-	Stories,
 	Subtitle,
 	Title,
 } from "@storybook/addon-docs/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 import type { IconProps } from "./Icon.types";
 import { IconLibrary } from "./IconLibrary";
-import { Accessibility as IconRef, iconMap } from "./index";
 import styles from "./IconStories.module.css";
+import { Accessibility as IconRef, iconMap } from "./index";
 
 type StoryProps = IconProps & { name: string };
 
@@ -235,9 +234,9 @@ export const EndDate: Story = { args: { name: "EndDate" } };
 
 export const EndDateFlag: Story = { args: { name: "EndDateFlag" } };
 
-export const Error: Story = { args: { name: "Error" } };
-
 export const ErrorCircle: Story = { args: { name: "ErrorCircle" } };
+
+export const ErrorOutlined: Story = { args: { name: "ErrorOutlined" } };
 
 export const Event: Story = { args: { name: "Event" } };
 

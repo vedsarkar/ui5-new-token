@@ -112,18 +112,21 @@ export const UriTemplates = meta.story({
 		apps: [
 			{
 				name: "Console",
+				// biome-ignore lint/suspicious/noTemplateCurlyInString: URI template placeholders
 				uri: "https://console.reltio.com/?env=${environment}&tenant=${tenant}",
 				icon: "https://reltio.design/apps/icons/console.svg",
 				category: "Applications",
 			},
 			{
 				name: "Hub",
+				// biome-ignore lint/suspicious/noTemplateCurlyInString: URI template placeholders
 				uri: "https://hub.reltio.com/?env=${environment}&tenant=${tenant}",
 				icon: "https://reltio.design/apps/icons/mdm.svg",
 				category: "Applications",
 			},
 			{
 				name: "RDM",
+				// biome-ignore lint/suspicious/noTemplateCurlyInString: URI template placeholders
 				uri: "https://rdm.reltio.com/?env=${environment}&tenant=${tenant}",
 				icon: "https://reltio.design/apps/icons/rdm.svg",
 				category: "Applications",

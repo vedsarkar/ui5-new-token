@@ -9,7 +9,10 @@ export const Divider = ({
 	...rest
 }: DividerProps) => {
 	return (
+		// biome-ignore lint/a11y/useSemanticElements: div with role="separator" supports children (labeled divider)
+		// biome-ignore lint/a11y/useFocusableInteractive: non-interactive separator, no focus needed
 		<div
+			// biome-ignore lint/a11y/useAriaPropsForRole: visual separator, aria-valuenow not applicable for static divider
 			role="separator"
 			className={classNames(
 				styles.root,

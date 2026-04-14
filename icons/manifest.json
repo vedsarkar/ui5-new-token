@@ -499,10 +499,10 @@
 			"import": "import { ErrorCircle } from \"@reltio/design/icons\""
 		},
 		{
-			"name": "Error",
-			"kebabName": "error",
-			"path": "/icons/error.svg",
-			"import": "import { Error } from \"@reltio/design/icons\""
+			"name": "ErrorOutlined",
+			"kebabName": "error-outlined",
+			"path": "/icons/error-outlined.svg",
+			"import": "import { ErrorOutlined } from \"@reltio/design/icons\""
 		},
 		{
 			"name": "Event",

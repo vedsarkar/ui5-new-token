@@ -131,12 +131,12 @@ function generateUnifiedStories(icons) {
 		)
 		.join("\n\n");
 
-	return `import { ArgTypes, Description as Desc, Stories, Subtitle, Title } from "@storybook/addon-docs/blocks";
+	return `import { ArgTypes, Description as Desc, Subtitle, Title } from "@storybook/addon-docs/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 import type { IconProps } from "./Icon.types";
 import { IconLibrary } from "./IconLibrary";
-import { ${firstIcon} as IconRef, iconMap } from "./index";
 import styles from "./IconStories.module.css";
+import { ${firstIcon} as IconRef, iconMap } from "./index";
 
 type StoryProps = IconProps & { name: string };
 

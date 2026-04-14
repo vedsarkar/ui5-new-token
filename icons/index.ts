@@ -82,8 +82,8 @@ import { EditSchedule } from "./EditSchedule";
 import { Email } from "./Email";
 import { EndDate } from "./EndDate";
 import { EndDateFlag } from "./EndDateFlag";
-import { Error } from "./Error";
 import { ErrorCircle } from "./ErrorCircle";
+import { ErrorOutlined } from "./ErrorOutlined";
 import { Event } from "./Event";
 import { Expand } from "./Expand";
 import { ExpandLess } from "./ExpandLess";
@@ -320,8 +320,8 @@ export {
 	Email,
 	EndDate,
 	EndDateFlag,
-	Error,
 	ErrorCircle,
+	ErrorOutlined,
 	Event,
 	Expand,
 	ExpandLess,
@@ -562,8 +562,8 @@ export const iconMap: Record<
 	Email: Email,
 	EndDate: EndDate,
 	EndDateFlag: EndDateFlag,
-	Error: Error,
 	ErrorCircle: ErrorCircle,
+	ErrorOutlined: ErrorOutlined,
 	Event: Event,
 	Expand: Expand,
 	ExpandLess: ExpandLess,

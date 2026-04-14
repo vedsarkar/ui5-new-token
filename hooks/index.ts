@@ -1,6 +1,6 @@
 export type {
-	TextStreamEvent,
 	StreamFetcher,
 	StreamFetcherInput,
+	TextStreamEvent,
 } from "./useTextStream";
 export { useTextStream } from "./useTextStream";

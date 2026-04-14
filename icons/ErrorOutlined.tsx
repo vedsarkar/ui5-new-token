@@ -2,8 +2,7 @@ import { classNames } from "@/utils/classNames";
 import styles from "./Icon.module.css";
 import type { IconProps } from "./Icon.types";
 
-// biome-ignore lint/suspicious/noShadowRestrictedNames: icon name matches Material Design icon name
-export const Error = ({
+export const ErrorOutlined = ({
 	size = "medium",
 	color = "inherited",
 	className,
