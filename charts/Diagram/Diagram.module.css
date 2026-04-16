@@ -1,0 +1,58 @@
+.root {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.flow {
+	width: 100%;
+	height: 100%;
+	transition: opacity 0.2s ease-in;
+}
+
+.overlay {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--reltio-color-text-secondary);
+	font-size: 14px;
+	pointer-events: none;
+}
+
+/* ── React Flow theme overrides ── */
+.root :global(.react-flow__node) {
+	padding: 0;
+	border: none;
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
+	font-size: inherit;
+}
+
+.root :global(.react-flow__edge-path) {
+	stroke: var(--reltio-color-text-placeholder);
+	stroke-width: 1.5;
+}
+
+.root :global(.react-flow__edge-text) {
+	font-size: 11px;
+	fill: var(--reltio-color-text-secondary);
+}
+
+.root :global(.react-flow__edge-textbg) {
+	fill: var(--reltio-color-surface-1);
+}
+
+.root :global(.react-flow__background) {
+	background: transparent;
+}
+
+.root :global(.react-flow__pane) {
+	cursor: grab;
+}
+
+.root :global(.react-flow__pane:active) {
+	cursor: grabbing;
+}

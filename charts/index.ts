@@ -1,4 +1,5 @@
 export * from "./BarChart";
+export * from "./Diagram";
 export * from "./DonutChart";
 export * from "./GaugeChart";
 export * from "./GeoChart";

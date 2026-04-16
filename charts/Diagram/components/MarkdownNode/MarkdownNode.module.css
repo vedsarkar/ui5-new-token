@@ -1,0 +1,91 @@
+.node {
+	background: var(--reltio-color-surface-1);
+	border: 1px solid var(--reltio-color-border-2);
+	border-radius: 8px;
+	min-width: 120px;
+	max-width: 300px;
+	font-family: "Roboto Flex", sans-serif;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--reltio-color-text);
+	line-height: 1.3;
+}
+
+.icon {
+	flex-shrink: 0;
+	font-size: 14px;
+}
+
+.label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.divider {
+	height: 1px;
+	background: var(--reltio-color-border-2);
+}
+
+.body {
+	padding: 6px 12px 8px;
+}
+
+/* Compact Markdown overrides for node context */
+.body :global(.reltio_Markdown_root) {
+	font-size: 12px;
+	line-height: 1.35;
+}
+
+.body :global(.reltio_Markdown_root) p {
+	margin: 2px 0;
+}
+
+.body :global(.reltio_Markdown_root) h1,
+.body :global(.reltio_Markdown_root) h2,
+.body :global(.reltio_Markdown_root) h3,
+.body :global(.reltio_Markdown_root) h4,
+.body :global(.reltio_Markdown_root) h5,
+.body :global(.reltio_Markdown_root) h6 {
+	font-size: 12px;
+	margin: 4px 0 2px;
+}
+
+.body :global(.reltio_Markdown_root) ul,
+.body :global(.reltio_Markdown_root) ol {
+	margin: 2px 0;
+	padding-left: 16px;
+}
+
+.body :global(.reltio_Markdown_root) li {
+	margin: 1px 0;
+}
+
+.body :global(.reltio_Markdown_root) pre {
+	padding: 6px 8px;
+	font-size: 11px;
+	border-radius: 4px;
+}
+
+.body :global(.reltio_Markdown_root) code {
+	font-size: 11px;
+	padding: 1px 3px;
+}
+
+.body :global(.reltio_Markdown_root) blockquote {
+	margin: 4px 0;
+	padding-left: 8px;
+}
+
+.handle {
+	width: 6px;
+	height: 6px;
+	background: var(--reltio-color-border-2);
+	border: 1px solid var(--reltio-color-surface-1);
+}
