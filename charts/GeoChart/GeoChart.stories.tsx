@@ -1,9 +1,11 @@
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
+import europeGeoJSON from "./data/europe.geo.json";
 import usaGeoJSON from "./data/usa-states.geo.json";
 import { GeoChart } from "./GeoChart";
 import cssClasses from "./GeoChart.module.css";
 
-const sampleData = [
+const usaData = [
 	{ name: "California", value: 39 },
 	{ name: "Texas", value: 29 },
 	{ name: "Florida", value: 22 },
@@ -53,37 +55,83 @@ const sampleData = [
 	{ name: "Vermont", value: 0 },
 ];
 
+const europeData = [
+	{ name: "Germany", value: 83 },
+	{ name: "France", value: 67 },
+	{ name: "United Kingdom", value: 66 },
+	{ name: "Italy", value: 60 },
+	{ name: "Spain", value: 47 },
+	{ name: "Ukraine", value: 44 },
+	{ name: "Poland", value: 38 },
+	{ name: "Romania", value: 19 },
+	{ name: "Netherlands", value: 17 },
+	{ name: "Belgium", value: 11 },
+	{ name: "Czechia", value: 10 },
+	{ name: "Greece", value: 10 },
+	{ name: "Portugal", value: 10 },
+	{ name: "Sweden", value: 10 },
+	{ name: "Hungary", value: 9 },
+	{ name: "Belarus", value: 9 },
+	{ name: "Austria", value: 8 },
+	{ name: "Switzerland", value: 8 },
+	{ name: "Serbia", value: 7 },
+	{ name: "Bulgaria", value: 7 },
+	{ name: "Denmark", value: 5 },
+	{ name: "Finland", value: 5 },
+	{ name: "Slovakia", value: 5 },
+	{ name: "Norway", value: 5 },
+	{ name: "Ireland", value: 4 },
+	{ name: "Croatia", value: 4 },
+	{ name: "Moldova", value: 3 },
+	{ name: "Bosnia and Herzegovina", value: 3 },
+	{ name: "Albania", value: 2 },
+	{ name: "Lithuania", value: 2 },
+	{ name: "North Macedonia", value: 2 },
+	{ name: "Slovenia", value: 2 },
+	{ name: "Latvia", value: 1 },
+	{ name: "Estonia", value: 1 },
+	{ name: "Montenegro", value: 0 },
+	{ name: "Luxembourg", value: 0 },
+	{ name: "Kosovo", value: 1 },
+	{ name: "Iceland", value: 0 },
+];
+
 const meta = preview.meta({
 	title: "Charts/GeoChart",
 	component: GeoChart,
 	parameters: {
-		layout: "padded",
+		layout: "fullscreen",
 		cssClasses,
 	},
+	decorators: [FullscreenDecorator],
 	args: {
 		map: usaGeoJSON,
-		data: sampleData,
-		style: { aspectRatio: "3 / 2" },
+		data: usaData,
 	},
 });
 
-export const Default = meta.story({});
-
-export const WithRoam = meta.story({
-	args: {
-		roam: true,
+export const Default = meta.story({
+	parameters: {
+		docs: {
+			source: {
+				code: `<GeoChart map={usaGeoJSON} data={data} />`,
+			},
+		},
 	},
 });
 
-export const CustomRanges = meta.story({
+export const Europe = meta.story({
 	args: {
-		ranges: [
-			{ min: 0, max: 2, label: "0 - 2M" },
-			{ min: 3, max: 6, label: "3 - 6M" },
-			{ min: 7, max: 12, label: "7 - 12M" },
-			{ min: 13, max: 25, label: "13 - 25M" },
-			{ min: 26, max: 40, label: "26 - 40M" },
-		],
+		map: europeGeoJSON,
+		data: europeData,
+		units: "M",
+	},
+	parameters: {
+		docs: {
+			source: {
+				code: `<GeoChart map={europeGeoJSON} data={data} units="M" />`,
+			},
+		},
 	},
 });
 
@@ -91,18 +139,12 @@ export const WithUnits = meta.story({
 	args: {
 		units: "M",
 	},
-});
-
-export const Loading = meta.story({
-	args: {
-		data: [],
-		loading: true,
-	},
-});
-
-export const BackgroundRefresh = meta.story({
-	args: {
-		loading: true,
+	parameters: {
+		docs: {
+			source: {
+				code: `<GeoChart map={usaGeoJSON} data={data} units="M" />`,
+			},
+		},
 	},
 });
 
@@ -110,11 +152,11 @@ export const Empty = meta.story({
 	args: {
 		data: [],
 	},
-});
-
-export const ErrorState = meta.story({
-	name: "Error",
-	args: {
-		error: "Failed to load map data. Please try again later.",
+	parameters: {
+		docs: {
+			source: {
+				code: `<GeoChart map={usaGeoJSON} />`,
+			},
+		},
 	},
 });

@@ -1,3 +1,4 @@
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { SankeyChart } from "./SankeyChart";
 import cssClasses from "./SankeyChart.module.css";
@@ -23,9 +24,10 @@ const meta = preview.meta({
 	title: "Charts/SankeyChart",
 	component: SankeyChart,
 	parameters: {
-		layout: "padded",
+		layout: "fullscreen",
 		cssClasses,
 	},
+	decorators: [FullscreenDecorator],
 	args: {
 		nodes: sampleNodes,
 		links: sampleLinks,
@@ -56,7 +58,6 @@ export const MultiLevel = meta.story({
 			{ source: "Matched", target: "Golden Record", value: 650 },
 			{ source: "Review Queue", target: "Golden Record", value: 100 },
 		],
-		height: 400,
 	},
 });
 
@@ -66,36 +67,9 @@ export const WithUnits = meta.story({
 	},
 });
 
-export const Loading = meta.story({
-	args: {
-		nodes: [],
-		links: [],
-		loading: true,
-	},
-});
-
-export const BackgroundRefresh = meta.story({
-	args: {
-		loading: true,
-	},
-});
-
 export const Empty = meta.story({
 	args: {
 		nodes: [],
 		links: [],
-	},
-});
-
-export const ErrorState = meta.story({
-	name: "Error",
-	args: {
-		error: "Failed to load chart data. Please try again later.",
-	},
-});
-
-export const CustomHeight = meta.story({
-	args: {
-		height: 500,
 	},
 });

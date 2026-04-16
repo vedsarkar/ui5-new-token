@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { GraphChart } from "./GraphChart";
 import cssClasses from "./GraphChart.module.css";
@@ -70,10 +71,10 @@ const meta = preview.meta({
 		layout: "fullscreen",
 		cssClasses,
 	},
+	decorators: [FullscreenDecorator],
 	args: {
 		nodes: smallGraph.nodes,
 		links: smallGraph.links,
-		style: { height: "100vh" },
 	},
 });
 
@@ -99,31 +100,10 @@ export const WithUnits = meta.story({
 	},
 });
 
-export const Loading = meta.story({
-	args: {
-		nodes: [],
-		links: [],
-		loading: true,
-	},
-});
-
-export const BackgroundRefresh = meta.story({
-	args: {
-		loading: true,
-	},
-});
-
 export const Empty = meta.story({
 	args: {
 		nodes: [],
 		links: [],
-	},
-});
-
-export const ErrorState = meta.story({
-	name: "Error",
-	args: {
-		error: "Failed to load graph data. Please try again later.",
 	},
 });
 

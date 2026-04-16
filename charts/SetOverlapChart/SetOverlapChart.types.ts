@@ -57,17 +57,6 @@ export type SetOverlapChartProps = HtmlProps<
 		 * Examples: `"Set Size"`, `"Source system"`
 		 */
 		setsChartAxisLabel?: string;
-
-		/**
-		 * Shows a loading overlay on the chart.
-		 * - When data is empty: loading overlay on blank area
-		 * - When data is present: loading overlay on rendered chart
-		 * @default false
-		 */
-		loading?: boolean;
-
-		/** Error message. When set, replaces the chart with centered error text. */
-		error?: string;
 	}
 >;
 

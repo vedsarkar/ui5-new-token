@@ -25,24 +25,9 @@ export type BarChartProps = HtmlProps<
 		series: BarChartSeries[];
 
 		/**
-		 * Height of the chart container. Number values are treated as pixels.
-		 * @default 300
-		 */
-		height?: number | string;
-
-		/**
-		 * Shows the ECharts built-in loading overlay.
-		 * @default false
-		 */
-		loading?: boolean;
-
-		/**
 		 * Unit suffix appended to Y-axis labels and tooltip values.
 		 * Examples: "ms", "%", " records"
 		 */
 		units?: string;
-
-		/** Error message. When set, replaces the chart with centered error text. */
-		error?: string;
 	}
 >;

@@ -1,3 +1,4 @@
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { Diagram } from "./Diagram";
 import cssClasses from "./Diagram.module.css";
@@ -90,12 +91,6 @@ const simpleEdges: DiagramEdge[] = [
 	{ source: "c", target: "d" },
 ];
 
-const fullscreenDecorator = (Story: React.ComponentType) => (
-	<div style={{ height: "100vh" }}>
-		<Story />
-	</div>
-);
-
 const meta = preview.meta({
 	title: "Charts/Diagram",
 	component: Diagram,
@@ -103,7 +98,7 @@ const meta = preview.meta({
 		layout: "fullscreen",
 		cssClasses,
 	},
-	decorators: [fullscreenDecorator],
+	decorators: [FullscreenDecorator],
 	args: {
 		nodes: workflowNodes,
 		edges: workflowEdges,

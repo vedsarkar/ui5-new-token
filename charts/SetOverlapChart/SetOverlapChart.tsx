@@ -57,8 +57,6 @@ export const SetOverlapChart = ({
 	mode = "intersection",
 	intersectionChartAxisLabel,
 	setsChartAxisLabel,
-	loading = false,
-	error,
 	className,
 	style,
 	...rest
@@ -86,7 +84,7 @@ export const SetOverlapChart = ({
 		return () => resizeObserver.disconnect();
 	}, []);
 
-	const hasValidData = intersections.length > 0 && sets.length > 0 && !error;
+	const hasValidData = intersections.length > 0 && sets.length > 0;
 
 	const {
 		labels,
@@ -134,21 +132,9 @@ export const SetOverlapChart = ({
 		? `Set overlap chart showing overlaps across ${sets.length} sets and ${intersections.length} intersections`
 		: "Empty set overlap chart";
 
-	const overlay = useMemo(
-		() =>
-			error ? (
-				<div className={classNames(styles.overlay, styles.errorOverlay)}>
-					{error}
-				</div>
-			) : loading ? (
-				<div className={classNames(styles.overlay, styles.loadingOverlay)}>
-					Loading
-				</div>
-			) : !hasValidData ? (
-				<div className={classNames(styles.overlay)}>No data</div>
-			) : null,
-		[error, loading, hasValidData],
-	);
+	const overlay = !hasValidData ? (
+		<div className={classNames(styles.overlay)}>No data</div>
+	) : null;
 
 	return (
 		<div

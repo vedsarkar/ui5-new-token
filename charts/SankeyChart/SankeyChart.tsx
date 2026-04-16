@@ -1,6 +1,6 @@
 import type { EChartsOption } from "echarts";
 import { SankeyChart as EChartsSankey } from "echarts/charts";
-import { Chart, echarts } from "@/charts/Chart";
+import { Chart, echarts, formatWithUnits } from "@/charts/Chart";
 import { classNames } from "@/utils/classNames";
 import styles from "./SankeyChart.module.css";
 import type {
@@ -11,14 +11,7 @@ import type {
 
 echarts.use([EChartsSankey]);
 
-const DEFAULT_HEIGHT = 300;
-
 const EMPTY_OPTION: EChartsOption = {};
-
-function formatWithUnits(value: number | string, units?: string): string {
-	if (!units) return `${value}`;
-	return `${value} ${units}`;
-}
 
 function buildSankeyOption(
 	nodes: SankeyChartNode[],
@@ -54,10 +47,7 @@ function buildSankeyOption(
 export const SankeyChart = ({
 	nodes,
 	links,
-	height = DEFAULT_HEIGHT,
 	units,
-	loading = false,
-	error,
 	className,
 	...rest
 }: SankeyChartProps) => {
@@ -66,21 +56,14 @@ export const SankeyChart = ({
 		nodes.length > 0 &&
 		Array.isArray(links) &&
 		links.length > 0;
-	const option =
-		hasData && !error ? buildSankeyOption(nodes, links, units) : EMPTY_OPTION;
-
-	const overlay = error ? (
-		<div className={classNames(styles.overlay, styles.errorOverlay)}>
-			{error}
-		</div>
-	) : !hasData && !loading ? (
-		<div className={classNames(styles.overlay)}>No data</div>
-	) : null;
+	const option = hasData
+		? buildSankeyOption(nodes, links, units)
+		: EMPTY_OPTION;
 
 	return (
 		<div className={classNames(styles.root, className)} {...rest}>
-			{overlay}
-			<Chart option={option} height={height} loading={loading} />
+			{!hasData && <div className={classNames(styles.overlay)}>No data</div>}
+			<Chart option={option} />
 		</div>
 	);
 };

@@ -1,13 +1,11 @@
 import type { EChartsOption } from "echarts";
 import { LineChart as EChartsLine } from "echarts/charts";
-import { Chart, echarts } from "@/charts/Chart";
+import { Chart, echarts, formatWithUnits } from "@/charts/Chart";
 import { classNames } from "@/utils/classNames";
 import styles from "./LineChart.module.css";
 import type { LineChartProps, LineChartSeries } from "./LineChart.types";
 
 echarts.use([EChartsLine]);
-
-const DEFAULT_HEIGHT = 300;
 
 const EMPTY_GRID_OPTION: EChartsOption = {
 	xAxis: { type: "category" },
@@ -25,11 +23,6 @@ const EMPTY_GRID_OPTION: EChartsOption = {
 		containLabel: true,
 	},
 };
-
-function formatWithUnits(value: number | string, units?: string): string {
-	if (!units) return `${value}`;
-	return `${value} ${units}`;
-}
 
 function buildLineOption(
 	data: Record<string, unknown>[],
@@ -83,31 +76,19 @@ export const LineChart = ({
 	data,
 	xKey,
 	series,
-	height = DEFAULT_HEIGHT,
 	units,
-	loading = false,
-	error,
 	className,
 	...rest
 }: LineChartProps) => {
 	const hasData = Array.isArray(data) && data.length > 0;
-	const option =
-		hasData && !error
-			? buildLineOption(data, xKey, series, units)
-			: EMPTY_GRID_OPTION;
-
-	const overlay = error ? (
-		<div className={classNames(styles.overlay, styles.errorOverlay)}>
-			{error}
-		</div>
-	) : !hasData && !loading ? (
-		<div className={styles.overlay}>No data</div>
-	) : null;
+	const option = hasData
+		? buildLineOption(data, xKey, series, units)
+		: EMPTY_GRID_OPTION;
 
 	return (
 		<div className={classNames(styles.root, className)} {...rest}>
-			{overlay}
-			<Chart option={option} height={height} loading={loading} />
+			{!hasData && <div className={classNames(styles.overlay)}>No data</div>}
+			<Chart option={option} />
 		</div>
 	);
 };

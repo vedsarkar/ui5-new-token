@@ -16,18 +16,9 @@ export type GaugeChartProps = HtmlProps<
 		max?: number;
 
 		/**
-		 * Height of the chart container. Number values are treated as pixels.
-		 * @default 300
+		 * Unit suffix appended to the center value display.
+		 * Examples: "%", "ms", " pts"
 		 */
-		height?: number | string;
-
-		/**
-		 * Shows the ECharts built-in loading overlay.
-		 * @default false
-		 */
-		loading?: boolean;
-
-		/** Error message. When set, replaces the chart with centered error text. */
-		error?: string;
+		units?: string;
 	}
 >;

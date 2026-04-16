@@ -25,26 +25,9 @@ export type LineChartProps = HtmlProps<
 		series: LineChartSeries[];
 
 		/**
-		 * Height of the chart container. Number values are treated as pixels.
-		 * @default 300
-		 */
-		height?: number | string;
-
-		/**
-		 * Shows the ECharts built-in loading overlay.
-		 * - When `data` is empty: loading overlay on empty grid
-		 * - When `data` is present: loading overlay on rendered chart
-		 * @default false
-		 */
-		loading?: boolean;
-
-		/**
 		 * Unit suffix appended to Y-axis labels and tooltip values.
 		 * Examples: "ms", "%", " records"
 		 */
 		units?: string;
-
-		/** Error message. When set, replaces the chart with centered error text. */
-		error?: string;
 	}
 >;

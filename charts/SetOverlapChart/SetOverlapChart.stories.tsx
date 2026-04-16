@@ -1,3 +1,4 @@
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { SetOverlapChart } from "./SetOverlapChart";
 import cssClasses from "./SetOverlapChart.module.css";
@@ -82,14 +83,14 @@ const meta = preview.meta({
 	title: "Charts/SetOverlapChart",
 	component: SetOverlapChart,
 	parameters: {
-		layout: "padded",
+		layout: "fullscreen",
 		cssClasses,
 	},
+	decorators: [FullscreenDecorator],
 	args: {
 		sets: defaultSets,
 		intersections: defaultIntersections,
 		mode: "intersection",
-		style: { width: 900, height: 500 },
 	},
 });
 
@@ -647,34 +648,9 @@ export const WithAxisLabels = meta.story({
 	},
 });
 
-export const Loading = meta.story({
-	args: {
-		sets: [],
-		intersections: [],
-		loading: true,
-	},
-});
-
-export const BackgroundRefresh = meta.story({
-	args: {
-		sets: defaultSets,
-		intersections: defaultIntersections,
-		loading: true,
-	},
-});
-
 export const Empty = meta.story({
 	args: {
 		sets: [],
 		intersections: [],
-	},
-});
-
-export const ErrorState = meta.story({
-	name: "Error",
-	args: {
-		sets: defaultSets,
-		intersections: defaultIntersections,
-		error: "Failed to load chart data. Please try again later.",
 	},
 });

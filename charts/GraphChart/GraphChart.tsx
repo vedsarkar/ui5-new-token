@@ -2,7 +2,7 @@ import type { EChartsOption } from "echarts";
 import { GraphChart as EChartsGraph } from "echarts/charts";
 import { useLayoutEffect, useRef, useState } from "react";
 
-import { Chart, echarts } from "@/charts/Chart";
+import { Chart, echarts, formatWithUnits } from "@/charts/Chart";
 import { classNames } from "@/utils/classNames";
 import styles from "./GraphChart.module.css";
 import type {
@@ -14,7 +14,6 @@ import type {
 
 echarts.use([EChartsGraph]);
 
-const FILL_HEIGHT = "100%";
 const DEFAULT_SIZE = 30;
 const MIN_SIZE = 20;
 const MAX_SIZE = 60;
@@ -48,11 +47,6 @@ function normalizeSize(
 	if (value === undefined) return DEFAULT_SIZE;
 	if (min === max) return DEFAULT_SIZE;
 	return MIN_SIZE + ((value - min) / (max - min)) * (MAX_SIZE - MIN_SIZE);
-}
-
-function formatWithUnits(value: number | string, units?: string): string {
-	if (!units) return `${value}`;
-	return `${value} ${units}`;
 }
 
 function buildGraphOption(
@@ -188,8 +182,6 @@ export const GraphChart = ({
 	links,
 	layout = "force",
 	units,
-	loading = false,
-	error,
 	className,
 	...rest
 }: GraphChartProps) => {
@@ -207,22 +199,14 @@ export const GraphChart = ({
 		Array.isArray(links) &&
 		links.length > 0;
 	const option =
-		hasData && !error && palette.length > 0
+		hasData && palette.length > 0
 			? buildGraphOption(nodes, links, palette, layout, units)
 			: EMPTY_OPTION;
 
-	const overlay = error ? (
-		<div className={classNames(styles.overlay, styles.errorOverlay)}>
-			{error}
-		</div>
-	) : !hasData && !loading ? (
-		<div className={classNames(styles.overlay)}>No data</div>
-	) : null;
-
 	return (
 		<div ref={rootRef} className={classNames(styles.root, className)} {...rest}>
-			{overlay}
-			<Chart option={option} height={FILL_HEIGHT} loading={loading} />
+			{!hasData && <div className={classNames(styles.overlay)}>No data</div>}
+			<Chart option={option} />
 		</div>
 	);
 };

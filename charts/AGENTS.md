@@ -24,9 +24,13 @@ charts/
 └── AGENTS.md
 ```
 
-**Layer 1 — Base `Chart` (internal):** Manages ECharts instance lifecycle, dynamic theming, resize, and loading. Never used directly by consumers. No Storybook stories.
+**Layer 1 — Base `Chart` (internal):** Manages ECharts instance lifecycle, dynamic theming, and resize. Also serves as the single source for shared chart utilities (formatting helpers, constants, etc.). Never used directly by consumers. No Storybook stories.
 
 **Layer 2 — High-level charts (public):** `LineChart`, `BarChart`, `DonutChart`, etc. Each wraps `<Chart>` with a simplified declarative API. These are what consumers import and use.
+
+### Shared Utilities
+
+Any utility function or constant used by more than one chart MUST live in `charts/Chart/` and be exported from its `index.ts`. High-level charts import shared code from `@/charts/Chart` — never duplicate logic across chart components.
 
 ## Creating a New Chart Component
 
@@ -93,18 +97,9 @@ yAxis: {
 },
 ```
 
-### 4. State Management Pattern
+### 4. Empty State
 
-Every high-level chart MUST handle these states in priority order:
-
-| Priority | State | Condition | Display |
-|----------|-------|-----------|---------|
-| 1 | Error | `error` prop is non-empty | Error text overlay + empty grid |
-| 2 | Loading | `loading={true}` | ECharts loading overlay (on chart or empty grid) |
-| 3 | Empty | `data` is empty/undefined, not loading | "No data" text overlay + empty grid |
-| 4 | Chart | data present, no error | Normal chart rendering |
-
-Use `EMPTY_GRID_OPTION` for non-data states to show axes and grid behind overlays:
+When `data` is empty or undefined, charts show a "No data" text overlay on top of an empty grid. Use `EMPTY_GRID_OPTION` for cartesian charts to render axes behind the overlay:
 
 ```typescript
 const EMPTY_GRID_OPTION: EChartsOption = {
@@ -115,7 +110,7 @@ const EMPTY_GRID_OPTION: EChartsOption = {
 };
 ```
 
-State overlays are plain React elements positioned absolutely over the ECharts canvas — not ECharts graphic elements. This means custom React components (like `ErrorMessage` or `Skeleton`) can be used for state visuals in the future.
+The overlay is a plain React element positioned absolutely over the ECharts canvas.
 
 ### 5. Component Implementation Pattern
 
@@ -126,29 +121,31 @@ export const BarChart = ({
   data,
   categoryKey,
   series,
-  height = DEFAULT_HEIGHT,
-  loading = false,
-  error,
   className,
+  ...rest,
 }: BarChartProps) => {
   const hasData = Array.isArray(data) && data.length > 0;
-  const option = hasData && !error
+  const option = hasData
     ? buildBarOption(data, categoryKey, series)
     : EMPTY_GRID_OPTION;
 
-  const overlay = error ? (
-    <div className={classNames(styles.overlay, styles.errorOverlay)}>{error}</div>
-  ) : !hasData && !loading ? (
-    <div className={styles.overlay}>No data</div>
-  ) : null;
-
   return (
-    <div className={classNames(styles.root, className)}>
-      {overlay}
-      <Chart option={option} height={height} loading={loading} />
+    <div className={classNames(styles.root, className)} {...rest}>
+      {!hasData && (
+        <div className={classNames(styles.overlay)}>No data</div>
+      )}
+      <Chart option={option} />
     </div>
   );
 };
+```
+
+### Sizing
+
+Charts fill 100% of their parent container (both width and height). The consumer controls dimensions by sizing the parent element or passing `style` / `className` directly to the chart component:
+
+```tsx
+<BarChart data={data} xKey="month" series={series} style={{ height: 300 }} />
 ```
 
 ### 6. CSS Styles
@@ -163,6 +160,7 @@ Chart CSS modules follow the same rules as component CSS:
 .root {
   position: relative;
   width: 100%;
+  height: 100%;
 }
 
 .overlay {
@@ -175,10 +173,6 @@ Chart CSS modules follow the same rules as component CSS:
   font-size: 14px;
   z-index: 1;
   pointer-events: none;
-}
-
-.errorOverlay {
-  color: var(--reltio-color-error-font);
 }
 ```
 
@@ -193,16 +187,15 @@ Every chart MUST define:
 Common props pattern:
 
 ```typescript
-export type XxxChartProps = {
-  data?: Record<string, unknown>[];
-  // ... chart-specific data mapping props
-  series: XxxChartSeries[];
-  height?: number | string;
-  units?: string;
-  loading?: boolean;
-  error?: string;
-  className?: string;
-};
+export type XxxChartProps = HtmlProps<
+  "div",
+  {
+    data?: Record<string, unknown>[];
+    // ... chart-specific data mapping props
+    series: XxxChartSeries[];
+    units?: string;
+  }
+>;
 ```
 
 ### 8. Exports
@@ -217,11 +210,7 @@ Stories go under `"Charts/XxxChart"` title. One variant per story. MUST include 
 
 **Required stories for every chart:**
 - `Default` — simplest use case
-- `Loading` — initial loading state (no data)
-- `BackgroundRefresh` — loading with existing data
 - `Empty` — empty data
-- `Error` — error state with message
-- `CustomHeight` — non-default height
 
 **Additional stories** specific to the chart type (e.g., `MultipleSeries`, `WithUnits`, `FormattedXAxis`).
 
@@ -252,7 +241,8 @@ Do NOT hardcode any color values in chart components or option builders. All col
 - **Data-first** — `data` is an array of objects, keys are specified via props
 - **Minimal props** — only essential configuration exposed, no ECharts options leak through
 - **No escape hatches** — consumers cannot access the ECharts instance or pass raw options
-- **States are built-in** — `loading`, `error`, empty detection are handled internally
+- **Empty state built-in** — "No data" overlay is handled internally when data is empty
+- **Consumer-controlled sizing** — charts fill 100% of parent; no `height` prop
 - **Canvas only** — high-level charts always use canvas renderer, no `renderer` prop
 - **Formatting via functions** — `xKey` accepts string or function for extraction + formatting
 
@@ -261,8 +251,8 @@ Do NOT hardcode any color values in chart components or option builders. All col
 - [ ] Types in `.types.ts` file using `type` keyword
 - [ ] ECharts series type registered at module level
 - [ ] `buildXxxOption()` is a pure function
-- [ ] All states handled (error > loading > empty > chart)
-- [ ] Empty grid shown behind state overlays
+- [ ] Shared logic imported from `@/charts/Chart`, not duplicated
+- [ ] Empty state handled ("No data" overlay when data is empty)
 - [ ] No `undefined` values in ECharts option (use conditional spread)
 - [ ] Colors use `--reltio-color-*` tokens, no hardcoded hex values
 - [ ] All className attributes use `classNames()` utility

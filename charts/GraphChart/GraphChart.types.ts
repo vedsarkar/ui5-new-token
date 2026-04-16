@@ -52,14 +52,5 @@ export type GraphChartProps = HtmlProps<
 		 * Examples: "connections", "score", "records"
 		 */
 		units?: string;
-
-		/**
-		 * Shows the ECharts built-in loading overlay.
-		 * @default false
-		 */
-		loading?: boolean;
-
-		/** Error message. When set, replaces the chart with centered error text. */
-		error?: string;
 	}
 >;

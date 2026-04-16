@@ -1,7 +1,2 @@
 export { GeoChart } from "./GeoChart";
-export type {
-	GeoChartItem,
-	GeoChartProps,
-	GeoChartRange,
-	GeoJSON,
-} from "./GeoChart.types";
+export type { GeoChartItem, GeoChartProps, GeoJSON } from "./GeoChart.types";

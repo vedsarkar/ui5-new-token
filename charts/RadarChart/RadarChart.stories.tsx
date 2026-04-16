@@ -1,3 +1,4 @@
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { RadarChart } from "./RadarChart";
 import cssClasses from "./RadarChart.module.css";
@@ -14,9 +15,10 @@ const meta = preview.meta({
 	title: "Charts/RadarChart",
 	component: RadarChart,
 	parameters: {
-		layout: "padded",
+		layout: "fullscreen",
 		cssClasses,
 	},
+	decorators: [FullscreenDecorator],
 	args: {
 		indicators,
 		series: [{ name: "Source A", values: [90, 75, 85, 60, 70] }],
@@ -35,34 +37,14 @@ export const MultipleSeries = meta.story({
 	},
 });
 
-export const Loading = meta.story({
+export const WithUnits = meta.story({
 	args: {
-		series: [],
-		loading: true,
-	},
-});
-
-export const BackgroundRefresh = meta.story({
-	args: {
-		loading: true,
+		units: "%",
 	},
 });
 
 export const Empty = meta.story({
 	args: {
 		series: [],
-	},
-});
-
-export const ErrorState = meta.story({
-	name: "Error",
-	args: {
-		error: "Failed to load chart data. Please try again later.",
-	},
-});
-
-export const CustomHeight = meta.story({
-	args: {
-		height: 500,
 	},
 });

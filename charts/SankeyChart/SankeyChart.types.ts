@@ -26,24 +26,9 @@ export type SankeyChartProps = HtmlProps<
 		links?: SankeyChartLink[];
 
 		/**
-		 * Height of the chart container. Number values are treated as pixels.
-		 * @default 300
-		 */
-		height?: number | string;
-
-		/**
 		 * Unit suffix appended to tooltip values.
 		 * Examples: "records", "users", "MB"
 		 */
 		units?: string;
-
-		/**
-		 * Shows the ECharts built-in loading overlay.
-		 * @default false
-		 */
-		loading?: boolean;
-
-		/** Error message. When set, replaces the chart with centered error text. */
-		error?: string;
 	}
 >;

@@ -2,7 +2,7 @@ import type { EChartsOption } from "echarts";
 import { MapChart as EChartsMap } from "echarts/charts";
 import { VisualMapPiecewiseComponent } from "echarts/components";
 import { useLayoutEffect, useRef, useState } from "react";
-import { Chart, echarts } from "@/charts/Chart";
+import { Chart, echarts, formatWithUnits } from "@/charts/Chart";
 import { classNames } from "@/utils/classNames";
 import styles from "./GeoChart.module.css";
 import type {
@@ -14,7 +14,6 @@ import type {
 
 echarts.use([EChartsMap, VisualMapPiecewiseComponent]);
 
-const FILL_HEIGHT = "100%";
 const SHADE_COUNT = 5;
 
 const EMPTY_OPTION: EChartsOption = {};
@@ -79,17 +78,11 @@ function computeAutoRanges(
 	return ranges;
 }
 
-function formatWithUnits(value: number | string, units?: string): string {
-	if (!units) return `${value}`;
-	return `${value} ${units}`;
-}
-
 function buildGeoOption(
 	mapName: string,
 	data: GeoChartItem[],
 	ranges: GeoChartRange[],
 	shades: string[],
-	roam: boolean | "scale" | "move",
 	units?: string,
 ): EChartsOption {
 	return {
@@ -120,7 +113,7 @@ function buildGeoOption(
 			{
 				type: "map",
 				map: mapName,
-				roam,
+				roam: true,
 				label: {
 					show: false,
 				},
@@ -138,11 +131,7 @@ function buildGeoOption(
 export const GeoChart = ({
 	map,
 	data,
-	ranges,
-	roam = false,
 	units,
-	loading = false,
-	error,
 	className,
 	style,
 	...rest
@@ -156,23 +145,14 @@ export const GeoChart = ({
 	}, []);
 
 	const hasData = Array.isArray(data) && data.length > 0;
-	const resolvedRanges =
-		hasData && !error ? (ranges ?? computeAutoRanges(data, units)) : [];
+	const ranges = hasData ? computeAutoRanges(data, units) : [];
 
 	const mapName = ensureMapRegistered(map);
 
 	const option =
-		hasData && !error && shades.length > 0
-			? buildGeoOption(mapName, data, resolvedRanges, shades, roam, units)
+		hasData && shades.length > 0
+			? buildGeoOption(mapName, data, ranges, shades, units)
 			: EMPTY_OPTION;
-
-	const overlay = error ? (
-		<div className={classNames(styles.overlay, styles.errorOverlay)}>
-			{error}
-		</div>
-	) : !hasData && !loading ? (
-		<div className={classNames(styles.overlay)}>No data</div>
-	) : null;
 
 	return (
 		<div
@@ -181,8 +161,8 @@ export const GeoChart = ({
 			style={style}
 			{...rest}
 		>
-			{overlay}
-			<Chart option={option} height={FILL_HEIGHT} loading={loading} />
+			{!hasData && <div className={classNames(styles.overlay)}>No data</div>}
+			<Chart option={option} />
 		</div>
 	);
 };

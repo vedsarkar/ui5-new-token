@@ -1,7 +1,7 @@
 import type { EChartsOption } from "echarts";
 import { RadarChart as EChartsRadar } from "echarts/charts";
 import { RadarComponent } from "echarts/components";
-import { Chart, echarts } from "@/charts/Chart";
+import { Chart, echarts, formatWithUnits } from "@/charts/Chart";
 import { classNames } from "@/utils/classNames";
 import styles from "./RadarChart.module.css";
 import type {
@@ -12,13 +12,12 @@ import type {
 
 echarts.use([EChartsRadar, RadarComponent]);
 
-const DEFAULT_HEIGHT = 300;
-
 const EMPTY_OPTION: EChartsOption = {};
 
 function buildRadarOption(
 	indicators: RadarChartIndicator[],
 	series: RadarChartSeries[],
+	units?: string,
 ): EChartsOption {
 	return {
 		radar: {
@@ -26,6 +25,9 @@ function buildRadarOption(
 		},
 		tooltip: {
 			trigger: "item",
+			...(units && {
+				valueFormatter: (value) => formatWithUnits(value as number, units),
+			}),
 		},
 		legend: {
 			show: series.length > 1,
@@ -49,9 +51,7 @@ function buildRadarOption(
 export const RadarChart = ({
 	indicators,
 	series,
-	height = DEFAULT_HEIGHT,
-	loading = false,
-	error,
+	units,
 	className,
 	...rest
 }: RadarChartProps) => {
@@ -60,21 +60,14 @@ export const RadarChart = ({
 		series.length > 0 &&
 		Array.isArray(indicators) &&
 		indicators.length > 0;
-	const option =
-		hasData && !error ? buildRadarOption(indicators, series) : EMPTY_OPTION;
-
-	const overlay = error ? (
-		<div className={classNames(styles.overlay, styles.errorOverlay)}>
-			{error}
-		</div>
-	) : !hasData && !loading ? (
-		<div className={classNames(styles.overlay)}>No data</div>
-	) : null;
+	const option = hasData
+		? buildRadarOption(indicators, series, units)
+		: EMPTY_OPTION;
 
 	return (
 		<div className={classNames(styles.root, className)} {...rest}>
-			{overlay}
-			<Chart option={option} height={height} loading={loading} />
+			{!hasData && <div className={classNames(styles.overlay)}>No data</div>}
+			<Chart option={option} />
 		</div>
 	);
 };

@@ -15,17 +15,5 @@ export type ChartProps = HtmlProps<
 		 * @default "canvas"
 		 */
 		renderer?: "canvas" | "svg";
-
-		/**
-		 * Height of the chart container. Number values are treated as pixels.
-		 * @default 300
-		 */
-		height?: number | string;
-
-		/**
-		 * When true, shows the ECharts built-in loading indicator.
-		 * @default false
-		 */
-		loading?: boolean;
 	}
 >;

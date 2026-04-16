@@ -1,3 +1,4 @@
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { DonutChart } from "./DonutChart";
 import cssClasses from "./DonutChart.module.css";
@@ -12,9 +13,10 @@ const meta = preview.meta({
 	title: "Charts/DonutChart",
 	component: DonutChart,
 	parameters: {
-		layout: "padded",
+		layout: "fullscreen",
 		cssClasses,
 	},
+	decorators: [FullscreenDecorator],
 	args: {
 		data: sampleData,
 	},
@@ -37,34 +39,14 @@ export const ManySegments = meta.story({
 	},
 });
 
-export const Loading = meta.story({
+export const WithUnits = meta.story({
 	args: {
-		data: [],
-		loading: true,
-	},
-});
-
-export const BackgroundRefresh = meta.story({
-	args: {
-		loading: true,
+		units: "records",
 	},
 });
 
 export const Empty = meta.story({
 	args: {
 		data: [],
-	},
-});
-
-export const ErrorState = meta.story({
-	name: "Error",
-	args: {
-		error: "Failed to load chart data. Please try again later.",
-	},
-});
-
-export const CustomHeight = meta.story({
-	args: {
-		height: 500,
 	},
 });

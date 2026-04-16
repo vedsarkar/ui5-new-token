@@ -21,13 +21,9 @@ echartsCore.use([
 	LegendComponent,
 ]);
 
-const DEFAULT_HEIGHT = 300;
-
 export const Chart = ({
 	option,
 	renderer = "canvas",
-	height = DEFAULT_HEIGHT,
-	loading = false,
 	className,
 	style,
 	...rest
@@ -62,26 +58,11 @@ export const Chart = ({
 		chartRef.current?.setOption(option);
 	}, [option]);
 
-	useEffect(() => {
-		if (!chartRef.current) return;
-
-		if (loading) {
-			const maskColor = getComputedStyle(containerRef.current)
-				.getPropertyValue("--reltio-color-bg-white")
-				.trim();
-			chartRef.current.showLoading({ maskColor });
-		} else {
-			chartRef.current.hideLoading();
-		}
-	}, [loading]);
-
-	const containerHeight = typeof height === "number" ? `${height}px` : height;
-
 	return (
 		<div
 			ref={containerRef}
 			className={classNames(styles.root, className)}
-			style={{ ...style, height: containerHeight }}
+			style={style}
 			{...rest}
 		/>
 	);

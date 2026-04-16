@@ -1,3 +1,4 @@
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { GaugeChart } from "./GaugeChart";
 import cssClasses from "./GaugeChart.module.css";
@@ -6,9 +7,10 @@ const meta = preview.meta({
 	title: "Charts/GaugeChart",
 	component: GaugeChart,
 	parameters: {
-		layout: "padded",
+		layout: "fullscreen",
 		cssClasses,
 	},
+	decorators: [FullscreenDecorator],
 	args: {
 		value: 72,
 	},
@@ -31,35 +33,16 @@ export const CustomMax = meta.story({
 	},
 });
 
-export const Loading = meta.story({
+export const WithUnits = meta.story({
 	args: {
-		value: undefined,
-		loading: true,
-	},
-});
-
-export const BackgroundRefresh = meta.story({
-	args: {
-		loading: true,
+		value: 85,
+		label: "Quality",
+		units: "%",
 	},
 });
 
 export const Empty = meta.story({
 	args: {
 		value: undefined,
-	},
-});
-
-export const ErrorState = meta.story({
-	name: "Error",
-	args: {
-		error: "Failed to load chart data. Please try again later.",
-	},
-});
-
-export const CustomHeight = meta.story({
-	args: {
-		height: 200,
-		label: "Compact",
 	},
 });

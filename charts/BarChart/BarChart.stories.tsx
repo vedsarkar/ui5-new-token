@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { BarChart } from "./BarChart";
 import cssClasses from "./BarChart.module.css";
@@ -28,9 +29,10 @@ const meta = preview.meta({
 	title: "Charts/BarChart",
 	component: BarChart,
 	parameters: {
-		layout: "padded",
+		layout: "fullscreen",
 		cssClasses,
 	},
+	decorators: [FullscreenDecorator],
 	args: {
 		data: sampleData,
 		xKey: "month",
@@ -78,35 +80,9 @@ export const FormattedXAxis = meta.story({
 	},
 });
 
-export const Loading = meta.story({
-	args: {
-		data: [],
-		loading: true,
-	},
-});
-
-export const BackgroundRefresh = meta.story({
-	args: {
-		loading: true,
-	},
-});
-
 export const Empty = meta.story({
 	args: {
 		data: [],
-	},
-});
-
-export const ErrorState = meta.story({
-	name: "Error",
-	args: {
-		error: "Failed to load chart data. Please try again later.",
-	},
-});
-
-export const CustomHeight = meta.story({
-	args: {
-		height: 500,
 	},
 });
 
@@ -128,6 +104,5 @@ export const DenseData = meta.story({
 			{ key: "requests", name: "Requests" },
 			{ key: "errors", name: "Errors" },
 		],
-		height: 500,
 	},
 });

@@ -20,7 +20,3 @@
 	z-index: 1;
 	pointer-events: none;
 }
-
-.errorOverlay {
-	color: var(--reltio-color-error-font);
-}
