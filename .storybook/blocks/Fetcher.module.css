@@ -1,0 +1,112 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 24px;
+	background: var(--reltio-color-surface-1);
+	font-size: 14px;
+	color: var(--reltio-color-text);
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.method {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 4px 10px;
+	border-radius: 4px;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	color: var(--reltio-color-text-white);
+}
+
+.method_GET {
+	background: var(--reltio-color-primary);
+}
+.method_POST {
+	background: var(--reltio-color-success);
+}
+.method_PUT {
+	background: var(--reltio-color-warning);
+}
+.method_PATCH {
+	background: var(--reltio-color-purple);
+}
+.method_DELETE {
+	background: var(--reltio-color-error);
+}
+
+.path {
+	font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+	font-size: 14px;
+	color: var(--reltio-color-text);
+	background: var(--reltio-color-surface-2);
+	padding: 4px 8px;
+	border-radius: 4px;
+}
+
+.description {
+	color: var(--reltio-color-text-secondary);
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	border-top: 1px solid var(--reltio-color-border-1);
+	padding-top: 16px;
+}
+
+.sectionTitle {
+	margin: 0;
+	font-size: 13px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--reltio-color-text-secondary);
+}
+
+.statusRow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.status {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2px 8px;
+	border-radius: 4px;
+	font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--reltio-color-text-white);
+}
+
+.statusSuccess {
+	background: var(--reltio-color-success);
+}
+
+.statusError {
+	background: var(--reltio-color-error);
+}
+
+.statusText {
+	font-size: 13px;
+	color: var(--reltio-color-text-secondary);
+}
+
+.empty {
+	margin: 0;
+	font-size: 13px;
+	color: var(--reltio-color-text-placeholder);
+	font-style: italic;
+}
