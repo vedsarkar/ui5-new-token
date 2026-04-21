@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { Readable } from "node:stream";
 import type { Plugin } from "vite";
-import { proxyRequest } from "../api/proxy.shared.ts";
+import { proxyRequest } from "../proxy/proxyRequest.ts";
 
 const PROXY_PATH = "/api/proxy";
 const BODYLESS_METHODS = new Set(["GET", "HEAD"]);

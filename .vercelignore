@@ -1,4 +1,2 @@
 api/**/*.stories.tsx
 api/**/*.story.mdx
-api/**/sample.json
-api/**/schema.json

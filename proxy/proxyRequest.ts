@@ -1,8 +1,9 @@
 /**
  * Shared proxy logic — pure function on standard Web APIs (Request/Response/fetch).
  * Used both by the Vercel Edge Function in `api/proxy.ts` and by the local Vite
- * middleware in `.storybook/main.ts` so the runtime behaviour stays identical
- * across environments.
+ * middleware in `.storybook/reltioProxyDevPlugin.ts` so the runtime behaviour
+ * stays identical across environments. Lives outside `/api/` so Vercel does not
+ * try to deploy it as a function (only `/api/*.ts` files become functions).
  *
  * Contract: the caller sends a request to `/api/proxy` with the original target
  * URL in the `x-target-url` header. The host is validated against an allowlist
