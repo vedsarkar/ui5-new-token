@@ -2,7 +2,7 @@
 	"rewrites": [
 		{
 			"source": "/mcp",
-			"destination": "https://690ca858e8b7a13516b41c1a-cibsnzjipr.chromatic.com/mcp"
+			"destination": "https://main--690ca858e8b7a13516b41c1a.chromatic.com/mcp"
 		}
 	]
 }
