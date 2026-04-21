@@ -1,6 +1,6 @@
 import { Meta } from "@storybook/addon-docs/blocks";
 
-<Meta title="Welcome" />
+<Meta title="Welcome" parameters={{ docs: { toc: false } }} />
 
 <style>{`
 	/* Override Storybook's default container constraints */
@@ -15,6 +15,10 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 	.sbdocs-preview {
 		overflow: visible !important;
+	}
+
+	.sbdocs.sbdocs-toc--custom {
+		display: none !important;
 	}
 
 	.welcome-container {
@@ -46,9 +50,6 @@ import { Meta } from "@storybook/addon-docs/blocks";
   </div>
 	<div className="welcome-description">
     Build right faster. Ship consistent. Ready for humans and AI alike.
-  </div>
-  <div className="welcome-description">
-    <a href="/?path=/docs/agents--docs">Read the full Overview →</a>
   </div>
 </div>
 

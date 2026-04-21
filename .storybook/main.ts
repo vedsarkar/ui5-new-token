@@ -1,4 +1,6 @@
 import { defineMain } from "@storybook/react-vite/node";
+import { reltioProxyDevPlugin } from "./reltioProxyDevPlugin.ts";
+
 export default defineMain({
 	framework: "@storybook/react-vite",
 
@@ -18,6 +20,12 @@ export default defineMain({
 	],
 
 	staticDirs: ["../public"],
+
+	viteFinal: async (config) => {
+		config.plugins = config.plugins ?? [];
+		config.plugins.push(reltioProxyDevPlugin());
+		return config;
+	},
 
 	typescript: {
 		reactDocgen: "react-docgen-typescript",

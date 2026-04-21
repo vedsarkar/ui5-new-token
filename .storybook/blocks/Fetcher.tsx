@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Markdown } from "@/components/Markdown";
+import { Skeleton } from "@/components/Skeleton";
 import { classNames } from "@/utils/classNames";
 import styles from "./Fetcher.module.css";
 
@@ -30,6 +32,8 @@ type FetcherProps = {
 	url?: string;
 	/** Markdown-formatted description of the endpoint. */
 	description?: string;
+	/** Bearer token used for the `Authorization` header. Masked as `***` in the rendered curl. */
+	accessToken?: string;
 	/** Request sent to the API: HTTP method and optional body payload. */
 	request?: FetcherRequest;
 	/** Response returned by the API: HTTP status and optional JSON body. */
@@ -48,17 +52,17 @@ const STATUS_TEXT: Record<FetcherStatus, string> = {
 	"500": "Internal Server Error",
 };
 
-const isSuccess = (status: FetcherStatus): boolean => status.startsWith("2");
-
 export const buildCurl = (
 	method: FetcherMethod,
 	url: string,
 	hasBody: boolean,
+	accessToken?: string,
 ): string => {
+	const tokenDisplay = accessToken ? "***" : "{accessToken}";
 	const lines = [
 		`curl -X ${method} \\`,
 		`  "${url}" \\`,
-		`  -H "Authorization: Bearer {accessToken}" \\`,
+		`  -H "Authorization: Bearer ${tokenDisplay}" \\`,
 		'  -H "Content-Type: application/json"',
 	];
 	if (hasBody) {
@@ -73,18 +77,98 @@ const formatJson = (value: unknown): string => JSON.stringify(value, null, 2);
 const codeBlock = (lang: string, body: string): string =>
 	`\`\`\`${lang}\n${body}\n\`\`\``;
 
+type SendState =
+	| { kind: "idle" }
+	| { kind: "sending" }
+	| {
+			kind: "success";
+			status: number;
+			statusText: string;
+			body: unknown;
+			isJson: boolean;
+		}
+	| { kind: "error"; message: string };
+
 export const Fetcher = ({
 	url = "",
 	description,
+	accessToken,
 	request,
 	response,
 }: FetcherProps) => {
+	const [isCurlCopied, setIsCurlCopied] = useState(false);
+	const [sendState, setSendState] = useState<SendState>({ kind: "idle" });
 	const method = request?.method ?? "GET";
 	const body = request?.body;
 	const hasRequestBody = body !== undefined && body !== null;
-	const status = response?.status ?? "200";
-	const json = response?.json;
-	const hasResponseBody = json !== undefined && json !== null;
+	const curl = buildCurl(method, url, hasRequestBody, accessToken);
+	const hasUrlPlaceholders = url.includes("{") || url.includes("}");
+	const isSending = sendState.kind === "sending";
+	const sendDisabled = isSending || hasUrlPlaceholders || !url;
+
+	const copyCurl = async () => {
+		await navigator.clipboard.writeText(curl);
+		setIsCurlCopied(true);
+		setTimeout(() => setIsCurlCopied(false), 1500);
+	};
+
+	const sendRequest = async () => {
+		setSendState({ kind: "sending" });
+		const headers: Record<string, string> = {
+			"Content-Type": "application/json",
+		};
+		if (accessToken) {
+			headers.Authorization = `Bearer ${accessToken}`;
+		}
+		const init: RequestInit = { method, headers };
+		if (hasRequestBody) {
+			init.body = JSON.stringify(body);
+		}
+		try {
+			const res = await fetch(url, init);
+			const text = await res.text();
+			let parsed: unknown = text;
+			let isJson = false;
+			if (text) {
+				try {
+					parsed = JSON.parse(text);
+					isJson = true;
+				} catch {
+					/* keep raw text */
+				}
+			} else {
+				parsed = undefined;
+			}
+			setSendState({
+				kind: "success",
+				status: res.status,
+				statusText: res.statusText,
+				body: parsed,
+				isJson,
+			});
+		} catch (e) {
+			setSendState({
+				kind: "error",
+				message: e instanceof Error ? e.message : "Request failed",
+			});
+		}
+	};
+
+	const liveResponse = sendState.kind === "success";
+	const liveStatus = liveResponse ? String(sendState.status) : null;
+	const liveStatusText = liveResponse
+		? sendState.statusText || STATUS_TEXT[liveStatus as FetcherStatus] || ""
+		: null;
+	const liveBody = liveResponse ? sendState.body : undefined;
+	const liveIsJson = liveResponse ? sendState.isJson : false;
+
+	const status = (liveStatus ?? response?.status ?? "200") as FetcherStatus;
+	const statusText = liveStatusText ?? STATUS_TEXT[status] ?? "";
+	const json = liveResponse ? liveBody : response?.json;
+	const hasResponseBody = liveResponse
+		? liveBody !== undefined
+		: json !== undefined && json !== null;
+	const isStatusSuccess = status.startsWith("2");
 
 	return (
 		<div className={classNames(styles.root)}>
@@ -103,30 +187,97 @@ export const Fetcher = ({
 
 			<section className={classNames(styles.section)}>
 				<h3 className={classNames(styles.sectionTitle)}>Request</h3>
-				<Markdown>
-					{codeBlock("bash", buildCurl(method, url, hasRequestBody))}
-				</Markdown>
+				<Markdown>{codeBlock("bash", curl)}</Markdown>
+				<div className={classNames(styles.actions)}>
+					<button
+						type="button"
+						onClick={copyCurl}
+						className={classNames(
+							styles.actionButton,
+							isCurlCopied && styles.actionButtonSuccess,
+						)}
+						aria-live="polite"
+					>
+						{isCurlCopied ? "Copied!" : "Copy"}
+					</button>
+					{accessToken ? (
+						<button
+							type="button"
+							onClick={sendRequest}
+							disabled={sendDisabled}
+							className={classNames(
+								styles.actionButton,
+								styles.actionButtonSend,
+							)}
+							aria-live="polite"
+							title={
+								hasUrlPlaceholders
+									? "Fill in the URL placeholders to send the request"
+									: undefined
+							}
+						>
+							{isSending ? "Sending…" : "Send"}
+						</button>
+					) : (
+						<p className={classNames(styles.actionHint)}>
+							To send a real request, add your access token in the Controls
+							panel.
+						</p>
+					)}
+				</div>
 			</section>
 
 			<section className={classNames(styles.section)}>
 				<h3 className={classNames(styles.sectionTitle)}>Response</h3>
-				<div className={classNames(styles.statusRow)}>
-					<span
-						className={classNames(
-							styles.status,
-							isSuccess(status) ? styles.statusSuccess : styles.statusError,
-						)}
-					>
-						{status}
-					</span>
-					<span className={classNames(styles.statusText)}>
-						{STATUS_TEXT[status]}
-					</span>
-				</div>
-				{hasResponseBody ? (
-					<Markdown>{codeBlock("json", formatJson(json))}</Markdown>
+				{isSending ? (
+					<Skeleton rows={5} />
+				) : sendState.kind === "error" ? (
+					<p className={classNames(styles.error)}>
+						Request failed: {sendState.message}
+					</p>
 				) : (
-					<p className={classNames(styles.empty)}>No response body.</p>
+					<>
+						<div className={classNames(styles.statusRow)}>
+							<span
+								className={classNames(
+									styles.status,
+									isStatusSuccess ? styles.statusSuccess : styles.statusError,
+								)}
+							>
+								{status}
+							</span>
+							<span className={classNames(styles.statusText)}>
+								{statusText}
+							</span>
+							{liveResponse ? (
+								<span
+									className={classNames(styles.badge, styles.badgeLive)}
+									title="Real response from the upstream API"
+								>
+									Live
+								</span>
+							) : (
+								<span
+									className={classNames(styles.badge, styles.badgeMock)}
+									title="Mocked response defined in the story"
+								>
+									Mock
+								</span>
+							)}
+						</div>
+						{hasResponseBody ? (
+							<Markdown>
+								{codeBlock(
+									liveResponse && !liveIsJson ? "text" : "json",
+									liveResponse && !liveIsJson
+										? String(json ?? "")
+										: formatJson(json),
+								)}
+							</Markdown>
+						) : (
+							<p className={classNames(styles.empty)}>No response body.</p>
+						)}
+					</>
 				)}
 			</section>
 		</div>

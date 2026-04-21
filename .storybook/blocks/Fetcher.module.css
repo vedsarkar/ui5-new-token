@@ -110,3 +110,99 @@
 	color: var(--reltio-color-text-placeholder);
 	font-style: italic;
 }
+
+.actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.actionHint {
+	margin: 0;
+	font-size: 12px;
+	color: var(--reltio-color-text-secondary);
+	font-style: italic;
+}
+
+.actionButton {
+	padding: 4px 12px;
+	border: 1px solid var(--reltio-color-border-1);
+	border-radius: 4px;
+	background: var(--reltio-color-surface-2);
+	color: var(--reltio-color-text);
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	transition:
+		background 0.15s,
+		color 0.15s,
+		border-color 0.15s;
+
+	&:hover:not(:disabled) {
+		background: var(--reltio-color-primary-transparent-mild);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--reltio-color-primary);
+		outline-offset: 2px;
+	}
+
+	&:disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+}
+
+.actionButtonSend {
+	background: var(--reltio-color-primary);
+	border-color: var(--reltio-color-primary);
+	color: var(--reltio-color-text-white);
+
+	&:hover:not(:disabled) {
+		background: var(--reltio-color-primary);
+		filter: brightness(1.05);
+	}
+}
+
+.actionButtonSuccess {
+	background: var(--reltio-color-success-soft);
+	border-color: var(--reltio-color-success);
+	color: var(--reltio-color-success);
+
+	&:hover:not(:disabled) {
+		background: var(--reltio-color-success-soft);
+	}
+}
+
+.badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px 6px;
+	border-radius: 4px;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	cursor: help;
+}
+
+.badgeLive {
+	background: var(--reltio-color-primary-transparent-mild);
+	color: var(--reltio-color-primary);
+}
+
+.badgeMock {
+	background: var(--reltio-color-surface-2);
+	color: var(--reltio-color-text-secondary);
+	border: 1px dashed var(--reltio-color-border-1);
+}
+
+.error {
+	margin: 0;
+	padding: 8px 12px;
+	border-radius: 4px;
+	background: var(--reltio-color-error-soft, var(--reltio-color-surface-2));
+	color: var(--reltio-color-error);
+	font-size: 13px;
+}

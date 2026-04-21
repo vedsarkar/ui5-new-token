@@ -12,6 +12,7 @@ import { definePreview } from "@storybook/react-vite";
 import { initialize, mswLoader } from "msw-storybook-addon";
 import { CssClasses } from "./blocks/CssClasses";
 import { ImportExample } from "./blocks/ImportExample";
+import { reltioProxyHandler } from "./mocks/reltioProxyHandler";
 
 initialize({ onUnhandledRequest: "bypass" });
 
@@ -22,7 +23,7 @@ export default definePreview({
 
 	parameters: {
 		msw: {
-			handlers: [],
+			handlers: [reltioProxyHandler],
 		},
 
 		docs: {
@@ -37,6 +38,7 @@ export default definePreview({
 					<Stories />
 				</>
 			),
+			toc: true,
 		},
 
 		a11y: {

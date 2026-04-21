@@ -8,7 +8,19 @@ import schemaJson from "./schema.json";
 const schema = schemaJson as JsonSchemaNode;
 
 const defaultRequestBody = fakeFromSchema(schema, { omitReadOnly: true });
-const defaultResponseBody = fakeFromSchema(schema);
+const responseBody_200 = fakeFromSchema(schema);
+const responseBody_400 = {
+	error: "Bad Request",
+	message: "The request is invalid.",
+};
+const responseBody_401 = {
+	error: "Unauthorized",
+	message: "The request is unauthorized.",
+};
+const responseBody_403 = {
+	error: "Forbidden",
+	message: "The request is forbidden.",
+};
 
 type ConfigurationFetcherProps = Omit<ComponentProps<typeof Fetcher>, "url"> & {
 	environment?: string;
@@ -42,7 +54,7 @@ const meta = preview.meta({
 					const url = buildEndpointUrl(args.environment, args.tenantId);
 					const hasBody =
 						args.request?.body !== undefined && args.request?.body !== null;
-					return buildCurl(method, url, hasBody);
+					return buildCurl(method, url, hasBody, args.accessToken);
 				},
 			},
 		},
@@ -50,23 +62,50 @@ const meta = preview.meta({
 	argTypes: {
 		environment: {
 			control: "text",
-			description: "Reltio environment subdomain (e.g. `dev`, `prod`).",
 		},
 		tenantId: {
 			control: "text",
-			description: "Target tenant identifier.",
+		},
+		accessToken: {
+			control: "text",
 		},
 		request: {
 			control: "object",
-			description:
-				"Request sent to the API: `method` (HTTP verb) and optional `body` payload.",
+		},
+		description: {
+			table: { disable: true },
 		},
 		response: {
-			control: "object",
-			description:
-				"Response returned by the API: `status` (HTTP code) and optional `json` body.",
+			control: "select",
+			options: [
+				"200 OK",
+				"400 Bad Request",
+				"401 Unauthorized",
+				"403 Forbidden",
+			],
+			defaultValue: "200 OK",
+			mapping: {
+				"200 OK": {
+					status: "200",
+					json: responseBody_200,
+				},
+				"400 Bad Request": {
+					status: "400",
+					json: responseBody_400,
+				},
+				"401 Unauthorized": {
+					status: "401",
+					json: responseBody_401,
+				},
+				"403 Forbidden": {
+					status: "403",
+					json: responseBody_403,
+				},
+			},
 		},
-		description: { table: { disable: true } },
+	},
+	args: {
+		response: "200 OK",
 	},
 });
 
@@ -76,10 +115,6 @@ export const GetConfiguration = meta.story({
 		description: "Retrieves the full L3 configuration for the tenant.",
 		request: {
 			method: "GET",
-		},
-		response: {
-			status: "200",
-			json: defaultResponseBody,
 		},
 	},
 });
@@ -92,10 +127,6 @@ export const PutConfiguration = meta.story({
 		request: {
 			method: "PUT",
 			body: defaultRequestBody,
-		},
-		response: {
-			status: "200",
-			json: defaultResponseBody,
 		},
 	},
 });

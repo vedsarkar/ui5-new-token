@@ -1,4 +1,7 @@
 {
+	"functions": {
+		"api/proxy.ts": { "runtime": "edge" }
+	},
 	"rewrites": [
 		{
 			"source": "/mcp",
