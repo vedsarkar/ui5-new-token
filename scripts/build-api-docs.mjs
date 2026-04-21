@@ -1,12 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fakeFromSchema } from "../.storybook/utils/fakeFromSchema.mjs";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const API_DIR = path.join(ROOT, "api");
+const SCHEMAS_DIR = path.join(ROOT, "public", "schemas");
 
-const HEADER = `{/*
+const SCHEMA_PUBLIC_URL_BASE = "/schemas";
+
+const headerFor = (name) => `{/*
   AUTO-GENERATED — do not edit by hand.
-  Source: ./schema.json
+  Source: ${SCHEMA_PUBLIC_URL_BASE}/${name.toLowerCase()}.json
   Run: npm run build-api-docs
 */}`;
 
@@ -18,27 +22,44 @@ function discoverApis() {
 		.flatMap((entry) => {
 			const name = entry.name;
 			const dir = path.join(API_DIR, name);
-			const schemaPath = path.join(dir, "schema.json");
+			const schemaPath = path.join(SCHEMAS_DIR, `${name.toLowerCase()}.json`);
 			const storiesPath = path.join(dir, `${name}.stories.tsx`);
-			if (!fs.existsSync(schemaPath)) return [];
-			if (!fs.existsSync(storiesPath)) {
+			const samplePath = path.join(dir, `${name}.sample.json`);
+			if (!fs.existsSync(storiesPath)) return [];
+			if (!fs.existsSync(schemaPath)) {
 				console.warn(
-					`WARNING: schema "${schemaPath}" has no matching stories file "${storiesPath}" — skipping`,
+					`WARNING: stories "${storiesPath}" has no matching schema at "${schemaPath}" — skipping`,
 				);
 				return [];
 			}
-			return [{ name, dir, schemaPath, storiesPath }];
+			return [{ name, dir, schemaPath, storiesPath, samplePath }];
 		});
+}
+
+/**
+ * (Re)generate `<Name>.sample.json` from the schema on every run so the
+ * sample never drifts out of sync with the schema definition. The file is
+ * a build artefact — treat it as auto-generated, do not edit by hand.
+ */
+function regenerateSample(api, schema) {
+	const generated = fakeFromSchema(schema);
+	fs.writeFileSync(
+		api.samplePath,
+		`${JSON.stringify(generated, null, 2)}\n`,
+		"utf-8",
+	);
+	console.log(`Generated ${path.relative(ROOT, api.samplePath)}`);
 }
 
 // JSON Schema → flat field-by-field markdown.
 // Mirrors the structure that AI agents and humans both consume.
 const MAX_DEPTH = 12;
 
-function schemaToMarkdown(schema) {
+function schemaToMarkdown(schema, schemaUrl) {
 	const sections = [];
 	if (schema.title) sections.push(`# ${escapeMdx(schema.title)}`);
 	if (schema.description) sections.push(escapeMdx(schema.description));
+	if (schemaUrl) sections.push(`**JSON Schema:** [${schemaUrl}](${schemaUrl})`);
 	walk(schema, "", sections, 0);
 	return sections.join("\n\n");
 }
@@ -135,14 +156,16 @@ function formatValue(value) {
 
 function buildMdx({ name, schema }) {
 	const importNamespace = `${capitalize(name)}Stories`;
-	return `${HEADER}
+	const schemaUrl =
+		schema.$id || `${SCHEMA_PUBLIC_URL_BASE}/${name.toLowerCase()}.json`;
+	return `${headerFor(name)}
 
 import { Meta, Stories } from "@storybook/addon-docs/blocks";
 import * as ${importNamespace} from "./${name}.stories";
 
 <Meta of={${importNamespace}} />
 
-${schemaToMarkdown(schema)}
+${schemaToMarkdown(schema, schemaUrl)}
 
 <Stories />
 `;
@@ -154,12 +177,15 @@ function capitalize(str) {
 
 const apis = discoverApis();
 if (apis.length === 0) {
-	console.log("No API schemas found in api/*/schema.json — nothing to do.");
+	console.log(
+		"No API schemas found in public/schemas/<name>.json paired with api/<Name>/<Name>.stories.tsx — nothing to do.",
+	);
 	process.exit(0);
 }
 
 for (const api of apis) {
 	const schema = JSON.parse(fs.readFileSync(api.schemaPath, "utf-8"));
+	regenerateSample(api, schema);
 	const mdx = buildMdx({ name: api.name, schema });
 	const outputPath = path.join(api.dir, `${api.name}.story.mdx`);
 	fs.writeFileSync(outputPath, mdx, "utf-8");

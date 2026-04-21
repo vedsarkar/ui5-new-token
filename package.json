@@ -30,7 +30,9 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "vitest run",
+		"pretest": "npm run build-api-docs",
 		"coverage": "vitest run --coverage",
+		"precoverage": "npm run build-api-docs",
 		"dev": "storybook dev -p 6006",
 		"predev": "npm run build-api-docs",
 		"build-storybook": "storybook build",

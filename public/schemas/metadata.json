@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://reltio.design/api/metadata/schema.json",
+	"$id": "https://reltio.design/schemas/metadata.json",
 	"title": "Reltio Tenant Metadata Configuration",
 	"description": "Root configuration object (also known as L3) that defines the complete data model for a Reltio MDM tenant. This is the single source of truth for all business entities, relationships, matching logic, survivorship rules, and data governance within a tenant.\n\nEvery piece of data stored in Reltio — profiles, relationships, interactions, groups — is shaped by this configuration. All UI applications, integrations, ETL pipelines, and AI agents must read and interpret this object to understand the tenant's data model. Returned by GET /reltio/api/{tenantId}/configuration and updated via PUT to the same endpoint.",
 	"type": "object",

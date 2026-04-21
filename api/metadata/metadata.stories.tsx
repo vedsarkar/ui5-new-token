@@ -1,14 +1,10 @@
 import type { ComponentProps } from "react";
 import { buildCurl, Fetcher } from "@/.storybook/blocks/Fetcher";
 import preview from "@/.storybook/preview";
-import { fakeFromSchema } from "@/.storybook/utils/fakeFromSchema";
-import type { JsonSchemaNode } from "@/.storybook/utils/jsonSchema.types";
-import schemaJson from "./schema.json";
+import sampleJson from "./Metadata.sample.json";
 
-const schema = schemaJson as JsonSchemaNode;
-
-const defaultRequestBody = fakeFromSchema(schema, { omitReadOnly: true });
-const responseBody_200 = fakeFromSchema(schema);
+const defaultRequestBody = sampleJson;
+const responseBody_200 = sampleJson;
 const responseBody_400 = {
 	error: "Bad Request",
 	message: "The request is invalid.",
