@@ -24,7 +24,12 @@ export default defineConfig({
 					},
 
 					// Exclude Storybook template files from tests
-					exclude: ["**/node_modules/**"],
+					exclude: [
+						"**/node_modules/**",
+						"api/**",
+						"test-utils/**",
+						"**/*.json",
+					],
 				},
 				optimizeDeps: {
 					include: ["react/jsx-dev-runtime"],
@@ -32,7 +37,14 @@ export default defineConfig({
 			},
 		],
 		coverage: {
-			exclude: ["**/node_modules/**", ".storybook/**", "**/*.module.css"],
+			exclude: [
+				"**/node_modules/**",
+				".storybook/**",
+				"**/*.module.css",
+				"api/**",
+				"test-utils/**",
+				"**/*.json",
+			],
 			// thresholds: {
 			// 	statements: 80,
 			// 	branches: 80,
