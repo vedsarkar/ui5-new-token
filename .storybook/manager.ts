@@ -3,4 +3,5 @@ import reltioTheme from "./reltio-theme";
 
 addons.setConfig({
 	theme: reltioTheme,
+	showToolbar: false,
 });

@@ -11,6 +11,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 		padding: 0 !important;
 		max-width: none !important;
 		margin: 0 !important;
+		background: var(--reltio-color-surface-1, #ffffff);
 	}
 
 	.sbdocs-preview {
@@ -21,35 +22,424 @@ import { Meta } from "@storybook/addon-docs/blocks";
 		display: none !important;
 	}
 
-	.welcome-container {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		padding: 40px;
-		background-image: url('/design-bg.png');
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
-		overflow: hidden;
-		box-sizing: border-box;
-		margin: 0;
+	.welcome {
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+		color: var(--reltio-color-text, #0e0e25);
+		background: var(--reltio-color-surface-1, #ffffff);
 	}
 
-  .welcome-description {
-    width: 30%;
-    min-width: 300px;
-    margin: 0;
-  }
+	/* Inherit our font everywhere; specific classes own their colors */
+	.welcome p,
+	.welcome h1,
+	.welcome h2,
+	.welcome h3,
+	.welcome span,
+	.welcome a {
+		font-family: inherit;
+	}
 
+	.welcome a {
+		color: var(--reltio-color-primary, #0000cc);
+		text-decoration: none;
+		font-weight: 600;
+	}
+
+	/* ---------- Section bands ---------- */
+
+	.welcome-band {
+		width: 100%;
+		padding: 80px 64px;
+		box-sizing: border-box;
+	}
+
+	.welcome-band--gradient { background: linear-gradient(135deg, var(--reltio-color-primary, #0000cc) 0%, var(--reltio-color-primary, #0000cc) 65%, #000066 65%, #000066 100%); color: #ffffff; }
+	.welcome-band--surface { background: var(--reltio-color-surface-1, #ffffff); }
+	.welcome-band--soft    { background: var(--reltio-color-surface-2, #f5f5fa); }
+	.welcome-band--lavender{ background: #ece9ff; }
+	.welcome-band--rose    { background: #fde7ef; }
+	.welcome-band--ink     { background: #000066; color: #f8fafc; }
+
+	.welcome-inner {
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+
+	/* ---------- Hero ---------- */
+
+	.welcome-hero {
+		position: relative;
+		box-sizing: border-box;
+		width: calc(100% - 128px);
+		max-width: 1200px;
+		margin: 0 auto;
+		border-radius: 16px;
+		overflow: hidden;
+	}
+
+	.welcome-hero-content {
+		position: relative;
+		z-index: 1;
+	}
+
+	.welcome .welcome-hero .welcome-hero-title {
+		margin: 0 0 16px;
+		font-size: 56px;
+		line-height: 1.05;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+		color: #ffffff !important;
+	}
+
+	.welcome .welcome-hero .welcome-hero-sub {
+		margin: 0;
+		font-size: 20px;
+		line-height: 1.45;
+		color: rgba(255, 255, 255, 0.92);
+		max-width: 520px;
+	}
+
+	.welcome-hero-cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 12px 22px;
+		background: #ffffff;
+		color: var(--reltio-color-primary, #0000cc);
+		border-radius: 999px;
+		font-size: 15px;
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.welcome-hero-cta:hover {
+		text-decoration: none;
+		background: #f5f5fa;
+	}
+
+	.welcome-hero-cta::after {
+		content: "→";
+		font-weight: 500;
+	}
+
+	/* ---------- Section header (centered) ---------- */
+
+	.welcome-section-head {
+		max-width: 720px;
+		margin: 0 auto 56px;
+		text-align: center;
+	}
+
+	.welcome .welcome-band .welcome-section-eyebrow {
+		display: block;
+		margin: 0 0 12px;
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--reltio-color-primary, #0000cc);
+	}
+
+	.welcome .welcome-band .welcome-section-title {
+		margin: 0 0 16px;
+		font-size: 40px;
+		line-height: 1.15;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+		color: var(--reltio-color-text, #0e0e25);
+	}
+
+	.welcome .welcome-band--ink .welcome-section-title { color: #f8fafc !important; }
+
+	.welcome .welcome-band .welcome-section-lede {
+		margin: 0;
+		font-size: 17px;
+		line-height: 1.55;
+		color: var(--reltio-color-text-secondary, #5a5a72);
+	}
+
+	.welcome .welcome-band--ink .welcome-section-lede { color: rgba(248, 250, 252, 0.85) !important; }
+
+	/* ---------- Two-column feature ---------- */
+
+	.welcome-feature {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 64px;
+		align-items: center;
+	}
+
+	.welcome-feature--reverse .welcome-feature-text { order: 2; }
+	.welcome-feature--reverse .welcome-feature-art  { order: 1; }
+
+	.welcome-feature-eyebrow {
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+		margin: 0 0 12px;
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	.welcome .welcome-feature-eyebrow-accent {
+		color: var(--reltio-color-primary, #0000cc);
+	}
+
+	.welcome .welcome-band--lavender .welcome-feature-eyebrow-accent { color: #6d4cff; }
+	.welcome .welcome-band--rose .welcome-feature-eyebrow-accent { color: #c43d75; }
+	.welcome .welcome-band--ink .welcome-feature-eyebrow-accent { color: #93c5fd; }
+
+	.welcome .welcome-feature-eyebrow-tag {
+		color: var(--reltio-color-text, #0e0e25);
+	}
+
+	.welcome .welcome-band--ink .welcome-feature-eyebrow-tag { color: #f8fafc; }
+
+	.welcome .welcome-feature .welcome-feature-title {
+		margin: 0 0 16px;
+		font-size: 32px;
+		line-height: 1.2;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+		color: var(--reltio-color-text, #0e0e25);
+	}
+
+	.welcome .welcome-band--ink .welcome-feature-title { color: #f8fafc; }
+
+	.welcome .welcome-feature .welcome-feature-body {
+		margin: 0 0 20px;
+		font-size: 16px;
+		line-height: 1.6;
+		color: var(--reltio-color-text-secondary, #5a5a72);
+		max-width: 460px;
+	}
+
+	.welcome .welcome-band--ink .welcome-feature-body { color: rgba(248, 250, 252, 0.85); }
+
+	.welcome-feature-links {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: wrap;
+		gap: 8px 20px;
+		font-size: 15px;
+	}
+
+	.welcome-band--ink .welcome-feature-links a { color: #93c5fd; }
+	.welcome-band--lavender .welcome-feature-links a { color: #6d4cff; }
+	.welcome-band--rose .welcome-feature-links a { color: #c43d75; }
+
+	.welcome-feature-art {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 280px;
+	}
+
+	.welcome-feature-art svg,
+	.welcome-feature-art img {
+		width: 100%;
+		height: auto;
+		max-width: 520px;
+		display: block;
+	}
+
+	/* ---------- CLI terminal mockup ---------- */
+
+	.welcome-terminal {
+		width: 100%;
+		max-width: 520px;
+		height: 320px;
+		border-radius: 12px;
+		overflow: hidden;
+		background: #1e1e2e;
+		border: 1px solid #2a2a3e;
+		box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18), 0 4px 10px rgba(15, 23, 42, 0.06);
+	}
+
+	.welcome-terminal-bar {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 11px 14px;
+		background: #2a2a3e;
+		border-bottom: 1px solid #11111c;
+	}
+
+	.welcome-terminal-dot {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		display: inline-block;
+		flex-shrink: 0;
+	}
+
+	.welcome .welcome-terminal-title {
+		flex: 1;
+		text-align: center;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		font-size: 12px;
+		font-weight: 500;
+		color: #94a3b8;
+		margin-right: 56px;
+	}
+
+	.welcome-terminal-body {
+		padding: 18px 20px 20px;
+		line-height: 1.7;
+		color: #e2e8f0;
+		overflow-x: auto;
+	}
+
+	.welcome-terminal-line * {
+		font-size: 12px !important;
+		font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace !important;
+		white-space: nowrap;
+	}
+
+	.welcome-terminal-line--indent {
+		padding-left: 22px;
+	}
+
+	.welcome .welcome-terminal-prompt { color: #6d4cff; font-weight: 600; }
+	.welcome .welcome-terminal-cmd { color: #60a5fa; font-weight: 600; }
+	.welcome .welcome-terminal-flag { color: #94a3b8; }
+	.welcome .welcome-terminal-method { color: #34d399; font-weight: 600; }
+	.welcome .welcome-terminal-string { color: #fbbf24; }
+	.welcome .welcome-terminal-var { color: #c084fc; }
+	.welcome .welcome-terminal-cont { color: #64748b; }
+
+	@media (max-width: 880px) {
+		.welcome-band { padding: 56px 24px; }
+		.welcome-hero { padding: 56px 28px 64px; }
+		.welcome-hero-title { font-size: 40px; }
+		.welcome-hero-art { display: none; }
+		.welcome-feature { grid-template-columns: 1fr; gap: 32px; }
+		.welcome-feature--reverse .welcome-feature-text,
+		.welcome-feature--reverse .welcome-feature-art { order: initial; }
+		.welcome-section-title { font-size: 32px; }
+	}
 `}</style>
 
-<div className="welcome-container">
-  <h1 className="welcome-title">Reltio Design Platform</h1>
-	<div className="welcome-description">
-    Comprehensive UI development, testing, and documentation ecosystem for the Reltio product suite. It serves as a unified platform enabling multiple teams to build, test, document, and distribute UI components and applications while maintaining consistency, quality, and embeddability.
-  </div>
-	<div className="welcome-description">
-    Build right faster. Ship consistent. Ready for humans and AI alike.
-  </div>
-</div>
+<div className="welcome">
 
+  {/* ---------- Hero ---------- */}
+
+	<section className="welcome-band welcome-band--gradient">
+		<header className="welcome-hero">
+			<div className="welcome-hero-content">
+				<div className="welcome-hero-title">Reltio Design Platform</div>
+				<div className="welcome-hero-sub">A single workspace for everyone shaping Reltio products — designers, engineers, architects, partners, and AI agents. Visual language, API contracts, app architectures, and agent workflows live side by side.</div>
+			</div>
+		</header>
+	</section>
+
+  {/* ---------- Principles intro ---------- */}
+
+  <section className="welcome-band">
+    <div className="welcome-inner">
+      <div className="welcome-section-head">
+        <div className="welcome-section-eyebrow">Built on principles</div>
+        <div className="welcome-section-title">Design as a discipline — not just a UI.</div>
+        <div className="welcome-section-lede">{"We treat design as the act of shaping every part of a Reltio product — its data contracts, its agent surface, and its visual language. Three principles set the ground rules."}</div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Principle 1: API-first (white) ---------- */}
+
+  <section className="welcome-band welcome-band--soft">
+    <div className="welcome-inner welcome-feature">
+      <div className="welcome-feature-text">
+        <div className="welcome-feature-eyebrow">
+          <span className="welcome-feature-eyebrow-accent">API-First.</span>
+          <span className="welcome-feature-eyebrow-tag">Data driven.</span>
+        </div>
+        <div className="welcome-feature-title">Every capability is a contract — long before it's a screen.</div>
+        <div className="welcome-feature-body">{"We design endpoints, schemas, and events first so the same surface powers Reltio apps, partner integrations, and AI agents. Skipping this step is what made yesterday's “application-first” stacks impossible to modernize — we treat the API layer as the real product."}</div>
+				<div className="welcome-feature-links">
+					<a href="./?path=/docs/api-metadata--docs">Metadata schema</a>
+					<a href="./?path=/story/api-metadata--get-configuration">GET /configuration</a>
+				</div>
+			</div>
+      <div className="welcome-feature-art">
+        <div className="welcome-terminal" role="img" aria-label="Example Reltio API request">
+          <div className="welcome-terminal-bar">
+            <span className="welcome-terminal-dot" style={{background: "#ff5f57"}} />
+            <span className="welcome-terminal-dot" style={{background: "#febc2e"}} />
+            <span className="welcome-terminal-dot" style={{background: "#28c840"}} />
+            <span className="welcome-terminal-title">zsh — reltio</span>
+          </div>
+          <div className="welcome-terminal-body">
+            <div className="welcome-terminal-line"><span className="welcome-terminal-prompt">$</span> <span className="welcome-terminal-cmd">curl</span> <span className="welcome-terminal-flag">-X</span> <span className="welcome-terminal-method">GET</span> <span className="welcome-terminal-cont">{"\\"}</span></div>
+            <div className="welcome-terminal-line welcome-terminal-line--indent"><span className="welcome-terminal-string">{"\"https://"}<span className="welcome-terminal-var">{"{env}"}</span>{".reltio.com/reltio/api/"}<span className="welcome-terminal-var">{"{tenantId}"}</span>{"/configuration\""}</span> <span className="welcome-terminal-cont">{"\\"}</span></div>
+            <div className="welcome-terminal-line welcome-terminal-line--indent"><span className="welcome-terminal-flag">-H</span> <span className="welcome-terminal-string">{"\"Authorization: Bearer "}<span className="welcome-terminal-var">****</span>{"\""}</span> <span className="welcome-terminal-cont">{"\\"}</span></div>
+            <div className="welcome-terminal-line welcome-terminal-line--indent"><span className="welcome-terminal-flag">-H</span> <span className="welcome-terminal-string">{"\"Accept: application/json\""}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Principle 2: AI-native (lavender) ---------- */}
+
+  <section className="welcome-band welcome-band--lavender">
+    <div className="welcome-inner welcome-feature welcome-feature--reverse">
+      <div className="welcome-feature-text">
+        <div className="welcome-feature-eyebrow">
+          <span className="welcome-feature-eyebrow-accent">AI-Native.</span>
+          <span className="welcome-feature-eyebrow-tag">Agent foundation.</span>
+        </div>
+        <div className="welcome-feature-title">AI agents are first-class consumers of the platform.</div>
+        <div className="welcome-feature-body">{"Documentation, types, and examples are written so engineers and AI can reason about the system through the same contracts — surfaced via MCP, manifests, and schema-driven docs. We’re working on building out AI resources for every part of your design and development journey, including guidance on designing for AI and out-of-the-box components for building AI into apps"}</div>
+				<div className="welcome-feature-links">
+					<a href="./?path=/docs/guides-spec-driven-development--docs">Spec-driven workflow</a>
+					<a href="/manifests/components.html">Storybook MCP</a>
+					<a href="./?path=/story/components-chat--docs">AI Chat component</a>
+					<a href="./?path=/story/components-streaming-hook--docs">Streaming hook</a>
+				</div>
+			</div>
+      <div className="welcome-feature-art">
+        <img src="/ai-native.png" alt="" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Principle 3: UI-composable ---------- */}
+
+  <section className="welcome-band welcome-band--surface">
+    <div className="welcome-inner welcome-feature">
+      <div className="welcome-feature-text">
+        <div className="welcome-feature-eyebrow">
+          <span className="welcome-feature-eyebrow-accent">Component-based.</span>
+          <span className="welcome-feature-eyebrow-tag">Visual language.</span>
+        </div>
+        <div className="welcome-feature-title">Every Reltio screen, assembled from a shared library.</div>
+        <div className="welcome-feature-body">{"Reusable React components, design tokens, charts, icons, and full app anatomies — covered by Storybook stories that double as visual tests, accessibility checks, and live specifications. New surfaces inherit consistency by composition instead of reinventing it."}</div>
+				<div className="welcome-feature-links">
+					<a href="./?path=/docs/colors--docs">Design tokens</a>
+					<a href="./?path=/docs/charts-geochart--docs">Charts</a>
+					<a href="./?path=/docs/icons--docs">Icons</a>
+				</div>
+			</div>
+      <div className="welcome-feature-art">
+        <img src="/ui-composable.png" alt="" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Closing CTA on dark band ---------- */}
+
+  <section className="welcome-band welcome-band--ink">
+    <div className="welcome-inner">
+      <div className="welcome-section-head">
+        <div className="welcome-section-eyebrow" style={{color: "#93c5fd"}}>One workspace</div>
+        <div className="welcome-section-title">Build right faster. Ship consistent. Ready for humans and AI alike.</div>
+        <div className="welcome-section-lede">{"A single place where all the Reltio product stories live — visual primitives, API contracts, application anatomies, dev guidelines. Storybook exposes everything in this workspace through the Model Context Protocol. AI agents can discover, preview, and reuse Reltio building blocks and API contracts directly, without copy-paste or guesswork."}</div>
+      </div>
+      <div style={{display: "flex", flexWrap: "wrap", gap: "12px 16px", justifyContent: "center"}}>
+        <a className="welcome-hero-cta" href="/manifests/components.html" style={{background: "#ffffff", color: "#0e0e25"}}>Browse the manifest</a>
+        <a className="welcome-hero-cta" href="/mcp" style={{background: "transparent", color: "#ffffff", border: "1px solid rgba(255,255,255,0.4)"}}>Open the MCP endpoint</a>
+      </div>
+    </div>
+  </section>
+
+</div>
