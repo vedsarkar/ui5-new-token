@@ -1,0 +1,253 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/Typography" />
+
+# Typography
+
+`@reltio/design` ships **SAP 72** as the default text font and **72 Mono** as the default monospace font. This guide shows how to load them in your application and how to use them when writing your own CSS on top of the design system.
+
+> **🎯 Key Principle:** Once the fonts are loaded and the root `font-family` is set, every Reltio component renders in SAP 72 automatically. Your own elements inherit the same family through standard CSS inheritance — you almost never need to declare `font-family` yourself.
+
+## Quick Start
+
+Two steps to start using SAP 72 in your app.
+
+### 1. Load the fonts
+
+The fonts are hosted on `reltio.design` with CORS enabled, so the recommended approach is a single `<link>`:
+
+```html
+<link rel="stylesheet" href="https://reltio.design/fonts.css" />
+```
+
+This declares all `@font-face` rules for the families `"72"` (six weights) and `"72 Mono"` (two weights). The actual font files are downloaded by the browser on demand.
+
+**Alternative — npm import.** If you prefer to keep all third-party dependencies pinned through `package.json`, the same stylesheet ships with the npm package:
+
+```js
+import "@reltio/design/fonts.css";
+```
+
+The npm version contains absolute CDN URLs to the font files internally, so it works through any bundler with no extra static-asset configuration. The browser still downloads the actual `.woff2` files from `reltio.design`.
+
+> **💡 Self-hosting?** If you need to serve the assets from your own origin (offline, air-gapped, locked-down CSP, or production version pinning), download the font files directly from SAP — the official source for the typeface:
+>
+> 1. Go to [SAP Fiori Design Web — Font 72 downloads](https://www.sap.com/design-system/fiori-design-web/resources/downloads#font-72) and download the font package. We use the `.woff2` files for the six text weights — Light, Regular, Italic, Semibold, Bold, BoldItalic — and 72 Mono Regular and Bold. Each weight is shipped in two character coverage variants (Latin subset, e.g. `72-Regular.woff2`, and the extended `-full` counterpart, e.g. `72-Regular-full.woff2`); ship both for international support.
+> 2. Place the `.woff2` files somewhere your app serves them, for example `public/fonts/`.
+> 3. Copy our [`fonts.css`](https://reltio.design/fonts.css) next to them and adjust the `url(...)` paths inside to point at where you put the files.
+> 4. `<link>` your local `fonts.css` from your app instead of the CDN one.
+
+### 2. Set the root `font-family`
+
+Add this to your application's global stylesheet (e.g. `app.css`, `globals.css`):
+
+```css
+:root {
+	font-family: "72", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		sans-serif;
+}
+```
+
+The fallback chain renders text immediately using the OS default while SAP 72 is downloading, then swaps in.
+
+That's the entire setup. Every Reltio component now renders in SAP 72, and your own elements inherit it.
+
+## Available Faces
+
+The default text family is `"72"`. The default monospace family is `"72 Mono"`.
+
+<table>
+	<thead>
+		<tr>
+			<th>Family</th>
+			<th>Weight</th>
+			<th>Style</th>
+			<th>Typical use</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>"72"</code></td>
+			<td>300 (Light)</td>
+			<td>normal</td>
+			<td>Display headings, hero text</td>
+		</tr>
+		<tr>
+			<td><code>"72"</code></td>
+			<td>400 (Regular)</td>
+			<td>normal</td>
+			<td>Body text (default)</td>
+		</tr>
+		<tr>
+			<td><code>"72"</code></td>
+			<td>400</td>
+			<td>italic</td>
+			<td>Emphasis, captions</td>
+		</tr>
+		<tr>
+			<td><code>"72"</code></td>
+			<td>600 (Semibold)</td>
+			<td>normal</td>
+			<td>Buttons, labels, table headers</td>
+		</tr>
+		<tr>
+			<td><code>"72"</code></td>
+			<td>700 (Bold)</td>
+			<td>normal</td>
+			<td>Headings, banner titles</td>
+		</tr>
+		<tr>
+			<td><code>"72"</code></td>
+			<td>700</td>
+			<td>italic</td>
+			<td>Bold emphasis</td>
+		</tr>
+		<tr>
+			<td><code>"72 Mono"</code></td>
+			<td>400 (Regular)</td>
+			<td>normal</td>
+			<td>Code blocks, JSON, log output</td>
+		</tr>
+		<tr>
+			<td><code>"72 Mono"</code></td>
+			<td>700 (Bold)</td>
+			<td>normal</td>
+			<td>Emphasized code, status badges</td>
+		</tr>
+	</tbody>
+</table>
+
+> **Need another weight?** SAP also distributes Black, Condensed, CondensedBold, and SemiboldDuplex. They are not bundled by default — reach out to the UI Center of Excellence team if your design requires them.
+
+## Using the Fonts in Your CSS
+
+### Default text — just inherit
+
+The platform relies on CSS inheritance for `font-family`. When you build your own components or page sections on top of `@reltio/design`, do not redeclare the family — your elements pick up SAP 72 automatically from `:root`.
+
+**✅ Do:** Style other properties, leave `font-family` alone
+
+```css
+.title {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--reltio-color-text);
+}
+```
+
+**❌ Don't:** Re-declare a different family
+
+```css
+.title {
+	font-family: "Roboto", sans-serif; /* breaks visual consistency */
+	font-size: 14px;
+}
+```
+
+### Form controls — use `font-family: inherit`
+
+Browser user agents reset `font-family` on `<input>`, `<textarea>`, `<select>`, and `<button>` elements. To make them inherit from the page, set it back explicitly:
+
+```css
+.input {
+	font-family: inherit;
+	font-size: 14px;
+}
+```
+
+This is the only place where declaring `font-family` in your component CSS is expected.
+
+### Monospace and code — use the 72 Mono stack
+
+For code blocks, JSON viewers, log output, or any monospace context, use the canonical stack:
+
+```css
+.codeBlock {
+	font-family: "72 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+```
+
+The fallbacks ensure graceful degradation if 72 Mono fails to load:
+
+- `ui-monospace` — modern OS monospace.
+- `"SF Mono"`, `Menlo`, `Consolas` — platform-specific defaults.
+- `monospace` — generic family as last resort.
+
+## How Character Coverage Works
+
+Each weight is registered twice in `fonts.css` with different `unicode-range` values:
+
+<table>
+	<thead>
+		<tr>
+			<th>Subset</th>
+			<th>Range</th>
+			<th>When the browser fetches it</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Latin</td>
+			<td><code>U+0000–00FF</code> + selected Latin punctuation</td>
+			<td>Always — typical Western European UI uses only this</td>
+		</tr>
+		<tr>
+			<td>Full Unicode</td>
+			<td><code>U+0100–FFFF</code></td>
+			<td>Only when a non-Latin character (Cyrillic, Greek, CJK, Arabic, ...) appears on the page</td>
+		</tr>
+	</tbody>
+</table>
+
+You don't need to do anything — the browser picks the right file per character automatically. This keeps the default page weight low (around 50 KB per loaded weight) while still covering international content correctly when needed.
+
+## Why SAP 72
+
+SAP 72 is the native typeface of SAP Fiori. Reltio Design uses SAP Fiori as its primary visual reference, so adopting 72 keeps Reltio surfaces visually consistent with adjacent SAP UI5 web components and the broader enterprise data ecosystem. Practical benefits:
+
+- **Predictable rendering** across operating systems — no more "the text looks slightly different on macOS vs Windows".
+- **Smooth visual blending** when Reltio components are embedded next to SAP UI5 web components.
+- **Self-hosted, no third-party CDN** — fonts are served from `reltio.design` (or your own origin) with long cache headers.
+
+## Quick Reference
+
+<table>
+	<thead>
+		<tr>
+			<th>I want to...</th>
+			<th>Do this</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Set up SAP 72 in my app</td>
+			<td>
+				<code>{`<link rel="stylesheet" href="https://reltio.design/fonts.css" />`}</code>
+				(or <code>{`import "@reltio/design/fonts.css"`}</code>) + set <code>:root</code> font-family
+			</td>
+		</tr>
+		<tr>
+			<td>Use the default font in my own component</td>
+			<td>Nothing — inherit from <code>:root</code></td>
+		</tr>
+		<tr>
+			<td>Style a form control</td>
+			<td>Add <code>font-family: inherit</code> to the input/textarea</td>
+		</tr>
+		<tr>
+			<td>Render code or JSON</td>
+			<td>Use <code>"72 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace</code></td>
+		</tr>
+		<tr>
+			<td>Render Cyrillic, Greek, CJK, Arabic</td>
+			<td>Nothing — the browser pulls the extended subset automatically</td>
+		</tr>
+	</tbody>
+</table>
+
+## Resources
+
+- [SAP 72 typeface overview](https://experience.sap.com/fiori-design-web/typography/) — official SAP Fiori typography guidance
+- [MDN: `@font-face`](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face) — CSS spec for self-hosted fonts
+- [MDN: `unicode-range`](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/unicode-range) — per-subset on-demand downloads
+- [Component Customization](?path=/docs/guides-component-customization--docs) — how to style on top of Reltio components

@@ -7,7 +7,6 @@
 	cursor: pointer;
 	user-select: none;
 	position: relative;
-	font-family: "Libre Franklin", sans-serif;
 	font-size: 14px;
 	color: var(--reltio-color-text);
 	line-height: 1.4;

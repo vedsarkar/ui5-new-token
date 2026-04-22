@@ -8,5 +8,27 @@
 			"source": "/mcp",
 			"destination": "https://690ca858e8b7a13516b41c1a-cibsnzjipr.chromatic.com/mcp"
 		}
+	],
+	"headers": [
+		{
+			"source": "/fonts.css",
+			"headers": [
+				{ "key": "Access-Control-Allow-Origin", "value": "*" },
+				{
+					"key": "Cache-Control",
+					"value": "public, max-age=31536000, immutable"
+				}
+			]
+		},
+		{
+			"source": "/fonts/(.*)",
+			"headers": [
+				{ "key": "Access-Control-Allow-Origin", "value": "*" },
+				{
+					"key": "Cache-Control",
+					"value": "public, max-age=31536000, immutable"
+				}
+			]
+		}
 	]
 }

@@ -86,7 +86,7 @@ type SendState =
 			statusText: string;
 			body: unknown;
 			isJson: boolean;
-		}
+	  }
 	| { kind: "error"; message: string };
 
 export const Fetcher = ({

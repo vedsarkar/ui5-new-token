@@ -10,8 +10,7 @@
 	border: none;
 	transition: background 0.15s;
 	user-select: none;
-	font-family:
-		"SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+	font-family: "72 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 	font-size: 13px;
 	line-height: 1.5;
 

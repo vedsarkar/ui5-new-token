@@ -1,6 +1,8 @@
 :root {
-	/* biome-ignore lint: This rule needs !important for global font reset */
-	font-family: "Inter", sans-serif !important;
+	font-family:
+		"72", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		/* biome-ignore lint/complexity/noImportantStyles: Global font reset needs to win over Storybook's own !important rules */
+		sans-serif !important;
 }
 
 [data-theme="dark"] {

@@ -2,7 +2,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
-	font-family: "Libre Franklin", sans-serif;
 	cursor: text;
 }
 

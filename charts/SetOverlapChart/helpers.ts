@@ -18,7 +18,7 @@ const getContext = (
 	if (typeof OffscreenCanvas !== "undefined") {
 		const ctx = new OffscreenCanvas(0, 0).getContext("2d");
 		if (ctx) {
-			ctx.font = `${fontSize} "Inter", sans-serif`;
+			ctx.font = `${fontSize} "72", sans-serif`;
 			ctxCache.set(fontSize, ctx);
 			return ctx;
 		}

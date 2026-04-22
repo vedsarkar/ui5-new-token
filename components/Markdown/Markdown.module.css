@@ -8,7 +8,6 @@
 .root {
 	word-wrap: break-word;
 	line-height: 1.5;
-	font-family: "Roboto Flex", sans-serif;
 	font-size: 14px;
 	font-weight: 400;
 	letter-spacing: 0.15px;
@@ -34,7 +33,6 @@
 .root h6 {
 	margin: 1rem 0 0.5rem 0;
 	font-weight: 600;
-	font-family: "Libre Franklin", sans-serif;
 }
 
 .root h1 {
@@ -92,7 +90,7 @@
 }
 
 .root code {
-	font-family: monospace;
+	font-family: "72 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 	font-size: 0.9em;
 	background-color: var(--reltio-color-surface-2);
 	padding: 0.2em 0.4em;
@@ -136,7 +134,6 @@
 .tableWrapper table {
 	width: 100%;
 	border-collapse: collapse;
-	font-family: "Roboto Flex", sans-serif;
 	color: var(--reltio-color-text);
 	background-color: var(--reltio-color-surface-1);
 	font-size: 14px;

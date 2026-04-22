@@ -1,7 +1,6 @@
 .root {
 	display: block;
 	overflow: auto;
-	font-family: system-ui, sans-serif;
 	font-size: 14px;
 	color: var(--reltio-color-text);
 	background: transparent;

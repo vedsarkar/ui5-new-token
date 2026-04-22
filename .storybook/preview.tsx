@@ -13,6 +13,7 @@ import { initialize, mswLoader } from "msw-storybook-addon";
 import { CssClasses } from "./blocks/CssClasses";
 import { ImportExample } from "./blocks/ImportExample";
 import { reltioProxyHandler } from "./mocks/reltioProxyHandler";
+import reltioTheme from "./reltio-theme";
 
 initialize({ onUnhandledRequest: "bypass" });
 
@@ -27,6 +28,7 @@ export default definePreview({
 		},
 
 		docs: {
+			theme: reltioTheme,
 			page: () => (
 				<>
 					<Title />
@@ -38,7 +40,9 @@ export default definePreview({
 					<Stories />
 				</>
 			),
-			toc: true,
+			toc: {
+				headingSelector: "h2, h3",
+			},
 		},
 
 		a11y: {

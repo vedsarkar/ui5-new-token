@@ -1,5 +1,4 @@
 .root {
-	font-family: "Roboto", sans-serif;
 	container-type: inline-size;
 }
 
@@ -57,7 +56,7 @@
 	border-radius: 4px;
 	box-sizing: border-box;
 	font-size: 16px;
-	font-family: "Roboto", sans-serif;
+	font-family: inherit;
 	line-height: 1.5;
 	resize: none;
 	color: var(--reltio-color-text);
@@ -95,7 +94,6 @@
 	color: var(--reltio-color-text-secondary);
 	z-index: 2;
 	font-size: 16px;
-	font-family: "Roboto", sans-serif;
 	pointer-events: none;
 }
 
@@ -123,7 +121,6 @@
 	font-size: 12px;
 	padding: 4px 16px;
 	color: var(--reltio-color-text-secondary);
-	font-family: "Roboto", sans-serif;
 }
 
 .root[data-error="true"] .supportingText {

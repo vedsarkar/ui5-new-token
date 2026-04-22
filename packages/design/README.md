@@ -38,6 +38,33 @@ import "@reltio/design/variables.css";
 
 This provides all `--reltio-color-*` variables on `:root` (light mode) and `[data-theme="dark"]` (dark mode). See the [Component Customization](https://reltio.design/?path=/docs/guides-component-customization--docs) guide for details.
 
+### Fonts (SAP 72)
+
+Components are designed to render in **SAP 72** (text) and **72 Mono** (monospace). The recommended way to load the fonts is a single `<link>` to our CDN:
+
+```html
+<link rel="stylesheet" href="https://reltio.design/fonts.css" />
+```
+
+As an alternative, you can import the same stylesheet from the npm package:
+
+```js
+import "@reltio/design/fonts.css";
+```
+
+The npm version contains the same `@font-face` rules but with absolute CDN URLs to the font files, so no extra static-asset setup is needed in your bundler.
+
+Either way, set the root `font-family` in your global CSS:
+
+```css
+:root {
+	font-family: "72", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		sans-serif;
+}
+```
+
+See the [Typography](https://reltio.design/?path=/docs/guides-typography--docs) guide for the full list of available weights, the monospace stack, and self-hosting instructions.
+
 ## Target Audience
 
 The library is designed for Reltio internal teams developing applications.
