@@ -1,16 +1,20 @@
 {
 	"name": "@reltio/design",
-	"version": "0.4.0",
+	"version": "0.5.0",
 	"description": "Reltio Design Platform",
 	"peerDependencies": {
 		"react": ">=17 <20",
 		"react-dom": ">=17 <20"
 	},
 	"dependencies": {
-		"style-inject": "^0.3.0",
-		"rc-tree": "^5.13.1",
+		"@dagrejs/dagre": "^3.0.0",
+		"@storybook/mcp": "^0.6.1",
+		"@xyflow/react": "^12.10.2",
+		"d3-scale": "^4.0.2",
+		"echarts": "^6.0.0",
 		"markdown-to-jsx": "^9.7.3",
-		"d3-scale": "^4.0.2"
+		"rc-tree": "^5.13.1",
+		"style-inject": "^0.3.0"
 	},
 	"scripts": {
 		"build": "tsc && tsc-alias",
