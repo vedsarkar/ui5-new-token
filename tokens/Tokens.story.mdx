@@ -1,0 +1,181 @@
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import * as TokensStories from "./Tokens.stories";
+
+<Meta of={TokensStories} />
+
+# Design Tokens
+
+The Reltio Design Platform mirrors [SAP Horizon](https://github.com/SAP/theming-base-content) design tokens 1:1. Every `--sap*` CSS variable is available on `:root` when the active theme stylesheet is loaded. Colors **must** use these tokens — never hardcode hex values.
+
+## Usage
+
+**React** — wrap your app in `<ThemeProvider>` from `@reltio/design`. All `--sap*` variables are injected automatically.
+
+**Plain CSS** — reference any variable: `color: var(--sapBrandColor)`, `background: var(--sapErrorBackground)`, etc.
+
+## Quick Reference
+
+The most commonly used tokens across all categories:
+
+<table>
+	<thead>
+		<tr>
+			<th>Token</th>
+			<th>Purpose</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapBrandColor</code></td><td>Primary brand, main CTAs</td></tr>
+		<tr><td><code>--sapTextColor</code></td><td>Default body text</td></tr>
+		<tr><td><code>--sapTitleColor</code></td><td>Headings</td></tr>
+		<tr><td><code>--sapContent_LabelColor</code></td><td>Labels, secondary text</td></tr>
+		<tr><td><code>--sapContent_IconColor</code></td><td>Default icon color</td></tr>
+		<tr><td><code>--sapLinkColor</code></td><td>Interactive links</td></tr>
+		<tr><td><code>--sapBackgroundColor</code></td><td>Page background</td></tr>
+		<tr><td><code>--sapBaseColor</code></td><td>Card / control surface</td></tr>
+		<tr><td><code>--sapShell_Background</code></td><td>App shell / header</td></tr>
+		<tr><td><code>--sapSuccessColor</code></td><td>Positive outcome (+ <code>*Background</code>, <code>*BorderColor</code>)</td></tr>
+		<tr><td><code>--sapErrorColor</code></td><td>Error / failure (+ <code>*Background</code>, <code>*BorderColor</code>)</td></tr>
+		<tr><td><code>--sapWarningColor</code></td><td>Caution (+ <code>*Background</code>, <code>*BorderColor</code>)</td></tr>
+		<tr><td><code>--sapInformationColor</code></td><td>Informational (+ <code>*Background</code>, <code>*BorderColor</code>)</td></tr>
+		<tr><td><code>--sapField_Background</code></td><td>Input field surface</td></tr>
+		<tr><td><code>--sapField_BorderColor</code></td><td>Input field border</td></tr>
+		<tr><td><code>--sapButton_Background</code></td><td>Default button surface</td></tr>
+		<tr><td><code>--sapButton_Emphasized_Background</code></td><td>Primary / CTA button</td></tr>
+		<tr><td><code>--sapElement_Height</code></td><td>Default control height (2.75rem / 44px)</td></tr>
+		<tr><td><code>--sapElement_Compact_Height</code></td><td>Compact mode height (2rem / 32px)</td></tr>
+		<tr><td><code>--sapElement_BorderCornerRadius</code></td><td>Default border radius (0.75rem / 12px)</td></tr>
+		<tr><td><code>--sapFontFamily</code></td><td>Default font stack (SAP 72)</td></tr>
+		<tr><td><code>--sapFontSize</code></td><td>Base font size (0.875rem)</td></tr>
+		<tr><td><code>--sapContent_Shadow0..3</code></td><td>Four elevation levels (full <code>box-shadow</code> strings)</td></tr>
+		<tr><td><code>--sapChart_OrderedColor_1..12</code></td><td>Categorical chart palette</td></tr>
+	</tbody>
+</table>
+
+## Token Categories
+
+### Brand
+
+Primary brand identity, accent palette, and highlight colors.
+
+- `--sapBrandColor` — primary brand color, use for main CTAs and primary actions
+- `--sapHighlightColor` — selection and focus highlight
+- `--sapHighlightTextColor` — text on highlighted backgrounds
+- `--sapAccentColor1`..`10` — 10 distinct accent hues for categorical data (charts, tags, avatars)
+- `--sapAccentBackgroundColor1`..`10` — lighter tinted backgrounds pairing with each AccentColor
+
+### Semantic
+
+Status and feedback colors. Each semantic state provides a Color + Background + BorderColor triplet.
+
+- `--sapSuccessColor` / `--sapErrorColor` / `--sapWarningColor` / `--sapInformationColor` — state foregrounds
+- `--sapSuccess/Error/Warning/InformationBackground` — matching backgrounds
+- `--sapSuccess/Error/Warning/InformationBorderColor` — matching borders
+- `--sapPositiveColor`, `--sapNegativeColor`, `--sapCriticalColor`, `--sapInformativeColor` — state element colors with `*ElementColor` and `*TextColor` variants
+- `--sapNeutralColor` — neutral, non-semantic state
+- `--sapIndicationColor_1`..`10` — extended 10-step indication palette, each with `_Background`, `_BorderColor`, `_TextColor`, `_Hover_Background`, `_Active_Background`
+
+### Surface
+
+Backgrounds, page surfaces, shells, panels, and structural containers.
+
+- `--sapBackgroundColor` — default page background
+- `--sapBaseColor` — base surface for cards and controls
+- `--sapShell_Background` — app shell / header background
+- `--sapPageHeader_Background` / `--sapPageFooter_Background` — page header and footer
+- `--sapGroup_ContentBackground` — content group background
+- `--sapTile_Background` — tile / card surface
+- `--sapObjectHeader_Background` — object page header
+- `--sapToolbar_Background` — toolbar surface
+- `--sapInfobar_Background` — info bar background
+- `--sapBlockLayer_Background` — modal overlay layer
+
+### Interaction
+
+Universal interaction-state colors.
+
+- `--sapHoverColor` — hover background
+- `--sapActiveColor` — active / pressed background
+- `--sapSelectedColor` — selected background
+
+Component-specific states (e.g. `--sapButton_Hover_Background`, `--sapList_Hover_Background`) are in their respective categories.
+
+### Text & Links
+
+- `--sapTextColor` — default body text
+- `--sapTitleColor` — headings
+- `--sapLinkColor` — interactive link text
+- `--sapLink_Hover_Color` / `--sapLink_Visited_Color` / `--sapLink_Active_Color` — link states
+- `--sapLink_SubtleColor` — de-emphasized link
+- `--sapLink_InvertedColor` — link on dark backgrounds
+
+### Typography
+
+Font families, sizes, weights, and the SAP 72 type-scale.
+
+- `--sapFontFamily` — default font stack ("72", "72full", Arial, Helvetica, sans-serif)
+- `--sapFontSize` — base font size (0.875rem)
+- `--sapFontLargeSize` / `--sapFontSmallSize` — large and small text
+- `--sapFontHeader1Size`..`6Size` — heading scale (H1 through H6)
+- `--sapFontBoldWeight` — bold weight value
+- `--sapFontMonoFamily` — monospace font ("72Mono")
+
+### Layout & Sizing
+
+- `--sapElement_Height` — default control height (2.75rem / 44px)
+- `--sapElement_Compact_Height` — compact mode height (2rem / 32px)
+- `--sapElement_Condensed_Height` — condensed height (1.5rem / 24px)
+- `--sapElement_BorderCornerRadius` — default border radius (0.75rem / 12px)
+- `--sapElement_BorderWidth` — default border width (0.0625rem / 1px)
+- `--sapBreakpoint_S_Min` / `M_Min` / `L_Min` / `XL_Min` — responsive breakpoints
+- `--sapScrollBar_Dimension` — scrollbar size
+
+### Content & Icons
+
+- `--sapContent_LabelColor` — label / secondary text color
+- `--sapContent_IconColor` — default icon color
+- `--sapContent_FocusColor` — focus ring color
+- `--sapContent_FocusWidth` / `--sapContent_FocusStyle` — focus ring dimensions
+- `--sapContent_Shadow0`..`3` — four elevation levels as full `box-shadow` strings
+- `--sapContent_ForegroundColor` — default foreground
+- `--sapContent_BadgeBackground` — badge / counter background
+
+### Charts & Data Viz
+
+- `--sapChart_OrderedColor_1`..`12` — 12-step categorical chart palette
+- `--sapChart_Background` — chart canvas background
+- `--sapChart_ReferenceLineColor` — reference / threshold lines
+- `--sapChart_Good` / `--sapChart_Bad` / `--sapChart_Critical` — semantic chart colors
+- `--sapChart_Sequence_1`..`12` — sequential palette variants with `_BorderColor`
+- `--sapLegendColor1`..`20` — legend marker foreground colors
+- `--sapLegendBackgroundColor1`..`20` — legend marker backgrounds
+
+### Form Controls
+
+- `--sapField_Background` / `--sapField_BorderColor` — input field surface and border
+- `--sapField_Hover_Background` / `--sapField_Focus_Background` — field interaction states
+- `--sapField_InvalidColor` / `--sapField_WarningColor` / `--sapField_SuccessColor` — validation
+- `--sapButton_Background` / `--sapButton_BorderColor` — default button
+- `--sapButton_Emphasized_Background` — primary / CTA button
+- `--sapButton_Hover_Background` / `--sapButton_Active_Background` — button states
+- `--sapList_Background` / `--sapList_BorderColor` — list surface
+- `--sapList_Hover_Background` / `--sapList_Active_Background` — list item states
+- `--sapTab_Background` / `--sapTab_Selected_Background` — tab bar
+
+### Avatars & Assistant
+
+- `--sapAvatar_1`..`10_Background` / `_BorderColor` / `_TextColor` — 10 avatar color presets
+- `--sapAssistant_Background` / `_BorderColor` / `_TextColor` — AI assistant surface
+- `--sapAssistant_Hover_Background` / `_Active_Background` — assistant interaction states
+- `--sapAssistant_Answer_Background` — answer bubble surface
+
+### Miscellaneous
+
+- `--sapCompanyLogo` — company logo reference
+- `--sapSapThemeId` — theme identifier string
+- `--sapProgress_Background` / `--sapProgress_BorderColor` — progress bar base
+- `--sapProgress_PositiveBackground` / `NegativeBackground` / `CriticalBackground` — progress semantic states
+
+## Full Token Tables
+
+<Stories />

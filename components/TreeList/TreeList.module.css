@@ -2,7 +2,7 @@
 	display: block;
 	overflow: auto;
 	font-size: 14px;
-	color: var(--reltio-color-text);
+	color: var(--sapTextColor);
 	background: transparent;
 	border: none;
 	border-radius: 0;

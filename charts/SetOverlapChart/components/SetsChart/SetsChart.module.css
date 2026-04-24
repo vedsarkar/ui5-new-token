@@ -1,5 +1,5 @@
 .setsBarBackground {
-	fill: var(--reltio-color-brand-blue);
+	fill: var(--sapBrandColor);
 	opacity: 0.08;
 	transition:
 		x ease-in-out 0.3s,
@@ -7,14 +7,14 @@
 }
 
 .setsBarDimmed {
-	fill: var(--reltio-color-border-3);
+	fill: var(--sapContent_NonInteractiveIconColor);
 	transition:
 		x ease-in-out 0.3s,
 		width ease-in-out 0.3s;
 }
 
 .setsBar {
-	fill: var(--reltio-color-brand-blue);
+	fill: var(--sapBrandColor);
 	transition:
 		x ease-in-out 0.3s,
 		width ease-in-out 0.3s;
@@ -24,7 +24,7 @@
 	fill: transparent;
 	stroke-width: 1px;
 	cursor: pointer;
-	stroke: var(--reltio-color-brand-blue);
+	stroke: var(--sapBrandColor);
 	opacity: 0;
 	transition: opacity ease-in-out 0.3s;
 	outline: none;
@@ -37,14 +37,14 @@
 
 .setsLabel {
 	font-size: var(--set-label-size);
-	fill: var(--reltio-color-text);
+	fill: var(--sapTextColor);
 	text-anchor: start;
 	dominant-baseline: middle;
 	transition: all ease-in-out 0.3s;
 }
 
 .gridLine {
-	stroke: var(--reltio-color-border-black);
+	stroke: var(--sapTextColor);
 	opacity: 0.04;
 	stroke-width: 1px;
 }

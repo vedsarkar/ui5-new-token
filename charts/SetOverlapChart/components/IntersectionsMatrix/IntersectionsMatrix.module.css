@@ -1,24 +1,24 @@
 .circle {
 	stroke-width: 2px;
-	fill: var(--reltio-color-surface-3);
-	stroke: var(--reltio-color-surface-3);
+	fill: var(--sapNeutralBackground);
+	stroke: var(--sapNeutralBackground);
 	transition: fill ease-in-out 0.3s;
 }
 
 .activeCircle {
-	fill: var(--reltio-color-brand-blue);
+	fill: var(--sapBrandColor);
 }
 
 .dimmedCircle {
-	fill: var(--reltio-color-border-3);
+	fill: var(--sapContent_NonInteractiveIconColor);
 }
 
 .link {
-	stroke: var(--reltio-color-brand-blue);
+	stroke: var(--sapBrandColor);
 	stroke-width: 2px;
 	transition: stroke ease-in-out 0.3s;
 }
 
 .dimmedLine {
-	stroke: var(--reltio-color-border-3);
+	stroke: var(--sapContent_NonInteractiveIconColor);
 }

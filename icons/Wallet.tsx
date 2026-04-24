@@ -1,0 +1,27 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const Wallet = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<path d="M12.25 1C13.7688 1 15 2.23122 15 3.75V12.25C15 13.7688 13.7688 15 12.25 15H3.75C2.23122 15 1 13.7688 1 12.25V3.75C1 2.23122 2.23122 1 3.75 1H12.25ZM3.75 2.5C3.05964 2.5 2.5 3.05964 2.5 3.75V12.25C2.5 12.9404 3.05964 13.5 3.75 13.5H12.25C12.9404 13.5 13.5 12.9404 13.5 12.25V12H8.75C7.23122 12 6 10.7688 6 9.25V6.75C6 5.23122 7.23122 4 8.75 4H13.5V3.75C13.5 3.05964 12.9404 2.5 12.25 2.5H3.75ZM8.75 5.5C8.05964 5.5 7.5 6.05964 7.5 6.75V9.25C7.5 9.94036 8.05964 10.5 8.75 10.5H13.5V5.5H8.75ZM9.5 7C10.0523 7 10.5 7.44772 10.5 8C10.5 8.55228 10.0523 9 9.5 9C8.94772 9 8.5 8.55228 8.5 8C8.5 7.44772 8.94772 7 9.5 7Z" />
+		</svg>
+	);
+};

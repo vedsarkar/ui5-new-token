@@ -1,0 +1,34 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const TrendUp = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<g clip-path="url(#clip0_1096_2367)">
+				<path d="M15.2511 3C15.6654 3 16.0011 3.33579 16.0011 3.75V7.25002C16.0011 7.66423 15.6654 8.00002 15.2511 8.00002C14.837 7.99993 14.5011 7.66418 14.5011 7.25002V5.72853L9.31947 11.7393C9.0444 12.0583 8.54515 12.0845 8.23841 11.7969C8.10046 11.6676 5.68175 8.82229 5.68175 8.82229L1.25302 12.8077C0.94515 13.0847 0.470519 13.0598 0.193444 12.752C-0.0835288 12.4442 -0.0586103 11.9695 0.249109 11.6924L5.24913 7.1924C5.54929 6.92226 6.0575 6.95525 6.32043 7.26174L8.75208 10.0996L13.5802 4.50001H11.7511C11.337 4.49992 11.0011 4.16416 11.0011 3.75C11.0011 3.33584 11.337 3.00009 11.7511 3H15.2511Z" />
+			</g>
+			<defs>
+				<clipPath id="clip0_1096_2367">
+					<rect width="16" height="16" fill="white" />
+				</clipPath>
+			</defs>
+		</svg>
+	);
+};

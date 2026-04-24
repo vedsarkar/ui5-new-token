@@ -22,7 +22,7 @@
 	left: 14px;
 	top: 0;
 	bottom: 0;
-	background-color: var(--reltio-color-bg-transparent-1);
+	background-color: var(--sapNeutralBackground);
 }
 
 .lastLevelLine::after {
@@ -40,5 +40,5 @@
 	position: absolute;
 	top: 50%;
 	left: 14px;
-	background-color: var(--reltio-color-bg-transparent-1);
+	background-color: var(--sapNeutralBackground);
 }

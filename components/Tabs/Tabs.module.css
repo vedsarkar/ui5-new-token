@@ -13,7 +13,7 @@
 	border: none;
 	background: transparent;
 	border-radius: 8px;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 	font-size: 14px;
 	font-weight: 500;
 	line-height: 1.5;
@@ -34,7 +34,7 @@
 		left: 8px;
 		right: 8px;
 		height: 3px;
-		background-color: var(--reltio-color-primary);
+		background-color: var(--sapBrandColor);
 		border-radius: 100px 100px 0 0;
 		transform: scaleX(0);
 		transform-origin: center;
@@ -42,13 +42,13 @@
 	}
 
 	&:hover {
-		background-color: var(--reltio-color-surface-2);
-		color: var(--reltio-color-text);
+		background-color: var(--sapBackgroundColor);
+		color: var(--sapTextColor);
 	}
 
 	&:focus-visible {
-		background-color: var(--reltio-color-surface-2);
-		outline: 2px solid var(--reltio-color-primary);
+		background-color: var(--sapBackgroundColor);
+		outline: 2px solid var(--sapContent_FocusColor);
 		outline-offset: -2px;
 	}
 
@@ -60,7 +60,7 @@
 }
 
 .active {
-	color: var(--reltio-color-primary);
+	color: var(--sapBrandColor);
 
 	&::after {
 		transform: scaleX(1);

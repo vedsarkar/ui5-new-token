@@ -3,8 +3,8 @@
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
-	background-color: var(--reltio-color-bg-transparent-2);
-	color: var(--reltio-color-text-secondary);
+	background-color: var(--sapActiveColor);
+	color: var(--sapContent_LabelColor);
 	font-weight: 500;
 	text-transform: uppercase;
 	line-height: 1;

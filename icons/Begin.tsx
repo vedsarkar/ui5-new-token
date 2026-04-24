@@ -1,0 +1,27 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const Begin = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<path d="M1.23218 1.17384L8.73218 7.42386C9.08608 7.71904 9.08614 8.28104 8.73218 8.57621L1.23218 14.8262C0.753685 15.2249 0.00180449 14.8728 0.00170898 14.2501V1.75001C0.00170898 1.12727 0.753751 0.775145 1.23218 1.17384ZM8.21069 1.23048C8.49768 0.932013 8.97264 0.92224 9.27124 1.20899L15.7712 7.45902C16.0741 7.75026 16.0741 8.24981 15.7712 8.54105L9.27124 14.7911C8.97266 15.0778 8.49766 15.068 8.21069 14.7696C7.92396 14.471 7.93377 13.996 8.23218 13.709L14.1687 8.00003L8.23218 2.29103C7.93374 2.00406 7.924 1.52908 8.21069 1.23048ZM1.50171 12.6485L7.07983 8.00003L1.50171 3.35158V12.6485Z" />
+		</svg>
+	);
+};

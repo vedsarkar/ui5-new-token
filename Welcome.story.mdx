@@ -11,7 +11,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 		padding: 0 !important;
 		max-width: none !important;
 		margin: 0 !important;
-		background: var(--reltio-color-surface-1, #ffffff);
+		background: var(--sapBaseColor, #ffffff);
 	}
 
 	.sbdocs-preview {
@@ -24,8 +24,8 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 	.welcome {
 		font-family: "72", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-		color: var(--reltio-color-text, #0e0e25);
-		background: var(--reltio-color-surface-1, #ffffff);
+		color: var(--sapTextColor, #131e29);
+		background: var(--sapBaseColor, #ffffff);
 	}
 
 	/* Inherit our font everywhere; specific classes own their colors */
@@ -39,7 +39,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 	}
 
 	.welcome a {
-		color: var(--reltio-color-primary, #0000cc);
+		color: var(--sapBrandColor, #0070f2);
 		text-decoration: none;
 		font-weight: 600;
 	}
@@ -52,9 +52,9 @@ import { Meta } from "@storybook/addon-docs/blocks";
 		box-sizing: border-box;
 	}
 
-	.welcome-band--gradient { background: linear-gradient(135deg, var(--reltio-color-primary, #0000cc) 0%, var(--reltio-color-primary, #0000cc) 65%, #000066 65%, #000066 100%); color: #ffffff; }
-	.welcome-band--surface { background: var(--reltio-color-surface-1, #ffffff); }
-	.welcome-band--soft    { background: var(--reltio-color-surface-2, #f5f5fa); }
+	.welcome-band--gradient { background: linear-gradient(135deg, var(--sapBrandColor, #0070f2) 0%, var(--sapBrandColor, #0070f2) 65%, var(--sapHighlightColor, #0064d9) 65%, var(--sapHighlightColor, #0064d9) 100%); color: #ffffff; }
+	.welcome-band--surface { background: var(--sapBaseColor, #ffffff); }
+	.welcome-band--soft    { background: var(--sapBackgroundColor, #f5f6f7); }
 	.welcome-band--lavender{ background: #ece9ff; }
 	.welcome-band--rose    { background: #fde7ef; }
 	.welcome-band--ink     { background: #000066; color: #f8fafc; }
@@ -69,7 +69,6 @@ import { Meta } from "@storybook/addon-docs/blocks";
 	.welcome-hero {
 		position: relative;
 		box-sizing: border-box;
-		width: calc(100% - 128px);
 		max-width: 1200px;
 		margin: 0 auto;
 		overflow: hidden;
@@ -103,7 +102,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 		gap: 8px;
 		padding: 12px 22px;
 		background: #ffffff;
-		color: var(--reltio-color-primary, #0000cc);
+		color: var(--sapBrandColor, #0070f2);
 		border-radius: 999px;
 		font-size: 15px;
 		font-weight: 600;
@@ -135,7 +134,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 		font-weight: 600;
 		letter-spacing: 0.12em;
 		text-transform: uppercase;
-		color: var(--reltio-color-primary, #0000cc);
+		color: var(--sapBrandColor, #0070f2);
 	}
 
 	.welcome .welcome-band .welcome-section-title {
@@ -144,7 +143,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 		line-height: 1.15;
 		font-weight: 700;
 		letter-spacing: -0.01em;
-		color: var(--reltio-color-text, #0e0e25);
+		color: var(--sapTextColor, #131e29);
 	}
 
 	.welcome .welcome-band--ink .welcome-section-title { color: #f8fafc !important; }
@@ -153,7 +152,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 		margin: 0;
 		font-size: 17px;
 		line-height: 1.55;
-		color: var(--reltio-color-text-secondary, #5a5a72);
+		color: var(--sapContent_LabelColor, #556b82);
 	}
 
 	.welcome .welcome-band--ink .welcome-section-lede { color: rgba(248, 250, 252, 0.85) !important; }
@@ -180,7 +179,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 	}
 
 	.welcome .welcome-feature-eyebrow-accent {
-		color: var(--reltio-color-primary, #0000cc);
+		color: var(--sapBrandColor, #0070f2);
 	}
 
 	.welcome .welcome-band--lavender .welcome-feature-eyebrow-accent { color: #6d4cff; }
@@ -188,7 +187,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 	.welcome .welcome-band--ink .welcome-feature-eyebrow-accent { color: #93c5fd; }
 
 	.welcome .welcome-feature-eyebrow-tag {
-		color: var(--reltio-color-text, #0e0e25);
+		color: var(--sapTextColor, #131e29);
 	}
 
 	.welcome .welcome-band--ink .welcome-feature-eyebrow-tag { color: #f8fafc; }
@@ -199,7 +198,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 		line-height: 1.2;
 		font-weight: 700;
 		letter-spacing: -0.01em;
-		color: var(--reltio-color-text, #0e0e25);
+		color: var(--sapTextColor, #131e29);
 	}
 
 	.welcome .welcome-band--ink .welcome-feature-title { color: #f8fafc; }
@@ -208,7 +207,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 		margin: 0 0 20px;
 		font-size: 16px;
 		line-height: 1.6;
-		color: var(--reltio-color-text-secondary, #5a5a72);
+		color: var(--sapContent_LabelColor, #556b82);
 		max-width: 460px;
 	}
 
@@ -231,6 +230,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 		align-items: center;
 		justify-content: center;
 		min-height: 280px;
+		min-width: 0;
 	}
 
 	.welcome-feature-art svg,
@@ -246,7 +246,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 	.welcome-terminal {
 		width: 100%;
 		max-width: 520px;
-		height: 320px;
+		aspect-ratio: 520 / 320;
 		border-radius: 12px;
 		overflow: hidden;
 		background: #1e1e2e;
@@ -436,7 +436,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
       </div>
       <div style={{display: "flex", flexWrap: "wrap", gap: "12px 16px", justifyContent: "center"}}>
         <a className="welcome-hero-cta" href="/manifests/components.html" style={{background: "#ffffff", color: "#0e0e25"}}>Browse the manifest</a>
-        <a className="welcome-hero-cta" href="/mcp" style={{background: "transparent", color: "#ffffff", border: "1px solid rgba(255,255,255,0.4)"}}>Open the MCP endpoint</a>
+        <a className="welcome-hero-cta" href="./?path=/docs/guides-storybook-mcp--docs" style={{background: "transparent", color: "#ffffff", border: "1px solid rgba(255,255,255,0.4)"}}>Connect your AI agent</a>
       </div>
     </div>
   </section>

@@ -2,11 +2,11 @@
 	position: relative;
 	width: 100%;
 	height: 100%;
-	--geo-shade-1: color-mix(in oklch, var(--reltio-color-primary) 15%, white);
-	--geo-shade-2: color-mix(in oklch, var(--reltio-color-primary) 35%, white);
-	--geo-shade-3: color-mix(in oklch, var(--reltio-color-primary) 55%, white);
-	--geo-shade-4: color-mix(in oklch, var(--reltio-color-primary) 75%, white);
-	--geo-shade-5: var(--reltio-color-primary);
+	--geo-shade-1: color-mix(in oklch, var(--sapBrandColor) 15%, white);
+	--geo-shade-2: color-mix(in oklch, var(--sapBrandColor) 35%, white);
+	--geo-shade-3: color-mix(in oklch, var(--sapBrandColor) 55%, white);
+	--geo-shade-4: color-mix(in oklch, var(--sapBrandColor) 75%, white);
+	--geo-shade-5: var(--sapBrandColor);
 }
 
 .overlay {
@@ -15,7 +15,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 	font-size: 14px;
 	z-index: 1;
 	pointer-events: none;

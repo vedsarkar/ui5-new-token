@@ -140,8 +140,25 @@ export const GeoChart = ({
 	const [shades, setShades] = useState<string[]>([]);
 
 	useLayoutEffect(() => {
-		if (!rootRef.current) return;
-		setShades(readShades(rootRef.current));
+		const el = rootRef.current;
+		if (!el) return;
+
+		let rafId: number | undefined;
+		const read = () => {
+			const probe = getComputedStyle(el)
+				.getPropertyValue("--geo-shade-5")
+				.trim();
+			if (!probe) {
+				rafId = requestAnimationFrame(read);
+				return;
+			}
+			setShades(readShades(el));
+		};
+		read();
+
+		return () => {
+			if (rafId !== undefined) cancelAnimationFrame(rafId);
+		};
 	}, []);
 
 	const hasData = Array.isArray(data) && data.length > 0;

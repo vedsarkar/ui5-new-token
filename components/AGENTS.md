@@ -36,7 +36,7 @@ import type { ButtonProps } from "@/components/Button/Button.types";
 
 **External customization** is done through stable CSS classes (e.g. `.reltio_Tabs_tab`), NOT through component-level CSS custom properties. The `classNames()` utility automatically generates these stable, prefixed selectors on every rendered element. See the [Component Customization guide](/?path=/docs/guides-component-customization--docs) for details.
 
-**Colors** — always reference global `--reltio-color-*` tokens from `public/variables.css`. Never hardcode hex color values in component CSS.
+**Colors** — always reference SAP Horizon `--sap*` tokens declared on `:root` by the active per-theme CSS file (`public/themes/horizon-{light,dark}.theme.css`). Never hardcode hex color values in component CSS. The full token surface is browseable in Storybook → Design Tokens; canonical semantic guidance lives at <https://www.sap.com/design-system/>.
 
 **Typography, spacing, sizing** — use plain values directly (e.g. `font-size: 14px`, `padding: 8px 16px`). There are no global tokens for these yet.
 
@@ -56,12 +56,12 @@ import type { ButtonProps } from "@/components/Button/Button.types";
 
 ```css
 /* ❌ BAD — background variable set and consumed on .root */
-.root { --chip-bg: var(--reltio-color-bg-transparent-1); background: var(--chip-bg); }
-.filled.primary { --chip-bg: var(--reltio-color-primary-transparent-mild); }
+.root { --chip-bg: var(--sapButton_Lite_Background); background: var(--chip-bg); }
+.filled.primary { --chip-bg: var(--sapButton_Emphasized_Background); }
 
 /* ✅ GOOD — variants override the property directly */
-.root { background: var(--reltio-color-bg-transparent-1); }
-.filled.primary { background: var(--reltio-color-primary-transparent-mild); }
+.root { background: var(--sapButton_Lite_Background); }
+.filled.primary { background: var(--sapButton_Emphasized_Background); }
 ```
 
 **The only valid case** for a CSS variable is when a parent sets a value that **cascades to multiple child elements** via the DOM:
@@ -90,7 +90,7 @@ Even then, consider whether compound selectors (`.small .leadingIcon`) are simpl
 
 When a component uses an internal CSS variable (e.g. for a dynamic prop that cascades to pseudo-elements), the component MUST always set that variable explicitly on its root element — including the default value. This creates a hard boundary that prevents any ancestor or global variable with the same name from leaking in.
 
-The only CSS variables a component may consume from outside are the global `--reltio-color-*` tokens defined in `public/variables.css`. All other customization goes through **React props** and **stable CSS classes**.
+The only CSS variables a component may consume from outside are the SAP Horizon `--sap*` tokens declared on `:root` by the active per-theme CSS file. All other customization goes through **React props** and **stable CSS classes**.
 
 ```tsx
 /* ✅ GOOD — variable always set on root, no external leak possible */

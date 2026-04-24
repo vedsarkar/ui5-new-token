@@ -21,7 +21,7 @@
 	width: calc(var(--size) * 0.25);
 	height: calc(var(--size) * 0.25);
 	border-radius: calc(var(--size) * 0.15625);
-	background-color: var(--reltio-color-primary-soft);
+	background-color: var(--sapInformationBackground);
 	animation: dotFlashing 1s infinite linear alternate;
 	animation-delay: 0.5s;
 }
@@ -35,7 +35,7 @@
 	width: calc(var(--size) * 0.25);
 	height: calc(var(--size) * 0.25);
 	border-radius: calc(var(--size) * 0.15625);
-	background-color: var(--reltio-color-primary-soft);
+	background-color: var(--sapInformationBackground);
 	animation: dotFlashing 1s infinite alternate;
 }
 
@@ -51,13 +51,13 @@
 
 @keyframes dotFlashing {
 	0% {
-		background-color: var(--reltio-color-primary-soft);
+		background-color: var(--sapInformationBackground);
 	}
 	50%,
 	100% {
 		background-color: color-mix(
 			in srgb,
-			var(--reltio-color-primary-soft) 20%,
+			var(--sapInformationBackground) 20%,
 			transparent
 		);
 	}

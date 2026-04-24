@@ -1,0 +1,34 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const ChartTableView = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<g clip-path="url(#clip0_1057_2589)">
+				<path d="M14.2432 8C15.2172 8.00006 16 8.79894 16 9.76562V14.2344C16 15.2011 15.2172 15.9999 14.2432 16H1.75684C0.782797 15.9999 0 15.2011 0 14.2344V9.76562C0 8.79894 0.782797 8.00006 1.75684 8H14.2432ZM1.5 14.2344C1.5 14.3848 1.62333 14.4999 1.75684 14.5H5V13H1.5V14.2344ZM6.5 14.5H9.5V13H6.5V14.5ZM11 14.5H14.2432C14.3767 14.4999 14.5 14.3848 14.5 14.2344V13H11V14.5ZM1.75684 9.5C1.62333 9.50006 1.5 9.6152 1.5 9.76562V11.5H5V9.5H1.75684ZM6.5 11.5H9.5V9.5H6.5V11.5ZM11 11.5H14.5V9.76562C14.5 9.6152 14.3767 9.50006 14.2432 9.5H11V11.5ZM0.75 0C1.16421 0 1.5 0.335786 1.5 0.75V4.25C1.5 4.66421 1.16421 5 0.75 5C0.335786 5 0 4.66421 0 4.25V0.75C0 0.335786 0.335786 0 0.75 0ZM11.25 3.5C11.6642 3.5 12 3.83579 12 4.25C12 4.66421 11.6642 5 11.25 5H4.75C4.33579 5 4 4.66421 4 4.25C4 3.83579 4.33579 3.5 4.75 3.5H11.25ZM15.25 0C15.6642 0 16 0.335786 16 0.75C16 1.16421 15.6642 1.5 15.25 1.5H4.75C4.33579 1.5 4 1.16421 4 0.75C4 0.335786 4.33579 0 4.75 0H15.25Z" />
+			</g>
+			<defs>
+				<clipPath id="clip0_1057_2589">
+					<rect width="16" height="16" fill="white" />
+				</clipPath>
+			</defs>
+		</svg>
+	);
+};

@@ -1,0 +1,27 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const Sound = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<path d="M11.8145 2.13967C12.0431 1.9767 12.3441 1.9544 12.5938 2.08302C12.8433 2.21165 13 2.46924 13 2.75002V13.25C13 13.5308 12.8433 13.7884 12.5938 13.917C12.3441 14.0456 12.0431 14.0233 11.8145 13.8604L7.75879 10.9707H3.75C3.33579 10.9707 3 10.6349 3 10.2207V5.77931C3 5.3651 3.33579 5.02931 3.75 5.02931H7.75879L11.8145 2.13967ZM8.43555 6.38967C8.30847 6.48023 8.15604 6.52931 8 6.52931H4.5V9.47072H8C8.15604 9.47072 8.30847 9.51981 8.43555 9.61037L11.5 11.794V4.20509L8.43555 6.38967Z" />
+		</svg>
+	);
+};

@@ -1,0 +1,27 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const GenderMaleAndFemale = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<path d="M14.25 0C14.6642 0 15 0.335786 15 0.75V4.25C15 4.66421 14.6642 5 14.25 5C13.8358 5 13.5 4.66421 13.5 4.25V2.55957L11.6641 4.39551C11.8795 4.88677 12 5.42922 12 6C12 7.95272 10.6005 9.57758 8.75 9.92871V11H11.25C11.6642 11 12 11.3358 12 11.75C12 12.1642 11.6642 12.5 11.25 12.5H8.75V15.25C8.75 15.6642 8.41421 16 8 16C7.58579 16 7.25 15.6642 7.25 15.25V12.5H4.75C4.33579 12.5 4 12.1642 4 11.75C4 11.3358 4.33579 11 4.75 11H7.25V9.92871C5.39945 9.57758 4 7.95272 4 6C4 3.79086 5.79086 2 8 2C9.08892 2 10.0756 2.43575 10.7969 3.1416L12.4395 1.5H10.75C10.3358 1.5 10 1.16421 10 0.75C10 0.335786 10.3358 0 10.75 0H14.25ZM8 3.5C6.61929 3.5 5.5 4.61929 5.5 6C5.5 7.38071 6.61929 8.5 8 8.5C9.38071 8.5 10.5 7.38071 10.5 6C10.5 4.61929 9.38071 3.5 8 3.5Z" />
+		</svg>
+	);
+};

@@ -1,0 +1,34 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const CourseBook = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<g clip-path="url(#clip0_1057_2638)">
+				<path d="M5.53223 0.0567282L13.5322 3.30673C13.8149 3.42157 13.9999 3.69694 14 4.00204V13.2521C14 13.6663 13.6642 14.0021 13.25 14.0021C12.8358 14.0021 12.5 13.6663 12.5 13.2521V4.50693L5.25684 1.56454L3.6377 2.2579L10.0508 5.06455C10.3237 5.18395 10.4999 5.45417 10.5 5.75205V15.2521C10.5 15.5015 10.3758 15.7347 10.1689 15.8741C9.96196 16.0135 9.69895 16.0412 9.46777 15.9474L1.46777 12.6974C1.18506 12.5825 1 12.3072 1 12.0021V2.25204C1 1.91611 1.15234 1.70127 1.4541 1.56259L4.9541 0.0625876C5.15625 -0.0135772 5.33522 -0.0232072 5.53223 0.0567282ZM2.5 11.4962L9 14.1368V6.24228L2.5 3.39853V11.4962Z" />
+			</g>
+			<defs>
+				<clipPath id="clip0_1057_2638">
+					<rect width="16" height="16" fill="white" />
+				</clipPath>
+			</defs>
+		</svg>
+	);
+};

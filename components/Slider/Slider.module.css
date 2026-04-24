@@ -19,8 +19,8 @@
 	border-radius: 6px;
 	background: linear-gradient(
 		to right,
-		var(--reltio-color-primary) var(--slider-progress),
-		var(--reltio-color-border-2) var(--slider-progress)
+		var(--sapBrandColor) var(--slider-progress),
+		var(--sapField_BorderColor) var(--slider-progress)
 	);
 }
 
@@ -31,16 +31,16 @@
 	width: 4px;
 	height: 36px;
 	border-radius: 2px;
-	background: var(--reltio-color-primary);
-	border-left: 6px solid var(--reltio-color-surface-1);
-	border-right: 6px solid var(--reltio-color-surface-1);
+	background: var(--sapBrandColor);
+	border-left: 6px solid var(--sapField_Background);
+	border-right: 6px solid var(--sapField_Background);
 	box-sizing: content-box;
 	cursor: pointer;
 	margin-top: -12px;
 }
 
 .root:focus-visible::-webkit-slider-thumb {
-	outline: 2px solid var(--reltio-color-primary);
+	outline: 2px solid var(--sapContent_FocusColor);
 	outline-offset: 2px;
 }
 
@@ -48,14 +48,14 @@
 .root::-moz-range-track {
 	height: 12px;
 	border-radius: 6px;
-	background: var(--reltio-color-border-2);
+	background: var(--sapField_BorderColor);
 	border: none;
 }
 
 .root::-moz-range-progress {
 	height: 12px;
 	border-radius: 6px;
-	background: var(--reltio-color-primary);
+	background: var(--sapBrandColor);
 }
 
 /* ── Firefox Thumb ── */
@@ -63,15 +63,15 @@
 	width: 4px;
 	height: 36px;
 	border-radius: 2px;
-	background: var(--reltio-color-primary);
-	border-left: 6px solid var(--reltio-color-surface-1);
-	border-right: 6px solid var(--reltio-color-surface-1);
+	background: var(--sapBrandColor);
+	border-left: 6px solid var(--sapField_Background);
+	border-right: 6px solid var(--sapField_Background);
 	box-sizing: content-box;
 	cursor: pointer;
 }
 
 .root:focus-visible::-moz-range-thumb {
-	outline: 2px solid var(--reltio-color-primary);
+	outline: 2px solid var(--sapContent_FocusColor);
 	outline-offset: 2px;
 }
 

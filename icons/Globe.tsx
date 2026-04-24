@@ -1,0 +1,34 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const Globe = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<g clip-path="url(#clip0_1095_2437)">
+				<path d="M9.17969 0.0869141C13.0386 0.657279 16 3.98255 16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8C0 5.4014 1.23973 3.09317 3.15918 1.63184C4.42209 0.612661 6.01516 3.48343e-05 7.83984 0C8.28853 0 8.73527 0.0210416 9.17969 0.0869141ZM1.69629 6.41113C1.56852 6.91967 1.5 7.45183 1.5 8C1.5 11.2497 3.88496 13.9418 7 14.4229V12.584C5.97471 12.2593 5.22282 11.3168 5.10645 10.2539L1.69629 6.41113ZM10 3.25C10 3.66421 9.66421 4 9.25 4H7V5.25C7 5.66421 6.66421 6 6.25 6H4.64551L6.38281 8H9.25C9.66421 8 10 8.33579 10 8.75V11C11.0964 11 12.1006 11.6816 12.4551 12.7305C13.7132 11.5451 14.5 9.86499 14.5 8C14.5 5.10806 12.6111 2.65809 10 1.81445V3.25Z" />
+			</g>
+			<defs>
+				<clipPath id="clip0_1095_2437">
+					<rect width="16" height="16" fill="white" />
+				</clipPath>
+			</defs>
+		</svg>
+	);
+};

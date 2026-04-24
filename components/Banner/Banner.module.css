@@ -40,7 +40,7 @@
 	font-size: 14px;
 	font-weight: 400;
 	line-height: 20px;
-	color: var(--reltio-color-text);
+	color: var(--sapTextColor);
 }
 
 /* Close button */
@@ -56,7 +56,7 @@
 	border: none;
 	background: none;
 	cursor: pointer;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 	opacity: 0.6;
 	border-radius: 50%;
 	transition: opacity 150ms ease;
@@ -67,63 +67,63 @@
 }
 
 .closeButton:focus-visible {
-	outline: 2px solid var(--reltio-color-primary);
+	outline: 2px solid var(--sapContent_FocusColor);
 	outline-offset: 1px;
 	opacity: 1;
 }
 
 /* Color variant: Info */
 .info {
-	background-color: var(--reltio-color-primary-transparent-mild);
-	border-color: var(--reltio-color-primary-transparent-focus);
+	background-color: var(--sapInformationBackground);
+	border-color: var(--sapInformationBorderColor);
 }
 
 .info .icon {
-	color: var(--reltio-color-primary);
+	color: var(--sapInformativeColor);
 }
 
 .info .title {
-	color: var(--reltio-color-primary);
+	color: var(--sapInformativeColor);
 }
 
 /* Color variant: Success */
 .success {
-	background-color: var(--reltio-color-success-transparent);
-	border-color: var(--reltio-color-success-transparent-hover);
+	background-color: var(--sapSuccessBackground);
+	border-color: var(--sapSuccessBorderColor);
 }
 
 .success .icon {
-	color: var(--reltio-color-success);
+	color: var(--sapPositiveElementColor);
 }
 
 .success .title {
-	color: var(--reltio-color-success);
+	color: var(--sapPositiveElementColor);
 }
 
 /* Color variant: Warning */
 .warning {
-	background-color: var(--reltio-color-orange-transparent);
-	border-color: var(--reltio-color-orange-transparent-hover);
+	background-color: var(--sapWarningBackground);
+	border-color: var(--sapWarningBorderColor);
 }
 
 .warning .icon {
-	color: var(--reltio-color-orange);
+	color: var(--sapCriticalElementColor);
 }
 
 .warning .title {
-	color: var(--reltio-color-orange);
+	color: var(--sapCriticalElementColor);
 }
 
 /* Color variant: Error */
 .error {
-	background-color: var(--reltio-color-error-transparent);
-	border-color: var(--reltio-color-error-transparent-hover);
+	background-color: var(--sapErrorBackground);
+	border-color: var(--sapErrorBorderColor);
 }
 
 .error .icon {
-	color: var(--reltio-color-error);
+	color: var(--sapNegativeElementColor);
 }
 
 .error .title {
-	color: var(--reltio-color-error);
+	color: var(--sapNegativeElementColor);
 }

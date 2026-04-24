@@ -1,0 +1,27 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const ScreenSplitThree = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<path d="M13.25 1C14.7688 1 16 2.23122 16 3.75V12.25C16 13.7688 14.7688 15 13.25 15C9.74293 15 6.25351 15 2.75 15C1.23122 15 0 13.7688 0 12.25V3.75C1.77173e-07 2.23122 1.23122 1 2.75 1H13.25ZM2.75 2.5C2.05964 2.5 1.5 3.05964 1.5 3.75V12.25C1.5 12.9404 2.05964 13.5 2.75 13.5H4.5V2.5H2.75ZM11.5 13.5H13.25C13.9404 13.5 14.5 12.9404 14.5 12.25V3.75C14.5 3.05964 13.9404 2.5 13.25 2.5H11.5V13.5ZM6 13.5H10V2.5H6V13.5Z" />
+		</svg>
+	);
+};

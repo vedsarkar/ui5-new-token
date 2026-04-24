@@ -3,14 +3,14 @@
 	align-items: flex-start;
 	gap: 8px;
 	padding: 12px 16px;
-	background-color: var(--reltio-color-error-soft);
-	border: 1px solid var(--reltio-color-error);
+	background-color: var(--sapErrorBackground);
+	border: 1px solid var(--sapNegativeElementColor);
 	border-radius: 8px;
 	box-sizing: border-box;
 }
 
 .text {
-	color: var(--reltio-color-error-font);
+	color: var(--sapNegativeTextColor);
 	font-size: 14px;
 	line-height: 1.5;
 	margin: 0;

@@ -28,42 +28,43 @@ export default App;
 
 **Important:** React is listed as peer dependencies. Make sure it's added to your project.
 
-### Design Tokens
+### Theme & Fonts (recommended — React)
 
-To use Reltio color tokens (CSS custom properties for theming and dark mode), import the variables stylesheet:
+Wrap your application in `<ThemeProvider>`. It activates the active SAP Horizon theme (Morning Horizon by default in light environments, Evening Horizon in dark environments) **and** registers all SAP 72 `@font-face` rules in one step:
 
-```js
-import "@reltio/design/variables.css";
-```
+```jsx
+import { ThemeProvider } from "@reltio/design";
 
-This provides all `--reltio-color-*` variables on `:root` (light mode) and `[data-theme="dark"]` (dark mode). See the [Component Customization](https://reltio.design/?path=/docs/guides-component-customization--docs) guide for details.
-
-### Fonts (SAP 72)
-
-Components are designed to render in **SAP 72** (text) and **72 Mono** (monospace). The recommended way to load the fonts is a single `<link>` to our CDN:
-
-```html
-<link rel="stylesheet" href="https://reltio.design/fonts.css" />
-```
-
-As an alternative, you can import the same stylesheet from the npm package:
-
-```js
-import "@reltio/design/fonts.css";
-```
-
-The npm version contains the same `@font-face` rules but with absolute CDN URLs to the font files, so no extra static-asset setup is needed in your bundler.
-
-Either way, set the root `font-family` in your global CSS:
-
-```css
-:root {
-	font-family: "72", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-		sans-serif;
+export default function App() {
+	return (
+		<ThemeProvider>
+			<YourApp />
+		</ThemeProvider>
+	);
 }
 ```
 
-See the [Typography](https://reltio.design/?path=/docs/guides-typography--docs) guide for the full list of available weights, the monospace stack, and self-hosting instructions.
+All `--sap*` design tokens become available on `:root`, components render in SAP 72, and the active theme tracks the user's `prefers-color-scheme`. Pin the theme with `<ThemeProvider defaultTheme="horizon-light">` (or `"horizon-dark"`); override CDN URLs for self-hosting via the `themeUrls` / `themeBaseUrl` / `fontUrls` / `fontBaseUrl` props (see Storybook for examples).
+
+### Theme & Fonts (alternative — non-React)
+
+Static sites and server-rendered pages without React control over `<head>` can load the same files via raw `<link>`:
+
+```html
+<link rel="stylesheet" href="https://reltio.design/themes/horizon-light.theme.css" />
+<link rel="stylesheet" href="https://reltio.design/fonts.css" />
+```
+
+Or via npm subpath import (any bundler that handles CSS-as-asset):
+
+```js
+import "@reltio/design/themes/horizon-light.css";
+import "@reltio/design/fonts.css";
+```
+
+The npm versions contain the same `@font-face` rules but with absolute CDN URLs to the font files, so no extra static-asset setup is needed.
+
+See the [Typography](https://reltio.design/?path=/docs/guides-typography--docs) and Design Tokens guides in Storybook for the full list of available weights, the monospace stack, the SAP `--sap*` token surface, and self-hosting instructions.
 
 ## Target Audience
 

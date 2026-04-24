@@ -57,7 +57,7 @@ export const Checkbox = ({
 				>
 					<path
 						d="M2 6L5 9L10 3"
-						stroke="var(--reltio-color-surface-1)"
+						stroke="var(--sapField_Background)"
 						strokeWidth="2"
 						strokeLinecap="round"
 						strokeLinejoin="round"

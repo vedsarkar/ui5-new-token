@@ -1,7 +1,7 @@
 .root {
 	margin: 1rem 0;
-	background-color: var(--reltio-color-surface-1);
-	border: 0.5px solid var(--reltio-color-border-2);
+	background-color: var(--sapGroup_ContentBackground);
+	border: 0.5px solid var(--sapField_BorderColor);
 	border-radius: 12px;
 	overflow: hidden;
 	padding: 0;
@@ -15,7 +15,7 @@
 	cursor: pointer;
 	user-select: none;
 	list-style: none;
-	color: var(--reltio-color-text);
+	color: var(--sapTextColor);
 	line-height: 1.71;
 	padding: 12px;
 	margin: 0;
@@ -26,11 +26,7 @@
 }
 
 .summary:hover {
-	background-color: color-mix(
-		in srgb,
-		var(--reltio-color-primary) 12%,
-		transparent
-	);
+	background-color: color-mix(in srgb, var(--sapBrandColor) 12%, transparent);
 }
 
 .summary::-webkit-details-marker {
@@ -58,7 +54,7 @@
 .chevron {
 	flex-shrink: 0;
 	transition: transform 195ms cubic-bezier(0.4, 0, 0.2, 1);
-	color: var(--reltio-color-text);
+	color: var(--sapTextColor);
 	width: 24px;
 	height: 24px;
 	display: flex;
@@ -72,21 +68,21 @@
 
 .content {
 	padding: 0 12px 12px 12px;
-	color: var(--reltio-color-text);
+	color: var(--sapTextColor);
 	line-height: 1.71;
 }
 
 .content pre {
 	margin: 0;
-	background-color: var(--reltio-color-surface-2);
+	background-color: var(--sapBackgroundColor);
 	border-radius: 8px;
 	padding: 16px;
-	border: 1px solid var(--reltio-color-border-2);
+	border: 1px solid var(--sapField_BorderColor);
 }
 
 .content code {
-	color: var(--reltio-color-text);
-	background-color: var(--reltio-color-surface-2);
+	color: var(--sapTextColor);
+	background-color: var(--sapBackgroundColor);
 	padding: 0.2em 0.4em;
 	border-radius: 3px;
 	font-family: "72 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -94,15 +90,15 @@
 }
 
 :global([data-theme="dark"]) .root {
-	background-color: var(--reltio-color-surface-2);
+	background-color: var(--sapBackgroundColor);
 }
 
 :global([data-theme="dark"]) .content pre,
 :global([data-theme="dark"]) .content code {
 	background-color: color-mix(
 		in srgb,
-		var(--reltio-color-border-2) 40%,
-		var(--reltio-color-surface-2)
+		var(--sapField_BorderColor) 40%,
+		var(--sapBackgroundColor)
 	);
 }
 

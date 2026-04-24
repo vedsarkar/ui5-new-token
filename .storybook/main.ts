@@ -15,7 +15,6 @@ export default defineMain({
 		"@storybook/addon-docs",
 		"@storybook/addon-a11y",
 		"@storybook/addon-vitest",
-		"@storybook/addon-themes",
 		"@storybook/addon-mcp",
 	],
 
@@ -31,7 +30,7 @@ export default defineMain({
 		reactDocgen: "react-docgen-typescript",
 		reactDocgenTypescriptOptions: {
 			shouldExtractLiteralValuesFromEnum: true,
-			include: ["components/**/*.tsx", "charts/**/*.tsx"],
+			include: ["components/**/*.tsx", "charts/**/*.tsx", "icons/**/*.tsx"],
 		},
 	},
 });

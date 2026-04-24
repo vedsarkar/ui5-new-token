@@ -7,7 +7,7 @@
 	position: relative;
 	font-size: 14px;
 	line-height: 1.4;
-	color: var(--reltio-color-text);
+	color: var(--sapTextColor);
 	user-select: none;
 	-webkit-tap-highlight-color: transparent;
 }
@@ -33,7 +33,7 @@
 	width: 36px;
 	height: 20px;
 	border-radius: 10px;
-	background-color: var(--reltio-color-border-2);
+	background-color: var(--sapField_BorderColor);
 	box-sizing: border-box;
 	position: relative;
 	transition: background-color 150ms ease;
@@ -41,22 +41,22 @@
 
 /* Hover on track */
 .root:hover .track {
-	background-color: var(--reltio-color-border-3);
+	background-color: var(--sapContent_NonInteractiveIconColor);
 }
 
 /* Focus-visible: outline on track when input is keyboard-focused */
 .input:focus-visible ~ .track {
-	outline: 2px solid var(--reltio-color-primary);
+	outline: 2px solid var(--sapContent_FocusColor);
 	outline-offset: 2px;
 }
 
 /* Checked track */
 .checked .track {
-	background-color: var(--reltio-color-primary);
+	background-color: var(--sapBrandColor);
 }
 
 .checked.root:hover .track {
-	background-color: var(--reltio-color-primary-hover);
+	background-color: var(--sapHighlightColor);
 }
 
 /* Handle */
@@ -64,7 +64,7 @@
 	width: 16px;
 	height: 16px;
 	border-radius: 50%;
-	background-color: var(--reltio-color-surface-1);
+	background-color: var(--sapField_Background);
 	transform: translateX(2px);
 	transition: transform 150ms ease;
 }

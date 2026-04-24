@@ -8,49 +8,45 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 > **🎯 Key Principle:** Once the fonts are loaded and the root `font-family` is set, every Reltio component renders in SAP 72 automatically. Your own elements inherit the same family through standard CSS inheritance — you almost never need to declare `font-family` yourself.
 
-## Quick Start
+## Quick Start (Recommended — React)
 
-Two steps to start using SAP 72 in your app.
+The simplest path is to wrap your application in `<ThemeProvider>`. It activates the active theme **and** registers all SAP 72 `@font-face` rules in one step, with all assets served from the `reltio.design` CDN by default.
 
-### 1. Load the fonts
+```jsx
+import { ThemeProvider } from "@reltio/design";
 
-The fonts are hosted on `reltio.design` with CORS enabled, so the recommended approach is a single `<link>`:
-
-```html
-<link rel="stylesheet" href="https://reltio.design/fonts.css" />
-```
-
-This declares all `@font-face` rules for the families `"72"` (six weights) and `"72 Mono"` (two weights). The actual font files are downloaded by the browser on demand.
-
-**Alternative — npm import.** If you prefer to keep all third-party dependencies pinned through `package.json`, the same stylesheet ships with the npm package:
-
-```js
-import "@reltio/design/fonts.css";
-```
-
-The npm version contains absolute CDN URLs to the font files internally, so it works through any bundler with no extra static-asset configuration. The browser still downloads the actual `.woff2` files from `reltio.design`.
-
-> **💡 Self-hosting?** If you need to serve the assets from your own origin (offline, air-gapped, locked-down CSP, or production version pinning), download the font files directly from SAP — the official source for the typeface:
->
-> 1. Go to [SAP Fiori Design Web — Font 72 downloads](https://www.sap.com/design-system/fiori-design-web/resources/downloads#font-72) and download the font package. We use the `.woff2` files for the six text weights — Light, Regular, Italic, Semibold, Bold, BoldItalic — and 72 Mono Regular and Bold. Each weight is shipped in two character coverage variants (Latin subset, e.g. `72-Regular.woff2`, and the extended `-full` counterpart, e.g. `72-Regular-full.woff2`); ship both for international support.
-> 2. Place the `.woff2` files somewhere your app serves them, for example `public/fonts/`.
-> 3. Copy our [`fonts.css`](https://reltio.design/fonts.css) next to them and adjust the `url(...)` paths inside to point at where you put the files.
-> 4. `<link>` your local `fonts.css` from your app instead of the CDN one.
-
-### 2. Set the root `font-family`
-
-Add this to your application's global stylesheet (e.g. `app.css`, `globals.css`):
-
-```css
-:root {
-	font-family: "72", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-		sans-serif;
+export default function App() {
+	return (
+		<ThemeProvider>
+			<YourApp />
+		</ThemeProvider>
+	);
 }
 ```
 
-The fallback chain renders text immediately using the OS default while SAP 72 is downloading, then swaps in.
+That's it — fonts are loaded, `--sap*` design tokens are on `:root`, and every Reltio component renders in SAP 72. The provider listens to the system `prefers-color-scheme` media query and picks the right theme automatically. You can override with `<ThemeProvider defaultTheme="horizon-light">` (or `"horizon-dark"`) if you want to lock the choice.
 
-That's the entire setup. Every Reltio component now renders in SAP 72, and your own elements inherit it.
+The root `font-family` SAP 72 declaration is part of the platform's global CSS — you do not need to add anything to your own global stylesheet for the default text family to apply.
+
+## Alternative — non-React consumers
+
+For static sites, server-rendered pages where you can't control `<head>` from React, or MDX docs that render outside a `ThemeProvider`, use raw `<link>` references to the same CDN files:
+
+```html
+<link rel="stylesheet" href="https://reltio.design/themes/horizon-light.theme.css" />
+<link rel="stylesheet" href="https://reltio.design/fonts.css" />
+```
+
+Or import them through the npm package (works in any bundler that handles CSS-as-asset):
+
+```js
+import "@reltio/design/themes/horizon-light.css";
+import "@reltio/design/fonts.css";
+```
+
+The npm versions contain absolute CDN URLs to the font files internally, so no extra static-asset configuration is needed. The browser still downloads the actual `.woff2` files from `reltio.design`.
+
+> **💡 Self-hosting fonts?** If you need to serve the assets from your own origin (offline, air-gapped, locked-down CSP, or production version pinning), `<ThemeProvider>` accepts URL overrides via the `fontUrls` and `fontBaseUrl` props — see the `ThemeProvider` story in Storybook. For non-React setups, download the `.woff2` files directly from SAP ([Fiori Design Web — Font 72 downloads](https://www.sap.com/design-system/fiori-design-web/resources/downloads#font-72)), copy them next to a hand-written `fonts.css`, and adjust the `url(...)` paths inside to point at your own origin.
 
 ## Available Faces
 
@@ -103,6 +99,18 @@ The default text family is `"72"`. The default monospace family is `"72 Mono"`.
 			<td>Bold emphasis</td>
 		</tr>
 		<tr>
+			<td><code>"72"</code></td>
+			<td>900 (Black)</td>
+			<td>normal</td>
+			<td>Major page titles in the SAP Horizon hero style</td>
+		</tr>
+		<tr>
+			<td><code>"72-SemiboldDuplex"</code></td>
+			<td>400</td>
+			<td>normal</td>
+			<td>Interactive-affordance text where width must stay stable across weights</td>
+		</tr>
+		<tr>
 			<td><code>"72 Mono"</code></td>
 			<td>400 (Regular)</td>
 			<td>normal</td>
@@ -117,7 +125,7 @@ The default text family is `"72"`. The default monospace family is `"72 Mono"`.
 	</tbody>
 </table>
 
-> **Need another weight?** SAP also distributes Black, Condensed, CondensedBold, and SemiboldDuplex. They are not bundled by default — reach out to the UI Center of Excellence team if your design requires them.
+> **Need another weight?** SAP also distributes Condensed and CondensedBold. They are not bundled by default — reach out to the UI Center of Excellence team if your design requires them.
 
 ## Using the Fonts in Your CSS
 
@@ -131,7 +139,7 @@ The platform relies on CSS inheritance for `font-family`. When you build your ow
 .title {
 	font-size: 14px;
 	font-weight: 600;
-	color: var(--reltio-color-text);
+	color: var(--sapTextColor);
 }
 ```
 

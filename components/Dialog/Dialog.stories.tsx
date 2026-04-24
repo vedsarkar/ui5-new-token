@@ -119,7 +119,7 @@ export const CustomBody = meta.story({
 					</div>
 					<p
 						style={{
-							color: "var(--reltio-color-text-secondary)",
+							color: "var(--sapContent_LabelColor)",
 							fontSize: 14,
 							marginBottom: 16,
 						}}

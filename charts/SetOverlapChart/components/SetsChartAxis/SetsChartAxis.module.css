@@ -1,18 +1,18 @@
 .axisTick {
-	stroke: var(--reltio-color-border-black);
+	stroke: var(--sapTextColor);
 	stroke-width: 1px;
 	opacity: 0.54;
 }
 
 .axisTickLabel {
 	font-size: 10px;
-	fill: var(--reltio-color-text);
+	fill: var(--sapTextColor);
 	opacity: 0.54;
 	text-anchor: middle;
 }
 
 .axisLabel {
-	fill: var(--reltio-color-text);
+	fill: var(--sapTextColor);
 	opacity: 0.54;
 	font-size: 12px;
 	text-anchor: middle;

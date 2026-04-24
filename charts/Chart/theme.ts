@@ -1,21 +1,21 @@
-const TOKEN_NAMES = [
-	"primary",
-	"success",
-	"warning",
-	"orange",
-	"pink",
-	"purple",
-	"aqua-font",
-	"lime",
-	"error",
+const PALETTE_TOKENS = [
+	"--sapBrandColor",
+	"--sapPositiveElementColor",
+	"--sapCriticalColor",
+	"--sapCriticalElementColor",
+	"--sapAccentColor3",
+	"--sapAccentColor4",
+	"--sapAccentColor7",
+	"--sapAccentColor8",
+	"--sapNegativeElementColor",
 ] as const;
 
 function getToken(styles: CSSStyleDeclaration, name: string): string {
-	return styles.getPropertyValue(`--reltio-color-${name}`).trim();
+	return styles.getPropertyValue(name).trim();
 }
 
 /**
- * Builds an ECharts theme object by reading --reltio-color-* CSS custom
+ * Builds an ECharts theme object by reading --sap* CSS custom
  * properties from the given DOM element. CSS custom properties inherit
  * through the DOM tree, so the resolved values reflect the nearest
  * ancestor's data-theme attribute (light or dark).
@@ -23,7 +23,7 @@ function getToken(styles: CSSStyleDeclaration, name: string): string {
 export function buildTheme(element: HTMLElement) {
 	const styles = getComputedStyle(element);
 
-	const colorPalette = TOKEN_NAMES.map((name) => getToken(styles, name));
+	const colorPalette = PALETTE_TOKENS.map((name) => getToken(styles, name));
 
 	return {
 		color: colorPalette,
@@ -31,68 +31,68 @@ export function buildTheme(element: HTMLElement) {
 
 		title: {
 			textStyle: {
-				color: getToken(styles, "text"),
+				color: getToken(styles, "--sapTextColor"),
 			},
 		},
 
 		legend: {
 			textStyle: {
-				color: getToken(styles, "text-secondary"),
+				color: getToken(styles, "--sapContent_LabelColor"),
 			},
 		},
 
 		tooltip: {
-			backgroundColor: getToken(styles, "bg-tooltip"),
-			borderColor: getToken(styles, "border-2"),
+			backgroundColor: getToken(styles, "--sapBlockLayer_Background"),
+			borderColor: getToken(styles, "--sapField_BorderColor"),
 			textStyle: {
-				color: getToken(styles, "text-forced-white"),
+				color: getToken(styles, "--sapContent_ContrastTextColor"),
 			},
 		},
 
 		categoryAxis: {
 			axisLine: {
 				lineStyle: {
-					color: getToken(styles, "border-2"),
+					color: getToken(styles, "--sapField_BorderColor"),
 				},
 			},
 			axisTick: {
 				lineStyle: {
-					color: getToken(styles, "border-2"),
+					color: getToken(styles, "--sapField_BorderColor"),
 				},
 			},
 			axisLabel: {
-				color: getToken(styles, "text-secondary"),
+				color: getToken(styles, "--sapContent_LabelColor"),
 			},
 			splitLine: {
 				lineStyle: {
-					color: getToken(styles, "border-1"),
+					color: getToken(styles, "--sapGroup_ContentBorderColor"),
 				},
 			},
 		},
 
 		visualMap: {
 			textStyle: {
-				color: getToken(styles, "text-secondary"),
+				color: getToken(styles, "--sapContent_LabelColor"),
 			},
 		},
 
 		valueAxis: {
 			axisLine: {
 				lineStyle: {
-					color: getToken(styles, "border-2"),
+					color: getToken(styles, "--sapField_BorderColor"),
 				},
 			},
 			axisTick: {
 				lineStyle: {
-					color: getToken(styles, "border-2"),
+					color: getToken(styles, "--sapField_BorderColor"),
 				},
 			},
 			axisLabel: {
-				color: getToken(styles, "text-secondary"),
+				color: getToken(styles, "--sapContent_LabelColor"),
 			},
 			splitLine: {
 				lineStyle: {
-					color: getToken(styles, "border-1"),
+					color: getToken(styles, "--sapGroup_ContentBorderColor"),
 				},
 			},
 		},

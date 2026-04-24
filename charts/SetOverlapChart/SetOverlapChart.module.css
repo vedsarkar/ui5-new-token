@@ -16,7 +16,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 	font-size: 14px;
 	z-index: 1;
 	pointer-events: none;

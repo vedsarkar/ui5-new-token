@@ -1,4 +1,8 @@
-<!-- Reltio Design Platform stylesheets (load order matters) -->
-<link rel="stylesheet" href="/variables.css" />
-<link rel="stylesheet" href="/fonts.css" />
+<!--
+  Reltio Design Platform — Storybook preview head.
+
+  Theme tokens (per-theme CSS file) and SAP 72 @font-face rules are now
+  injected by the global <ThemeProvider> decorator in preview.tsx. Only
+  Storybook's own non-design-system stylesheet is loaded here.
+-->
 <link rel="stylesheet" href="/global.css" />

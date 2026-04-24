@@ -8,7 +8,7 @@
 	user-select: none;
 	position: relative;
 	font-size: 14px;
-	color: var(--reltio-color-text);
+	color: var(--sapTextColor);
 	line-height: 1.4;
 }
 
@@ -31,7 +31,7 @@
 	width: 20px;
 	height: 20px;
 	border-radius: 50%;
-	border: 2px solid var(--reltio-color-border-2);
+	border: 2px solid var(--sapField_BorderColor);
 	box-sizing: border-box;
 	flex-shrink: 0;
 	transition:
@@ -52,43 +52,43 @@
 
 /* Checked state */
 .checked .circle {
-	border-color: var(--reltio-color-primary);
+	border-color: var(--sapBrandColor);
 }
 
 .checked .circle::after {
-	background-color: var(--reltio-color-primary);
+	background-color: var(--sapBrandColor);
 	transform: scale(1);
 }
 
 /* Error state */
 .error .circle {
-	border-color: var(--reltio-color-error);
+	border-color: var(--sapNegativeElementColor);
 }
 
 .error.checked .circle {
-	border-color: var(--reltio-color-error);
+	border-color: var(--sapNegativeElementColor);
 }
 
 .error.checked .circle::after {
-	background-color: var(--reltio-color-error);
+	background-color: var(--sapNegativeElementColor);
 }
 
 /* Hover state */
 .root:hover .circle {
-	border-color: var(--reltio-color-text-secondary);
+	border-color: var(--sapContent_LabelColor);
 }
 
 .checked:hover .circle {
-	border-color: var(--reltio-color-primary-hover);
+	border-color: var(--sapHighlightColor);
 }
 
 .error:hover .circle {
-	border-color: var(--reltio-color-error);
+	border-color: var(--sapNegativeElementColor);
 }
 
 /* Focus-visible state */
 .input:focus-visible + .circle {
-	outline: 2px solid var(--reltio-color-primary);
+	outline: 2px solid var(--sapContent_FocusColor);
 	outline-offset: 2px;
 }
 

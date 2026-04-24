@@ -1,0 +1,69 @@
+.table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+	font-family: var(--sapFontFamily);
+	font-size: var(--sapFontSize);
+	color: var(--sapTextColor);
+}
+
+.th {
+	text-align: left;
+	padding: 10px 8px;
+	font-weight: 600;
+	color: var(--sapContent_LabelColor);
+	border-bottom: 1px solid var(--sapList_BorderColor);
+}
+
+.thName {
+	width: 40%;
+}
+
+.thValue {
+	width: 30%;
+}
+
+.variableCell {
+	padding: 8px;
+	border-bottom: 1px solid var(--sapList_BorderColor);
+	cursor: pointer;
+	transition: background 0.15s;
+	vertical-align: middle;
+	height: 40px;
+
+	&:hover {
+		background: var(--sapList_Hover_Background);
+	}
+}
+
+.sampleCell {
+	padding: 8px;
+	border-bottom: 1px solid var(--sapList_BorderColor);
+	vertical-align: middle;
+	height: 40px;
+}
+
+.code {
+	font-family: var(--sapFontMonoFamily, ui-monospace, monospace);
+}
+
+.codeCopied {
+	background: var(--sapSuccessBackground);
+	padding: 2px 4px;
+	border-radius: 2px;
+}
+
+.swatch {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-width: 120px;
+	height: 40px;
+	border-radius: 4px;
+	font-family: var(--sapFontMonoFamily, ui-monospace, monospace);
+
+	/* Relative color syntax: extract oklch lightness from --_bg,
+	   then snap to black (L=0) or white (L=1) at the 0.6 threshold. */
+	color: oklch(from var(--_bg) clamp(0, (0.6 - l) * 999, 1) 0 0);
+}

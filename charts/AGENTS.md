@@ -152,7 +152,7 @@ Charts fill 100% of their parent container (both width and height). The consumer
 
 Chart CSS modules follow the same rules as component CSS:
 
-- Colors MUST use `--reltio-color-*` tokens
+- Colors MUST use SAP Horizon `--sap*` tokens (see `AGENTS.md` for the global token policy).
 - `classNames()` utility on all className attributes
 - Standard overlay styles for empty/error states:
 
@@ -169,7 +169,7 @@ Chart CSS modules follow the same rules as component CSS:
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--reltio-color-text-secondary);
+  color: var(--sapContent_LabelColor);
   font-size: 14px;
   z-index: 1;
   pointer-events: none;
@@ -228,11 +228,10 @@ const meta = preview.meta({
 
 ## Theme System
 
-The chart theme is built dynamically from `--reltio-color-*` CSS tokens at mount time via `buildTheme()` in `charts/Chart/theme.ts`. This means:
+The chart theme is built dynamically from SAP Horizon `--sap*` CSS custom properties at mount time via `buildTheme()` in `charts/Chart/theme.ts`. The 9-color data series palette is derived from SAP tokens: `--sapBrandColor`, `--sapPositiveElementColor`, `--sapCriticalColor`, `--sapCriticalElementColor`, `--sapAccentColor3`, `--sapAccentColor4`, `--sapAccentColor7`, `--sapAccentColor8`, `--sapNegativeElementColor`.
 
-- Charts automatically use the correct colors for light/dark mode based on `data-theme` attribute
-- Theme is read once at mount — runtime theme switching requires page refresh
-- The 9-color data series palette is: primary, success, warning, orange, pink, purple, aqua-font, lime, error
+- Charts automatically use the correct colors for light/dark mode based on the active theme loaded by `<ThemeProvider>` (per-theme CSS file injection)
+- Theme is read once at mount — runtime theme switching requires re-mounting the chart subtree
 
 Do NOT hardcode any color values in chart components or option builders. All colors come from the theme.
 
@@ -254,7 +253,7 @@ Do NOT hardcode any color values in chart components or option builders. All col
 - [ ] Shared logic imported from `@/charts/Chart`, not duplicated
 - [ ] Empty state handled ("No data" overlay when data is empty)
 - [ ] No `undefined` values in ECharts option (use conditional spread)
-- [ ] Colors use `--reltio-color-*` tokens, no hardcoded hex values
+- [ ] Colors use SAP Horizon `--sap*` tokens, no hardcoded hex values
 - [ ] All className attributes use `classNames()` utility
 - [ ] Storybook stories added (one variant per story, all required states)
 - [ ] Exported from `charts/index.ts`

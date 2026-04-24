@@ -4,8 +4,8 @@
 	gap: 6px;
 	height: 32px;
 	padding: 0 12px;
-	background-color: var(--reltio-color-bg-transparent-1);
-	color: var(--reltio-color-text);
+	background-color: var(--sapNeutralBackground);
+	color: var(--sapTextColor);
 	font-size: 14px;
 	font-weight: 500;
 	letter-spacing: 0.25px;
@@ -35,7 +35,7 @@
 	cursor: pointer;
 
 	&:hover {
-		box-shadow: 0 1px 3px var(--reltio-color-shadow-2);
+		box-shadow: var(--sapContent_Shadow0);
 	}
 
 	&:active {
@@ -43,105 +43,105 @@
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--reltio-color-primary);
+		outline: 2px solid var(--sapContent_FocusColor);
 		outline-offset: 1px;
 	}
 }
 
 /* Variant: Filled (default) */
 .filled.default {
-	background-color: var(--reltio-color-bg-transparent-1);
-	color: var(--reltio-color-text);
+	background-color: var(--sapNeutralBackground);
+	color: var(--sapTextColor);
 
 	&.clickable:hover {
-		background-color: var(--reltio-color-bg-transparent-2);
+		background-color: var(--sapActiveColor);
 	}
 }
 
 .filled.primary {
-	background-color: var(--reltio-color-primary-transparent-mild);
-	color: var(--reltio-color-primary);
+	background-color: var(--sapInformationBackground);
+	color: var(--sapInformativeColor);
 
 	&.clickable:hover {
-		background-color: var(--reltio-color-primary-transparent-focus);
+		background-color: var(--sapInformationBackground);
 	}
 }
 
 .filled.success {
-	background-color: var(--reltio-color-success-transparent);
-	color: var(--reltio-color-success);
+	background-color: var(--sapSuccessBackground);
+	color: var(--sapPositiveElementColor);
 
 	&.clickable:hover {
-		background-color: var(--reltio-color-success-transparent-hover);
+		background-color: var(--sapSuccessBackground);
 	}
 }
 
 .filled.warning {
-	background-color: var(--reltio-color-orange-transparent);
-	color: var(--reltio-color-orange);
+	background-color: var(--sapWarningBackground);
+	color: var(--sapCriticalElementColor);
 
 	&.clickable:hover {
-		background-color: var(--reltio-color-orange-transparent-hover);
+		background-color: var(--sapWarningBackground);
 	}
 }
 
 .filled.error {
-	background-color: var(--reltio-color-error-transparent);
-	color: var(--reltio-color-error);
+	background-color: var(--sapErrorBackground);
+	color: var(--sapNegativeElementColor);
 
 	&.clickable:hover {
-		background-color: var(--reltio-color-error-transparent-hover);
+		background-color: var(--sapErrorBackground);
 	}
 }
 
 /* Variant: Outlined */
 .outlined.default {
 	background-color: transparent;
-	color: var(--reltio-color-text);
-	border-color: var(--reltio-color-border-2);
+	color: var(--sapTextColor);
+	border-color: var(--sapField_BorderColor);
 
 	&.clickable:hover {
-		background-color: var(--reltio-color-bg-transparent-1);
+		background-color: var(--sapNeutralBackground);
 	}
 }
 
 .outlined.primary {
 	background-color: transparent;
-	color: var(--reltio-color-primary);
-	border-color: var(--reltio-color-primary);
+	color: var(--sapInformativeColor);
+	border-color: var(--sapInformativeColor);
 
 	&.clickable:hover {
-		background-color: var(--reltio-color-primary-transparent-mild);
+		background-color: var(--sapInformationBackground);
 	}
 }
 
 .outlined.success {
 	background-color: transparent;
-	color: var(--reltio-color-success);
-	border-color: var(--reltio-color-success);
+	color: var(--sapPositiveElementColor);
+	border-color: var(--sapPositiveElementColor);
 
 	&.clickable:hover {
-		background-color: var(--reltio-color-success-transparent);
+		background-color: var(--sapSuccessBackground);
 	}
 }
 
 .outlined.warning {
 	background-color: transparent;
-	color: var(--reltio-color-orange);
-	border-color: var(--reltio-color-orange);
+	color: var(--sapCriticalElementColor);
+	border-color: var(--sapCriticalElementColor);
 
 	&.clickable:hover {
-		background-color: var(--reltio-color-orange-transparent);
+		background-color: var(--sapWarningBackground);
 	}
 }
 
 .outlined.error {
 	background-color: transparent;
-	color: var(--reltio-color-error);
-	border-color: var(--reltio-color-error);
+	color: var(--sapNegativeElementColor);
+	border-color: var(--sapNegativeElementColor);
 
 	&.clickable:hover {
-		background-color: var(--reltio-color-error-transparent);
+		background-color: var(--sapErrorBackground);
 	}
 }
 
@@ -189,7 +189,7 @@
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--reltio-color-primary);
+		outline: 2px solid var(--sapContent_FocusColor);
 		outline-offset: 1px;
 		opacity: 1;
 	}

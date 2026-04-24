@@ -122,62 +122,48 @@ export const ${iconName} = ({
 function generateUnifiedStories(icons) {
 	const sortedIcons = [...icons].sort((a, b) => a.name.localeCompare(b.name));
 
-	const firstIcon = sortedIcons[0].name;
-
 	const stories = sortedIcons
 		.map(
 			({ name }) =>
-				`export const ${name}: Story = { args: { name: "${name}" } };`,
+				`export const ${name}: Story = {
+	render: () => (
+		<div className={styles.story}>
+			<Icons.${name} size="small" color="success" />
+			<Icons.${name} />
+			<Icons.${name} size="large" color="error" />
+		</div>
+	),
+};`,
 		)
 		.join("\n\n");
 
-	return `import { ArgTypes, Description as Desc, Subtitle, Title } from "@storybook/addon-docs/blocks";
-import type { Meta, StoryObj } from "@storybook/react";
-import type { IconProps } from "./Icon.types";
-import { IconLibrary } from "./IconLibrary";
+	return `import { Description, Title } from "@storybook/addon-docs/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { IconLibrary } from "@/.storybook/blocks/IconLibrary";
+import { Icon } from "./IconDoc";
 import styles from "./IconStories.module.css";
-import { ${firstIcon} as IconRef, iconMap } from "./index";
+import { iconMap as Icons } from "./index";
 
-type StoryProps = IconProps & { name: string };
-
-const meta: Meta<StoryProps> = {
+const meta: Meta = {
 	title: "Icons",
-	component: IconRef as React.FC,
-	argTypes: {
-		color: {
-			control: "select",
-			options: ["inherited", "primary", "secondary", "success", "warning", "error"],
-		},
-	},
+	component: Icon,
 	parameters: {
 		layout: "centered",
 		docs: {
+			toc: { headingSelector: "[data-toc]" },
 			page: () => (
 				<>
 					<Title />
-					<Subtitle />
-					<Desc />
-					<h3>Props</h3>
-					<ArgTypes />
+					<Description />
 					<IconLibrary />
-        </>
+				</>
 			),
 		},
-	},
-	render: ({ name }) => {
-		const Icon = iconMap[name];
-		return (
-			<div className={styles.story}>
-				<Icon size="small" color="success" />
-				<Icon />
-				<Icon size="large" color="error" />
-			</div>
-		);
 	},
 };
 
 export default meta;
-type Story = StoryObj<StoryProps>;
+type Story = StoryObj;
 
 ${stories}
 `;
@@ -208,21 +194,6 @@ export const iconMap: Record<string, React.ComponentType<import("./Icon.types").
 ${iconMapEntries}
 };
 `;
-}
-
-function generateManifest(icons) {
-	return JSON.stringify(
-		{
-			icons: icons.map(({ name, kebabName }) => ({
-				name,
-				kebabName,
-				path: `/icons/${kebabName}.svg`,
-				import: `import { ${name} } from "@reltio/design/icons"`,
-			})),
-		},
-		null,
-		2,
-	);
 }
 
 async function main() {
@@ -272,10 +243,6 @@ async function main() {
 	const storiesCode = generateUnifiedStories(icons);
 	await writeFile(join(ICONS_OUTPUT_DIR, "Icons.stories.tsx"), storiesCode);
 	console.log("Generated: Icons.stories.tsx");
-
-	const manifestCode = generateManifest(icons);
-	await writeFile(join(ICONS_OUTPUT_DIR, "manifest.json"), manifestCode);
-	console.log("Generated: manifest.json");
 
 	console.log(`\nSuccessfully generated ${icons.length} icon components`);
 

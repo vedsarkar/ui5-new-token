@@ -21,7 +21,7 @@
 	padding: 0;
 
 	&:focus-visible {
-		outline: 2px solid var(--reltio-color-primary);
+		outline: 2px solid var(--sapContent_FocusColor);
 		outline-offset: 2px;
 	}
 
@@ -52,31 +52,31 @@
 
 /* Filled + Primary */
 .filled.primary {
-	background-color: var(--reltio-color-primary);
-	color: var(--reltio-color-text-forced-white);
+	background-color: var(--sapButton_Emphasized_Background);
+	color: var(--sapButton_Emphasized_TextColor);
 
 	&:hover {
-		background-color: var(--reltio-color-primary-hover);
+		background-color: var(--sapButton_Emphasized_Hover_Background);
 	}
 }
 
 /* Filled + Inherited */
 .filled.inherited {
-	background-color: var(--reltio-color-surface-2);
-	color: var(--reltio-color-text);
+	background-color: var(--sapButton_Background);
+	color: var(--sapButton_TextColor);
 }
 
 :global([data-theme="dark"]) .filled.inherited {
-	border: 1px solid var(--reltio-color-border-2);
+	border: 1px solid var(--sapButton_BorderColor);
 }
 
 /* Outlined + Primary */
 .outlined.primary {
-	border-color: var(--reltio-color-primary);
-	color: var(--reltio-color-primary);
+	border-color: var(--sapButton_Emphasized_BorderColor);
+	color: var(--sapButton_Emphasized_Background);
 
 	&:hover {
-		background-color: var(--reltio-color-surface-2);
+		background-color: var(--sapButton_Hover_Background);
 	}
 }
 
@@ -86,16 +86,16 @@
 	color: inherit;
 
 	&:hover {
-		background-color: var(--reltio-color-surface-2);
+		background-color: var(--sapButton_Hover_Background);
 	}
 }
 
 /* Text + Primary */
 .text.primary {
-	color: var(--reltio-color-primary);
+	color: var(--sapButton_Lite_TextColor);
 
 	&:hover {
-		background-color: var(--reltio-color-surface-2);
+		background-color: var(--sapButton_Lite_Hover_Background);
 	}
 }
 
@@ -104,7 +104,7 @@
 	color: inherit;
 
 	&:hover {
-		background-color: var(--reltio-color-surface-2);
+		background-color: var(--sapButton_Lite_Hover_Background);
 	}
 }
 

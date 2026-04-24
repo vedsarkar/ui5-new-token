@@ -1,0 +1,27 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const CommandLineInterfaces = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<path d="M14.2498 12.4998C14.6638 12.5 14.9998 12.8357 14.9998 13.2498C14.9996 13.6637 14.6637 13.9996 14.2498 13.9998H7.74979C7.33571 13.9998 7 13.6638 6.99979 13.2498C6.99979 12.8356 7.33557 12.4998 7.74979 12.4998H14.2498ZM1.20487 2.23513C1.48921 1.93406 1.96327 1.92058 2.26444 2.20486L6.76444 6.45193C7.07345 6.74406 7.07359 7.25061 6.76444 7.54275L2.26444 11.7947C1.9635 12.0789 1.48935 12.065 1.20487 11.7644C0.920518 11.4634 0.934125 10.9893 1.23514 10.7049L5.15701 6.99685L1.23514 3.29471C0.93407 3.01037 0.920596 2.5363 1.20487 2.23513Z" />
+		</svg>
+	);
+};

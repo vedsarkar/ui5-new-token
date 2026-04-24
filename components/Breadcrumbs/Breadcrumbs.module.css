@@ -11,7 +11,7 @@
 .separator {
 	display: inline-flex;
 	align-items: center;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 	font-size: 14px;
 	user-select: none;
 }
@@ -20,7 +20,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 	text-decoration: none;
 	font-size: 14px;
 	padding: 6px 8px;
@@ -31,12 +31,12 @@
 }
 
 .link:hover {
-	color: var(--reltio-color-text);
-	background-color: var(--reltio-color-bg-transparent-1);
+	color: var(--sapTextColor);
+	background-color: var(--sapNeutralBackground);
 }
 
 .link:focus-visible {
-	outline: 2px solid var(--reltio-color-primary);
+	outline: 2px solid var(--sapContent_FocusColor);
 	outline-offset: 1px;
 	border-radius: 4px;
 }
@@ -45,7 +45,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	color: var(--reltio-color-text);
+	color: var(--sapTextColor);
 	font-size: 14px;
 	font-weight: 600;
 	padding: 6px 8px;

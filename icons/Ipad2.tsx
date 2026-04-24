@@ -1,0 +1,27 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const Ipad2 = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<path d="M14 2.00195V2C15.1046 2 16 2.89543 16 4V11.9502C15.9999 13.0822 15.0822 13.9999 13.9502 14H2.0498C0.917776 13.9999 0.0001055 13.0822 0 11.9502V4C5.30847e-05 2.89548 0.895463 2 2 2V2.00195C2.01656 2.00156 2.03315 2 2.0498 2H13.9502L14 2.00195ZM2 3.50391V12.4951C5.6553 12.4951 10.0554 12.4951 14 12.4951V3.50391C10.0545 3.50262 2 3.50391 2 3.50391Z" />
+		</svg>
+	);
+};

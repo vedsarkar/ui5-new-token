@@ -7,7 +7,14 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!public/mockServiceWorker.js", "!.claude"]
+		"includes": [
+			"**",
+			"!public/mockServiceWorker.js",
+			"!.claude",
+			"!public/themes",
+			"!public/fonts.css",
+			"!tokens/Tokens.stories.tsx"
+		]
 	},
 	"formatter": {
 		"enabled": true,

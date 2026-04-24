@@ -21,7 +21,7 @@
 	height: 26px;
 	border: none;
 	background: none;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 	cursor: pointer;
 }
 

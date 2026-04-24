@@ -31,26 +31,53 @@ export const Chart = ({
 	const containerRef = useRef<HTMLDivElement>(null);
 	const chartRef = useRef<echartsCore.ECharts | null>(null);
 	const rendererRef = useRef(renderer);
+	const optionRef = useRef(option);
+	optionRef.current = option;
 
 	useEffect(() => {
 		const container = containerRef.current;
 		if (!container) return;
 
-		const theme = buildTheme(container);
-		const chart = echartsCore.init(container, theme, {
-			renderer: rendererRef.current,
-		});
-		chartRef.current = chart;
+		let disposed = false;
+		let resizeObserver: ResizeObserver | null = null;
+		let rafId: number | undefined;
 
-		const resizeObserver = new ResizeObserver(() => {
-			chart.resize();
-		});
-		resizeObserver.observe(container);
+		const init = () => {
+			if (disposed) return;
+
+			// Theme CSS is loaded async by ThemeProvider — if tokens are
+			// not yet available, defer until the next frame.
+			const probe = getComputedStyle(container)
+				.getPropertyValue("--sapBrandColor")
+				.trim();
+			if (!probe) {
+				rafId = requestAnimationFrame(init);
+				return;
+			}
+
+			const theme = buildTheme(container);
+			const chart = echartsCore.init(container, theme, {
+				renderer: rendererRef.current,
+			});
+			chartRef.current = chart;
+			chart.setOption(optionRef.current);
+
+			resizeObserver = new ResizeObserver(() => {
+				chart.resize();
+			});
+			resizeObserver.observe(container);
+		};
+
+		init();
 
 		return () => {
-			resizeObserver.disconnect();
-			chart.dispose();
-			chartRef.current = null;
+			disposed = true;
+			if (rafId !== undefined) cancelAnimationFrame(rafId);
+			resizeObserver?.disconnect();
+			if (chartRef.current) {
+				chartRef.current.dispose();
+				chartRef.current = null;
+			}
 		};
 	}, []);
 

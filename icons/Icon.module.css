@@ -32,21 +32,21 @@
 }
 
 .primary {
-	color: var(--reltio-color-primary);
+	color: var(--sapBrandColor);
 }
 
 .secondary {
-	color: var(--reltio-color-secondary);
+	color: var(--sapNeutralColor);
 }
 
 .success {
-	color: var(--reltio-color-success);
+	color: var(--sapPositiveColor);
 }
 
 .warning {
-	color: var(--reltio-color-warning);
+	color: var(--sapCriticalColor);
 }
 
 .error {
-	color: var(--reltio-color-error);
+	color: var(--sapNegativeColor);
 }

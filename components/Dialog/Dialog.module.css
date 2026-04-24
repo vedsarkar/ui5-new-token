@@ -5,13 +5,11 @@
 	max-height: min(480px, calc(100vh - 48px));
 	padding: 16px;
 	gap: 12px;
-	border: 1px solid var(--reltio-color-border-2);
+	border: 1px solid var(--sapField_BorderColor);
 	border-radius: 16px;
-	background: var(--reltio-color-surface-2);
-	color: var(--reltio-color-text);
-	box-shadow:
-		0 8px 32px var(--reltio-color-shadow-4),
-		0 2px 8px var(--reltio-color-shadow-2);
+	background: var(--sapBackgroundColor);
+	color: var(--sapTextColor);
+	box-shadow: var(--sapContent_Shadow2);
 	opacity: 0;
 	pointer-events: none;
 }
@@ -22,7 +20,7 @@
 }
 
 .root::backdrop {
-	background: var(--reltio-color-bg-modal);
+	background: var(--sapBlockLayer_Background);
 	opacity: 0;
 	pointer-events: none;
 }
@@ -93,17 +91,17 @@
 	border: none;
 	border-radius: 8px;
 	background: transparent;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 	cursor: pointer;
 	transition: background-color 150ms ease;
 
 	&:hover {
-		background: var(--reltio-color-bg-transparent-1);
-		color: var(--reltio-color-text);
+		background: var(--sapNeutralBackground);
+		color: var(--sapTextColor);
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--reltio-color-primary);
+		outline: 2px solid var(--sapContent_FocusColor);
 		outline-offset: 1px;
 	}
 }
@@ -121,7 +119,7 @@
 	flex: 1 1 auto;
 	overflow-y: auto;
 	padding: 24px;
-	background: var(--reltio-color-surface-1);
+	background: var(--sapGroup_ContentBackground);
 	border-radius: 12px;
-	border: 1px solid var(--reltio-color-border-1);
+	border: 1px solid var(--sapGroup_ContentBorderColor);
 }

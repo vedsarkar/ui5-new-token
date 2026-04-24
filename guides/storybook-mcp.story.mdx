@@ -1,0 +1,224 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/Storybook MCP" />
+
+# Storybook MCP
+
+The Reltio Design Platform publishes a remote [Model Context Protocol](https://modelcontextprotocol.io/) server powered by [Storybook MCP](https://storybook.js.org/blog/storybook-mcp-for-react/). It gives AI agents direct access to every component, story, design token, and API contract documented in this workspace — no copy-paste, no guesswork.
+
+```
+https://reltio.design/mcp
+```
+
+> **What does it do?** The MCP server exposes Storybook documentation and stories as structured context that AI coding agents can discover, read, preview, and test — the same content you browse here, but machine-readable.
+
+## Available Tools
+
+<table>
+	<thead>
+		<tr>
+			<th>Tool</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>list-all-documentation</code></td>
+			<td>Returns the full index of all documented components, stories, guides, and API references</td>
+		</tr>
+		<tr>
+			<td><code>get-documentation</code></td>
+			<td>Fetches the full documentation page for a specific component or guide</td>
+		</tr>
+		<tr>
+			<td><code>get-documentation-for-story</code></td>
+			<td>Retrieves documentation scoped to a single story variant</td>
+		</tr>
+		<tr>
+			<td><code>preview-stories</code></td>
+			<td>Returns live preview URLs for component stories</td>
+		</tr>
+		<tr>
+			<td><code>run-story-tests</code></td>
+			<td>Executes interaction and accessibility tests for stories and streams the results</td>
+		</tr>
+	</tbody>
+</table>
+
+## Setup
+
+### Claude Code
+
+Create a `.mcp.json` file in the root of your project:
+
+```json
+{
+  "mcpServers": {
+    "reltio-design": {
+      "type": "http",
+      "url": "https://reltio.design/mcp"
+    }
+  }
+}
+```
+
+Or add it via the CLI:
+
+```bash
+claude mcp add reltio-design --type http --url https://reltio.design/mcp
+```
+
+The server will be available in all Claude Code sessions within that project.
+
+### Cursor
+
+Add the server to `.cursor/mcp.json` in your project root:
+
+```json
+{
+  "mcpServers": {
+    "reltio-design": {
+      "type": "http",
+      "url": "https://reltio.design/mcp"
+    }
+  }
+}
+```
+
+After saving, open Cursor Settings > MCP and verify "reltio-design" appears in the server list with a green indicator.
+
+### VS Code (Copilot)
+
+VS Code has built-in MCP support for GitHub Copilot Chat. Add the server to `.vscode/mcp.json` in your project root:
+
+```json
+{
+  "servers": {
+    "reltio-design": {
+      "type": "http",
+      "url": "https://reltio.design/mcp"
+    }
+  }
+}
+```
+
+The MCP tools will be available in Copilot Chat agent mode.
+
+### Windsurf
+
+Add the server to `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "reltio-design": {
+      "type": "http",
+      "url": "https://reltio.design/mcp"
+    }
+  }
+}
+```
+
+### Claude.ai (Web)
+
+Claude.ai supports remote MCP servers through the Integrations settings.
+
+1. Open [claude.ai](https://claude.ai) and go to **Settings > Integrations**
+2. Click **Add integration** and select **Custom MCP**
+3. Enter the server URL: `https://reltio.design/mcp`
+4. Name it **Reltio Design**
+5. Save — the tools will be available in all new conversations
+
+### ChatGPT
+
+ChatGPT supports MCP servers in its desktop app.
+
+1. Open ChatGPT and go to **Settings > Tools**
+2. Click **Add tool** and select **Connect MCP server**
+3. Enter the URL: `https://reltio.design/mcp`
+4. Name it **Reltio Design** and save
+
+### OpenAI Codex
+
+Codex reads MCP configuration from `codex.json` in your project root:
+
+```json
+{
+  "mcpServers": {
+    "reltio-design": {
+      "type": "http",
+      "url": "https://reltio.design/mcp"
+    }
+  }
+}
+```
+
+### Amazon Q Developer
+
+Amazon Q supports MCP servers in both CLI and IDE modes. Add to `.amazonq/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "reltio-design": {
+      "type": "http",
+      "url": "https://reltio.design/mcp"
+    }
+  }
+}
+```
+
+### Any MCP-Compatible Client
+
+The server uses the standard HTTP (Streamable HTTP) transport. Any client that supports remote MCP servers can connect using the URL:
+
+```
+https://reltio.design/mcp
+```
+
+If your client uses `npx mcp-add`, the one-liner is:
+
+```bash
+npx mcp-add --type http --url "https://reltio.design/mcp" --scope project
+```
+
+## What Agents Can Do
+
+Once connected, an AI agent can use the Reltio Design MCP server to:
+
+- **Discover components** — list all available components, their props, and variants before writing code
+- **Read documentation** — fetch the full docs for a specific component, including usage guidelines and API reference
+- **Preview stories** — get live preview URLs to visually verify component states
+- **Run tests** — execute interaction and accessibility tests directly from the chat
+- **Follow conventions** — understand the project's design tokens, typography, icon library, and coding patterns
+
+### Example Prompts
+
+Once the MCP server is connected, try asking your AI agent:
+
+> "List all available Reltio components"
+
+> "Show me the documentation for the Button component"
+
+> "What props does the Dialog component accept?"
+
+> "Run accessibility tests for the Checkbox stories"
+
+> "What design tokens are available for colors?"
+
+## Local Development
+
+When working on the Reltio Design Platform itself, you can connect to the local Storybook dev server instead of the remote endpoint. Start Storybook first:
+
+```bash
+npm run dev
+```
+
+Then use `http://localhost:6006/mcp` as the URL in any of the configurations above. The `.mcp.json` in this repository already points to the local server for development.
+
+## Resources
+
+- [Storybook MCP announcement](https://storybook.js.org/blog/storybook-mcp-for-react/) — how Storybook MCP works under the hood
+- [Model Context Protocol](https://modelcontextprotocol.io/) — the open standard specification
+- [MCP Clients](https://modelcontextprotocol.io/clients) — full list of MCP-compatible applications
+- [Spec-driven development](?path=/docs/guides-spec-driven-development--docs) — how we use specifications in this project

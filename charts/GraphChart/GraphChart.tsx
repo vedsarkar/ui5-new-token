@@ -19,24 +19,22 @@ const MIN_SIZE = 20;
 const MAX_SIZE = 60;
 const BASELINE_NODE_COUNT = 15;
 const PALETTE_TOKENS = [
-	"primary",
-	"success",
-	"warning",
-	"orange",
-	"pink",
-	"purple",
-	"aqua-font",
-	"lime",
-	"error",
+	"--sapBrandColor",
+	"--sapPositiveElementColor",
+	"--sapCriticalColor",
+	"--sapCriticalElementColor",
+	"--sapAccentColor3",
+	"--sapAccentColor4",
+	"--sapAccentColor7",
+	"--sapAccentColor8",
+	"--sapNegativeElementColor",
 ];
 
 const EMPTY_OPTION: EChartsOption = {};
 
 function readPalette(element: HTMLElement): string[] {
 	const computed = getComputedStyle(element);
-	return PALETTE_TOKENS.map((token) =>
-		computed.getPropertyValue(`--reltio-color-${token}`).trim(),
-	);
+	return PALETTE_TOKENS.map((token) => computed.getPropertyValue(token).trim());
 }
 
 function normalizeSize(
@@ -189,8 +187,25 @@ export const GraphChart = ({
 	const [palette, setPalette] = useState<string[]>([]);
 
 	useLayoutEffect(() => {
-		if (!rootRef.current) return;
-		setPalette(readPalette(rootRef.current));
+		const el = rootRef.current;
+		if (!el) return;
+
+		let rafId: number | undefined;
+		const read = () => {
+			const probe = getComputedStyle(el)
+				.getPropertyValue("--sapBrandColor")
+				.trim();
+			if (!probe) {
+				rafId = requestAnimationFrame(read);
+				return;
+			}
+			setPalette(readPalette(el));
+		};
+		read();
+
+		return () => {
+			if (rafId !== undefined) cancelAnimationFrame(rafId);
+		};
 	}, []);
 
 	const hasData =

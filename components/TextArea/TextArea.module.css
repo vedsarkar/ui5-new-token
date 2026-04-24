@@ -18,24 +18,24 @@
 	margin: 0;
 	box-sizing: border-box;
 	border-radius: 4px;
-	outline: 1px solid var(--reltio-color-border-3);
+	outline: 1px solid var(--sapField_BorderColor);
 	cursor: text;
 	transition:
 		outline-color 0.1s ease,
 		outline-width 0.1s ease;
-	background: var(--reltio-color-surface-1);
+	background: var(--sapField_Background);
 }
 
 .root:focus-within .inputContainer {
-	outline: 2px solid var(--reltio-color-primary);
+	outline: 2px solid var(--sapBrandColor);
 }
 
 .root[data-error="true"] .inputContainer {
-	outline-color: var(--reltio-color-error);
+	outline-color: var(--sapNegativeElementColor);
 }
 
 .root[data-error="true"]:focus-within .inputContainer {
-	outline: 2px solid var(--reltio-color-error);
+	outline: 2px solid var(--sapNegativeElementColor);
 }
 
 .root[data-disabled="true"] .inputContainer {
@@ -59,22 +59,22 @@
 	font-family: inherit;
 	line-height: 1.5;
 	resize: none;
-	color: var(--reltio-color-text);
+	color: var(--sapField_TextColor);
 	padding: 16px;
 	overflow-y: auto;
 	field-sizing: content;
 }
 
 .textarea::placeholder {
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapField_PlaceholderTextColor);
 }
 
 .root:focus-within .textarea::placeholder {
-	color: var(--reltio-color-primary);
+	color: var(--sapBrandColor);
 }
 
 .root[data-error="true"] .textarea::placeholder {
-	color: var(--reltio-color-error);
+	color: var(--sapNegativeElementColor);
 }
 
 .textarea:disabled {
@@ -88,10 +88,10 @@
 	left: 8px;
 	transform: translateY(-50%);
 	transition: all 0.2s ease;
-	background-color: var(--reltio-color-surface-1);
+	background-color: var(--sapField_Background);
 	padding: 4px 8px;
 	border-radius: 4px;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 	z-index: 2;
 	font-size: 16px;
 	pointer-events: none;
@@ -110,21 +110,21 @@
 }
 
 .root:focus-within .label {
-	color: var(--reltio-color-primary);
+	color: var(--sapBrandColor);
 }
 
 .root[data-error="true"] .label {
-	color: var(--reltio-color-error);
+	color: var(--sapNegativeElementColor);
 }
 
 .supportingText {
 	font-size: 12px;
 	padding: 4px 16px;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 }
 
 .root[data-error="true"] .supportingText {
-	color: var(--reltio-color-error);
+	color: var(--sapNegativeElementColor);
 }
 
 .toolbar {

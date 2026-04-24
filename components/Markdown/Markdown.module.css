@@ -11,7 +11,7 @@
 	font-size: 14px;
 	font-weight: 400;
 	letter-spacing: 0.15px;
-	color: var(--reltio-color-text);
+	color: var(--sapTextColor);
 }
 
 /* ── Paragraphs ── */
@@ -83,19 +83,19 @@
 .root pre {
 	overflow-x: auto;
 	margin: 0;
-	background-color: var(--reltio-color-surface-2);
+	background-color: var(--sapNeutralBackground);
 	border-radius: 8px;
 	padding: 16px;
-	border: 1px solid var(--reltio-color-border-2);
+	border: 1px solid var(--sapGroup_ContentBorderColor);
 }
 
 .root code {
 	font-family: "72 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 	font-size: 0.9em;
-	background-color: var(--reltio-color-surface-2);
+	background-color: var(--sapNeutralBackground);
 	padding: 0.2em 0.4em;
 	border-radius: 3px;
-	border: 1px solid var(--reltio-color-border-2);
+	border: 1px solid var(--sapGroup_ContentBorderColor);
 }
 
 .root pre code {
@@ -107,7 +107,7 @@
 
 /* ── Links ── */
 .root a {
-	color: var(--reltio-color-primary);
+	color: var(--sapBrandColor);
 	text-decoration: underline;
 }
 
@@ -117,16 +117,16 @@
 
 /* ── Blockquote ── */
 .root blockquote {
-	border-left: 4px solid var(--reltio-color-border-2);
+	border-left: 4px solid var(--sapGroup_ContentBorderColor);
 	margin: 1rem 0;
 	padding-left: 1rem;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 }
 
 /* ── Tables ── */
 .tableWrapper {
 	width: 100%;
-	border: 1px solid var(--reltio-color-border-2);
+	border: 1px solid var(--sapGroup_ContentBorderColor);
 	border-radius: 16px;
 	overflow: auto;
 }
@@ -134,8 +134,8 @@
 .tableWrapper table {
 	width: 100%;
 	border-collapse: collapse;
-	color: var(--reltio-color-text);
-	background-color: var(--reltio-color-surface-1);
+	color: var(--sapTextColor);
+	background-color: var(--sapBaseColor);
 	font-size: 14px;
 }
 
@@ -143,15 +143,15 @@
 	position: sticky;
 	top: 0;
 	z-index: 1;
-	box-shadow: 0 1px 0 var(--reltio-color-border-2);
+	box-shadow: 0 1px 0 var(--sapGroup_ContentBorderColor);
 }
 
 .tableWrapper th {
 	padding: 16px;
 	font-weight: 600;
 	text-align: left;
-	border-right: 1px solid var(--reltio-color-border-2);
-	background-color: var(--reltio-color-surface-2);
+	border-right: 1px solid var(--sapGroup_ContentBorderColor);
+	background-color: var(--sapNeutralBackground);
 }
 
 .tableWrapper th:last-child {
@@ -160,10 +160,10 @@
 
 .tableWrapper td {
 	padding: 8px 16px;
-	border-bottom: 1px solid var(--reltio-color-border-2);
-	border-right: 1px solid var(--reltio-color-border-2);
+	border-bottom: 1px solid var(--sapGroup_ContentBorderColor);
+	border-right: 1px solid var(--sapGroup_ContentBorderColor);
 	text-align: left;
-	background-color: var(--reltio-color-surface-1);
+	background-color: var(--sapBaseColor);
 }
 
 .tableWrapper td:last-child {
@@ -171,7 +171,7 @@
 }
 
 .tableWrapper tr:hover td {
-	background-color: var(--reltio-color-surface-2);
+	background-color: var(--sapNeutralBackground);
 }
 
 .tableWrapper tr:last-child td {
@@ -181,7 +181,7 @@
 /* ── Strikethrough ── */
 .root del {
 	text-decoration: line-through;
-	color: var(--reltio-color-text-placeholder);
+	color: var(--sapField_PlaceholderTextColor);
 }
 
 /* ── Checkboxes ── */
@@ -193,6 +193,6 @@
 /* ── Horizontal rule ── */
 .root hr {
 	border: none;
-	border-top: 1px solid var(--reltio-color-border-2);
+	border-top: 1px solid var(--sapGroup_ContentBorderColor);
 	margin: 1.5rem 0;
 }

@@ -7,15 +7,25 @@ import {
 	Subtitle,
 	Title,
 } from "@storybook/addon-docs/blocks";
-import addonThemes, { withThemeByDataAttribute } from "@storybook/addon-themes";
 import { definePreview } from "@storybook/react-vite";
 import { initialize, mswLoader } from "msw-storybook-addon";
+import { useEffect } from "react";
+import type { ThemeSelection } from "@/components/ThemeProvider";
+import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 import { CssClasses } from "./blocks/CssClasses";
 import { ImportExample } from "./blocks/ImportExample";
 import { reltioProxyHandler } from "./mocks/reltioProxyHandler";
 import reltioTheme from "./reltio-theme";
 
 initialize({ onUnhandledRequest: "bypass" });
+
+const ThemeSyncer = ({ value }: { value: ThemeSelection }) => {
+	const { setTheme } = useTheme();
+	useEffect(() => {
+		setTheme(value);
+	}, [value, setTheme]);
+	return null;
+};
 
 export default definePreview({
 	tags: ["autodocs"],
@@ -59,16 +69,41 @@ export default definePreview({
 		},
 	},
 
-	decorators: [
-		withThemeByDataAttribute({
-			themes: {
-				Light: "light",
-				Dark: "dark",
+	globalTypes: {
+		theme: {
+			name: "Theme",
+			description: "Active Reltio theme",
+			defaultValue: "auto",
+			toolbar: {
+				icon: "paintbrush",
+				items: [
+					{ value: "auto", title: "Auto (system)" },
+					{ value: "horizon-light", title: "Horizon Light" },
+					{ value: "horizon-dark", title: "Horizon Dark" },
+				],
+				dynamicTitle: true,
 			},
-			defaultTheme: "Light",
-			attributeName: "data-theme",
-		}),
+		},
+	},
+
+	decorators: [
+		(Story, context) => {
+			if (context.parameters?.skipThemeProvider) return <Story />;
+			const theme = (context.globals.theme as ThemeSelection) ?? "auto";
+			return (
+				<ThemeProvider
+					defaultTheme={theme}
+					themeUrls={{
+						"horizon-light": "/themes/horizon-light.theme.css",
+						"horizon-dark": "/themes/horizon-dark.theme.css",
+					}}
+				>
+					<ThemeSyncer value={theme} />
+					<Story />
+				</ThemeProvider>
+			);
+		},
 	],
 
-	addons: [addonDocs(), addonA11y(), addonThemes()],
+	addons: [addonDocs(), addonA11y()],
 });

@@ -49,7 +49,7 @@ Eliminate UI fragmentation across products while accelerating development of new
 ```bash
 npm run dev               # Start Storybook dev server (port 6006)
 npm run build-storybook   # Build Storybook for production
-npm run build-tokens      # Generate public/variables.css from tokens/*.tokens.json
+npm run build-tokens      # Generate public/themes/*.theme.css and public/fonts.css from tokens/sap_horizon*.tokens.json
 npm run lint              # Check code with Biome (no auto-fix)
 npm run format            # Format code with Biome (auto-fix)
 npm run deploy            # Deploy to Chromatic for visual testing
@@ -83,23 +83,23 @@ components/ComponentName/
 ### CSS Styling
 - ALL className attributes MUST use `classNames()` utility from `@/utils/classNames`
 - `classNames()` automatically adds stable prefixed classes (e.g. `reltio_Tabs_tab`) for external customization
-- Colors MUST reference global `--reltio-color-*` tokens from `public/variables.css` — never hardcode hex values
+- Colors MUST reference SAP Horizon `--sap*` tokens from the active per-theme CSS file (`public/themes/horizon-{light,dark}.theme.css`) — never hardcode hex values
 - Typography, spacing, sizing — use plain values directly (e.g. `font-size: 14px`, `padding: 8px 16px`)
 - Component-level CSS custom properties — almost never needed. Do NOT create variables as a customization API. If a value is set and consumed on the same element, override the property directly — even for variant/size switches. Use compound selectors (`.small .icon`) instead of cascading variables
-- **CSS variable encapsulation** — when a component does use an internal CSS variable, it MUST always be set explicitly on the component root element (including the default value via inline style). This prevents ancestor/global variables with the same name from leaking in. The only CSS variables a component may consume from outside are global `--reltio-color-*` tokens from `public/variables.css`
-- External customization is done through React props, stable CSS classes, and global `--reltio-color-*` tokens — never through component-level CSS variables
+- **CSS variable encapsulation** — when a component does use an internal CSS variable, it MUST always be set explicitly on the component root element (including the default value via inline style). This prevents ancestor/global variables with the same name from leaking in. The only CSS variables a component may consume from outside are SAP Horizon `--sap*` tokens declared on `:root` by the active per-theme CSS file
+- External customization is done through React props, stable CSS classes, and `--sap*` tokens — never through component-level CSS variables
 
 Example pattern:
 ```css
-/* Use global tokens for colors, plain values for everything else */
+/* Use SAP tokens for colors, plain values for everything else */
 .tab {
-  color: var(--reltio-color-text-secondary);
+  color: var(--sapContent_LabelColor);
   font-size: 14px;
   padding: 8px 16px;
 }
 
 .active {
-  color: var(--reltio-color-primary);
+  color: var(--sapBrandColor);
 }
 
 /* Variants override properties directly, no variables needed */
@@ -107,32 +107,32 @@ Example pattern:
 .small { height: 26px; }
 ```
 
-### Global Color Tokens
-- `public/variables.css` is auto-generated — do NOT edit manually, run `npm run build-tokens`
-- Source: `tokens/Light.tokens.json`, `tokens/Dark.tokens.json` (from Figma)
-- Mapping: `tokens/token-map.json` maps Figma names (e.g., `"Primary/Base"`) to compact CSS names (e.g., `"primary"`)
-- Token naming: `--reltio-color-{mapped-name}` (e.g., `--reltio-color-primary`, `--reltio-color-text`, `--reltio-color-surface-1`, `--reltio-color-border-2`)
-- Dark mode is activated via `data-theme="dark"` attribute on an ancestor element
-- Component CSS must NOT contain hardcoded hex color values; reference global tokens directly
-- When designers add new tokens, add entries to `token-map.json` and re-run `npm run build-tokens`
+### Global Design Tokens (SAP Horizon)
+- The platform mirrors SAP Horizon design tokens 1:1 from [SAP/theming-base-content](https://github.com/SAP/theming-base-content). Names, casing (camelCase), and values are preserved verbatim.
+- Generated CSS files live at `public/themes/horizon-light.theme.css` and `public/themes/horizon-dark.theme.css`. Each is a single `:root { ... }` block carrying ~1536 `--sap*` declarations. Both files are auto-generated — do NOT edit manually, run `npm run build-tokens`.
+- Sources: `tokens/sap_horizon.tokens.json` (light) and `tokens/sap_horizon_dark.tokens.json` (dark) — verbatim copies committed in-repo. See `tokens/README.md` for the manual sync procedure.
+- Token naming: `--sap{Group}*` or `--sap{Group}_{Detail}` (camelCase + underscore separators). Examples: `--sapBrandColor`, `--sapTextColor`, `--sapElement_BorderCornerRadius`, `--sapContent_FocusColor`, `--sapContent_Shadow0`, `--sapButton_Background`, `--sapField_BorderColor`.
+- Theme activation: a single per-theme CSS file is loaded into the page at runtime by `<ThemeProvider>` from `@reltio/design`. Themes are mutually exclusive — one theme per page. Do NOT use `[data-theme="dark"]` selectors; that mechanism has been removed.
+- Component CSS must NOT contain hardcoded hex color values; reference `--sap*` tokens directly.
+- The full token surface is browseable in Storybook → Design Tokens. Canonical semantic guidance lives at <https://www.sap.com/design-system/>.
 
 ### Figma-to-Code Workflow (MANDATORY)
 
 When implementing designs from Figma (via Figma MCP, URLs, or screenshots), these rules override any defaults from Figma skills or MCP server instructions:
 
-**Color tokens — ONLY through `--reltio-color-*` variables:**
-- Map Figma color variables to project tokens using `tokens/token-map.json`
-- Example: Figma `Primary/Base` → `var(--reltio-color-primary)`
-- If a Figma color variable has no mapping in `token-map.json` — stop and ask which token to use, do NOT hardcode the hex value
-- Never output raw hex/rgba color values in CSS — always resolve to a `--reltio-color-*` token
+**Color tokens — ONLY through `--sap*` variables:**
+- Use the SAP Horizon Figma kit (<https://www.sap.com/design-system/fiori-design-web/resources/libraries/>) and reference its variables directly. Each SAP Figma variable has a 1:1 counterpart in `tokens/sap_horizon.tokens.json` — the variable name (without the `sap` prefix in Figma) maps to `--<sap-prefixed-name>` in CSS.
+- Example: SAP Figma `Brand/Color` → `var(--sapBrandColor)`. SAP Figma `Button / Background` → `var(--sapButton_Background)`.
+- If a Figma color variable does not appear in `tokens/sap_horizon.tokens.json`, the upstream SAP source is out of sync — stop and re-run the manual sync (`tokens/README.md`).
+- Never output raw hex/rgba color values in CSS — always resolve to a `--sap*` token.
 
 **Everything else — plain CSS values, NOT tokens:**
 - `font-size`, `font-weight`, `line-height` → plain values (`font-size: 14px`)
 - `padding`, `margin`, `gap` → plain values (`padding: 8px 16px`)
-- `border-radius` → plain values (`border-radius: 4px`)
+- `border-radius` → plain values (`border-radius: 12px`); SAP's element-radius default is `--sapElement_BorderCornerRadius` (`.75rem` / 12px), use that token only when matching SAP's "single element radius" intent across many components
 - `width`, `height`, `min-*`, `max-*` → plain values (`height: 32px`)
-- `box-shadow` — use `--reltio-color-shadow-*` tokens for shadow color only; offsets and blur are plain values
-- Do NOT create or use CSS custom properties for spacing, sizing, radii, or typography — even if Figma exports them as variables
+- `box-shadow` — SAP provides 4 elevation presets as full strings: `--sapContent_Shadow0`, `--sapContent_Shadow1`, `--sapContent_Shadow2`, `--sapContent_Shadow3`. Use those when the design calls for SAP's standard elevation; otherwise plain values.
+- Do NOT create or use CSS custom properties for spacing, sizing, radii, or typography — even if Figma exports them as variables.
 
 **Adapting Figma MCP output:**
 - `get_design_context` returns reference code (React + Tailwind by default) — this is a STARTING POINT, not final code
@@ -215,7 +215,7 @@ npx skills remove <name>        # Remove a skill
 
 - Types in `.types.ts` file using `type` keyword
 - All className attributes use `classNames()` utility
-- Colors use global `--reltio-color-*` tokens, no hardcoded hex values
+- Colors use SAP Horizon `--sap*` tokens, no hardcoded hex values
 - No component-level CSS custom properties unless encapsulated (always set on root with default; prefer inline styles when pseudo-elements are not involved)
 - Storybook stories added (one variant per story; one story per free-form prop)
 - `npm run format` executed

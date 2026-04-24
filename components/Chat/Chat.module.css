@@ -32,20 +32,20 @@
 	height: 36px;
 	border-radius: 50%;
 	border: none;
-	background: var(--reltio-color-surface-1);
-	box-shadow: 0 2px 8px var(--reltio-color-shadow-2);
-	color: var(--reltio-color-text-secondary);
+	background: var(--sapGroup_ContentBackground);
+	box-shadow: var(--sapContent_Shadow0);
+	color: var(--sapContent_LabelColor);
 	cursor: pointer;
 	transition: background 0.15s ease;
 	flex-shrink: 0;
 }
 
 .scrollToBottom:hover {
-	background: var(--reltio-color-surface-2);
+	background: var(--sapBackgroundColor);
 }
 
 .scrollToBottom:focus-visible {
-	outline: 2px solid var(--reltio-color-primary-transparent-focus);
+	outline: 2px solid var(--sapContent_FocusColor);
 	outline-offset: 2px;
 }
 

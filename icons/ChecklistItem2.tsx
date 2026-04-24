@@ -1,0 +1,27 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const ChecklistItem2 = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<path d="M12.25 1C13.2163 1.00003 13.9997 1.78402 14 2.75063V10.4634C13.9999 11.0535 13.7024 11.6044 13.209 11.9278L8.95898 14.7139C8.37673 15.0954 7.62327 15.0954 7.04102 14.7139L2.79102 11.9278C2.29761 11.6044 2.00014 11.0535 2 10.4634V2.75063C2.00025 1.784 2.78366 1 3.75 1H12.25ZM11.707 4.79434C11.3165 4.40378 10.6835 4.40373 10.293 4.79434L7.5 7.58832L6.20703 6.29489C5.81651 5.90433 5.18346 5.90428 4.79297 6.29489C4.40252 6.68552 4.40256 7.3188 4.79297 7.70946L6.79297 9.71018C7.18348 10.1008 7.81652 10.1008 8.20703 9.71018L11.707 6.20892C12.0975 5.81826 12.0975 5.185 11.707 4.79434Z" />
+		</svg>
+	);
+};

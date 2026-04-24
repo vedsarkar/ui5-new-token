@@ -196,26 +196,33 @@ Underscores are used throughout so the entire class name can be selected with a 
 
 ### Loading the Tokens
 
-Reltio Design publishes all color tokens as CSS custom properties. Include them in your application:
+Reltio Design mirrors the SAP Horizon design-token system 1:1. Activate the active theme by wrapping your React app in `<ThemeProvider>` from `@reltio/design`:
+
+```jsx
+import { ThemeProvider } from "@reltio/design";
+
+<ThemeProvider>
+  <App />
+</ThemeProvider>;
+```
+
+The provider injects the appropriate per-theme stylesheet (`https://reltio.design/themes/horizon-{light,dark}.theme.css`) and registers the SAP 72 `@font-face` rules. After that, every `--sap*` design token is available on `:root` for components and your own CSS.
+
+For non-React consumers (static sites, MDX docs, server-rendered pages without React control over `<head>`), reference the same files via raw CSS:
 
 ```js
-// From the npm package (recommended)
-import "@reltio/design/variables.css";
+// npm subpath import
+import "@reltio/design/themes/horizon-light.css";
 ```
 
 ```html
-<!-- Or from the public CDN -->
-<link rel="stylesheet" href="https://www.reltio.design/variables.css" />
+<!-- or via CDN -->
+<link rel="stylesheet" href="https://reltio.design/themes/horizon-light.theme.css" />
 ```
 
-```css
-/* Or import in CSS */
-@import url("https://www.reltio.design/variables.css");
-```
+### Token Surface
 
-This stylesheet defines all `--reltio-color-*` variables on `:root` (light mode) and `[data-theme="dark"]` (dark mode).
-
-### Available Token Categories
+The full token surface is browseable on the [Design Tokens](?path=/docs/design-tokens--docs) page. Canonical semantic guidance — when to use which token, how SAP's primary / accent / semantic concepts relate, the formal contrast rules — lives at the [SAP Design System site](https://www.sap.com/design-system/). A few of the most-used groups:
 
 <table>
   <thead>
@@ -227,49 +234,37 @@ This stylesheet defines all `--reltio-color-*` variables on `:root` (light mode)
   </thead>
   <tbody>
     <tr>
-      <td>Brand</td>
-      <td><code>--reltio-color-brand-*</code></td>
-      <td><code>brand-blue</code>, <code>brand-cobalt</code>, <code>brand-gold</code></td>
-    </tr>
-    <tr>
-      <td>Surfaces</td>
-      <td><code>--reltio-color-surface-*</code></td>
-      <td><code>surface-1</code> (white), <code>surface-2</code> (grey), <code>surface-3</code></td>
-    </tr>
-    <tr>
-      <td>Backgrounds</td>
-      <td><code>--reltio-color-bg-*</code></td>
-      <td><code>bg-base</code>, <code>bg-tooltip</code>, <code>bg-transparent-1</code></td>
-    </tr>
-    <tr>
-      <td>Borders</td>
-      <td><code>--reltio-color-border-*</code></td>
-      <td><code>border-1</code>, <code>border-2</code>, <code>border-grey-light</code></td>
-    </tr>
-    <tr>
-      <td>Text</td>
-      <td><code>--reltio-color-text-*</code></td>
-      <td><code>text</code>, <code>text-secondary</code>, <code>text-disabled</code></td>
-    </tr>
-    <tr>
-      <td>Primary</td>
-      <td><code>--reltio-color-primary-*</code></td>
-      <td><code>primary</code>, <code>primary-hover</code>, <code>primary-soft</code></td>
+      <td>Brand &amp; foundation</td>
+      <td><code>--sap&#123;Brand,Highlight,Base,Background,Text,Title,Link&#125;*</code></td>
+      <td><code>--sapBrandColor</code>, <code>--sapTextColor</code>, <code>--sapBackgroundColor</code></td>
     </tr>
     <tr>
       <td>Semantic</td>
-      <td><code>--reltio-color-{status}-*</code></td>
-      <td><code>success</code>, <code>error</code>, <code>warning</code> (+ hover, soft, border, font)</td>
+      <td><code>--sap&#123;Negative,Critical,Positive,Informative,Neutral&#125;*</code></td>
+      <td><code>--sapNegativeColor</code>, <code>--sapPositiveTextColor</code>, <code>--sapInformativeBackground</code></td>
     </tr>
     <tr>
-      <td>Shadows</td>
-      <td><code>--reltio-color-shadow-*</code></td>
-      <td><code>shadow-1</code>, <code>shadow-2</code>, <code>shadow-dark</code></td>
+      <td>Element foundations</td>
+      <td><code>--sapElement_*</code></td>
+      <td><code>--sapElement_BorderCornerRadius</code>, <code>--sapElement_Height</code></td>
+    </tr>
+    <tr>
+      <td>Content foundations</td>
+      <td><code>--sapContent_*</code></td>
+      <td><code>--sapContent_FocusColor</code>, <code>--sapContent_LabelColor</code>, <code>--sapContent_Shadow0..3</code></td>
+    </tr>
+    <tr>
+      <td>Per-control parameters</td>
+      <td><code>--sap&#123;Button,Field,Tab,List,Tile,Avatar,Chart,Shell,…&#125;_*</code></td>
+      <td><code>--sapButton_Background</code>, <code>--sapField_BorderColor</code></td>
+    </tr>
+    <tr>
+      <td>Indication / accent palettes</td>
+      <td><code>--sapIndicationColor_1..10</code>, <code>--sapAccentColor1..10</code></td>
+      <td>Industry- and product-specific accents</td>
     </tr>
   </tbody>
 </table>
-
-Browse all tokens with live previews on the [Color Tokens](?path=/docs/tokens-color-tokens--docs) page.
 
 ### Using Tokens in Your Application
 
@@ -277,64 +272,46 @@ Reference tokens in your own CSS to stay consistent with the design system:
 
 ```css
 .my-card {
-  background: var(--reltio-color-surface-1);
-  border: 1px solid var(--reltio-color-border-2);
-  color: var(--reltio-color-text);
+  background: var(--sapBaseColor);
+  border: 1px solid var(--sapField_BorderColor);
+  border-radius: var(--sapElement_BorderCornerRadius);
+  color: var(--sapTextColor);
 }
 
 .my-card-title {
-  color: var(--reltio-color-primary);
+  color: var(--sapBrandColor);
 }
 ```
 
-These styles automatically adapt when the user switches to dark mode.
+When the active theme switches (light ↔ dark), every `--sap*` token re-resolves to its theme-specific value and your component re-renders automatically.
 
-### Overriding Tokens
+### Theming model
 
-Override any token on `:root` to rebrand the entire design system:
+Themes are mutually exclusive at runtime — only one is loaded into the page at a time, via a `<link rel="stylesheet">` injected by `<ThemeProvider>`. Switch with the `useTheme` hook:
 
-```css
-:root {
-  --reltio-color-primary: #e91e63;
-  --reltio-color-primary-hover: #c2185b;
-}
+```jsx
+import { useTheme } from "@reltio/design";
+
+const ToggleButton = () => {
+  const { resolved, setTheme } = useTheme();
+  return (
+    <button type="button" onClick={() => setTheme(resolved === "horizon-dark" ? "horizon-light" : "horizon-dark")}>
+      Switch to {resolved === "horizon-dark" ? "light" : "dark"}
+    </button>
+  );
+};
 ```
 
-Or scope overrides to a specific section of your page:
-
-```css
-.partner-embed {
-  --reltio-color-primary: #00897b;
-  --reltio-color-primary-hover: #00695c;
-}
-```
-
-Every component inside `.partner-embed` picks up the new primary color through the CSS cascade.
-
-### Dark Mode
-
-Dark mode activates via the `data-theme="dark"` attribute on any ancestor element:
-
-```html
-<!-- Entire page in dark mode -->
-<html data-theme="dark">
-
-<!-- Or a specific section -->
-<div data-theme="dark">
-  <Tabs items={items} value={active} />
-</div>
-```
-
-The `variables.css` stylesheet includes all dark mode overrides under `[data-theme="dark"]`. No additional configuration is needed.
+The previous `[data-theme="dark"]` attribute mechanism — and the corresponding ability to nest themes inside a subtree — is no longer supported. One theme per page; this aligns with the SAP UI5 / Fundamental Library Styles convention.
 
 ## Combining Both Approaches
 
-For maximum flexibility, combine global tokens with stable class selectors:
+For maximum flexibility, combine SAP token references with stable class selectors:
 
 ```css
-/* Override the primary color for the entire app */
+/* Override the brand color for the entire app */
 :root {
-  --reltio-color-primary: #e91e63;
+  --sapBrandColor: #e91e63;
 }
 
 /* Then fine-tune a specific component */
@@ -348,6 +325,8 @@ For maximum flexibility, combine global tokens with stable class selectors:
 }
 ```
 
+> **Note on `:root` overrides.** The active per-theme stylesheet declares all `--sap*` values on `:root` too. Your override needs to load **after** the per-theme file so the cascade resolves in your favour — when using `<ThemeProvider>`, place your global CSS import after the React entry point that mounts the provider, or use a more specific selector than `:root`.
+
 ## Quick Reference
 
 <table>
@@ -360,9 +339,9 @@ For maximum flexibility, combine global tokens with stable class selectors:
   </thead>
   <tbody>
     <tr>
-      <td>Change all primary-colored elements</td>
-      <td>Override CSS token</td>
-      <td><code>--reltio-color-primary: #e91e63</code></td>
+      <td>Change the brand colour everywhere</td>
+      <td>Override SAP token on <code>:root</code></td>
+      <td><code>--sapBrandColor: #e91e63</code></td>
     </tr>
     <tr>
       <td>Change a specific component's style</td>
@@ -370,19 +349,14 @@ For maximum flexibility, combine global tokens with stable class selectors:
       <td><code>.reltio_Button_root &#123; ... &#125;</code></td>
     </tr>
     <tr>
-      <td>Change styles in one section only</td>
-      <td>Scoped token override</td>
-      <td><code>.sidebar &#123; --reltio-color-primary: teal &#125;</code></td>
-    </tr>
-    <tr>
-      <td>Enable dark mode</td>
-      <td>Data attribute</td>
-      <td><code>data-theme="dark"</code></td>
+      <td>Switch theme</td>
+      <td><code>useTheme().setTheme(...)</code></td>
+      <td><code>setTheme("horizon-dark")</code></td>
     </tr>
     <tr>
       <td>Use design tokens in your own CSS</td>
       <td>Reference tokens</td>
-      <td><code>color: var(--reltio-color-text)</code></td>
+      <td><code>color: var(--sapTextColor)</code></td>
     </tr>
   </tbody>
 </table>

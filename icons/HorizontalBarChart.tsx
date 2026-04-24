@@ -1,0 +1,27 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const HorizontalBarChart = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<path d="M1.75 1C2.16421 1 2.5 1.33579 2.5 1.75V13.25C2.5 13.3881 2.61193 13.5 2.75 13.5H14.25C14.6642 13.5 15 13.8358 15 14.25C15 14.6642 14.6642 15 14.25 15H2.75C1.7835 15 1 14.2165 1 13.25V1.75C1 1.33579 1.33579 1 1.75 1ZM8.25 10.5C8.66421 10.5 9 10.8358 9 11.25C9 11.6642 8.66421 12 8.25 12H4.75C4.33579 12 4 11.6642 4 11.25C4 10.8358 4.33579 10.5 4.75 10.5H8.25ZM11.25 6.5C11.6642 6.5 12 6.83579 12 7.25C12 7.66421 11.6642 8 11.25 8H4.75C4.33579 8 4 7.66421 4 7.25C4 6.83579 4.33579 6.5 4.75 6.5H11.25ZM14.25 2C14.6642 2 15 2.33579 15 2.75C15 3.16421 14.6642 3.5 14.25 3.5H4.75C4.33579 3.5 4 3.16421 4 2.75C4 2.33579 4.33579 2 4.75 2H14.25Z" />
+		</svg>
+	);
+};

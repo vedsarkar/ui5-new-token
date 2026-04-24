@@ -1,0 +1,27 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const CollapseGroup = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<path d="M8.54799 8.23384L12.7951 12.7339C13.0792 13.035 13.0657 13.5092 12.7649 13.7935C12.4638 14.0777 11.9897 14.0641 11.7053 13.7632L8.00306 9.84128L4.29498 13.7632C4.0106 14.0641 3.53647 14.0776 3.23539 13.7935C2.93437 13.509 2.92076 13.035 3.20511 12.7339L7.45715 8.23384C7.74927 7.92494 8.256 7.92451 8.54799 8.23384ZM8.54799 2.23379L12.7951 6.73383C13.0792 7.03494 13.0657 7.5091 12.7649 7.79341C12.4638 8.07763 11.9897 8.06402 11.7053 7.76314L8.00306 3.84123L4.29498 7.76314C4.0106 8.06408 3.53647 8.07755 3.23539 7.79341C2.93437 7.50896 2.92076 7.0349 3.20511 6.73383L7.45715 2.23379C7.74927 1.92489 8.256 1.92446 8.54799 2.23379Z" />
+		</svg>
+	);
+};

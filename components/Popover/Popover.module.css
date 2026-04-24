@@ -10,13 +10,11 @@
 	box-sizing: border-box;
 	margin: 8px;
 	padding: 0;
-	border: 1px solid var(--reltio-color-border-2);
+	border: 1px solid var(--sapField_BorderColor);
 	border-radius: 12px;
-	background: var(--reltio-color-surface-4);
-	color: var(--reltio-color-text);
-	box-shadow:
-		0 4px 16px var(--reltio-color-shadow-2),
-		0 1px 4px var(--reltio-color-shadow-1);
+	background: var(--sapGroup_ContentBackground);
+	color: var(--sapTextColor);
+	box-shadow: var(--sapContent_Shadow1);
 	inset: auto;
 	max-width: calc(100vw - 16px);
 	max-height: calc(100vh - 16px);
@@ -32,7 +30,7 @@
 	align-items: center;
 	gap: 8px;
 	padding: 4px 12px;
-	border-bottom: 1px solid var(--reltio-color-border-1);
+	border-bottom: 1px solid var(--sapGroup_ContentBorderColor);
 	font-weight: 600;
 	font-size: 14px;
 	flex-shrink: 0;
@@ -52,6 +50,6 @@
 	justify-content: flex-end;
 	gap: 8px;
 	padding: 12px;
-	border-top: 1px solid var(--reltio-color-border-1);
+	border-top: 1px solid var(--sapGroup_ContentBorderColor);
 	flex-shrink: 0;
 }

@@ -1,6 +1,6 @@
 .node {
-	background: var(--reltio-color-surface-1);
-	border: 1px solid var(--reltio-color-border-2);
+	background: var(--sapGroup_ContentBackground);
+	border: 1px solid var(--sapField_BorderColor);
 	border-radius: 8px;
 	min-width: 120px;
 	max-width: 300px;
@@ -13,7 +13,7 @@
 	padding: 8px 12px;
 	font-size: 13px;
 	font-weight: 600;
-	color: var(--reltio-color-text);
+	color: var(--sapTextColor);
 	line-height: 1.3;
 }
 
@@ -29,7 +29,7 @@
 
 .divider {
 	height: 1px;
-	background: var(--reltio-color-border-2);
+	background: var(--sapField_BorderColor);
 }
 
 .body {
@@ -85,6 +85,6 @@
 .handle {
 	width: 6px;
 	height: 6px;
-	background: var(--reltio-color-border-2);
-	border: 1px solid var(--reltio-color-surface-1);
+	background: var(--sapField_BorderColor);
+	border: 1px solid var(--sapGroup_ContentBackground);
 }

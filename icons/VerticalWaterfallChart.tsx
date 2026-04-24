@@ -1,0 +1,27 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const VerticalWaterfallChart = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<path d="M1.75 1C2.16421 1 2.5 1.33579 2.5 1.75V13.25C2.5 13.3881 2.61193 13.5 2.75 13.5H14.25C14.6642 13.5 15 13.8358 15 14.25C15 14.6642 14.6642 15 14.25 15H2.75C1.7835 15 1 14.2165 1 13.25V1.75C1 1.33579 1.33579 1 1.75 1ZM4.75 1C5.16421 1 5.5 1.33579 5.5 1.75V11.25C5.5 11.6642 5.16421 12 4.75 12C4.33579 12 4 11.6642 4 11.25V1.75C4 1.33579 4.33579 1 4.75 1ZM13.75 6C14.1642 6 14.5 6.33579 14.5 6.75V10.25C14.5 10.6642 14.1642 11 13.75 11C13.3358 11 13 10.6642 13 10.25V6.75C13 6.33579 13.3358 6 13.75 6ZM10.75 3C11.1642 3 11.5 3.33579 11.5 3.75V8.25C11.5 8.66421 11.1642 9 10.75 9C10.3358 9 10 8.66421 10 8.25V3.75C10 3.33579 10.3358 3 10.75 3ZM7.75 1C8.16421 1 8.5 1.33579 8.5 1.75V3.25C8.5 3.66421 8.16421 4 7.75 4C7.33579 4 7 3.66421 7 3.25V1.75C7 1.33579 7.33579 1 7.75 1Z" />
+		</svg>
+	);
+};

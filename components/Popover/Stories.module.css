@@ -20,12 +20,12 @@
 
 .menuItemDanger {
 	composes: menuItem;
-	color: var(--reltio-color-error);
+	color: var(--sapNegativeElementColor);
 }
 
 .menuDivider {
 	border: none;
-	border-top: 1px solid var(--reltio-color-border-2);
+	border-top: 1px solid var(--sapField_BorderColor);
 	margin: 4px 0;
 }
 

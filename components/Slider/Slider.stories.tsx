@@ -35,7 +35,7 @@ export const Default = meta.story({
 					}}
 					aria-label="Default slider"
 				/>
-				<span style={{ fontSize: 14, color: "var(--reltio-color-text)" }}>
+				<span style={{ fontSize: 14, color: "var(--sapTextColor)" }}>
 					Value: {value}
 				</span>
 			</div>
@@ -65,7 +65,7 @@ export const CustomRange = meta.story({
 					step={1}
 					aria-label="Custom range slider"
 				/>
-				<span style={{ fontSize: 14, color: "var(--reltio-color-text)" }}>
+				<span style={{ fontSize: 14, color: "var(--sapTextColor)" }}>
 					Value: {value}
 				</span>
 			</div>

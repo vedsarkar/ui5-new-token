@@ -6,7 +6,7 @@
 
 .plain {
 	height: 1px;
-	background-color: var(--reltio-color-surface-3);
+	background-color: var(--sapNeutralBackground);
 }
 
 .labeled {
@@ -15,7 +15,7 @@
 	gap: 8px;
 	font-size: 14px;
 	font-weight: 600;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 }
 
 .labeled::before,
@@ -23,7 +23,7 @@
 	content: "";
 	flex: 1;
 	height: 1px;
-	background-color: var(--reltio-color-surface-3);
+	background-color: var(--sapNeutralBackground);
 }
 
 .start::before {

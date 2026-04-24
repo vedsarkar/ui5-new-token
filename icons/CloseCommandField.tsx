@@ -1,0 +1,27 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const CloseCommandField = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<path d="M6.73383 3.20529C7.035 2.921 7.50906 2.93449 7.79341 3.23557C8.07749 3.53675 8.06414 4.01088 7.76313 4.29516L3.84123 7.99738L7.76313 11.7055C8.06396 11.9899 8.07769 12.464 7.79341 12.7651C7.509 13.0658 7.03484 13.0794 6.73383 12.7953L2.23379 8.54329C1.92469 8.2512 1.92466 7.74447 2.23379 7.45245L6.73383 3.20529ZM12.7339 3.20529C13.035 2.921 13.5091 2.93449 13.7935 3.23557C14.0775 3.53675 14.0642 4.01088 13.7632 4.29516L9.84127 7.99738L13.7632 11.7055C14.064 11.9899 14.0777 12.464 13.7935 12.7651C13.509 13.0658 13.0349 13.0794 12.7339 12.7953L8.23384 8.54329C7.92474 8.2512 7.9247 7.74447 8.23384 7.45245L12.7339 3.20529Z" />
+		</svg>
+	);
+};

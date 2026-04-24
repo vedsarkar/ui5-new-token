@@ -11,17 +11,17 @@
 	font-weight: 500;
 	line-height: 20px;
 	letter-spacing: 0.15px;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 	cursor: inherit;
 }
 
 .required .label::after {
 	content: " *";
-	color: var(--reltio-color-error);
+	color: var(--sapNegativeElementColor);
 }
 
 .error .label {
-	color: var(--reltio-color-error);
+	color: var(--sapNegativeElementColor);
 }
 
 /* Input container — pill shape */
@@ -31,7 +31,7 @@
 	align-items: center;
 	gap: 4px;
 	min-height: 40px;
-	border: 1px solid var(--reltio-color-border-3);
+	border: 1px solid var(--sapField_BorderColor);
 	border-radius: 20px;
 	background: transparent;
 	padding: 8px 12px;
@@ -45,29 +45,29 @@
 
 /* Hover */
 .root:hover:not(.disabled):not(.readOnly) .inputContainer {
-	background-color: var(--reltio-color-surface-2);
-	border-color: var(--reltio-color-border-3);
+	background-color: var(--sapField_Hover_Background);
+	border-color: var(--sapField_Hover_BorderColor);
 }
 
 /* Focus — glow shadow */
 .root:focus-within:not(.disabled) .inputContainer {
-	border-color: var(--reltio-color-primary-transparent-focus);
+	border-color: var(--sapField_Focus_BorderColor);
 	box-shadow:
-		0 0 0 2px var(--reltio-color-surface-1),
-		0 0 7px 1px var(--reltio-color-primary);
+		0 0 0 2px var(--sapField_Background),
+		0 0 7px 1px var(--sapBrandColor);
 }
 
 /* Error */
 .error .inputContainer {
-	background-color: var(--reltio-color-error-transparent);
-	border-color: var(--reltio-color-error-border);
+	background-color: var(--sapField_InvalidBackground);
+	border-color: var(--sapField_InvalidColor);
 }
 
 .error:focus-within .inputContainer {
-	border-color: var(--reltio-color-error-border);
+	border-color: var(--sapField_InvalidColor);
 	box-shadow:
-		0 0 0 2px var(--reltio-color-surface-1),
-		0 0 7px 1px var(--reltio-color-error);
+		0 0 0 2px var(--sapField_Background),
+		0 0 7px 1px var(--sapNegativeElementColor);
 }
 
 /* Readonly */
@@ -81,8 +81,8 @@
 }
 
 .disabled .inputContainer {
-	background-color: var(--reltio-color-surface-3);
-	border-color: var(--reltio-color-border-3);
+	background-color: var(--sapField_ReadOnly_Background);
+	border-color: var(--sapField_BorderColor);
 	cursor: not-allowed;
 }
 
@@ -97,13 +97,13 @@
 	line-height: 20px;
 	letter-spacing: 0.17px;
 	font-family: inherit;
-	color: var(--reltio-color-text);
+	color: var(--sapField_TextColor);
 	padding: 2px 0;
 	cursor: inherit;
 }
 
 .input::placeholder {
-	color: var(--reltio-color-text-placeholder);
+	color: var(--sapField_PlaceholderTextColor);
 }
 
 .input:disabled {
@@ -116,7 +116,7 @@
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 }
 
 .endContent {
@@ -124,7 +124,7 @@
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 }
 
 /* Clear button */
@@ -139,7 +139,7 @@
 	border: none;
 	background: none;
 	cursor: pointer;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 	opacity: 0.5;
 	border-radius: 50%;
 	transition: opacity 150ms ease;
@@ -150,7 +150,7 @@
 }
 
 .clearButton:focus-visible {
-	outline: 2px solid var(--reltio-color-primary);
+	outline: 2px solid var(--sapContent_FocusColor);
 	outline-offset: 1px;
 	opacity: 0.8;
 }
@@ -159,9 +159,9 @@
 .helperText {
 	font-size: 12px;
 	line-height: 16px;
-	color: var(--reltio-color-text-placeholder);
+	color: var(--sapField_PlaceholderTextColor);
 }
 
 .error .helperText {
-	color: var(--reltio-color-error);
+	color: var(--sapNegativeElementColor);
 }

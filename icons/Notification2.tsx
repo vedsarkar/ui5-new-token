@@ -1,0 +1,34 @@
+import { classNames } from "@/utils/classNames";
+import styles from "./Icon.module.css";
+import type { IconProps } from "./Icon.types";
+
+export const Notification2 = ({
+	size = "medium",
+	color = "inherited",
+	className,
+	...props
+}: IconProps) => {
+	return (
+		<svg
+			className={classNames(
+				styles.root,
+				styles[size],
+				styles[color],
+				className,
+			)}
+			viewBox="0 0 16 16"
+			fill="currentColor"
+			aria-hidden="true"
+			{...props}
+		>
+			<g clip-path="url(#clip0_1109_2542)">
+				<path d="M13.6387 0C14.939 0 16 1.06143 16 2.36229V15.2562C16 15.9234 15.1554 16.2555 14.7012 15.7671L11.7012 12.5H2.36133C1.061 12.5 0 11.4798 0 10.1789V2.36229C0 1.06143 1.061 0 2.36133 0H13.6387ZM2.36133 1.50061C1.88943 1.50061 1.5 1.8902 1.5 2.36229V10.1789C1.5 10.651 1.88943 11 2.36133 11H12.0273C12.2098 11 12.3854 11.0709 12.5215 11.19L14.5 13.3482V2.36229C14.5 1.8902 14.1106 1.50061 13.6387 1.50061H2.36133ZM9.25 7.00284C9.66421 7.00284 10 7.33876 10 7.75314C10 8.16752 9.66421 8.50344 9.25 8.50344H4.75C4.33579 8.50344 4 8.16752 4 7.75314C4 7.33876 4.33579 7.00284 4.75 7.00284H9.25ZM11.25 4.00162C11.6642 4.00162 12 4.33754 12 4.75192C12 5.16631 11.6642 5.50223 11.25 5.50223H4.75C4.33579 5.50223 4 5.16631 4 4.75192C4 4.33754 4.33579 4.00162 4.75 4.00162H11.25Z" />
+			</g>
+			<defs>
+				<clipPath id="clip0_1109_2542">
+					<rect width="16" height="16" fill="white" />
+				</clipPath>
+			</defs>
+		</svg>
+	);
+};

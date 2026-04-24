@@ -3,9 +3,9 @@
 	flex-direction: column;
 	gap: 16px;
 	padding: 24px;
-	background: var(--reltio-color-surface-1);
+	background: var(--sapBaseColor);
 	font-size: 14px;
-	color: var(--reltio-color-text);
+	color: var(--sapTextColor);
 }
 
 .header {
@@ -24,43 +24,43 @@
 	font-size: 12px;
 	font-weight: 700;
 	letter-spacing: 0.04em;
-	color: var(--reltio-color-text-white);
+	color: var(--sapContent_ContrastTextColor);
 }
 
 .method_GET {
-	background: var(--reltio-color-primary);
+	background: var(--sapBrandColor);
 }
 .method_POST {
-	background: var(--reltio-color-success);
+	background: var(--sapSuccessColor);
 }
 .method_PUT {
-	background: var(--reltio-color-warning);
+	background: var(--sapCriticalColor);
 }
 .method_PATCH {
-	background: var(--reltio-color-purple);
+	background: var(--sapAccentColor5);
 }
 .method_DELETE {
-	background: var(--reltio-color-error);
+	background: var(--sapErrorColor);
 }
 
 .path {
 	font-family: "72 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 	font-size: 14px;
-	color: var(--reltio-color-text);
-	background: var(--reltio-color-surface-2);
+	color: var(--sapTextColor);
+	background: var(--sapNeutralBackground);
 	padding: 4px 8px;
 	border-radius: 4px;
 }
 
 .description {
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 }
 
 .section {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	border-top: 1px solid var(--reltio-color-border-1);
+	border-top: 1px solid var(--sapGroup_ContentBorderColor);
 	padding-top: 16px;
 }
 
@@ -70,7 +70,7 @@
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 }
 
 .statusRow {
@@ -88,26 +88,26 @@
 	font-family: "72 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 	font-size: 12px;
 	font-weight: 700;
-	color: var(--reltio-color-text-white);
+	color: var(--sapContent_ContrastTextColor);
 }
 
 .statusSuccess {
-	background: var(--reltio-color-success);
+	background: var(--sapSuccessColor);
 }
 
 .statusError {
-	background: var(--reltio-color-error);
+	background: var(--sapErrorColor);
 }
 
 .statusText {
 	font-size: 13px;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 }
 
 .empty {
 	margin: 0;
 	font-size: 13px;
-	color: var(--reltio-color-text-placeholder);
+	color: var(--sapField_PlaceholderTextColor);
 	font-style: italic;
 }
 
@@ -121,16 +121,16 @@
 .actionHint {
 	margin: 0;
 	font-size: 12px;
-	color: var(--reltio-color-text-secondary);
+	color: var(--sapContent_LabelColor);
 	font-style: italic;
 }
 
 .actionButton {
 	padding: 4px 12px;
-	border: 1px solid var(--reltio-color-border-1);
+	border: 1px solid var(--sapGroup_ContentBorderColor);
 	border-radius: 4px;
-	background: var(--reltio-color-surface-2);
-	color: var(--reltio-color-text);
+	background: var(--sapNeutralBackground);
+	color: var(--sapTextColor);
 	font-size: 12px;
 	font-weight: 600;
 	cursor: pointer;
@@ -140,11 +140,11 @@
 		border-color 0.15s;
 
 	&:hover:not(:disabled) {
-		background: var(--reltio-color-primary-transparent-mild);
+		background: var(--sapHoverColor);
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--reltio-color-primary);
+		outline: 2px solid var(--sapBrandColor);
 		outline-offset: 2px;
 	}
 
@@ -155,23 +155,23 @@
 }
 
 .actionButtonSend {
-	background: var(--reltio-color-primary);
-	border-color: var(--reltio-color-primary);
-	color: var(--reltio-color-text-white);
+	background: var(--sapBrandColor);
+	border-color: var(--sapBrandColor);
+	color: var(--sapContent_ContrastTextColor);
 
 	&:hover:not(:disabled) {
-		background: var(--reltio-color-primary);
+		background: var(--sapBrandColor);
 		filter: brightness(1.05);
 	}
 }
 
 .actionButtonSuccess {
-	background: var(--reltio-color-success-soft);
-	border-color: var(--reltio-color-success);
-	color: var(--reltio-color-success);
+	background: var(--sapSuccessBackground);
+	border-color: var(--sapSuccessColor);
+	color: var(--sapSuccessColor);
 
 	&:hover:not(:disabled) {
-		background: var(--reltio-color-success-soft);
+		background: var(--sapSuccessBackground);
 	}
 }
 
@@ -188,21 +188,21 @@
 }
 
 .badgeLive {
-	background: var(--reltio-color-primary-transparent-mild);
-	color: var(--reltio-color-primary);
+	background: var(--sapHoverColor);
+	color: var(--sapBrandColor);
 }
 
 .badgeMock {
-	background: var(--reltio-color-surface-2);
-	color: var(--reltio-color-text-secondary);
-	border: 1px dashed var(--reltio-color-border-1);
+	background: var(--sapNeutralBackground);
+	color: var(--sapContent_LabelColor);
+	border: 1px dashed var(--sapGroup_ContentBorderColor);
 }
 
 .error {
 	margin: 0;
 	padding: 8px 12px;
 	border-radius: 4px;
-	background: var(--reltio-color-error-soft, var(--reltio-color-surface-2));
-	color: var(--reltio-color-error);
+	background: var(--sapErrorBackground, var(--sapNeutralBackground));
+	color: var(--sapErrorColor);
 	font-size: 13px;
 }
