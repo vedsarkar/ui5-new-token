@@ -9,23 +9,12 @@ import {
 } from "@storybook/addon-docs/blocks";
 import { definePreview } from "@storybook/react-vite";
 import { initialize, mswLoader } from "msw-storybook-addon";
-import { useEffect } from "react";
-import type { ThemeSelection } from "@/components/ThemeProvider";
-import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 import { CssClasses } from "./blocks/CssClasses";
 import { ImportExample } from "./blocks/ImportExample";
 import { reltioProxyHandler } from "./mocks/reltioProxyHandler";
 import reltioTheme from "./reltio-theme";
 
 initialize({ onUnhandledRequest: "bypass" });
-
-const ThemeSyncer = ({ value }: { value: ThemeSelection }) => {
-	const { setTheme } = useTheme();
-	useEffect(() => {
-		setTheme(value);
-	}, [value, setTheme]);
-	return null;
-};
 
 export default definePreview({
 	tags: ["autodocs"],
@@ -65,6 +54,12 @@ export default definePreview({
 		options: {
 			storySort: {
 				method: "configure",
+				order: [
+					"Welcome",
+					"Icons",
+					"Design Tokens",
+					"*",
+				],
 			},
 		},
 	},
@@ -88,19 +83,17 @@ export default definePreview({
 
 	decorators: [
 		(Story, context) => {
-			if (context.parameters?.skipThemeProvider) return <Story />;
-			const theme = (context.globals.theme as ThemeSelection) ?? "auto";
+			const selection = (context.globals.theme as string) ?? "auto";
+			const theme =
+				selection === "auto"
+					? window.matchMedia("(prefers-color-scheme: dark)").matches
+						? "horizon-dark"
+						: "horizon-light"
+					: selection;
 			return (
-				<ThemeProvider
-					defaultTheme={theme}
-					themeUrls={{
-						"horizon-light": "/themes/horizon-light.theme.css",
-						"horizon-dark": "/themes/horizon-dark.theme.css",
-					}}
-				>
-					<ThemeSyncer value={theme} />
+				<div data-theme={theme}>
 					<Story />
-				</ThemeProvider>
+				</div>
 			);
 		},
 	],

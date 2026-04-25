@@ -230,8 +230,8 @@ const meta = preview.meta({
 
 The chart theme is built dynamically from SAP Horizon `--sap*` CSS custom properties at mount time via `buildTheme()` in `charts/Chart/theme.ts`. The 9-color data series palette is derived from SAP tokens: `--sapBrandColor`, `--sapPositiveElementColor`, `--sapCriticalColor`, `--sapCriticalElementColor`, `--sapAccentColor3`, `--sapAccentColor4`, `--sapAccentColor7`, `--sapAccentColor8`, `--sapNegativeElementColor`.
 
-- Charts automatically use the correct colors for light/dark mode based on the active theme loaded by `<ThemeProvider>` (per-theme CSS file injection)
-- Theme is read once at mount — runtime theme switching requires re-mounting the chart subtree
+- Charts automatically use the correct colors for light/dark mode based on the `data-theme` attribute on the nearest ancestor
+- Charts watch `data-theme` changes via MutationObserver and auto-reinitialize when the theme switches
 
 Do NOT hardcode any color values in chart components or option builders. All colors come from the theme.
 

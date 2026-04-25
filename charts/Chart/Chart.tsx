@@ -21,6 +21,15 @@ echartsCore.use([
 	LegendComponent,
 ]);
 
+function findThemeAncestor(el: HTMLElement): HTMLElement | null {
+	let node: HTMLElement | null = el;
+	while (node) {
+		if (node.dataset.theme) return node;
+		node = node.parentElement;
+	}
+	return null;
+}
+
 export const Chart = ({
 	option,
 	renderer = "canvas",
@@ -38,21 +47,10 @@ export const Chart = ({
 		const container = containerRef.current;
 		if (!container) return;
 
-		let disposed = false;
-		let resizeObserver: ResizeObserver | null = null;
-		let rafId: number | undefined;
-
-		const init = () => {
-			if (disposed) return;
-
-			// Theme CSS is loaded async by ThemeProvider — if tokens are
-			// not yet available, defer until the next frame.
-			const probe = getComputedStyle(container)
-				.getPropertyValue("--sapBrandColor")
-				.trim();
-			if (!probe) {
-				rafId = requestAnimationFrame(init);
-				return;
+		const initChart = () => {
+			if (chartRef.current) {
+				chartRef.current.dispose();
+				chartRef.current = null;
 			}
 
 			const theme = buildTheme(container);
@@ -61,19 +59,31 @@ export const Chart = ({
 			});
 			chartRef.current = chart;
 			chart.setOption(optionRef.current);
-
-			resizeObserver = new ResizeObserver(() => {
-				chart.resize();
-			});
-			resizeObserver.observe(container);
 		};
 
-		init();
+		initChart();
+
+		const resizeObserver = new ResizeObserver(() => {
+			chartRef.current?.resize();
+		});
+		resizeObserver.observe(container);
+
+		// Watch data-theme attribute changes on nearest themed ancestor
+		let mutationObserver: MutationObserver | null = null;
+		const themeAncestor = findThemeAncestor(container);
+		if (themeAncestor) {
+			mutationObserver = new MutationObserver(() => {
+				initChart();
+			});
+			mutationObserver.observe(themeAncestor, {
+				attributes: true,
+				attributeFilter: ["data-theme"],
+			});
+		}
 
 		return () => {
-			disposed = true;
-			if (rafId !== undefined) cancelAnimationFrame(rafId);
-			resizeObserver?.disconnect();
+			mutationObserver?.disconnect();
+			resizeObserver.disconnect();
 			if (chartRef.current) {
 				chartRef.current.dispose();
 				chartRef.current = null;

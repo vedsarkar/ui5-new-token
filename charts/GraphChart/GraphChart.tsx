@@ -1,6 +1,6 @@
 import type { EChartsOption } from "echarts";
 import { GraphChart as EChartsGraph } from "echarts/charts";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Chart, echarts, formatWithUnits } from "@/charts/Chart";
 import { classNames } from "@/utils/classNames";
@@ -186,26 +186,25 @@ export const GraphChart = ({
 	const rootRef = useRef<HTMLDivElement>(null);
 	const [palette, setPalette] = useState<string[]>([]);
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		const el = rootRef.current;
 		if (!el) return;
 
-		let rafId: number | undefined;
-		const read = () => {
-			const probe = getComputedStyle(el)
-				.getPropertyValue("--sapBrandColor")
-				.trim();
-			if (!probe) {
-				rafId = requestAnimationFrame(read);
-				return;
-			}
-			setPalette(readPalette(el));
-		};
-		read();
+		setPalette(readPalette(el));
 
-		return () => {
-			if (rafId !== undefined) cancelAnimationFrame(rafId);
-		};
+		// Watch data-theme attribute changes on nearest themed ancestor
+		let node: HTMLElement | null = el;
+		while (node && !node.dataset.theme) node = node.parentElement;
+		if (!node) return;
+
+		const observer = new MutationObserver(() => {
+			setPalette(readPalette(el));
+		});
+		observer.observe(node, {
+			attributes: true,
+			attributeFilter: ["data-theme"],
+		});
+		return () => observer.disconnect();
 	}, []);
 
 	const hasData =

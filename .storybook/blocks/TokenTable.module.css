@@ -1,0 +1,28 @@
+.table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.th {
+	text-align: left;
+	padding: 8px 12px;
+	border-bottom: 1px solid #e5e5e5;
+	font-size: 13px;
+	font-family: monospace;
+}
+
+.tdName {
+	padding: 8px 12px;
+	border-bottom: 1px solid #e5e5e5;
+	font-size: 13px;
+	font-family: monospace;
+	white-space: nowrap;
+}
+
+.tdValue {
+	padding: 8px 12px;
+	border-bottom: 1px solid #e5e5e5;
+	font-size: 13px;
+	font-family: monospace;
+}

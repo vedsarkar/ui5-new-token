@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { TokenTable } from "@/.storybook/blocks/TokenTable";
-import tokens from "./sap_horizon.tokens.json";
+import tokens from "./sap_horizon_dark.tokens.json";
 
 const root = tokens.root as Record<string, string>;
 const keys = Object.keys(root);
@@ -30,7 +30,7 @@ const baseKeys = new Set([
 ]);
 
 const meta: Meta<typeof TokenTable> = {
-	title: "Design Tokens/Horizon Morning",
+	title: "Design Tokens/Horizon Evening",
 	component: TokenTable,
 	tags: ["!autodocs"],
 	parameters: {
