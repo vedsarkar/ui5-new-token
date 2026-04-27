@@ -1,4 +1,4 @@
-import { proxyRequest } from "../proxy/proxyRequest";
+import { proxyRequest } from "../utils/proxyRequest";
 
 export const config = { runtime: "edge" };
 

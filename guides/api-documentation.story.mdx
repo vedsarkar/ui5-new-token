@@ -1,0 +1,304 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/API Documentation" />
+
+# API Documentation
+
+This guide explains how to add interactive API documentation to the Reltio Design Platform. Each API gets a dedicated section in Storybook with a schema reference, interactive request/response testing, and a live "Send" button — a full Swagger UI alternative built on Storybook.
+
+## How It Works
+
+API documentation is built from two files:
+
+<table>
+	<thead>
+		<tr>
+			<th>File</th>
+			<th>What It Does</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>api/&lt;Name&gt;/&lt;name&gt;.spec.json</code></td>
+			<td>OpenAPI 3.1 specification — the single source of truth for the API contract (endpoints, schemas, servers)</td>
+		</tr>
+		<tr>
+			<td><code>api/&lt;Name&gt;/&lt;Name&gt;.stories.tsx</code></td>
+			<td>Storybook stories — one per endpoint, with interactive curl preview and live request testing</td>
+		</tr>
+	</tbody>
+</table>
+
+A third file — `api/<Name>/<Name>.story.mdx` — is **auto-generated** by the build script. Never edit it by hand.
+
+## Step-by-Step Guide
+
+### 1. Create the OpenAPI Spec
+
+Place your OpenAPI 3.1 JSON file at `api/<Name>/<name>.spec.json` — colocated with the stories file. The filename must be **lowercase** (e.g. `api/Metadata/metadata.spec.json`).
+
+Here is the minimal structure:
+
+```json
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "My API",
+    "version": "1.0.0",
+    "description": "What this API does."
+  },
+  "servers": [
+    {
+      "url": "https://{environment}.reltio.com/reltio/api/{tenantId}",
+      "variables": {
+        "environment": {
+          "default": "{environment}",
+          "description": "Reltio environment name"
+        },
+        "tenantId": {
+          "default": "{tenantId}",
+          "description": "Unique tenant identifier"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/my-resource": {
+      "get": {
+        "operationId": "getMyResource",
+        "summary": "GET /my-resource",
+        "description": "Returns the resource.",
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyResource"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MyResource": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" }
+        }
+      }
+    }
+  }
+}
+```
+
+**Key points:**
+
+- Use `$ref` to reference schemas from `components.schemas` — they will be rendered in the "Data Models" section of the docs page.
+- The `info.description` is shown at the top of the page. Use it to explain what the API is for.
+- Server `variables` are shown in a table below the URL. Use `{placeholder}` as the default value for variables the user must fill in.
+
+### 2. Create the Stories File
+
+Create `api/<Name>/<Name>.stories.tsx`. Each exported story represents one API endpoint.
+
+```tsx
+import preview from "@/.storybook/preview";
+import { apiMetaConfig } from "@/.storybook/utils/apiMetaConfig";
+import spec from "./<name>.spec.json";
+
+// 1. Configure the API
+const api = apiMetaConfig({
+  url: "https://{environment}.reltio.com/reltio/api/{tenantId}/my-resource",
+  spec,
+  defaultPath: "/my-resource",
+});
+
+// 2. Create the Storybook meta
+const meta = preview.meta({
+  ...api,
+  title: "API/My API",
+  description: "Short description shown in the sidebar.",
+});
+
+// 3. Export one story per endpoint
+export const GetMyResource = meta.story({
+  name: "GET /my-resource",
+  description: "Returns the resource.",
+  args: {
+    request: {
+      method: "GET",
+    },
+  },
+});
+
+export const CreateMyResource = meta.story({
+  name: "POST /my-resource",
+  description: "Creates a new resource.",
+  args: {
+    request: {
+      method: "POST",
+      body: {
+        name: "Example",
+      },
+    },
+  },
+});
+```
+
+### 3. Generate the Docs Page
+
+Run the build script to generate the MDX documentation file:
+
+```bash
+npm run build-api-docs
+```
+
+This creates `api/<Name>/<Name>.story.mdx` which ties together:
+- The `<OpenApi>` component (renders API info, servers, and data models from the spec)
+- The `<Stories>` block (renders interactive endpoint testing from your stories)
+
+### 4. Preview
+
+Start the dev server and open your API section in the sidebar:
+
+```bash
+npm run dev
+```
+
+Your API docs page will show:
+- **API title and description** from the spec
+- **Servers** with URL template and variable table
+- **Data Models** with all schemas from `components.schemas`
+- **Interactive stories** for each endpoint with curl command, copy button, and live request sending
+
+## `apiMetaConfig` Reference
+
+The `apiMetaConfig()` function connects your stories to the OpenAPI spec.
+
+<table>
+	<thead>
+		<tr>
+			<th>Option</th>
+			<th>Type</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>url</code></td>
+			<td><code>string</code></td>
+			<td>Full endpoint URL template. Use <code>{`{environment}`}</code> and <code>{`{tenantId}`}</code> as placeholders — they become editable controls in Storybook.</td>
+		</tr>
+		<tr>
+			<td><code>spec</code></td>
+			<td><code>OpenApiSpec</code></td>
+			<td>The imported OpenAPI spec object (e.g. <code>import spec from "./metadata.spec.json"</code>).</td>
+		</tr>
+		<tr>
+			<td><code>defaultPath</code></td>
+			<td><code>string</code></td>
+			<td>Path within the spec used to extract the 200 response schema for generating fake data (e.g. <code>"/configuration"</code>).</td>
+		</tr>
+		<tr>
+			<td><code>responses</code></td>
+			<td><code>Record&lt;string, unknown&gt;</code></td>
+			<td>Override or add mock response bodies. Keys are HTTP status codes (e.g. <code>"200"</code>, <code>"404"</code>).</td>
+		</tr>
+	</tbody>
+</table>
+
+## Story Options
+
+Each `meta.story()` call defines one interactive endpoint.
+
+<table>
+	<thead>
+		<tr>
+			<th>Option</th>
+			<th>Description</th>
+			<th>Example</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>name</code></td>
+			<td>Display name in Storybook sidebar</td>
+			<td><code>"GET /configuration"</code></td>
+		</tr>
+		<tr>
+			<td><code>description</code></td>
+			<td>Markdown text shown below the endpoint header</td>
+			<td><code>"Retrieves the full L3 configuration."</code></td>
+		</tr>
+		<tr>
+			<td><code>args.request.method</code></td>
+			<td>HTTP method</td>
+			<td><code>"GET"</code>, <code>"POST"</code>, <code>"PUT"</code>, <code>"PATCH"</code>, <code>"DELETE"</code></td>
+		</tr>
+		<tr>
+			<td><code>args.request.body</code></td>
+			<td>Request body (for POST/PUT/PATCH). Shown in curl and sent with live requests.</td>
+			<td><code>{`{ name: "Example" }`}</code></td>
+		</tr>
+	</tbody>
+</table>
+
+## Live Request Testing
+
+Every story has a **Send** button that sends a real HTTP request to the upstream API:
+
+1. Open a story (e.g. "GET /configuration")
+2. Fill in `environment` and `tenantId` in the Controls panel
+3. Paste your access token
+4. Click **Send**
+
+The response shows the live status code and JSON body with a "Live" badge. Without a token, stories display mock responses generated from the OpenAPI spec schemas.
+
+## File Naming Convention
+
+<table>
+	<thead>
+		<tr>
+			<th>File</th>
+			<th>Convention</th>
+			<th>Example</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>OpenAPI spec</td>
+			<td><code>api/&lt;Name&gt;/&lt;name&gt;.spec.json</code></td>
+			<td><code>api/Metadata/metadata.spec.json</code></td>
+		</tr>
+		<tr>
+			<td>Stories</td>
+			<td><code>api/&lt;Name&gt;/&lt;Name&gt;.stories.tsx</code></td>
+			<td><code>api/Metadata/Metadata.stories.tsx</code></td>
+		</tr>
+		<tr>
+			<td>Docs (auto-generated)</td>
+			<td><code>api/&lt;Name&gt;/&lt;Name&gt;.story.mdx</code></td>
+			<td><code>api/Metadata/Metadata.story.mdx</code></td>
+		</tr>
+	</tbody>
+</table>
+
+All three files live in the same directory. The build script looks for `<name>.spec.json` (lowercase) next to `<Name>.stories.tsx`.
+
+## Checklist
+
+Before submitting your API documentation:
+
+- OpenAPI spec is valid 3.1 JSON with `info`, `paths`, and `components.schemas`
+- Stories file has one exported story per endpoint
+- Each story has `name`, `description`, and `args.request.method`
+- POST/PUT/PATCH stories include `args.request.body`
+- `npm run build-api-docs` generated the `.story.mdx` file
+- `npm run dev` shows the docs page with correct rendering
+- `npm run lint` passes

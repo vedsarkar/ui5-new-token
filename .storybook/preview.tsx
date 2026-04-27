@@ -54,12 +54,7 @@ export default definePreview({
 		options: {
 			storySort: {
 				method: "configure",
-				order: [
-					"Welcome",
-					"Icons",
-					"Design Tokens",
-					"*",
-				],
+				order: ["Welcome", "Icons", "Design Tokens", "*"],
 			},
 		},
 	},

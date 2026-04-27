@@ -5,8 +5,7 @@ type TokenTableProps = {
 };
 
 const isColor = (v: string): boolean =>
-	/^#[0-9a-f]{3,8}$/i.test(v) ||
-	(/^rgba?\(/.test(v) && v !== "transparent");
+	/^#[0-9a-f]{3,8}$/i.test(v) || (/^rgba?\(/.test(v) && v !== "transparent");
 
 const contrastColor = (v: string): string =>
 	`oklch(from ${v} clamp(0, calc((.6 - l) * 1000000), 1) 0 0 / 1)`;

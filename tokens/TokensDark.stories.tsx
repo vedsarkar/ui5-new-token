@@ -70,9 +70,7 @@ export const Content: Story = {
 
 export const Typography: Story = {
 	args: {
-		tokens: pick(
-			(k) => k.startsWith("sapFont") && !k.startsWith("sapFontUrl"),
-		),
+		tokens: pick((k) => k.startsWith("sapFont") && !k.startsWith("sapFontUrl")),
 	},
 };
 

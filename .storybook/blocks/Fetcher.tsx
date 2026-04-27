@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Markdown } from "@/components/Markdown";
 import { Skeleton } from "@/components/Skeleton";
 import { classNames } from "@/utils/classNames";
@@ -19,12 +19,12 @@ export type FetcherStatus =
 
 export type FetcherRequest = {
 	method: FetcherMethod;
-	body?: unknown;
+	body?: unknown | Promise<unknown>;
 };
 
 export type FetcherResponse = {
 	status: FetcherStatus;
-	json?: unknown;
+	json?: unknown | Promise<unknown>;
 };
 
 type FetcherProps = {
@@ -40,7 +40,7 @@ type FetcherProps = {
 	response?: FetcherResponse;
 };
 
-const STATUS_TEXT: Record<FetcherStatus, string> = {
+export const STATUS_TEXT: Record<FetcherStatus, string> = {
 	"200": "OK",
 	"201": "Created",
 	"204": "No Content",
@@ -77,6 +77,32 @@ const formatJson = (value: unknown): string => JSON.stringify(value, null, 2);
 const codeBlock = (lang: string, body: string): string =>
 	`\`\`\`${lang}\n${body}\n\`\`\``;
 
+function useResolved(value: unknown): { resolved: unknown; loading: boolean } {
+	const [state, setState] = useState<{ resolved: unknown; loading: boolean }>(
+		() =>
+			value instanceof Promise
+				? { resolved: undefined, loading: true }
+				: { resolved: value, loading: false },
+	);
+
+	useEffect(() => {
+		if (!(value instanceof Promise)) {
+			setState({ resolved: value, loading: false });
+			return;
+		}
+		let cancelled = false;
+		setState({ resolved: undefined, loading: true });
+		value.then((result) => {
+			if (!cancelled) setState({ resolved: result, loading: false });
+		});
+		return () => {
+			cancelled = true;
+		};
+	}, [value]);
+
+	return state;
+}
+
 type SendState =
 	| { kind: "idle" }
 	| { kind: "sending" }
@@ -98,13 +124,18 @@ export const Fetcher = ({
 }: FetcherProps) => {
 	const [isCurlCopied, setIsCurlCopied] = useState(false);
 	const [sendState, setSendState] = useState<SendState>({ kind: "idle" });
+	const { resolved: resolvedBody, loading: bodyLoading } = useResolved(
+		request?.body,
+	);
+	const { resolved: resolvedJson, loading: jsonLoading } = useResolved(
+		response?.json,
+	);
 	const method = request?.method ?? "GET";
-	const body = request?.body;
-	const hasRequestBody = body !== undefined && body !== null;
+	const hasRequestBody = request?.body !== undefined && request?.body !== null;
 	const curl = buildCurl(method, url, hasRequestBody, accessToken);
 	const hasUrlPlaceholders = url.includes("{") || url.includes("}");
 	const isSending = sendState.kind === "sending";
-	const sendDisabled = isSending || hasUrlPlaceholders || !url;
+	const sendDisabled = isSending || hasUrlPlaceholders || !url || bodyLoading;
 
 	const copyCurl = async () => {
 		await navigator.clipboard.writeText(curl);
@@ -122,7 +153,7 @@ export const Fetcher = ({
 		}
 		const init: RequestInit = { method, headers };
 		if (hasRequestBody) {
-			init.body = JSON.stringify(body);
+			init.body = JSON.stringify(resolvedBody);
 		}
 		try {
 			const res = await fetch(url, init);
@@ -164,7 +195,8 @@ export const Fetcher = ({
 
 	const status = (liveStatus ?? response?.status ?? "200") as FetcherStatus;
 	const statusText = liveStatusText ?? STATUS_TEXT[status] ?? "";
-	const json = liveResponse ? liveBody : response?.json;
+	const json = liveResponse ? liveBody : resolvedJson;
+	const isJsonLoading = !liveResponse && jsonLoading;
 	const hasResponseBody = liveResponse
 		? liveBody !== undefined
 		: json !== undefined && json !== null;
@@ -229,7 +261,7 @@ export const Fetcher = ({
 
 			<section className={classNames(styles.section)}>
 				<h3 className={classNames(styles.sectionTitle)}>Response</h3>
-				{isSending ? (
+				{isSending || isJsonLoading ? (
 					<Skeleton rows={5} />
 				) : sendState.kind === "error" ? (
 					<p className={classNames(styles.error)}>
