@@ -83,7 +83,10 @@ export const apiMetaConfig = ({
 	const responseOptions = Object.keys(responseMapping);
 
 	const ApiFetcher = ({ environment, tenantId, ...rest }: ApiFetcherProps) => (
-		<Fetcher {...rest} url={buildEndpointUrl(url, environment, tenantId)} />
+		<Fetcher
+			{...rest}
+			url={buildEndpointUrl(rest.request?.url || url, environment, tenantId)}
+		/>
 	);
 
 	const config = {
@@ -97,7 +100,7 @@ export const apiMetaConfig = ({
 						const args = ctx.args;
 						const method = args.request?.method ?? "GET";
 						const endpointUrl = buildEndpointUrl(
-							url,
+							args.request?.url || url,
 							args.environment,
 							args.tenantId,
 						);

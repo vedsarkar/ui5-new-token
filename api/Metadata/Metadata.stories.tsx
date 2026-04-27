@@ -17,8 +17,8 @@ const meta = preview.meta({
 
 export const GetConfiguration = meta.story({
 	name: "GET /configuration",
-	description: "Retrieves the full L3 configuration for the tenant.",
 	args: {
+		description: "Retrieves the full L3 configuration for the tenant.",
 		request: {
 			method: "GET",
 		},
@@ -27,9 +27,9 @@ export const GetConfiguration = meta.story({
 
 export const PutConfiguration = meta.story({
 	name: "PUT /configuration",
-	description:
-		"Replaces the entire tenant configuration with the provided body. The request must conform to the L3 schema; server-managed fields (`createdTime`, `updatedTime`, `createdBy`, `updatedBy`) are ignored on input.",
 	args: {
+		description:
+			"Replaces the entire tenant configuration with the provided body. The request must conform to the L3 schema; server-managed fields (`createdTime`, `updatedTime`, `createdBy`, `updatedBy`) are ignored on input.",
 		request: {
 			method: "PUT",
 			body: {},

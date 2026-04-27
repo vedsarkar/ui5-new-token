@@ -19,6 +19,8 @@ export type FetcherStatus =
 
 export type FetcherRequest = {
 	method: FetcherMethod;
+	/** Full URL template override for this endpoint. Resolved by `apiMetaConfig` — not used by `Fetcher` directly. */
+	url?: string;
 	body?: unknown | Promise<unknown>;
 };
 

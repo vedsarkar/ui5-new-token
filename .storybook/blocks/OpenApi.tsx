@@ -50,14 +50,14 @@ function renderField(
 ): string {
 	const lines = [`### \`${fieldPath}\``];
 	const meta: string[] = [];
-	meta.push(`- **Type:** <span class="${styles.typeValue}">${formatType(node)}</span>`);
+	meta.push(
+		`- **Type:** <span class="${styles.typeValue}">${formatType(node)}</span>`,
+	);
 	if (required) meta.push("- **Required**");
 	if (node.default !== undefined)
 		meta.push(`- **Default:** ${formatValue(node.default)}`);
 	if (node.enum && node.enum.length > 0)
-		meta.push(
-			`- **Enum:** ${node.enum.map((v) => formatValue(v)).join(", ")}`,
-		);
+		meta.push(`- **Enum:** ${node.enum.map((v) => formatValue(v)).join(", ")}`);
 	if (node.format) meta.push(`- **Format:** ${node.format}`);
 	if (node.pattern) meta.push(`- **Pattern:** \`${node.pattern}\``);
 	const range: string[] = [];
