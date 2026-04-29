@@ -4,19 +4,19 @@ import styles from "./Button.module.css";
 import type { ButtonProps } from "./Button.types";
 
 /**
- * Universal Button Component
+ * SAP Fiori Button
  *
- * A flexible, accessible button component that supports multiple variants
- * (filled, outlined, text), color options (primary, secondary, inherited),
- * sizes, states, and can render as either a button or anchor element.
+ * A flexible, accessible button component that supports SAP Fiori design variants
+ * (default, emphasized, ghost, transparent, positive, negative, attention),
+ * and can render as either a button or anchor element.
  *
- * Automatically switches to circular icon-only layout when children
+ * Automatically switches to icon-only layout when children
  * is a single React component element.
+ *
+ * @see https://experience.sap.com/fiori-design-web/button/
  */
 export const Button = ({
-	variant = "filled",
-	color = "inherited",
-	size = "medium",
+	design = "default",
 	disabled = false,
 	fullWidth = false,
 	children,
@@ -27,7 +27,6 @@ export const Button = ({
 }: ButtonProps) => {
 	const buttonRef = useRef<HTMLButtonElement | HTMLAnchorElement>(null);
 
-	// Remove focus when button becomes disabled
 	useEffect(() => {
 		if (
 			disabled &&
@@ -46,16 +45,13 @@ export const Button = ({
 
 	const composedClassName = classNames(
 		styles.root,
-		styles[variant],
-		styles[color],
-		styles[size],
+		styles[design],
 		disabled && styles.disabled,
 		fullWidth && styles.fullWidth,
 		isIconOnly && styles.iconOnly,
 		className,
 	);
 
-	// Render as anchor if href is provided
 	if (href) {
 		return (
 			<a
@@ -70,7 +66,6 @@ export const Button = ({
 		);
 	}
 
-	// Render as button
 	return (
 		<button
 			ref={buttonRef as React.RefObject<HTMLButtonElement>}

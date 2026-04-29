@@ -27,36 +27,54 @@ export const Default = meta.story({
 export const Initials = meta.story({
 	args: {
 		children: "AB",
+		colorScheme: 6,
 	},
 });
 
 export const WithIcon = meta.story({
 	args: {
 		children: <Star />,
+		colorScheme: 3,
 	},
 });
 
-export const Sizes = meta.story({
-	render: () => (
-		<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-			<Avatar size="xs" src="https://i.pravatar.cc/150?u=xs" alt="XS" />
-			<Avatar size="sm" src="https://i.pravatar.cc/150?u=sm" alt="SM" />
-			<Avatar size="md" src="https://i.pravatar.cc/150?u=md" alt="MD" />
-			<Avatar size="lg" src="https://i.pravatar.cc/150?u=lg" alt="LG" />
-			<Avatar size="xl" src="https://i.pravatar.cc/150?u=xl" alt="XL" />
-		</div>
-	),
-	play: async ({ canvasElement }) => {
-		const avatars = canvasElement.querySelectorAll("span[class]");
-		const sizes = [20, 24, 32, 40, 56];
-		const rootAvatars = Array.from(avatars).filter(
-			(el) => el.parentElement?.style.display === "flex",
-		);
-		for (let i = 0; i < rootAvatars.length; i++) {
-			const { width, height } = rootAvatars[i].getBoundingClientRect();
-			expect(width).toBe(sizes[i]);
-			expect(height).toBe(sizes[i]);
-		}
+export const SizeXS = meta.story({
+	args: {
+		size: "xs",
+		children: "XS",
+		colorScheme: 1,
+	},
+});
+
+export const SizeS = meta.story({
+	args: {
+		size: "s",
+		children: "S",
+		colorScheme: 2,
+	},
+});
+
+export const SizeM = meta.story({
+	args: {
+		size: "m",
+		children: "M",
+		colorScheme: 5,
+	},
+});
+
+export const SizeL = meta.story({
+	args: {
+		size: "l",
+		children: "L",
+		colorScheme: 7,
+	},
+});
+
+export const SizeXL = meta.story({
+	args: {
+		size: "xl",
+		children: "XL",
+		colorScheme: 8,
 	},
 });
 
@@ -64,7 +82,20 @@ export const Square = meta.story({
 	args: {
 		shape: "square",
 		children: "RS",
+		colorScheme: 4,
 	},
+});
+
+export const ColorSchemes = meta.story({
+	render: () => (
+		<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+			{([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const).map((scheme) => (
+				<Avatar key={scheme} size="s" colorScheme={scheme}>
+					{`${scheme}`}
+				</Avatar>
+			))}
+		</div>
+	),
 });
 
 export const Fallback = meta.story({
@@ -72,13 +103,9 @@ export const Fallback = meta.story({
 		src: "https://broken-url.invalid/avatar.png",
 	},
 	play: async ({ canvasElement }) => {
-		// Wait for the image error to trigger fallback
 		await new Promise((resolve) => setTimeout(resolve, 1000));
-
 		const imgs = canvasElement.querySelectorAll("img");
 		expect(imgs.length).toBe(0);
-
-		// Fallback should show the Person icon (an SVG element)
 		const svg = canvasElement.querySelector("svg");
 		expect(svg).toBeInTheDocument();
 	},

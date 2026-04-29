@@ -1,66 +1,109 @@
 .root {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	cursor: text;
 	container-type: inline-size;
 }
 
-.root[data-disabled="true"] {
-	opacity: 0.38;
-	cursor: not-allowed;
+/* Label — same pattern as TextField */
+.label {
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 20px;
+	color: var(--sapContent_LabelColor);
+	cursor: inherit;
 }
 
+.required .label::after {
+	content: " *";
+	color: var(--sapNegativeElementColor);
+}
+
+.error .label {
+	color: var(--sapField_InvalidColor);
+}
+
+/* Input container */
 .inputContainer {
-	position: relative;
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-template-rows: 1fr auto;
 	grid-template-areas:
 		"textarea"
 		"toolbar";
-	margin: 0;
 	box-sizing: border-box;
-	border-radius: 4px;
-	outline: 1px solid var(--sapField_BorderColor);
-	cursor: text;
-	transition:
-		outline-color 0.1s ease,
-		outline-width 0.1s ease;
+	border-radius: var(--sapField_BorderCornerRadius);
+	border: 1px solid var(--sapField_BorderColor);
 	background: var(--sapField_Background);
+	overflow: clip;
 }
 
 .root:focus-within .inputContainer {
-	outline: 2px solid var(--sapBrandColor);
+	border-color: var(--sapField_Focus_BorderColor);
+	outline: 1px solid var(--sapContent_FocusColor);
+	outline-offset: -2px;
 }
 
-.root[data-error="true"] .inputContainer {
-	outline-color: var(--sapNegativeElementColor);
+/* Value State: Error */
+.error .inputContainer {
+	border-color: var(--sapField_InvalidColor);
+	background-color: var(--sapField_InvalidBackground);
 }
 
-.root[data-error="true"]:focus-within .inputContainer {
-	outline: 2px solid var(--sapNegativeElementColor);
+/* Value State: Warning */
+.warning .inputContainer {
+	border-color: var(--sapField_WarningColor);
+	background-color: var(--sapField_WarningBackground);
 }
 
-.root[data-disabled="true"] .inputContainer {
+/* Value State: Success */
+.success .inputContainer {
+	border-color: var(--sapField_SuccessColor);
+	background-color: var(--sapField_SuccessBackground);
+}
+
+/* Value State: Information */
+.information .inputContainer {
+	border-color: var(--sapField_InformationColor);
+	background-color: var(--sapField_InformationBackground);
+}
+
+/* Read-only */
+.readOnly .inputContainer {
+	border-style: dashed;
+	background-color: var(--sapField_ReadOnly_Background);
+}
+
+/* Disabled */
+.disabled {
+	opacity: 0.4;
 	cursor: not-allowed;
 }
 
+.disabled .inputContainer {
+	cursor: not-allowed;
+	background-color: var(--sapField_ReadOnly_Background);
+}
+
+/* Textarea */
 .textarea {
 	grid-area: textarea;
-	position: relative;
 	display: block;
-	z-index: 1;
 	border: none;
 	outline: none;
 	background: none;
 	width: 100%;
 	min-height: 56px;
 	max-height: min(500px, 50cqh);
-	border-radius: 4px;
+	border-radius: var(--sapField_BorderCornerRadius);
 	box-sizing: border-box;
-	font-size: 16px;
+	font-size: 14px;
 	font-family: inherit;
 	line-height: 1.5;
 	resize: none;
 	color: var(--sapField_TextColor);
-	padding: 16px;
+	padding: 10px;
 	overflow-y: auto;
 	field-sizing: content;
 }
@@ -69,64 +112,34 @@
 	color: var(--sapField_PlaceholderTextColor);
 }
 
-.root:focus-within .textarea::placeholder {
-	color: var(--sapBrandColor);
-}
-
-.root[data-error="true"] .textarea::placeholder {
-	color: var(--sapNegativeElementColor);
-}
-
 .textarea:disabled {
 	cursor: not-allowed;
 }
 
-.label {
-	position: absolute;
-	opacity: 0;
-	top: 16px;
-	left: 8px;
-	transform: translateY(-50%);
-	transition: all 0.2s ease;
-	background-color: var(--sapField_Background);
-	padding: 4px 8px;
-	border-radius: 4px;
-	color: var(--sapContent_LabelColor);
-	z-index: 2;
-	font-size: 16px;
-	pointer-events: none;
-}
-
-.textarea:not(:placeholder-shown) + .label {
-	top: -1px;
+/* Value State Message */
+.valueStateMessage {
 	font-size: 12px;
-	opacity: 1;
-}
-
-.textarea:focus + .label {
-	top: -1px;
-	font-size: 12px;
-	opacity: 1;
-}
-
-.root:focus-within .label {
-	color: var(--sapBrandColor);
-}
-
-.root[data-error="true"] .label {
-	color: var(--sapNegativeElementColor);
-}
-
-.supportingText {
-	font-size: 12px;
-	padding: 4px 16px;
+	padding: 4px 0;
 	color: var(--sapContent_LabelColor);
 }
 
-.root[data-error="true"] .supportingText {
-	color: var(--sapNegativeElementColor);
+.error .valueStateMessage {
+	color: var(--sapField_InvalidColor);
 }
 
+.warning .valueStateMessage {
+	color: var(--sapField_WarningColor);
+}
+
+.success .valueStateMessage {
+	color: var(--sapField_SuccessColor);
+}
+
+.information .valueStateMessage {
+	color: var(--sapField_InformationColor);
+}
+
+/* Toolbar */
 .toolbar {
 	grid-area: toolbar;
 	display: flex;

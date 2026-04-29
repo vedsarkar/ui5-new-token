@@ -1,5 +1,6 @@
 import type React from "react";
 import type { HtmlProps } from "@/utils/types";
+import type { ValueState } from "@/utils/valueState";
 
 export type RadioProps = HtmlProps<
 	"input",
@@ -13,8 +14,8 @@ export type RadioProps = HtmlProps<
 		) => void;
 		/** Label content rendered next to the radio circle */
 		children?: React.ReactNode;
-		/** Whether the radio displays error styling */
-		error?: boolean;
+		/** Validation state affecting visual appearance */
+		valueState?: ValueState;
 		/** Prevents interaction and reduces opacity */
 		disabled?: boolean;
 	}

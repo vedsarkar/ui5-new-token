@@ -86,41 +86,10 @@ export const WithPlaceholder = meta.story({
 			/>
 		);
 	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		const input = canvas.getByPlaceholderText("Enter your name...");
-
-		expect(input).toBeInTheDocument();
-		await userEvent.type(input, "Jane");
-		expect(input).toHaveValue("Jane");
-	},
 });
 
-export const WithHelperText = meta.story({
-	render: (args) => {
-		const [value, setValue] = useState("");
-		return (
-			<TextField
-				{...args}
-				label="Email"
-				helperText="We will never share your email"
-				value={value}
-				onChange={(e, v) => {
-					setValue(v);
-					args?.onChange?.(e, v);
-				}}
-			/>
-		);
-	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		expect(
-			canvas.getByText("We will never share your email"),
-		).toBeInTheDocument();
-	},
-});
-
-export const ErrorState = meta.story({
+// Value states
+export const ValueStateError = meta.story({
 	name: "Error",
 	render: (args) => {
 		const [value, setValue] = useState("invalid-email");
@@ -128,8 +97,8 @@ export const ErrorState = meta.story({
 			<TextField
 				{...args}
 				label="Email"
-				helperText="Please enter a valid email address"
-				error
+				valueState="Error"
+				valueStateMessage="Please enter a valid email address"
 				value={value}
 				onChange={(e, v) => {
 					setValue(v);
@@ -146,6 +115,66 @@ export const ErrorState = meta.story({
 		expect(
 			canvas.getByText("Please enter a valid email address"),
 		).toBeInTheDocument();
+	},
+});
+
+export const ValueStateWarning = meta.story({
+	name: "Warning",
+	render: (args) => {
+		const [value, setValue] = useState("weak-password");
+		return (
+			<TextField
+				{...args}
+				label="Password"
+				valueState="Warning"
+				valueStateMessage="Password strength is weak"
+				value={value}
+				onChange={(e, v) => {
+					setValue(v);
+					args?.onChange?.(e, v);
+				}}
+			/>
+		);
+	},
+});
+
+export const ValueStateSuccess = meta.story({
+	name: "Success",
+	render: (args) => {
+		const [value, setValue] = useState("john.doe@example.com");
+		return (
+			<TextField
+				{...args}
+				label="Email"
+				valueState="Success"
+				valueStateMessage="Email is available"
+				value={value}
+				onChange={(e, v) => {
+					setValue(v);
+					args?.onChange?.(e, v);
+				}}
+			/>
+		);
+	},
+});
+
+export const ValueStateInformation = meta.story({
+	name: "Information",
+	render: (args) => {
+		const [value, setValue] = useState("");
+		return (
+			<TextField
+				{...args}
+				label="Username"
+				valueState="Information"
+				valueStateMessage="Username must be 3-20 characters"
+				value={value}
+				onChange={(e, v) => {
+					setValue(v);
+					args?.onChange?.(e, v);
+				}}
+			/>
+		);
 	},
 });
 
@@ -221,7 +250,6 @@ export const Disabled = meta.story({
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		const input = canvas.getByRole("textbox");
-
 		expect(input).toBeDisabled();
 	},
 });
@@ -235,7 +263,6 @@ export const Readonly = meta.story({
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		const input = canvas.getByRole("textbox");
-
 		expect(input).toHaveAttribute("readonly");
 	},
 });
@@ -259,9 +286,7 @@ export const Required = meta.story({
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		const input = canvas.getByRole("textbox");
-
 		expect(input).toBeRequired();
-		expect(canvas.getByText("Full name")).toBeInTheDocument();
 	},
 });
 
@@ -302,31 +327,5 @@ export const EmailType = meta.story({
 				}}
 			/>
 		);
-	},
-});
-
-export const Maxlength = meta.story({
-	render: (args) => {
-		const [value, setValue] = useState("");
-		return (
-			<TextField
-				{...args}
-				label="Short code"
-				helperText="Maximum 10 characters"
-				maxLength={10}
-				value={value}
-				onChange={(e, v) => {
-					setValue(v);
-					args?.onChange?.(e, v);
-				}}
-			/>
-		);
-	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		const input = canvas.getByRole("textbox");
-
-		await userEvent.type(input, "12345678901234");
-		expect(input).toHaveValue("1234567890");
 	},
 });

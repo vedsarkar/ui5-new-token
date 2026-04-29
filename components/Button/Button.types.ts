@@ -1,41 +1,28 @@
 import type { HtmlProps } from "@/utils/types";
 
 /**
- * Visual variant for the button
+ * SAP Fiori Button design variants.
+ *
+ * @see https://experience.sap.com/fiori-design-web/button/
  */
-export type ButtonVariant = "filled" | "outlined" | "text";
-
-/**
- * Color variant for the button
- */
-export type ButtonColor = "primary" | "inherited";
-
-/**
- * Size variant for the button
- */
-export type ButtonSize = "small" | "medium" | "large";
+export type ButtonDesign =
+	| "default"
+	| "emphasized"
+	| "ghost"
+	| "transparent"
+	| "positive"
+	| "negative"
+	| "attention";
 
 /**
  * Base button props shared between button and anchor renderings
  */
 type BaseButtonProps = {
 	/**
-	 * Visual variant
-	 * @default "filled"
+	 * SAP Fiori design variant
+	 * @default "default"
 	 */
-	variant?: ButtonVariant;
-
-	/**
-	 * Color variant
-	 * @default "inherited"
-	 */
-	color?: ButtonColor;
-
-	/**
-	 * Size variant
-	 * @default "medium"
-	 */
-	size?: ButtonSize;
+	design?: ButtonDesign;
 
 	/**
 	 * Whether the button is disabled

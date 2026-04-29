@@ -9,7 +9,7 @@ export const Checkbox = ({
 	onChange,
 	children,
 	indeterminate = false,
-	error = false,
+	valueState = "None",
 	disabled = false,
 	className,
 	...rest
@@ -32,7 +32,8 @@ export const Checkbox = ({
 				styles.root,
 				checked && styles.checked,
 				indeterminate && styles.indeterminate,
-				error && styles.error,
+				valueState === "Error" && styles.error,
+				valueState === "Warning" && styles.warning,
 				disabled && styles.disabled,
 				className,
 			)}

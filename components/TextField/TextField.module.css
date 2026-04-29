@@ -8,9 +8,8 @@
 /* Label */
 .label {
 	font-size: 14px;
-	font-weight: 500;
+	font-weight: 400;
 	line-height: 20px;
-	letter-spacing: 0.15px;
 	color: var(--sapContent_LabelColor);
 	cursor: inherit;
 }
@@ -20,27 +19,19 @@
 	color: var(--sapNegativeElementColor);
 }
 
-.error .label {
-	color: var(--sapNegativeElementColor);
-}
-
-/* Input container — pill shape */
+/* Input container */
 .inputContainer {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	gap: 4px;
-	min-height: 40px;
+	min-height: var(--sapElement_Height);
 	border: 1px solid var(--sapField_BorderColor);
-	border-radius: 20px;
-	background: transparent;
-	padding: 8px 12px;
+	border-radius: var(--sapField_BorderCornerRadius);
+	background: var(--sapField_Background);
+	padding: 0 10px;
 	box-sizing: border-box;
 	overflow: clip;
-	transition:
-		border-color 150ms ease,
-		background-color 150ms ease,
-		box-shadow 150ms ease;
 }
 
 /* Hover */
@@ -49,35 +40,51 @@
 	border-color: var(--sapField_Hover_BorderColor);
 }
 
-/* Focus — glow shadow */
+/* Focus */
 .root:focus-within:not(.disabled) .inputContainer {
 	border-color: var(--sapField_Focus_BorderColor);
-	box-shadow:
-		0 0 0 2px var(--sapField_Background),
-		0 0 7px 1px var(--sapBrandColor);
+	outline: 1px solid var(--sapContent_FocusColor);
+	outline-offset: -2px;
 }
 
-/* Error */
+/* Value State: Error */
 .error .inputContainer {
 	background-color: var(--sapField_InvalidBackground);
 	border-color: var(--sapField_InvalidColor);
 }
 
-.error:focus-within .inputContainer {
-	border-color: var(--sapField_InvalidColor);
-	box-shadow:
-		0 0 0 2px var(--sapField_Background),
-		0 0 7px 1px var(--sapNegativeElementColor);
+.error .label {
+	color: var(--sapField_InvalidColor);
+}
+
+/* Value State: Warning */
+.warning .inputContainer {
+	background-color: var(--sapField_WarningBackground);
+	border-color: var(--sapField_WarningColor);
+}
+
+/* Value State: Success */
+.success .inputContainer {
+	background-color: var(--sapField_SuccessBackground);
+	border-color: var(--sapField_SuccessColor);
+}
+
+/* Value State: Information */
+.information .inputContainer {
+	background-color: var(--sapField_InformationBackground);
+	border-color: var(--sapField_InformationColor);
 }
 
 /* Readonly */
 .readOnly .inputContainer {
 	border-style: dashed;
+	background-color: var(--sapField_ReadOnly_Background);
 }
 
 /* Disabled */
 .disabled {
 	cursor: not-allowed;
+	opacity: 0.4;
 }
 
 .disabled .inputContainer {
@@ -95,7 +102,6 @@
 	background: transparent;
 	font-size: 14px;
 	line-height: 20px;
-	letter-spacing: 0.17px;
 	font-family: inherit;
 	color: var(--sapField_TextColor);
 	padding: 2px 0;
@@ -111,20 +117,13 @@
 }
 
 /* Start / End content */
-.startContent {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-	color: var(--sapContent_LabelColor);
-}
-
+.startContent,
 .endContent {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	color: var(--sapContent_LabelColor);
+	color: var(--sapContent_NonInteractiveIconColor);
 }
 
 /* Clear button */
@@ -139,10 +138,9 @@
 	border: none;
 	background: none;
 	cursor: pointer;
-	color: var(--sapContent_LabelColor);
+	color: var(--sapContent_IconColor);
 	opacity: 0.5;
 	border-radius: 50%;
-	transition: opacity 150ms ease;
 }
 
 .clearButton:hover {
@@ -155,13 +153,25 @@
 	opacity: 0.8;
 }
 
-/* Helper text */
-.helperText {
+/* Value State Message */
+.valueStateMessage {
 	font-size: 12px;
 	line-height: 16px;
-	color: var(--sapField_PlaceholderTextColor);
+	color: var(--sapContent_LabelColor);
 }
 
-.error .helperText {
-	color: var(--sapNegativeElementColor);
+.error .valueStateMessage {
+	color: var(--sapField_InvalidColor);
+}
+
+.warning .valueStateMessage {
+	color: var(--sapField_WarningColor);
+}
+
+.success .valueStateMessage {
+	color: var(--sapField_SuccessColor);
+}
+
+.information .valueStateMessage {
+	color: var(--sapField_InformationColor);
 }

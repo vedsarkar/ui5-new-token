@@ -46,13 +46,13 @@ export const WithToolbar = meta.story({
 		label: "Comment",
 		toolbar: (
 			<>
-				<Button variant="outlined" size="small">
+				<Button design="ghost">
 					<Attachment size="small" /> Attach
 				</Button>
-				<Button variant="outlined" size="small">
+				<Button design="ghost">
 					<ContentCopy size="small" /> Copy
 				</Button>
-				<Button variant="outlined" size="small">
+				<Button design="ghost">
 					<Share size="small" /> Share
 				</Button>
 			</>
@@ -60,12 +60,24 @@ export const WithToolbar = meta.story({
 	},
 });
 
-export const WithError = meta.story({
+export const ValueStateError = meta.story({
+	name: "Error",
 	args: {
 		label: "Email",
-		error: true,
-		supportingText: "Please enter a valid email address",
+		valueState: "Error",
+		valueStateMessage: "Please enter a valid email address",
 		defaultValue: "invalid-email",
+	},
+});
+
+export const ValueStateWarning = meta.story({
+	name: "Warning",
+	args: {
+		label: "Description",
+		valueState: "Warning",
+		valueStateMessage: "Content exceeds recommended length",
+		defaultValue:
+			"This is a very long text that exceeds the recommended length for this field.",
 	},
 });
 
@@ -77,10 +89,11 @@ export const Disabled = meta.story({
 	},
 });
 
-export const WithSupportingText = meta.story({
+export const ReadOnly = meta.story({
 	args: {
-		label: "Bio",
-		supportingText: "Maximum 500 characters",
+		label: "Read-only field",
+		defaultValue: "This content cannot be edited",
+		readOnly: true,
 	},
 });
 

@@ -1,7 +1,11 @@
 import type React from "react";
 import type { HtmlProps } from "@/utils/types";
 
-export type BannerColor = "info" | "success" | "warning" | "error";
+/**
+ * SAP Fiori MessageStrip design variants.
+ * Maps to SAP semantic color tokens.
+ */
+export type BannerDesign = "information" | "positive" | "critical" | "negative";
 
 export type BannerProps = HtmlProps<
 	"div",
@@ -10,8 +14,10 @@ export type BannerProps = HtmlProps<
 		title?: string;
 		/** Description content rendered below the title */
 		children?: React.ReactNode;
-		/** Color variant that determines background, border, icon, and title color */
-		color?: BannerColor;
+		/** Design variant that determines background, border, icon, and title color
+		 * @default "information"
+		 */
+		design?: BannerDesign;
 		/** Whether a close button is shown */
 		dismissible?: boolean;
 		/** Callback fired when the close button is clicked */

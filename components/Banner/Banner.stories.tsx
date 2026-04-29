@@ -15,7 +15,7 @@ const meta = preview.meta({
 	},
 });
 
-export const Default = meta.story({
+export const Information = meta.story({
 	args: {
 		title: "Information",
 		children:
@@ -23,25 +23,25 @@ export const Default = meta.story({
 	},
 });
 
-export const Success = meta.story({
+export const Positive = meta.story({
 	args: {
-		color: "success",
+		design: "positive",
 		title: "Success",
 		children: "The operation completed successfully.",
 	},
 });
 
-export const Warning = meta.story({
+export const Critical = meta.story({
 	args: {
-		color: "warning",
+		design: "critical",
 		title: "Warning",
 		children: "Please review the changes before proceeding.",
 	},
 });
 
-export const ErrorColor = meta.story({
+export const Negative = meta.story({
 	args: {
-		color: "error",
+		design: "negative",
 		title: "Error",
 		children: "Something went wrong. Please try again later.",
 	},

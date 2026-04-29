@@ -1,0 +1,385 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "User Management API",
+		"version": "1.0.0",
+		"description": "The User Management API provides CRUD operations for Reltio platform users. Users are identified by username (typically an email address) and belong to a customer organization.\n\nEach user has:\n- **Roles** — permissions scoped to tenants (e.g., `ROLE_ADMIN_TENANT_myTenant`, `ROLE_USER`)\n- **Groups** — named collections of users for batch role assignment (e.g., `SALES_GROUP`)\n- **MFA settings** — multi-factor authentication enrollment (authenticator app or email)\n\nThis API is used by admin consoles and provisioning integrations to manage who can access which tenants with what permissions."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/services/oauth",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/users": {
+			"get": {
+				"operationId": "getAllUsers",
+				"summary": "GET /users",
+				"description": "Retrieves all users that the authenticated caller is entitled to see, based on their assigned roles. Admin users see all users under their customer; tenant-scoped admins see users with access to their tenants.",
+				"responses": {
+					"200": {
+						"description": "Array of user objects.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": { "$ref": "#/components/schemas/User" }
+								}
+							}
+						}
+					},
+					"401": { "description": "Unauthorized." },
+					"403": { "description": "Forbidden." }
+				}
+			},
+			"post": {
+				"operationId": "addUsers",
+				"summary": "POST /users",
+				"description": "Creates one or more new users. Each user must have a unique username (email) within the customer. Users are created with the specified roles, groups, and settings.",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": { "$ref": "#/components/schemas/User" }
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Users created.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": { "$ref": "#/components/schemas/User" }
+								}
+							}
+						}
+					},
+					"401": { "description": "Unauthorized." },
+					"500": { "description": "Username already in use." }
+				}
+			}
+		},
+		"/users/{username}": {
+			"get": {
+				"operationId": "getUser",
+				"summary": "GET /users/{username}",
+				"description": "Retrieves details for a specific user by username or email. Use `resolveGroups=true` to include roles inherited from the user's groups.",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" },
+						"description": "Username or email address."
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "User details.",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/User" }
+							}
+						}
+					},
+					"401": { "description": "Unauthorized." },
+					"404": { "description": "User not found." }
+				}
+			},
+			"put": {
+				"operationId": "updateUser",
+				"summary": "PUT /users/{username}",
+				"description": "Updates user details — roles, groups, enabled status, locale, timezone. Use `skipTokenRevocation=true` to avoid invalidating the user's active sessions after the update.",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": { "$ref": "#/components/schemas/User" }
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "User updated.",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/User" }
+							}
+						}
+					},
+					"401": { "description": "Unauthorized." },
+					"404": { "description": "User not found." }
+				}
+			},
+			"delete": {
+				"operationId": "deleteUser",
+				"summary": "DELETE /users/{username}",
+				"description": "Permanently deletes a user account. All active tokens are revoked and the user can no longer authenticate.",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": { "description": "User deleted." },
+					"401": { "description": "Unauthorized." },
+					"404": { "description": "User not found." }
+				}
+			}
+		},
+		"/users/{username}/groups": {
+			"get": {
+				"operationId": "getUserGroups",
+				"summary": "GET /users/{username}/groups",
+				"description": "Retrieves the list of groups that a user belongs to.",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Array of group names.",
+						"content": {
+							"application/json": {
+								"schema": { "type": "array", "items": { "type": "string" } }
+							}
+						}
+					},
+					"401": { "description": "Unauthorized." },
+					"404": { "description": "User not found." }
+				}
+			},
+			"put": {
+				"operationId": "updateUserGroups",
+				"summary": "PUT /users/{username}/groups",
+				"description": "Updates the group membership for a user. Replaces the current group list with the provided one.",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": { "$ref": "#/components/schemas/GroupsContainer" }
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Groups updated.",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/GroupsContainer" }
+							}
+						}
+					},
+					"401": { "description": "Unauthorized." },
+					"404": { "description": "User not found." }
+				}
+			}
+		},
+		"/users/{username}/revoketokens": {
+			"put": {
+				"operationId": "revokeUserTokens",
+				"summary": "PUT /users/{username}/revoketokens",
+				"description": "Revokes all active access tokens for a user, forcing them to re-authenticate. Use after role changes, security incidents, or account compromise.",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": { "description": "All tokens revoked." },
+					"401": { "description": "Unauthorized." },
+					"404": { "description": "User not found." }
+				}
+			}
+		},
+		"/users/tenants/{tenantId}": {
+			"get": {
+				"operationId": "getUsersForTenant",
+				"summary": "GET /users/tenants/{tenantId}",
+				"description": "Retrieves username/email pairs for all users who have access to a specific tenant. Returns a lightweight list — use `GET /users/{username}` for full user details.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Array of user summaries.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": { "$ref": "#/components/schemas/UserSummary" }
+								}
+							}
+						}
+					},
+					"401": { "description": "Unauthorized." }
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"User": {
+				"title": "User",
+				"description": "A Reltio platform user account.",
+				"type": "object",
+				"required": ["username", "email", "customer"],
+				"properties": {
+					"username": {
+						"type": "string",
+						"description": "Unique username (typically email).",
+						"examples": ["user@example.com"]
+					},
+					"email": {
+						"type": "string",
+						"description": "Email address.",
+						"examples": ["user@example.com"]
+					},
+					"customer": {
+						"type": "string",
+						"description": "Customer organization this user belongs to.",
+						"examples": ["AcmeCorp"]
+					},
+					"enabled": {
+						"type": "boolean",
+						"description": "Whether the user can authenticate. Disabled users are locked out.",
+						"examples": [true]
+					},
+					"accountNonExpired": { "type": "boolean" },
+					"accountNonLocked": {
+						"type": "boolean",
+						"description": "False if locked due to too many failed login attempts."
+					},
+					"credentialsNonExpired": {
+						"type": "boolean",
+						"description": "False if the password has expired."
+					},
+					"externalUser": {
+						"type": "boolean",
+						"description": "True for SSO users, false for native (password) users."
+					},
+					"locale": {
+						"type": "string",
+						"description": "User's locale.",
+						"examples": ["en"]
+					},
+					"timezone": {
+						"type": "string",
+						"description": "User's timezone.",
+						"examples": ["UTC"]
+					},
+					"groups": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "Group memberships.",
+						"examples": [["SALES_GROUP"]]
+					},
+					"userPermissions": { "$ref": "#/components/schemas/UserPermissions" },
+					"passwordChangedDate": {
+						"type": "integer",
+						"readOnly": true,
+						"description": "Last password change timestamp."
+					},
+					"lastLoginDate": {
+						"type": "integer",
+						"readOnly": true,
+						"description": "Last login timestamp."
+					},
+					"numberFailedLoginAttempts": { "type": "integer", "readOnly": true },
+					"createdDate": { "type": "integer", "readOnly": true },
+					"updatedDate": { "type": "integer", "readOnly": true },
+					"createdBy": { "type": "string", "readOnly": true },
+					"updatedBy": { "type": "string", "readOnly": true }
+				}
+			},
+			"UserSummary": {
+				"title": "User Summary",
+				"description": "Lightweight user representation with just username and email.",
+				"type": "object",
+				"required": ["username", "email"],
+				"properties": {
+					"username": { "type": "string" },
+					"email": { "type": "string" },
+					"isClient": {
+						"type": "boolean",
+						"description": "True if this is a machine client, not a human user."
+					}
+				}
+			},
+			"UserPermissions": {
+				"title": "User Permissions",
+				"description": "Role and permission assignments for a user.",
+				"type": "object",
+				"properties": {
+					"roles": {
+						"type": "object",
+						"description": "Map of tenant URI to array of role names.",
+						"additionalProperties": {
+							"type": "array",
+							"items": { "type": "string" }
+						}
+					},
+					"permissions": {
+						"type": "object",
+						"description": "Fine-grained permissions.",
+						"additionalProperties": { "type": "object" }
+					}
+				}
+			},
+			"GroupsContainer": {
+				"title": "Groups Container",
+				"description": "A list of group names for user group management.",
+				"type": "object",
+				"properties": {
+					"groups": {
+						"type": "array",
+						"items": { "type": "string" },
+						"examples": [["SALES_GROUP", "ADMIN_GROUP"]]
+					}
+				}
+			}
+		}
+	}
+}

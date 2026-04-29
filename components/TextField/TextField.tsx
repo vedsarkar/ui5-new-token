@@ -2,16 +2,24 @@ import type React from "react";
 import { useRef } from "react";
 import { Close } from "@/icons/Close";
 import { classNames } from "@/utils/classNames";
+import { getValueStateConfig } from "@/utils/valueState";
 import styles from "./TextField.module.css";
 import type { TextFieldProps } from "./TextField.types";
 
+/**
+ * SAP Fiori Input (TextField)
+ *
+ * A form control with label, value state support, and content slots.
+ *
+ * @see https://experience.sap.com/fiori-design-web/input-field/
+ */
 export const TextField = ({
 	value,
 	onChange,
 	label,
 	placeholder,
-	helperText,
-	error,
+	valueState = "None",
+	valueStateMessage,
 	disabled,
 	readOnly,
 	required,
@@ -20,9 +28,11 @@ export const TextField = ({
 	clearable,
 	className,
 	style,
+	name,
 	...rest
 }: TextFieldProps) => {
 	const inputRef = useRef<HTMLInputElement>(null);
+	const vsConfig = getValueStateConfig(valueState);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		onChange?.(e, e.target.value);
@@ -49,7 +59,7 @@ export const TextField = ({
 		<label
 			className={classNames(
 				styles.root,
-				error && styles.error,
+				valueState !== "None" && styles[vsConfig.className],
 				disabled && styles.disabled,
 				readOnly && styles.readOnly,
 				required && styles.required,
@@ -73,8 +83,8 @@ export const TextField = ({
 					disabled={disabled}
 					readOnly={readOnly}
 					required={required}
-					aria-invalid={error || undefined}
-					aria-required={required || undefined}
+					name={name}
+					{...vsConfig.aria}
 					{...rest}
 				/>
 				{showClear && (
@@ -92,8 +102,10 @@ export const TextField = ({
 					<span className={classNames(styles.endContent)}>{endContent}</span>
 				)}
 			</div>
-			{helperText && (
-				<span className={classNames(styles.helperText)}>{helperText}</span>
+			{valueState !== "None" && valueStateMessage && (
+				<span className={classNames(styles.valueStateMessage)}>
+					{valueStateMessage}
+				</span>
 			)}
 		</label>
 	);

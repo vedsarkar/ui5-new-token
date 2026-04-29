@@ -70,10 +70,15 @@ export const Default = meta.story({
 export const ErrorState = meta.story({
 	render: (args) => (
 		<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-			<Radio name="error-group" error checked onChange={args?.onChange}>
+			<Radio
+				name="error-group"
+				valueState="Error"
+				checked
+				onChange={args?.onChange}
+			>
 				Selected option
 			</Radio>
-			<Radio name="error-group" error onChange={args?.onChange}>
+			<Radio name="error-group" valueState="Error" onChange={args?.onChange}>
 				Another option
 			</Radio>
 		</div>

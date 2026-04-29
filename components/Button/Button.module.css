@@ -3,140 +3,175 @@
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
-	border: 0 solid transparent;
-	border-radius: 9999px;
+	border: var(--sapButton_BorderWidth) solid transparent;
+	border-radius: var(--sapButton_BorderCornerRadius);
 	cursor: pointer;
-	font-size: 16px;
+	font-family: var(--sapFontFamily);
+	font-size: 14px;
 	font-weight: 500;
-	line-height: 1.5;
-	letter-spacing: 0.15px;
+	line-height: 1.25;
 	text-align: center;
 	text-decoration: none;
 	white-space: nowrap;
 	user-select: none;
-	transition: all 200ms ease;
 	box-sizing: border-box;
-	background: none;
+	min-height: var(--sapElement_Height);
+	padding: 0 12px;
 	margin: 0;
-	padding: 0;
 
 	&:focus-visible {
 		outline: 2px solid var(--sapContent_FocusColor);
-		outline-offset: 2px;
+		outline-offset: -3px;
 	}
 
 	&:disabled,
 	&[aria-disabled="true"] {
-		opacity: 0.38;
-		cursor: not-allowed;
+		opacity: 0.4;
+		cursor: default;
 		pointer-events: none;
 	}
 }
 
-/* Style: Filled */
-.filled {
-	border: none;
+/* Design: Default */
+.default {
+	background-color: var(--sapButton_Background);
+	border-color: var(--sapButton_BorderColor);
+	color: var(--sapButton_TextColor);
+
+	&:hover {
+		background-color: var(--sapButton_Hover_Background);
+		border-color: var(--sapButton_Hover_BorderColor);
+		color: var(--sapButton_Hover_TextColor);
+	}
+
+	&:active {
+		background-color: var(--sapButton_Active_Background);
+		border-color: var(--sapButton_Active_BorderColor);
+		color: var(--sapButton_Active_TextColor);
+	}
 }
 
-/* Style: Outlined */
-.outlined {
-	background-color: transparent;
-	border: 1px solid;
-}
-
-/* Style: Text */
-.text {
-	background-color: transparent;
-	border: none;
-}
-
-/* Filled + Primary */
-.filled.primary {
+/* Design: Emphasized */
+.emphasized {
 	background-color: var(--sapButton_Emphasized_Background);
+	border-color: var(--sapButton_Emphasized_BorderColor);
 	color: var(--sapButton_Emphasized_TextColor);
+	font-weight: 700;
+	text-shadow: 0 0 var(--sapButton_Emphasized_TextShadow);
 
 	&:hover {
 		background-color: var(--sapButton_Emphasized_Hover_Background);
+		border-color: var(--sapButton_Emphasized_Hover_BorderColor);
+		color: var(--sapButton_Emphasized_Hover_TextColor);
+	}
+
+	&:active {
+		background-color: var(--sapButton_Emphasized_Active_Background);
+		border-color: var(--sapButton_Emphasized_Active_BorderColor);
+		color: var(--sapButton_Emphasized_Active_TextColor);
 	}
 }
 
-/* Filled + Inherited */
-.filled.inherited {
-	background-color: var(--sapButton_Background);
+/* Design: Ghost */
+.ghost {
+	background-color: transparent;
+	border-color: var(--sapButton_BorderColor);
 	color: var(--sapButton_TextColor);
-}
-
-:global([data-theme="dark"]) .filled.inherited {
-	border: 1px solid var(--sapButton_BorderColor);
-}
-
-/* Outlined + Primary */
-.outlined.primary {
-	border-color: var(--sapButton_Emphasized_BorderColor);
-	color: var(--sapButton_Emphasized_Background);
 
 	&:hover {
 		background-color: var(--sapButton_Hover_Background);
+		border-color: var(--sapButton_Hover_BorderColor);
+		color: var(--sapButton_Hover_TextColor);
+	}
+
+	&:active {
+		background-color: var(--sapButton_Active_Background);
+		border-color: var(--sapButton_Active_BorderColor);
+		color: var(--sapButton_Active_TextColor);
 	}
 }
 
-/* Outlined + Inherited */
-.outlined.inherited {
-	border-color: currentColor;
-	color: inherit;
-
-	&:hover {
-		background-color: var(--sapButton_Hover_Background);
-	}
-}
-
-/* Text + Primary */
-.text.primary {
+/* Design: Transparent */
+.transparent {
+	background-color: var(--sapButton_Lite_Background);
+	border-color: var(--sapButton_Lite_BorderColor);
 	color: var(--sapButton_Lite_TextColor);
 
 	&:hover {
 		background-color: var(--sapButton_Lite_Hover_Background);
+		border-color: var(--sapButton_Lite_Hover_BorderColor);
+		color: var(--sapButton_Lite_Hover_TextColor);
+	}
+
+	&:active {
+		background-color: var(--sapButton_Lite_Active_Background);
+		border-color: var(--sapButton_Lite_Active_BorderColor);
+		color: var(--sapButton_Lite_TextColor);
 	}
 }
 
-/* Text + Inherited */
-.text.inherited {
-	color: inherit;
+/* Design: Positive */
+.positive {
+	background-color: var(--sapButton_Accept_Background);
+	border-color: var(--sapButton_Accept_BorderColor);
+	color: var(--sapButton_Accept_TextColor);
 
 	&:hover {
-		background-color: var(--sapButton_Lite_Hover_Background);
+		background-color: var(--sapButton_Accept_Hover_Background);
+		border-color: var(--sapButton_Accept_Hover_BorderColor);
+		color: var(--sapButton_Accept_Hover_TextColor);
+	}
+
+	&:active {
+		background-color: var(--sapButton_Accept_Active_Background);
+		border-color: var(--sapButton_Accept_Active_BorderColor);
+		color: var(--sapButton_Accept_Active_TextColor);
 	}
 }
 
-/* Size: Small */
-.small {
-	min-height: 32px;
-	padding: 8px 12px;
-	font-size: 0.875rem;
+/* Design: Negative */
+.negative {
+	background-color: var(--sapButton_Reject_Background);
+	border-color: var(--sapButton_Reject_BorderColor);
+	color: var(--sapButton_Reject_TextColor);
+
+	&:hover {
+		background-color: var(--sapButton_Reject_Hover_Background);
+		border-color: var(--sapButton_Reject_Hover_BorderColor);
+		color: var(--sapButton_Reject_Hover_TextColor);
+	}
+
+	&:active {
+		background-color: var(--sapButton_Reject_Active_Background);
+		border-color: var(--sapButton_Reject_Active_BorderColor);
+		color: var(--sapButton_Reject_Active_TextColor);
+	}
 }
 
-/* Size: Medium */
-.medium {
-	min-height: 40px;
-	padding: 12px 18px;
-}
+/* Design: Attention */
+.attention {
+	background-color: var(--sapButton_Attention_Background);
+	border-color: var(--sapButton_Attention_BorderColor);
+	color: var(--sapButton_Attention_TextColor);
 
-/* Size: Large */
-.large {
-	min-height: 48px;
-	padding: 16px 24px;
-}
+	&:hover {
+		background-color: var(--sapButton_Attention_Hover_Background);
+		border-color: var(--sapButton_Attention_Hover_BorderColor);
+		color: var(--sapButton_Attention_Hover_TextColor);
+	}
 
-/* State: Disabled */
-.disabled {
-	opacity: 0.38;
-	cursor: not-allowed;
+	&:active {
+		background-color: var(--sapButton_Attention_Active_Background);
+		border-color: var(--sapButton_Attention_Active_BorderColor);
+		color: var(--sapButton_Attention_Active_TextColor);
+	}
 }
 
 /* Icon Only */
 .iconOnly {
 	aspect-ratio: 1;
 	padding: 0;
+	min-width: var(--sapElement_Height);
 }
 
 /* Full Width */

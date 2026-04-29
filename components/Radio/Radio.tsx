@@ -7,7 +7,7 @@ export const Radio = ({
 	checked = false,
 	onChange,
 	children,
-	error = false,
+	valueState = "None",
 	disabled = false,
 	className,
 	...rest
@@ -21,7 +21,8 @@ export const Radio = ({
 			className={classNames(
 				styles.root,
 				checked && styles.checked,
-				error && styles.error,
+				valueState === "Error" && styles.error,
+				valueState === "Warning" && styles.warning,
 				disabled && styles.disabled,
 				className,
 			)}

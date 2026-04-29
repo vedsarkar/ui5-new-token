@@ -32,11 +32,11 @@ export const AppSelector = ({
 			<Popover
 				trigger={
 					label ? (
-						<Button variant="text">
+						<Button design="transparent">
 							<Applications /> {label}
 						</Button>
 					) : (
-						<Button variant="text" aria-label="Applications">
+						<Button design="transparent" aria-label="Applications">
 							<Applications />
 						</Button>
 					)

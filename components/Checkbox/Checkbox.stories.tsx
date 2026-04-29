@@ -82,10 +82,10 @@ export const Indeterminate = meta.story({
 export const ErrorState = meta.story({
 	render: (args) => (
 		<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-			<Checkbox error onChange={args?.onChange}>
+			<Checkbox valueState="Error" onChange={args?.onChange}>
 				Accept terms
 			</Checkbox>
-			<Checkbox error checked onChange={args?.onChange}>
+			<Checkbox valueState="Error" checked onChange={args?.onChange}>
 				Privacy policy
 			</Checkbox>
 		</div>

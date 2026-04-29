@@ -71,10 +71,10 @@ export const WithHeaderAndFooter = meta.story({
 					header="Dialog Title"
 					footer={
 						<>
-							<Button variant="outlined" onClick={() => setOpen(false)}>
+							<Button design="ghost" onClick={() => setOpen(false)}>
 								Cancel
 							</Button>
-							<Button color="primary" onClick={() => setOpen(false)}>
+							<Button design="emphasized" onClick={() => setOpen(false)}>
 								Confirm
 							</Button>
 						</>
@@ -112,7 +112,7 @@ export const CustomBody = meta.story({
 							marginBottom: 4,
 						}}
 					>
-						<Info size="medium" color="primary" />
+						<Info size="medium" design="emphasized" />
 						<span style={{ fontSize: 18, fontWeight: 600 }}>
 							This is the title
 						</span>
@@ -142,10 +142,10 @@ export const CustomBody = meta.story({
 							marginTop: 16,
 						}}
 					>
-						<Button variant="outlined" onClick={() => setOpen(false)}>
+						<Button design="ghost" onClick={() => setOpen(false)}>
 							Cancel
 						</Button>
-						<Button color="primary" onClick={() => setOpen(false)}>
+						<Button design="emphasized" onClick={() => setOpen(false)}>
 							Save
 						</Button>
 					</div>
@@ -166,7 +166,7 @@ export const ScrollableContent = meta.story({
 					onClose={() => setOpen(false)}
 					header="Scrollable Content"
 					footer={
-						<Button color="primary" onClick={() => setOpen(false)}>
+						<Button design="emphasized" onClick={() => setOpen(false)}>
 							Close
 						</Button>
 					}

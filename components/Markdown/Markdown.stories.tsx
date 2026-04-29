@@ -245,6 +245,6 @@ export const ButtonAsReactComponent = meta.story({
 	args: {
 		children: `Use the design system Button in MDX:
 
-<Button variant="filled">Filled</Button> <Button variant="outlined">Outlined</Button>`,
+<Button design="emphasized">Emphasized</Button> <Button design="ghost">Ghost</Button>`,
 	},
 });

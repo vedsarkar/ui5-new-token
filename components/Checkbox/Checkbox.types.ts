@@ -1,5 +1,6 @@
 import type React from "react";
 import type { HtmlProps } from "@/utils/types";
+import type { ValueState } from "@/utils/valueState";
 
 export type CheckboxProps = HtmlProps<
 	"input",
@@ -15,8 +16,8 @@ export type CheckboxProps = HtmlProps<
 		children?: React.ReactNode;
 		/** Whether the checkbox is in an indeterminate state */
 		indeterminate?: boolean;
-		/** Whether the checkbox displays error styling */
-		error?: boolean;
+		/** Validation state affecting visual appearance */
+		valueState?: ValueState;
 		/** Whether the checkbox is disabled */
 		disabled?: boolean;
 	}

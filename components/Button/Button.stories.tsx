@@ -16,129 +16,76 @@ const meta = preview.meta({
 	},
 });
 
+// Design variants
 export const Default = meta.story({
 	args: {
-		children: "Button",
+		children: "Default",
 	},
 });
 
-// Variants
-export const Filled = meta.story({
+export const Emphasized = meta.story({
 	args: {
-		variant: "filled",
-		children: "Filled Button",
+		design: "emphasized",
+		children: "Emphasized",
 	},
 });
 
-export const Outlined = meta.story({
+export const Ghost = meta.story({
 	args: {
-		variant: "outlined",
-		children: "Outlined Button",
+		design: "ghost",
+		children: "Ghost",
 	},
 });
 
-export const Text = meta.story({
+export const Transparent = meta.story({
 	args: {
-		variant: "text",
-		children: "Text Button",
+		design: "transparent",
+		children: "Transparent",
 	},
 });
 
-// Color Variants - Filled
-export const FilledPrimary = meta.story({
+export const Positive = meta.story({
 	args: {
-		variant: "filled",
-		color: "primary",
-		children: "Filled Primary",
+		design: "positive",
+		children: "Positive",
 	},
 });
 
-// Color Variants - Outlined
-export const OutlinedPrimary = meta.story({
+export const Negative = meta.story({
 	args: {
-		variant: "outlined",
-		color: "primary",
-		children: "Outlined Primary",
+		design: "negative",
+		children: "Negative",
 	},
 });
 
-// Color Variants - Text
-export const TextPrimary = meta.story({
+export const Attention = meta.story({
 	args: {
-		variant: "text",
-		color: "primary",
-		children: "Text Primary",
+		design: "attention",
+		children: "Attention",
 	},
 });
 
-export const Small = meta.story({
-	args: {
-		size: "small",
-		children: "Small Button",
-	},
-});
-
-export const Medium = meta.story({
-	args: {
-		size: "medium",
-		children: "Medium Button",
-	},
-});
-
-export const Large = meta.story({
-	args: {
-		size: "large",
-		children: "Large Button",
-	},
-});
-
-// User Story 3: Disabled State
+// Disabled states
 export const Disabled = meta.story({
 	args: {
 		disabled: true,
-		children: "Disabled Button",
+		children: "Disabled",
 	},
 });
 
-export const DisabledFilledPrimary = meta.story({
+export const DisabledEmphasized = meta.story({
 	args: {
-		variant: "filled",
-		color: "primary",
+		design: "emphasized",
 		disabled: true,
-		children: "Disabled Filled Primary",
+		children: "Disabled Emphasized",
 	},
 });
 
-export const DisabledOutlinedPrimary = meta.story({
-	args: {
-		variant: "outlined",
-		color: "primary",
-		disabled: true,
-		children: "Disabled Outlined Primary",
-	},
-});
-
-export const DisabledTextPrimary = meta.story({
-	args: {
-		variant: "text",
-		color: "primary",
-		disabled: true,
-		children: "Disabled Text Primary",
-	},
-});
-
-export const AccessibleDisabled = meta.story({
-	args: {
-		disabled: true,
-		"aria-label": "Save changes (disabled)",
-		children: "Save",
-	},
-});
-
+// Full width
 export const FullWidth = meta.story({
 	args: {
 		fullWidth: true,
-		children: "Full Width Button",
+		children: "Full Width",
 	},
 	render: (args) => (
 		<div style={{ width: "400px" }}>
@@ -147,6 +94,7 @@ export const FullWidth = meta.story({
 	),
 });
 
+// Anchor rendering
 export const AsLink = meta.story({
 	args: {
 		href: "/about",
@@ -163,18 +111,10 @@ export const AsExternalLink = meta.story({
 	},
 });
 
-export const DisabledLink = meta.story({
-	args: {
-		href: "/disabled",
-		disabled: true,
-		children: "Disabled Link",
-	},
-});
-
+// Icon variants
 export const WithIcons = meta.story({
 	args: {
-		variant: "filled",
-		color: "primary",
+		design: "emphasized",
 		children: (
 			<>
 				<StarSelected />
@@ -192,36 +132,17 @@ export const IconOnly = meta.story({
 	},
 });
 
-export const IconOnlyFilledPrimary = meta.story({
+export const IconOnlyEmphasized = meta.story({
 	args: {
-		variant: "filled",
-		color: "primary",
+		design: "emphasized",
 		children: <StarSelected />,
 		"aria-label": "Favorite",
 	},
 });
 
-export const IconOnlyOutlinedPrimary = meta.story({
+export const IconOnlyTransparent = meta.story({
 	args: {
-		variant: "outlined",
-		color: "primary",
-		children: <StarSelected />,
-		"aria-label": "Favorite",
-	},
-});
-
-export const IconOnlyTextPrimary = meta.story({
-	args: {
-		variant: "text",
-		color: "primary",
-		children: <StarSelected />,
-		"aria-label": "Favorite",
-	},
-});
-
-export const IconOnlyDisabled = meta.story({
-	args: {
-		disabled: true,
+		design: "transparent",
 		children: <StarSelected />,
 		"aria-label": "Favorite",
 	},

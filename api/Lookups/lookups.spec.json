@@ -1,0 +1,400 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Lookups API",
+		"version": "1.0.0",
+		"description": "The Lookups API manages reference data (lookup tables) in Reltio MDM. Lookups are standardized code-value pairs organized by type — for example, Country codes (US → United States), State codes (CA → California), or Industry codes (SIC → Standard Industrial Classification).\n\nLookups serve two purposes:\n1. **Data standardization** — map source-specific codes to canonical values during ingestion\n2. **UI rendering** — provide dropdown options and display labels for coded attributes\n\nLookups support hierarchies (State belongs to Country), multiple sources (different systems contribute different code mappings), and localization.\n\nThe API has two flavors:\n- **Primary API** (`/reltio/api/{tenantId}/lookups`) — CRUD operations, resolve, and validate\n- **RDM Service** (`/lookups/{tenantId}`) — advanced pagination, scanning, and search with filters"
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/reltio/api/{tenantId}/lookups": {
+			"get": {
+				"operationId": "getLookups",
+				"summary": "GET /reltio/api/{tenantId}/lookups",
+				"description": "Retrieves all lookups for the tenant. Use the `source` parameter to filter by origin: `ALL` (default), `RDM` (Reference Data Management only), or `MDM` (MDM-managed only).",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "The lookup definitions for the tenant.",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/LookupType" }
+							}
+						}
+					},
+					"401": { "description": "Unauthorized." }
+				}
+			},
+			"post": {
+				"operationId": "createLookups",
+				"summary": "POST /reltio/api/{tenantId}/lookups",
+				"description": "Creates lookups for the tenant. If lookups already exist, they are **replaced** by this operation. Use PUT to update without replacing.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": { "$ref": "#/components/schemas/LookupType" }
+						}
+					}
+				},
+				"responses": {
+					"201": { "description": "Lookups created." },
+					"401": { "description": "Unauthorized." }
+				}
+			},
+			"put": {
+				"operationId": "updateLookups",
+				"summary": "PUT /reltio/api/{tenantId}/lookups",
+				"description": "Updates lookups for the tenant. If lookups are not yet defined, they are created. Unlike POST, this merges with existing lookups rather than replacing them.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": { "$ref": "#/components/schemas/LookupType" }
+						}
+					}
+				},
+				"responses": {
+					"202": { "description": "Lookups updated." },
+					"401": { "description": "Unauthorized." }
+				}
+			},
+			"delete": {
+				"operationId": "purgeLookups",
+				"summary": "DELETE /reltio/api/{tenantId}/lookups",
+				"description": "Purges **all** lookups in the tenant. **Warning:** This is irreversible and removes all reference data.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": { "description": "All lookups purged." },
+					"401": { "description": "Unauthorized." }
+				}
+			}
+		},
+		"/reltio/api/{tenantId}/lookups/resolve": {
+			"post": {
+				"operationId": "resolveLookup",
+				"summary": "POST /reltio/api/{tenantId}/lookups/resolve",
+				"description": "Resolves a lookup code to its canonical value. Given a type and code, returns the corresponding display value. Essential for rendering coded attributes in UIs.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": { "$ref": "#/components/schemas/LookupKey" }
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "The resolved lookup value.",
+						"content": {
+							"application/json": { "schema": { "type": "object" } }
+						}
+					},
+					"401": { "description": "Unauthorized." }
+				}
+			}
+		},
+		"/reltio/api/{tenantId}/lookups/validate": {
+			"post": {
+				"operationId": "validateLookups",
+				"summary": "POST /reltio/api/{tenantId}/lookups/validate",
+				"description": "Validates lookup codes — checks whether the provided type+code combinations exist in the tenant's lookup tables. Returns `OK` or `ERROR` status for each code. Useful for data quality checks during ingestion.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": { "$ref": "#/components/schemas/LookupValidateRequest" }
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Validation results per code.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/LookupValidateResponse"
+								}
+							}
+						}
+					},
+					"401": { "description": "Unauthorized." }
+				}
+			}
+		},
+		"/lookups/{tenantId}": {
+			"get": {
+				"operationId": "listLookupCodes",
+				"summary": "GET /lookups/{tenantId}",
+				"description": "Lists all lookup codes in the RDM tenant with pagination and filtering. Supports filtering by type, code, value, enabled status, dates, and source-specific values.\n\nThe response includes contributor sources, localization, and hierarchy information.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Paginated list of lookup codes.",
+						"content": {
+							"application/json": { "schema": { "type": "array", "items": {} } }
+						}
+					},
+					"401": { "description": "Unauthorized." }
+				}
+			}
+		},
+		"/lookups/{tenantId}/_total": {
+			"get": {
+				"operationId": "getLookupTotal",
+				"summary": "GET /lookups/{tenantId}/_total",
+				"description": "Returns the total number of lookup values matching the specified filter criteria.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Total count.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": { "total": { "type": "integer" } }
+								}
+							}
+						}
+					},
+					"401": { "description": "Unauthorized." }
+				}
+			}
+		},
+		"/lookups/{tenantId}/{type}/{code}": {
+			"get": {
+				"operationId": "getLookupByTypeAndCode",
+				"summary": "GET /lookups/{tenantId}/{type}/{code}",
+				"description": "Retrieves a specific lookup value by its type and code. Returns the canonical value, contributor sources, and any custom attributes.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "type",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" },
+						"description": "Lookup type (e.g., COUNTRY_CD)."
+					},
+					{
+						"name": "code",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" },
+						"description": "Lookup code (e.g., US)."
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "The lookup value.",
+						"content": {
+							"application/json": { "schema": { "type": "object" } }
+						}
+					},
+					"401": { "description": "Unauthorized." },
+					"404": { "description": "Lookup not found." }
+				}
+			},
+			"delete": {
+				"operationId": "deleteLookupByTypeAndCode",
+				"summary": "DELETE /lookups/{tenantId}/{type}/{code}",
+				"description": "Deletes a specific lookup value by its type and code.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "type",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "code",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": { "description": "Lookup deleted." },
+					"401": { "description": "Unauthorized." },
+					"404": { "description": "Lookup not found." }
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"LookupType": {
+				"title": "Lookup Type",
+				"description": "A lookup type containing code-value pairs.",
+				"type": "object",
+				"properties": {
+					"type": {
+						"type": "string",
+						"description": "The lookup type identifier.",
+						"examples": ["COUNTRY_CD"]
+					},
+					"lookup": { "$ref": "#/components/schemas/LookupEntry" }
+				}
+			},
+			"LookupEntry": {
+				"title": "Lookup Entry",
+				"description": "A single lookup code-value pair.",
+				"type": "object",
+				"properties": {
+					"lookCode": {
+						"type": "string",
+						"description": "The lookup code.",
+						"examples": ["US"]
+					},
+					"lookupValue": { "$ref": "#/components/schemas/LookupValue" }
+				}
+			},
+			"LookupValue": {
+				"title": "Lookup Value",
+				"description": "Display information for a lookup code.",
+				"type": "object",
+				"required": ["displayName"],
+				"properties": {
+					"displayName": {
+						"type": "string",
+						"description": "The display value.",
+						"examples": ["United States"]
+					},
+					"parent": {
+						"type": "string",
+						"description": "Parent lookup reference for hierarchical lookups.",
+						"examples": ["REGION_CD.NA"]
+					},
+					"parents": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "Multiple parent references."
+					}
+				}
+			},
+			"LookupKey": {
+				"title": "Lookup Key",
+				"description": "A type+code pair for lookup resolution.",
+				"type": "object",
+				"required": ["type", "codeValue"],
+				"properties": {
+					"type": { "type": "string", "examples": ["COUNTRY_CD"] },
+					"codeValue": { "type": "string", "examples": ["US"] }
+				}
+			},
+			"LookupValidateRequest": {
+				"title": "Lookup Validate Request",
+				"type": "object",
+				"properties": {
+					"codeValues": {
+						"type": "array",
+						"items": { "$ref": "#/components/schemas/LookupKey" },
+						"description": "Lookup codes to validate."
+					},
+					"parents": {
+						"type": "array",
+						"items": {},
+						"description": "Optional parent context for hierarchical validation."
+					}
+				}
+			},
+			"LookupValidateResponse": {
+				"title": "Lookup Validate Response",
+				"type": "object",
+				"properties": {
+					"codeValues": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"type": { "type": "string" },
+								"codeValue": { "type": "string" },
+								"status": { "type": "string", "enum": ["OK", "ERROR"] }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
