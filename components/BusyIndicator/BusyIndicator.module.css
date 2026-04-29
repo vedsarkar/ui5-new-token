@@ -1,0 +1,123 @@
+/* Root */
+.root {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Overlay wrapper — used when children are provided */
+.overlay {
+	position: relative;
+	display: inline-flex;
+}
+
+.overlayContent {
+	transition: opacity 200ms ease;
+}
+
+.overlayContentDimmed {
+	opacity: var(--sapContent_DisabledOpacity);
+	pointer-events: none;
+}
+
+.busyArea {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+/* When overlaying children, center the busy area absolutely */
+.busyAreaOverlay {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+}
+
+.busyArea:focus-visible {
+	outline: 2px solid var(--sapContent_FocusColor);
+	outline-offset: -2px;
+}
+
+/* Dots container */
+.dots {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 0;
+}
+
+/* Individual dot */
+.dot {
+	display: inline-block;
+	border-radius: 50%;
+	background-color: var(--sapContent_BusyColor);
+	animation: grow 1.6s cubic-bezier(0.32, 0.06, 0.85, 1.11) infinite;
+}
+
+.dot1 {
+	animation-delay: 0ms;
+}
+
+.dot2 {
+	animation-delay: 200ms;
+}
+
+.dot3 {
+	animation-delay: 400ms;
+}
+
+@keyframes grow {
+	0% {
+		transform: scale(0.5);
+	}
+	25% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(0.5);
+	}
+	100% {
+		transform: scale(0.5);
+	}
+}
+
+/* Size S */
+.S .dot {
+	width: 8px;
+	height: 8px;
+}
+
+.S .dots {
+	gap: 1px;
+}
+
+/* Size M (default) */
+.M .dot {
+	width: 16px;
+	height: 16px;
+}
+
+.M .dots {
+	gap: 3px;
+}
+
+/* Size L */
+.L .dot {
+	width: 32px;
+	height: 32px;
+}
+
+.L .dots {
+	gap: 4px;
+}
+
+/* Text label */
+.text {
+	margin-top: 8px;
+	font-size: 14px;
+	line-height: 20px;
+	color: var(--sapContent_LabelColor);
+	text-align: center;
+}

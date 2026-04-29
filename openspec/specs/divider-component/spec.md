@@ -1,129 +1,42 @@
 # divider-component Specification
 
 ## Purpose
-TBD - created by archiving change add-divider-component. Update Purpose after archive.
+
+Divider — a horizontal rule with optional label text, used to visually separate content sections.
+
+No direct SAP equivalent (custom component using SAP Horizon tokens).
+
 ## Requirements
-### Requirement: Horizontal Rendering
 
-The Divider component SHALL render as a `<div>` element with `role="separator"` to provide semantic meaning as a thematic break between content sections. When no `children` are provided, it SHALL display as a single horizontal line. When `children` are provided, it SHALL display the children with lines on either side according to the `align` prop.
+### Requirement: Basic Divider
 
-#### Scenario: Default divider renders as horizontal line
-
-- **WHEN** the Divider component is rendered without children
-- **THEN** it displays a horizontal line spanning the full width of its container
-- **AND** it renders as a `<div>` element with `role="separator"`
-
-#### Scenario: Divider fills container width
-
-- **WHEN** the Divider component is placed inside a container
-- **THEN** its width is 100% of the parent container
+#### Scenario: Line-only divider
+- **WHEN** no `children` is provided
+- **THEN** renders a full-width horizontal line in `--sapNeutralBackground`
 
 ### Requirement: Labeled Divider
 
-The Divider component SHALL accept optional `children` to render a labeled divider. When children are provided, the component SHALL display the label text with horizontal lines positioned according to the `align` prop.
+#### Scenario: Labeled divider with alignment
+- **WHEN** `children` (label text) is provided
+- **THEN** label renders in `--sapContent_LabelColor` with lines on either side
+- **AND** line segments use `::before` and `::after` pseudo-elements
 
-#### Scenario: Labeled divider with start alignment
+#### Scenario: Align start
+- **WHEN** `align` is `"start"` or not set
+- **THEN** label appears at the start, line appears after
 
-- **WHEN** the Divider is rendered with `children="Section"` and `align="start"` (or default)
-- **THEN** the label text "Section" appears on the left
-- **AND** a horizontal line extends from after the text to the right edge
+#### Scenario: Align center
+- **WHEN** `align` is `"center"`
+- **THEN** lines appear on both sides of the label
 
-#### Scenario: Labeled divider with center alignment
+#### Scenario: Align end
+- **WHEN** `align` is `"end"`
+- **THEN** line appears before, label at the end
 
-- **WHEN** the Divider is rendered with `children="Section"` and `align="center"`
-- **THEN** the label text "Section" appears centered
-- **AND** horizontal lines extend on both sides of the text
+### Requirement: TypeScript Types
 
-#### Scenario: Labeled divider with end alignment
+Props SHALL be defined as `DividerProps = HtmlProps<"div", { align, children }>`.
 
-- **WHEN** the Divider is rendered with `children="Section"` and `align="end"`
-- **THEN** the label text "Section" appears on the right
-- **AND** a horizontal line extends from the left edge to before the text
+### Requirement: CSS Styling
 
-### Requirement: Align Prop
-
-The Divider component SHALL accept an optional `align` prop with values `"start"`, `"center"`, or `"end"`. The default value SHALL be `"start"`. This prop controls the position of the label when `children` are provided.
-
-#### Scenario: Default alignment is start
-
-- **WHEN** the Divider is rendered with children but no `align` prop
-- **THEN** the label is positioned at the start (left) with the line on the right
-
-### Requirement: Accessibility
-
-The Divider component SHALL use `role="separator"` on the root `<div>` element to communicate its purpose to assistive technologies.
-
-#### Scenario: Separator role is set
-
-- **WHEN** the Divider component is rendered
-- **THEN** it has `role="separator"` attribute
-- **AND** screen readers announce it as a separator
-
-#### Scenario: Decorative divider is hidden from screen readers
-
-- **WHEN** the Divider component is rendered with `aria-hidden="true"`
-- **THEN** screen readers skip the divider element
-- **AND** it serves as purely visual decoration
-
-### Requirement: CSS Custom Properties
-
-The Divider component SHALL NOT use component-level CSS custom properties. Colors SHALL reference global `--reltio-color-*` tokens. Spacing and sizing SHALL use plain values.
-
-#### Scenario: Line color uses global token
-
-- **WHEN** the Divider component is rendered
-- **THEN** the line color uses a global `--reltio-color-border-*` token
-- **AND** no component-level CSS variables are defined
-
-### Requirement: className Utility Usage
-
-The Divider component SHALL use the `classNames` utility from `@/utils/classNames` for all className composition, providing stable base classes for external customization.
-
-#### Scenario: classNames utility composes CSS modules
-
-- **WHEN** the Divider component is rendered
-- **THEN** the `classNames` utility combines all applicable CSS module classes
-- **AND** filters out falsy values
-
-#### Scenario: Custom className support
-
-- **WHEN** a developer provides a `className` prop
-- **THEN** custom classes are added to the divider element
-- **AND** CSS module classes are preserved
-- **AND** no class name conflicts occur
-
-### Requirement: TypeScript Type Safety
-
-The Divider component SHALL be fully typed with TypeScript using strict mode. All types MUST be defined in a separate `Divider.types.ts` file using the `type` keyword exclusively (never `interface`).
-
-#### Scenario: Component props fully typed
-
-- **WHEN** a developer uses the Divider component
-- **THEN** all props have proper TypeScript types
-- **AND** TypeScript provides autocomplete for props
-- **AND** invalid prop values are caught at compile time
-
-#### Scenario: Types exported alongside component
-
-- **WHEN** a developer imports Divider
-- **THEN** `DividerProps` type can be imported from the same path
-- **AND** all types use the `type` keyword
-
-### Requirement: Storybook Documentation
-
-The Divider component SHALL have Storybook stories demonstrating all variants. Each story SHALL show only ONE variant.
-
-#### Scenario: Default story shows plain divider
-
-- **WHEN** viewing the Default story in Storybook
-- **THEN** a horizontal divider is displayed with default styling
-
-#### Scenario: Labeled story shows divider with text
-
-- **WHEN** viewing a Labeled story in Storybook
-- **THEN** a divider with label text is displayed
-
-#### Scenario: Alignment stories show each align option
-
-- **WHEN** viewing alignment variant stories
-- **THEN** each story demonstrates one alignment option (start, center, end)
+**SAP tokens used:** `--sapNeutralBackground`, `--sapContent_LabelColor`.

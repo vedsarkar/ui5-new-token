@@ -36,7 +36,6 @@
 		"dev": "storybook dev -p 6006",
 		"predev": "npm run build-api-docs",
 		"build-storybook": "storybook build",
-		"prebuild-storybook": "npm run build-api-docs",
 		"build-css": "node scripts/build-css.mjs",
 		"build-tokens": "node scripts/build-tokens.mjs",
 		"build-icons": "node scripts/build-icons.mjs",

@@ -1,301 +1,107 @@
 # textarea-component Specification
 
 ## Purpose
-TBD - created by archiving change add-textarea-component. Update Purpose after archive.
+
+SAP Fiori TextArea — a multi-line text input with label, value state support, toolbar slot, and auto-grow behavior via native `field-sizing: content`.
+
+SAP equivalent: `ui5-textarea`. Reference: https://experience.sap.com/fiori-design-web/text-area/
+
 ## Requirements
-### Requirement: Material Design 3 Styling
 
-The TextArea component SHALL follow Material Design 3 (M3) guidelines for text field appearance and behavior, implemented with custom CSS (no MUI or other React component library dependencies).
+### Requirement: Multi-line Input
 
-#### Scenario: Outlined text field variant
-- **WHEN** TextArea is rendered
-- **THEN** component uses M3 outlined text field styling
-- **AND** has visible border around the input container
-- **AND** border color changes on focus to indicate active state
+The TextArea SHALL render a native `<textarea>` inside a grid-based container. The textarea auto-grows using `field-sizing: content` with `min-height: 56px` and `max-height: min(500px, 50cqh)` (container query height).
 
-#### Scenario: Focus state follows M3 guidelines
-- **WHEN** textarea receives focus
-- **THEN** border width increases (1px to 2px)
-- **AND** border color changes to primary color
-- **AND** floating label uses primary color
+#### Scenario: Auto-grow behavior
+- **WHEN** the user types content exceeding the visible area
+- **THEN** the textarea height grows automatically up to the max height
+- **AND** a vertical scrollbar appears when max height is reached
 
-#### Scenario: No external UI library dependencies
-- **WHEN** TextArea component is built
-- **THEN** implementation uses only CSS Modules
-- **AND** does not depend on MUI, Ant Design, or similar libraries
-- **AND** React and React DOM are the only peer dependencies
+### Requirement: Label
 
-### Requirement: Native Props Passthrough
+The TextArea SHALL support a `label` prop rendering text above the input container, using `--sapContent_LabelColor` at 14px / 400 weight. The component wraps everything in a `<label>` for implicit association.
 
-The TextArea component SHALL pass all props except component-specific ones (label, error, supportingText, toolbar) to the underlying textarea element.
+#### Scenario: Required indicator
+- **WHEN** `required` is `true`
+- **THEN** a red asterisk (`*`) in `--sapNegativeElementColor` appears after the label text
 
-#### Scenario: Native attributes passed to textarea
-- **WHEN** developer provides native textarea attributes (value, onChange, disabled, name, placeholder, rows, etc.)
-- **THEN** attributes are spread to the native textarea element
-- **AND** textarea behaves as expected with those attributes
-
-#### Scenario: Event handlers passed to textarea
-- **WHEN** developer provides event handlers (onKeyDown, onKeyPress, onFocus, onBlur, etc.)
-- **THEN** handlers are attached to the native textarea element
-- **AND** events fire with the full event object
-
-#### Scenario: Data attributes and aria attributes passed through
-- **WHEN** developer provides data-testid or aria-* attributes
-- **THEN** attributes are spread to the native textarea element
-- **AND** testing and accessibility tools can access them
-
-#### Scenario: onChange receives full event
-- **WHEN** user types in the textarea
-- **THEN** onChange callback is called with the full React.ChangeEvent
-- **AND** developer can access event.target.value and other event properties
-
-### Requirement: Ref Forwarding
-
-The TextArea component SHALL forward refs to the underlying textarea element for imperative access.
-
-#### Scenario: Ref provides access to textarea element
-- **WHEN** ref prop is provided
-- **THEN** ref.current points to the native textarea element
-- **AND** allows imperative methods like focus() and select()
-
-### Requirement: Floating Label
-
-The TextArea component SHALL support a floating label that animates from placeholder position to above the input when focused or containing text.
-
-#### Scenario: Label displays as placeholder when empty
-- **WHEN** textarea is empty and not focused
-- **AND** label prop is provided
-- **THEN** label displays inside textarea at placeholder position
-- **AND** label uses placeholder color
-
-#### Scenario: Label floats on focus
-- **WHEN** textarea receives focus
-- **AND** label prop is provided
-- **THEN** label animates to position above textarea
-- **AND** label uses primary color
-- **AND** label font size reduces
-
-#### Scenario: Label stays floated with content
-- **WHEN** textarea has content
-- **AND** textarea loses focus
-- **THEN** label remains in floated position above textarea
-- **AND** label color returns to default
-
-#### Scenario: Native placeholder when no label
-- **WHEN** label prop is not provided
-- **AND** placeholder prop is provided
-- **THEN** native placeholder attribute is used on textarea element
+#### Scenario: Error label color
+- **WHEN** `valueState` is `"Error"`
+- **THEN** label color changes to `--sapField_InvalidColor`
 
 ### Requirement: Toolbar Slot
 
-The TextArea component SHALL support a toolbar slot below the textarea for action buttons, formatting controls, or other interactive elements.
+The TextArea SHALL support a `toolbar` prop accepting `ReactNode` rendered below the textarea inside the input container.
 
 #### Scenario: Toolbar renders below textarea
-- **WHEN** toolbar prop is provided with a React node
-- **THEN** toolbar content renders below the textarea
-- **AND** toolbar is inside the component border
+- **WHEN** `toolbar` is provided
+- **THEN** content renders in the toolbar grid area below the textarea
+- **AND** uses flex row layout with 12px gap and 8px 12px padding
 
-#### Scenario: Toolbar layout
-- **WHEN** toolbar is rendered
-- **THEN** toolbar uses flex layout with horizontal arrangement
-- **AND** toolbar has appropriate padding
+### Requirement: Value State
 
-### Requirement: Error State
+Same as TextField — `valueState` prop (None/Error/Warning/Success/Information) from `FormControlBase`. Each state applies distinct `--sapField_*` border and background tokens.
 
-The TextArea component SHALL support a boolean error state with visual feedback.
+#### Scenario: Error state
+- **WHEN** `valueState` is `"Error"`
+- **THEN** container uses `--sapField_InvalidBackground` and `--sapField_InvalidColor` border
 
-#### Scenario: Error changes border color
-- **WHEN** error prop is true
-- **THEN** border color changes to error color
-- **AND** label color changes to error color
+#### Scenario: Warning state
+- **WHEN** `valueState` is `"Warning"`
+- **THEN** container uses `--sapField_WarningBackground` and `--sapField_WarningColor` border
 
-#### Scenario: Supporting text shows in error styling
-- **WHEN** error prop is true
-- **AND** supportingText prop is provided
-- **THEN** supporting text displays below the textarea
-- **AND** supporting text uses error color
+#### Scenario: Success state
+- **WHEN** `valueState` is `"Success"`
+- **THEN** container uses `--sapField_SuccessBackground` and `--sapField_SuccessColor` border
 
-### Requirement: Supporting Text
+#### Scenario: Information state
+- **WHEN** `valueState` is `"Information"`
+- **THEN** container uses `--sapField_InformationBackground` and `--sapField_InformationColor` border
 
-The TextArea component SHALL support helper text that displays below the textarea.
+### Requirement: Value State Message
 
-#### Scenario: Supporting text displays
-- **WHEN** supportingText prop is provided
-- **AND** error prop is false or not provided
-- **THEN** supporting text displays below the textarea
-- **AND** supporting text uses secondary text color
+#### Scenario: Message renders below input container
+- **WHEN** `valueStateMessage` is provided and `valueState` is not `"None"`
+- **THEN** message renders at 12px font size with color matching the active state token
 
-### Requirement: Disabled State
+### Requirement: Disabled and ReadOnly States
 
-The TextArea component SHALL support a disabled state that prevents interaction and provides visual feedback.
+#### Scenario: Disabled
+- **WHEN** `disabled` is `true`
+- **THEN** `opacity: 0.4`, `cursor: not-allowed`, `--sapField_ReadOnly_Background`
 
-#### Scenario: Disabled prevents input
-- **WHEN** disabled prop is true
-- **THEN** textarea cannot be edited
-- **AND** textarea does not receive focus on click
+#### Scenario: ReadOnly
+- **WHEN** `readOnly` is `true`
+- **THEN** dashed border, `--sapField_ReadOnly_Background`, user can select/copy but not edit
 
-#### Scenario: Disabled reduces opacity
-- **WHEN** disabled prop is true
-- **THEN** component opacity is reduced
-- **AND** cursor shows not-allowed state
+### Requirement: Focus State
 
-#### Scenario: Disabled passed to native element
-- **WHEN** disabled prop is true
-- **THEN** native disabled attribute is set on textarea element
+#### Scenario: Focus styling
+- **WHEN** the textarea receives focus
+- **THEN** container border changes to `--sapField_Focus_BorderColor`
+- **AND** 1px outline in `--sapContent_FocusColor` with -2px offset
 
-### Requirement: Auto-resize
+### Requirement: ForwardRef
 
-The TextArea component SHALL automatically resize based on content using CSS field-sizing.
+The TextArea SHALL use `forwardRef` to expose the native `<textarea>` element ref to consumers.
 
-#### Scenario: Textarea grows with content
-- **WHEN** user types content that exceeds initial height
-- **THEN** textarea height increases to fit content
-- **AND** scrollbar does not appear until max height
+### Requirement: Rest Props Forwarding
 
-#### Scenario: Textarea respects max height
-- **WHEN** content exceeds maximum height (defined by CSS variable)
-- **THEN** textarea stops growing
-- **AND** scrollbar appears for overflow content
+All additional props SHALL be forwarded to the native `<textarea>` element, including `placeholder`, `rows`, `maxLength`, event handlers, and ARIA/data attributes.
 
-#### Scenario: Textarea shrinks when content removed
-- **WHEN** user deletes content
-- **THEN** textarea height decreases accordingly
+### Requirement: TypeScript Types
 
-### Requirement: CSS Custom Properties
+Props SHALL be defined in `TextArea.types.ts` as `TextAreaProps = HtmlProps<"textarea", FormControlBase & { label, toolbar }>`.
 
-The TextArea component SHALL define all design tokens as CSS custom properties on the root element with no hardcoded values, enabling external customization via inline styles or CSS overrides.
+### Requirement: CSS Styling
 
-#### Scenario: All CSS variables defined on root
-- **WHEN** TextArea component is rendered
-- **THEN** all CSS custom properties are defined on .root class
-- **AND** variables use --reltio-textarea- prefix
-- **AND** all variables include fallback values
-- **AND** no design tokens are hardcoded in the CSS
+Colors use `--sap*` tokens. Container uses `container-type: inline-size` for container queries. Grid layout with `textarea` and `toolbar` areas.
 
-#### Scenario: External customization via inline styles
-- **WHEN** developer provides style prop with CSS variables
-- **THEN** component applies custom values
-- **AND** example: `<TextArea style={{ "--reltio-textarea-border-radius": "8px" }}>`
+**SAP tokens used:** `--sapContent_LabelColor`, `--sapNegativeElementColor`, `--sapField_InvalidColor`, `--sapField_InvalidBackground`, `--sapField_WarningColor`, `--sapField_WarningBackground`, `--sapField_SuccessColor`, `--sapField_SuccessBackground`, `--sapField_InformationColor`, `--sapField_InformationBackground`, `--sapField_BorderColor`, `--sapField_Background`, `--sapField_Focus_BorderColor`, `--sapContent_FocusColor`, `--sapField_ReadOnly_Background`, `--sapField_TextColor`, `--sapField_PlaceholderTextColor`, `--sapField_BorderCornerRadius`.
 
-#### Scenario: CSS variables for typography
-- **WHEN** TextArea is rendered
-- **THEN** font-family defined as --reltio-textarea-font-family
-- **AND** font-size defined as --reltio-textarea-font-size
-- **AND** line-height defined as --reltio-textarea-line-height
-- **AND** text-color defined as --reltio-textarea-color-text
+### Requirement: Storybook Stories
 
-#### Scenario: CSS variables for colors
-- **WHEN** TextArea is rendered
-- **THEN** border-color defined as --reltio-textarea-color-border
-- **AND** focus border color defined as --reltio-textarea-color-border-focus
-- **AND** background defined as --reltio-textarea-color-background
-- **AND** error-color defined as --reltio-textarea-color-error
-- **AND** label color defined as --reltio-textarea-color-label
-- **AND** supporting text color defined as --reltio-textarea-color-supporting-text
-
-#### Scenario: CSS variables for sizing
-- **WHEN** TextArea is rendered
-- **THEN** border-radius defined as --reltio-textarea-border-radius
-- **AND** padding defined as --reltio-textarea-padding
-- **AND** min-height defined as --reltio-textarea-min-height
-- **AND** max-height defined as --reltio-textarea-max-height
-
-### Requirement: className Utility Usage
-
-The TextArea component SHALL use the classNames utility from utils/classNames.ts for all className composition.
-
-#### Scenario: classNames utility composes CSS modules
-- **WHEN** TextArea is rendered
-- **THEN** classNames utility combines all applicable CSS module classes
-- **AND** provides stable base classes
-
-#### Scenario: Custom className support
-- **WHEN** developer provides className prop
-- **THEN** custom classes are added to root element
-- **AND** CSS modules classes are preserved
-
-### Requirement: Keyboard Accessibility
-
-The TextArea component SHALL be fully keyboard accessible with proper focus management.
-
-#### Scenario: Tab key focuses textarea
-- **WHEN** user presses Tab key
-- **THEN** textarea receives keyboard focus
-- **AND** focus indicator becomes visible
-
-#### Scenario: Focus visible styling
-- **WHEN** textarea receives keyboard focus
-- **THEN** visible focus indicator appears (outline)
-- **AND** focus color uses primary color
-
-### Requirement: Screen Reader Support
-
-The TextArea component SHALL provide proper ARIA attributes and semantic HTML for screen reader compatibility.
-
-#### Scenario: Label associated with textarea
-- **WHEN** label prop is provided
-- **THEN** label is properly associated with textarea
-- **AND** screen readers announce the label
-
-#### Scenario: Error state announced
-- **WHEN** error prop is true
-- **THEN** aria-invalid="true" is set on textarea
-- **AND** supporting text is associated via aria-describedby
-
-#### Scenario: Supporting text associated
-- **WHEN** supportingText prop is provided
-- **THEN** supporting text is associated via aria-describedby
-- **AND** screen readers announce supporting text
-
-### Requirement: TypeScript Type Safety
-
-The TextArea component SHALL be fully typed with TypeScript using strict mode, with all types defined in a separate TextArea.types.ts file using the `type` keyword (not `interface`).
-
-#### Scenario: Component props extend textarea attributes
-- **WHEN** developer uses TextArea component
-- **THEN** TextAreaProps extends React.TextareaHTMLAttributes
-- **AND** TypeScript provides autocomplete for all native textarea attributes
-
-#### Scenario: Custom props typed
-- **WHEN** developer uses TextArea component
-- **THEN** label, error, supportingText, toolbar props have proper types
-- **AND** TypeScript provides autocomplete
-
-#### Scenario: Types exported alongside component
-- **WHEN** developer imports TextArea
-- **THEN** TextAreaProps type can be imported
-- **AND** all types use `type` keyword, not `interface`
-
-### Requirement: Storybook Documentation
-
-The TextArea component SHALL have comprehensive Storybook stories demonstrating all variants and use cases, with each story showing only ONE variant.
-
-#### Scenario: Stories for basic usage
-- **WHEN** viewing Storybook
-- **THEN** Default story shows basic textarea
-- **AND** story is interactive and functional
-
-#### Scenario: Stories for label patterns
-- **WHEN** viewing Storybook
-- **THEN** WithLabel story demonstrates floating label
-- **AND** WithPlaceholder story shows native placeholder fallback
-
-#### Scenario: Stories for toolbar
-- **WHEN** viewing Storybook
-- **THEN** WithToolbar story demonstrates toolbar slot
-
-#### Scenario: Stories for states
-- **WHEN** viewing Storybook
-- **THEN** WithError story shows error state with supportingText
-- **AND** Disabled story shows disabled state
-- **AND** WithSupportingText story shows helper text
-
-#### Scenario: Stories for auto-resize
-- **WHEN** viewing Storybook
-- **THEN** AutoResize story demonstrates height growing with content
-
-#### Scenario: Stories for customization
-- **WHEN** viewing Storybook
-- **THEN** WithCustomCssVariables story lists all CSS variables
-- **AND** variables are demonstrable
-
+#### Scenario: Stories
+- Default, WithLabel, WithPlaceholder, WithToolbar
+- ValueStateError, ValueStateWarning
+- Disabled, ReadOnly, AutoResize
