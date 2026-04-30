@@ -1,0 +1,298 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "SAML API",
+		"version": "1.0.0",
+		"description": "Manage SAML SSO configuration for a customer and tenant. Provides CRUD operations on SAML identity provider settings, role/group mappings, and metadata."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/api/v1/security/samlconfig/{customerId}/{tenantId}": {
+			"get": {
+				"operationId": "getSAMLConfig",
+				"summary": "GET /samlconfig/{customerId}/{tenantId}",
+				"description": "Retrieves the SAML configuration for the tenant.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "SAML configuration.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SAMLConfigResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "SAML configuration not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateSAML",
+				"summary": "PUT /samlconfig/{customerId}/{tenantId}",
+				"description": "Updates the SAML configuration for the tenant.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"description": "SAML configuration to update.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SAMLConfigRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "SAML configuration updated.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SAMLConfigResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "SAML configuration not found."
+					}
+				}
+			},
+			"post": {
+				"operationId": "configureSAML",
+				"summary": "POST /samlconfig/{customerId}/{tenantId}",
+				"description": "Adds SAML configuration for the tenant.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"description": "SAML configuration to create.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SAMLConfigRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "SAML configuration created.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SAMLConfigResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"409": {
+						"description": "Conflict — SAML configuration already exists."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteSAMLConfig",
+				"summary": "DELETE /samlconfig/{customerId}/{tenantId}",
+				"description": "Deletes the SAML configuration for the tenant.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "SAML configuration deleted."
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "SAML configuration not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"SAMLConfigRequest": {
+				"type": "object",
+				"description": "SAML configuration input — identity provider metadata, role/group mappings, and default assignments.",
+				"properties": {
+					"metaData": {
+						"type": "string",
+						"description": "IDP metadata XML."
+					},
+					"rolesSAMLAttribute": {
+						"type": "string",
+						"description": "SAML attribute name for roles mapping from the IDP."
+					},
+					"rolesMappingRegex": {
+						"type": "string",
+						"description": "Regex to extract role names from the SAML attribute value."
+					},
+					"defaultRoles": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "Default roles assigned to SSO users."
+					},
+					"groupsSAMLAttribute": {
+						"type": "string",
+						"description": "SAML attribute name for groups mapping from the IDP."
+					},
+					"groupsMappingRegex": {
+						"type": "string",
+						"description": "Regex to extract group names from the SAML attribute value."
+					},
+					"defaultGroups": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "Default groups assigned to SSO users."
+					},
+					"emailSAMLAttribute": {
+						"type": "string",
+						"description": "SAML attribute name for the user's email."
+					}
+				}
+			},
+			"SAMLConfigResponse": {
+				"type": "object",
+				"description": "SAML configuration output — includes generated service provider details (ACS URL, Entity ID) in addition to the configured settings.",
+				"properties": {
+					"metadata": {
+						"type": "string",
+						"description": "Service provider metadata XML."
+					},
+					"acsURL": {
+						"type": "string",
+						"description": "Assertion Consumer Service (ACS) URL."
+					},
+					"entityID": {
+						"type": "string",
+						"description": "Service provider Entity ID."
+					},
+					"defaultRoles": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "Default roles assigned to SSO users."
+					},
+					"emailSAMLAttribute": {
+						"type": "string",
+						"description": "SAML attribute name for the user's email."
+					},
+					"rolesSAMLAttribute": {
+						"type": "string",
+						"description": "SAML attribute name for roles mapping."
+					},
+					"rolesMappingRegex": {
+						"type": "string",
+						"description": "Regex for roles extraction."
+					},
+					"defaultGroups": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "Default groups assigned to SSO users."
+					},
+					"groupsSAMLAttribute": {
+						"type": "string",
+						"description": "SAML attribute name for groups mapping."
+					},
+					"groupsMappingRegex": {
+						"type": "string",
+						"description": "Regex for groups extraction."
+					}
+				}
+			}
+		}
+	}
+}

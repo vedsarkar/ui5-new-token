@@ -1,0 +1,348 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: referencedatamanagement.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./referencedatamanagement.spec.json";
+import * as ReferenceDataManagementStories from "./ReferenceDataManagement.stories";
+
+<Meta of={ReferenceDataManagementStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Reference Data Management API",
+		"version": "1.0.0",
+		"description": "Manage Reference Data Management (RDM) tenant configuration and canonical code generators. Generators automatically produce unique codes (UUID or sequential) for canonical values in lookup types."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/configuration/{tenantId}": {
+			"get": {
+				"operationId": "getByTenant",
+				"summary": "GET /configuration/{tenantId}",
+				"description": "Retrieves the configuration details of the RDM tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "RDM tenant configuration.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Tenant not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateByTenant",
+				"summary": "PUT /configuration/{tenantId}",
+				"description": "Updates or sets the RDM tenant configuration. If a configuration already exists, it is overridden.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "RDM configuration object.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Configuration saved successfully.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Tenant not found."
+					}
+				}
+			}
+		},
+		"/generators/{tenantId}": {
+			"post": {
+				"operationId": "rdmCreateGenerator",
+				"summary": "POST /generators/{tenantId}",
+				"description": "Creates a generator that automatically produces canonical codes for all canonical values in a lookup type. Supports UUID and Sequential generator types.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Generator definition.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Generator"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Generator created successfully.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Generator"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					}
+				}
+			}
+		},
+		"/generators/{tenantId}/{name}": {
+			"get": {
+				"operationId": "rdmGetGeneratorByTenant",
+				"summary": "GET /generators/{tenantId}/{name}",
+				"description": "Gets a generator for a tenant by its name. Returns details such as name, type, start value, and current value.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "name",
+						"in": "path",
+						"description": "Name of the generator.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Generator details.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Generator"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"404": {
+						"description": "Generator not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "rdmDeleteGeneratorByTenant",
+				"summary": "DELETE /generators/{tenantId}/{name}",
+				"description": "Deletes a generator. If the generator is used by any lookup type, it cannot be deleted — remove dependencies first.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "name",
+						"in": "path",
+						"description": "Name of the generator to delete.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Generator deleted successfully."
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"404": {
+						"description": "Generator not found."
+					},
+					"409": {
+						"description": "Conflict — generator is in use by a lookup type."
+					}
+				}
+			}
+		},
+		"/generators/{tenantId}/{name}/generate": {
+			"get": {
+				"operationId": "rdmGenerateNextValue",
+				"summary": "GET /generators/{tenantId}/{name}/generate",
+				"description": "Generates and returns the next value for the specified generator. For sequential generators, increments the current value by one.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "name",
+						"in": "path",
+						"description": "Name of the generator.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Generated value.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"value": {
+											"type": "string",
+											"description": "The generated value."
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"404": {
+						"description": "Generator not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"Generator": {
+				"type": "object",
+				"required": [
+					"name",
+					"type"
+				],
+				"description": "A canonical code generator that produces unique values for lookup types.",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "Unique name of the generator."
+					},
+					"type": {
+						"type": "string",
+						"enum": [
+							"UUID",
+							"SEQUENTIAL"
+						],
+						"description": "Generator type — UUID produces universally unique identifiers, SEQUENTIAL produces incrementing numbers."
+					},
+					"startValue": {
+						"type": "integer",
+						"description": "Start value for sequential generators."
+					},
+					"currentValue": {
+						"type": "integer",
+						"readOnly": true,
+						"description": "Current value of the sequential generator."
+					},
+					"description": {
+						"type": "string",
+						"description": "Human-readable description."
+					}
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />

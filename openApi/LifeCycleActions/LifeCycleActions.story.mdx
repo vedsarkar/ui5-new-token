@@ -1,0 +1,390 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: lifecycleactions.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./lifecycleactions.spec.json";
+import * as LifeCycleActionsStories from "./LifeCycleActions.stories";
+
+<Meta of={LifeCycleActionsStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Life Cycle Actions API",
+		"version": "1.0.0",
+		"description": "Register, manage, and execute Life Cycle Actions (LCAs) — custom logic triggered during entity lifecycle events such as create, update, merge, delete, and matching."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/api/{tenantId}/actions": {
+			"get": {
+				"operationId": "getTenantLCAObjects",
+				"summary": "GET /actions",
+				"description": "Retrieves the list of all registered Life Cycle Actions (LCAs) for the tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "List of registered LCAs.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/LifeCycleAction"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					}
+				}
+			},
+			"post": {
+				"operationId": "registerLifeCycleAction",
+				"summary": "POST /actions",
+				"description": "Registers Life Cycle Actions (LCAs) for the tenant. The JAR file must be placed in S3 storage and the S3 path passed in the module field.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Array of LCA objects to register.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/LifeCycleAction"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Registered LCAs.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/LifeCycleAction"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request — invalid LCA definition."
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					}
+				}
+			}
+		},
+		"/api/{tenantId}/actions/{name}": {
+			"get": {
+				"operationId": "getLifeCycleActionByName",
+				"summary": "GET /actions/{name}",
+				"description": "Gets details for the named Life Cycle Action (LCA) object.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "name",
+						"in": "path",
+						"description": "Name of the LCA.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "LCA details.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/LifeCycleAction"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"404": {
+						"description": "LCA not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteLCAFromCollectionByTenant",
+				"summary": "DELETE /actions/{name}",
+				"description": "Deregisters the specified Life Cycle Action.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "name",
+						"in": "path",
+						"description": "Name of the LCA to deregister.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "LCA deregistered successfully."
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"404": {
+						"description": "LCA not found."
+					}
+				}
+			}
+		},
+		"/api/{tenantId}/actions/{name}/{hookName}": {
+			"post": {
+				"operationId": "executeLCAForAnObject",
+				"summary": "POST /actions/{name}/{hookName}",
+				"description": "Executes a specified Life Cycle Action (LCA) at the given hook for a single object.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "name",
+						"in": "path",
+						"description": "Name of the LCA to execute.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "hookName",
+						"in": "path",
+						"description": "Lifecycle hook name (e.g. beforeSave, afterSave, beforeMerge).",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Object data to apply the LCA to.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Output data after applying the LCA.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"404": {
+						"description": "LCA or hook not found."
+					}
+				}
+			}
+		},
+		"/api/{tenantId}/execute/{hook}": {
+			"post": {
+				"operationId": "executeLCAForBatchOfObjects",
+				"summary": "POST /execute/{hook}",
+				"description": "Executes Life Cycle Actions (LCAs) at the specified hook for a list of objects.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "hook",
+						"in": "path",
+						"description": "Lifecycle hook name (e.g. beforeSave, afterSave, beforeMerge).",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Array of objects to apply LCAs to.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "List of output data after applying LCAs.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"type": "object"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"404": {
+						"description": "Hook not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"LifeCycleAction": {
+				"type": "object",
+				"required": [
+					"name",
+					"type",
+					"module"
+				],
+				"description": "A Life Cycle Action (LCA) object representing custom logic executed during entity lifecycle events.",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "Unique name of the LCA within the tenant."
+					},
+					"type": {
+						"type": "string",
+						"description": "Fully qualified Java class name of the action."
+					},
+					"module": {
+						"type": "string",
+						"description": "S3 path of the JAR file containing the action class."
+					},
+					"state": {
+						"type": "string",
+						"enum": [
+							"active",
+							"inactive"
+						],
+						"description": "State of the LCA — active or inactive."
+					},
+					"description": {
+						"type": "string",
+						"description": "Human-readable description of the LCA."
+					},
+					"updatedBy": {
+						"type": "string",
+						"readOnly": true,
+						"description": "User who last updated this LCA."
+					},
+					"updatedTime": {
+						"type": "integer",
+						"readOnly": true,
+						"description": "Last update timestamp."
+					}
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />
