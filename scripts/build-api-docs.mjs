@@ -24,7 +24,7 @@ function discoverApis() {
 			const storiesPath = path.join(dir, `${name}.stories.tsx`);
 			if (!fs.existsSync(storiesPath)) return [];
 
-			const specPath = path.join(dir, `${name.toLowerCase()}.spec.json`);
+			const specPath = path.join(dir, `${name}.spec.json`);
 			if (fs.existsSync(specPath)) {
 				return [{ name, dir, specPath, storiesPath, mode: "openapi" }];
 			}
@@ -68,7 +68,7 @@ ${rawJson}
 
 function buildMdxOpenApi({ name, spec }) {
 	const importNamespace = `${capitalize(name)}Stories`;
-	const specFileName = `${name.toLowerCase()}.spec.json`;
+	const specFileName = `${name}.spec.json`;
 	const rawJson = JSON.stringify(spec, null, "\t").replaceAll("*/", "*\\/");
 	return `${headerFor(specFileName)}
 
