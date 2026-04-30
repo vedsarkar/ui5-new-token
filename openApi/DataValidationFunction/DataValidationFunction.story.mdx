@@ -1,0 +1,545 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: datavalidationfunction.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./datavalidationfunction.spec.json";
+import * as DataValidationFunctionStories from "./DataValidationFunction.stories";
+
+<Meta of={DataValidationFunctionStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Data Validation Function API",
+		"version": "1.0.0",
+		"description": "Manage data validation functions that enforce data quality rules on entities and relations. Functions define expressions evaluated during create/update operations, triggering warnings or errors when conditions are met."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/api/{tenantId}/dataValidationFunctions": {
+			"get": {
+				"operationId": "getTenantValidationFunctions",
+				"summary": "GET /dataValidationFunctions",
+				"description": "Retrieves all Data Validation Functions configured for the tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Tenant validation functions.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TenantFunctions"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Functions not configured for the tenant."
+					}
+				}
+			}
+		},
+		"/api/{tenantId}/dataValidationFunctions/{functionURI}": {
+			"get": {
+				"operationId": "getValidationFunctionByUri",
+				"summary": "GET /dataValidationFunctions/{functionURI}",
+				"description": "Retrieves the details of a specific Data Validation Function.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "functionURI",
+						"in": "path",
+						"description": "URI of the validation function.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Validation function details.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Function"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Function not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateValidationFunction",
+				"summary": "PUT /dataValidationFunctions/{functionURI}",
+				"description": "Updates a Data Validation Function.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "functionURI",
+						"in": "path",
+						"description": "URI of the validation function.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Updated function definition.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Function"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Function updated successfully.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Function"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Function not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteValidationFunctionByUri",
+				"summary": "DELETE /dataValidationFunctions/{functionURI}",
+				"description": "Deletes a Data Validation Function.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "functionURI",
+						"in": "path",
+						"description": "URI of the validation function.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Function deleted successfully."
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Function not found."
+					}
+				}
+			}
+		},
+		"/api/{tenantId}/dataValidationFunctions/{objectType}/{object}": {
+			"get": {
+				"operationId": "getValidationFunctionsForObjectType",
+				"summary": "GET /dataValidationFunctions/{objectType}/{object}",
+				"description": "Retrieves the Data Validation Functions for an entity or relation type.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "objectType",
+						"in": "path",
+						"description": "Type category (e.g. entityTypes, relationTypes).",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "object",
+						"in": "path",
+						"description": "Name of the entity or relation type (e.g. Person, Organization).",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Validation functions for the object type.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ObjectFunctions"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Object type not found."
+					}
+				}
+			},
+			"post": {
+				"operationId": "createValidationFunctionsForObjectType",
+				"summary": "POST /dataValidationFunctions/{objectType}/{object}",
+				"description": "Creates Data Validation Functions for an entity or relation type.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "objectType",
+						"in": "path",
+						"description": "Type category (e.g. entityTypes, relationTypes).",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "object",
+						"in": "path",
+						"description": "Name of the entity or relation type.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Array of function definitions to create.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/Function"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Functions created successfully.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ObjectFunctions"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Object type not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteValidationFunctionsForEntityType",
+				"summary": "DELETE /dataValidationFunctions/{objectType}/{object}",
+				"description": "Deletes all Data Validation Functions for an entity type.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "objectType",
+						"in": "path",
+						"description": "Type category (e.g. entityTypes).",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "object",
+						"in": "path",
+						"description": "Name of the entity type.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Functions deleted successfully."
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Object type not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"TenantFunctions": {
+				"type": "object",
+				"description": "All validation functions configured for a tenant, grouped by entity and relation types.",
+				"properties": {
+					"tenantId": {
+						"type": "string",
+						"readOnly": true,
+						"description": "ID of the tenant."
+					},
+					"entityTypes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ObjectFunctions"
+						},
+						"description": "Validation functions grouped by entity type."
+					},
+					"relationTypes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ObjectFunctions"
+						},
+						"description": "Validation functions grouped by relation type."
+					}
+				}
+			},
+			"ObjectFunctions": {
+				"type": "object",
+				"description": "Validation functions for a specific entity or relation type.",
+				"properties": {
+					"type": {
+						"type": "string",
+						"description": "URI of the entity/relation type (e.g. configuration/entityTypes/Contact)."
+					},
+					"functions": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Function"
+						},
+						"description": "List of validation functions."
+					}
+				}
+			},
+			"Function": {
+				"type": "object",
+				"required": [
+					"name",
+					"attribute",
+					"expression",
+					"message"
+				],
+				"description": "A data validation function that evaluates an expression on entity/relation data and triggers an action (WARNING or ERROR) when the condition is met.",
+				"properties": {
+					"uri": {
+						"type": "string",
+						"readOnly": true,
+						"description": "URI of the validation function (auto-generated UUID)."
+					},
+					"name": {
+						"type": "string",
+						"description": "Name of the validation function."
+					},
+					"label": {
+						"type": "string",
+						"description": "Display label."
+					},
+					"description": {
+						"type": "string",
+						"description": "Human-readable description."
+					},
+					"attribute": {
+						"type": "string",
+						"description": "Fully qualified attribute URI on which validation is applied (e.g. configuration/entityTypes/Contact/attributes/FirstName)."
+					},
+					"expression": {
+						"type": "string",
+						"description": "Filter expression evaluated on the entity. If true, the action is triggered (e.g. missing(attributes.FirstName.value))."
+					},
+					"action": {
+						"type": "string",
+						"enum": [
+							"WARNING",
+							"ERROR"
+						],
+						"description": "Action type — WARNING allows save with a warning, ERROR blocks the save."
+					},
+					"validationEvent": {
+						"type": "string",
+						"enum": [
+							"CREATE",
+							"UPDATE",
+							"ALL"
+						],
+						"description": "When to apply: CREATE, UPDATE, or ALL events."
+					},
+					"applyOn": {
+						"type": "string",
+						"enum": [
+							"OV",
+							"CW",
+							"BOTH"
+						],
+						"description": "Apply on operational values (OV), crosswalk level (CW), or BOTH."
+					},
+					"sourceTypes": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"description": "Source types to which this function applies."
+					},
+					"message": {
+						"type": "string",
+						"description": "Message displayed when the expression evaluates to true."
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"ACTIVE",
+							"INACTIVE"
+						],
+						"description": "ACTIVE functions validate data; INACTIVE functions are skipped."
+					},
+					"createdBy": {
+						"type": "string",
+						"readOnly": true,
+						"description": "User who created this function."
+					},
+					"createdTime": {
+						"type": "string",
+						"readOnly": true,
+						"description": "Creation timestamp."
+					},
+					"updatedBy": {
+						"type": "string",
+						"readOnly": true,
+						"description": "User who last updated this function."
+					},
+					"updatedTime": {
+						"type": "string",
+						"readOnly": true,
+						"description": "Last update timestamp."
+					}
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />

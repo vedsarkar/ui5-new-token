@@ -92,16 +92,13 @@ const SchemaBlock = ({
 							<tr key={f.path}>
 								<td>
 									<code>{f.path}</code>
-									{f.required && (
-										<span className={classNames(styles.requiredBadge)}>
-											required
-										</span>
-									)}
 								</td>
-								<td>
+								<td style={{ whiteSpace: "nowrap" }}>
 									<code>{formatType(f.node)}</code>
 								</td>
-								<td>{f.node.description}</td>
+								<td>
+									{f.required && <code>required</code>} {f.node.description}
+								</td>
 							</tr>
 						))}
 					</tbody>

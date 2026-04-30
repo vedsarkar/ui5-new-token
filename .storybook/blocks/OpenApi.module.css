@@ -135,10 +135,10 @@
 .requiredBadge {
 	display: inline-block;
 	margin-left: 6px;
-	font-size: 10px;
-	font-weight: 600;
-	color: var(--sapNegativeTextColor);
-	vertical-align: middle;
+	font-size: 9px;
+	font-weight: 400;
+	color: var(--sapContent_LabelColor);
+	font-style: italic;
 }
 
 .typeValue {
