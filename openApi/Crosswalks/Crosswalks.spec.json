@@ -1,0 +1,334 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Crosswalks API",
+		"version": "1.0.0",
+		"description": "Manage crosswalks — the source-system contributions attached to entities and their relations. Provides add (POST array), single update (PUT value), date-attribute update (PUT date), and an end-date-and-reattribute convenience operation for entity crosswalks."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/{objectType}/{objectId}/crosswalks": {
+			"post": {
+				"operationId": "addCrossWalks",
+				"summary": "POST /{objectType}/{objectId}/crosswalks",
+				"description": "This API adds one or more crosswalks to an object. The request must contain the Object URI and the crosswalk details.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "objectType",
+						"in": "path",
+						"required": true,
+						"description": "Type of the object",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "objectId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the object",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Crosswalk"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/{objectType}/{objectId}/crosswalks/{id}": {
+			"put": {
+				"operationId": "setCrosswalkValueByTenant",
+				"summary": "PUT /{objectType}/{objectId}/crosswalks/{id}",
+				"description": "As a response, you will get an updated business object",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "objectType",
+						"in": "path",
+						"required": true,
+						"description": "The object type for which the crosswalk value must be updated",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "objectId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the object the crosswalk is associated with",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the crosswalk for which the value must be updated",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Crosswalk"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/{objectType}/{objectId}/crosswalks/{id}/{attribute}": {
+			"put": {
+				"operationId": "editAttributeOfCrossWalk",
+				"summary": "PUT /{objectType}/{objectId}/crosswalks/{id}/{attribute}",
+				"description": "The attribute's value can be related to the Create Date, Update Date, and Delete Date.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "objectType",
+						"in": "path",
+						"required": true,
+						"description": "Type of the object",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "objectId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the object",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the crosswalk",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "attribute",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Crosswalk"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/{objectId}/crosswalks/{id}/_endDateAndMoveRelatedRelationXws": {
+			"post": {
+				"operationId": "_endDateAndMoveRelatedRelationXws",
+				"summary": "POST /entities/{objectId}/crosswalks/{id}/_endDateAndMoveRelatedRelationXws",
+				"description": "The attribute's value can be related to the Delete Date.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "objectId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the object",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the crosswalk",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Crosswalk"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"Crosswalk": {
+				"type": "object",
+				"description": "Source-system contribution for an object attribute or relation.",
+				"properties": {
+					"type": {
+						"type": "string",
+						"description": "Source system URI."
+					},
+					"value": {
+						"type": "string",
+						"description": "External identifier value in the source system."
+					},
+					"sourceTable": {
+						"type": "string",
+						"description": "Source table or feed name."
+					},
+					"createDate": {
+						"type": "string",
+						"description": "Crosswalk creation date."
+					},
+					"updateDate": {
+						"type": "string",
+						"description": "Crosswalk last update date."
+					},
+					"deleteDate": {
+						"type": "string",
+						"description": "Crosswalk delete date."
+					}
+				}
+			}
+		}
+	}
+}

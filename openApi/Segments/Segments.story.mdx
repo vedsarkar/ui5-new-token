@@ -1,0 +1,382 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: Segments.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./Segments.spec.json";
+import * as SegmentsStories from "./Segments.stories";
+
+<Meta of={SegmentsStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Segments API",
+		"version": "1.0.0",
+		"description": "Manage segments in a Reltio tenant — create segments (collections of entities matching a filter expression), search/list, retrieve a segment by id, delete, enable/disable, and search for segments an entity belongs to. Combines, in one place, the POST creation endpoint exposed under the developer portal's Ingest module and the rest of the Segments tag from the Operate module."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/segments": {
+			"post": {
+				"operationId": "saveSegments",
+				"summary": "POST /segments",
+				"description": "Creates a collection of segments in a tenant. Accepts an array of segment definitions (each with a name, entity object type, and filter condition) and returns the created segments with their assigned URIs.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/Segment"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Segments created.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SegmentList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			},
+			"get": {
+				"operationId": "getSegmentsCollectionByTenant",
+				"summary": "GET /segments",
+				"description": "Searches for segments in a tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Matching segments.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SegmentList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/segments/{id}": {
+			"get": {
+				"operationId": "getSegmentById",
+				"summary": "GET /segments/{id}",
+				"description": "Returns a segment by segment ID from a tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "The segment.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Segment"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Segment not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteSegmentById",
+				"summary": "DELETE /segments/{id}",
+				"description": "Deletes a segment by segment ID from a tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Segment deleted.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Deletion result."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Segment not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/segments/{id}/enable": {
+			"put": {
+				"operationId": "enableSegment",
+				"summary": "PUT /segments/{id}/enable",
+				"description": "Enables the segment with the provided id.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Segment enabled.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Segment"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Segment not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/segments/{id}/disable": {
+			"put": {
+				"operationId": "disableSegment",
+				"summary": "PUT /segments/{id}/disable",
+				"description": "Disables the segment with the provided id.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Segment disabled.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Segment"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Segment not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/{id}/segments": {
+			"get": {
+				"operationId": "getEntitySegments",
+				"summary": "GET /entities/{id}/segments",
+				"description": "Search for segments an entity belongs to. Returns segments whose filter condition matches the given entity.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Matching segments.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SegmentList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Entity not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"Segment": {
+				"type": "object",
+				"description": "A Reltio segment — a saved query that defines a set of entities matching a filter condition. Has a stable URI, a name, an entity type scope, a filter expression, and an enabled/disabled status.",
+				"properties": {
+					"uri": {
+						"type": "string",
+						"description": "Stable Reltio URI of the segment (e.g. segments/abc123)."
+					},
+					"name": {
+						"type": "string",
+						"description": "Human-readable name of the segment."
+					},
+					"description": {
+						"type": "string",
+						"description": "Optional description of what the segment represents."
+					},
+					"objectType": {
+						"type": "string",
+						"description": "Entity type URI the segment applies to (e.g. configuration/entityTypes/Individual)."
+					},
+					"condition": {
+						"type": "string",
+						"description": "Filter expression that defines membership (e.g. equals(type,'configuration/entityTypes/Individual'))."
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"ENABLED",
+							"DISABLED"
+						],
+						"description": "Whether the segment is currently active."
+					},
+					"createdTime": {
+						"type": "integer",
+						"description": "Creation timestamp in milliseconds."
+					},
+					"updatedTime": {
+						"type": "integer",
+						"description": "Last update timestamp in milliseconds."
+					}
+				}
+			},
+			"SegmentList": {
+				"type": "array",
+				"description": "Array of segment objects.",
+				"items": {
+					"$ref": "#/components/schemas/Segment"
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />

@@ -1,0 +1,1270 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: Entities.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./Entities.spec.json";
+import * as EntitiesStories from "./Entities.stories";
+
+<Meta of={EntitiesStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Entities API",
+		"version": "1.0.0",
+		"description": "Manage entities in a Reltio tenant — create (Save Entities, Search Before Create), retrieve (single, by URI, by crosswalk, by ReltioID, batch by URIs, raw, with survivorship rules), search and counts (totals, segmentation, scan, events totals), update, clone, traverse (hops), cleanse / batch cleanse / recleanse, reverse geocode, delete, and read entities by segment. Combines into one place the two POST creation endpoints exposed under the developer portal's Ingest module and the rest of the Entities tag from the Operate module."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/entities": {
+			"get": {
+				"operationId": "getCollectionByTenant",
+				"summary": "GET /entities",
+				"description": "This API retrieves the individual entities or searches for multiple entities. The response can include a maximum of 200 entities. If the request consists of the select parameter, then ensure that there is no space between the query parameters. For example: select=URI,label,attributes._lookupCodes,attributes._lookupValues",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/EntityList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteByEntityTypeByTenant",
+				"summary": "DELETE /entities",
+				"description": "This API deletes all entities of the specified type from a tenant",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"post": {
+				"operationId": "saveEntities",
+				"summary": "POST /entities",
+				"description": "Save Entities API creates entities. Accepts an array of entity objects and returns the created entities with their assigned URIs.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Entities created.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/EntityList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/_byCrosswalk/{crosswalkValue}": {
+			"get": {
+				"operationId": "getEntityByCrosswalk",
+				"summary": "GET /entities/_byCrosswalk/{crosswalkValue}",
+				"description": "This API retrieves entities containing the specified crosswalk (crosswalkValue, type and sourceTable)",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "crosswalkValue",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/EntityList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/_byReltioId/{reltioId}": {
+			"get": {
+				"operationId": "getEntityByReltioId",
+				"summary": "GET /entities/_byReltioId/{reltioId}",
+				"description": "This API retrieves entities containing the specified reltioId (reltioId)",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "reltioId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/EntityList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/_byUris": {
+			"post": {
+				"operationId": "getEntitiesByUrisByTenant",
+				"summary": "POST /entities/_byUris",
+				"description": "This API retrieves entities by URIs with the specified pagination of attributes",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/EntityList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/_conditional": {
+			"post": {
+				"operationId": "searchBeforeCreateEntities",
+				"summary": "POST /entities/_conditional",
+				"description": "Search Before Create Aggregated API. For each input object, the API first searches for an existing entity using the supplied match rules and crosswalks; if a match is found, the existing entity is updated, otherwise a new entity is created.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Entities created or matched/updated.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/EntitySearchResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/_delete": {
+			"post": {
+				"operationId": "deleteEntitiesByTenant",
+				"summary": "POST /entities/_delete",
+				"description": "This API deletes entities by filter or list of uris from a tenant",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/_segmentation": {
+			"get": {
+				"operationId": "getEntitiesByBatchSearch",
+				"summary": "GET /entities/_segmentation",
+				"description": "This API searches for entities using entities and interaction attributes. The response can include a maximum of 200 entities. If the request consists of the select parameter, then ensure that there is no space between the query parameters. For example: select=URI,label,attributes._lookupCodes,attributes._lookupValues",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/_total": {
+			"get": {
+				"operationId": "getTotalByTenant",
+				"summary": "GET /entities/_total",
+				"description": "This API returns the total number of entities matching the specified filter criteria",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "integer",
+									"description": "Total count."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/{id}": {
+			"get": {
+				"operationId": "getObjectByTenant",
+				"summary": "GET /entities/{id}",
+				"description": "This API retrieves full or partial entity objects by URI from the tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/{id}/_clone": {
+			"post": {
+				"operationId": "cloneEntity",
+				"summary": "POST /entities/{id}/_clone",
+				"description": "This API clones entity",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/{id}/_events/_total": {
+			"get": {
+				"operationId": "getEntityEventsTotalByTenant",
+				"summary": "GET /entities/{id}/_events/_total",
+				"description": "This API allows to retrieve total counts of all events for selected entity grouped by event type",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "integer",
+									"description": "Total count."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/{id}/_get_with_survivorship_rules": {
+			"post": {
+				"operationId": "getObjectByTenant",
+				"summary": "POST /entities/{id}/_get_with_survivorship_rules",
+				"description": "This API retrieves full or partial entity objects by URI from the tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/{id}/_hops": {
+			"get": {
+				"operationId": "getByTenant",
+				"summary": "GET /entities/{id}/_hops",
+				"description": "This API returns entities and relations traversed with an N-hop operation. There is a limit of 1,500 entities that can be returned per API call. <p>Collections of traversed entities and relations with default details:</p><ul><li>Relations:<ul><li>uri: URI of a relation</li><li>type: type of a relation</li><li>startObject: contains information about the start object URI, and the directionalLabel object</li><li>endObject: contains information about the end object URI, and the directionalLabel object</li><li>Properties defined in select parameter</li></ul></li><li>Entities:<ul><li>uri: URI of an entity that is traversed</li><li>type: type of an entity</li><li>label: label of an entity</li><li>Properties defined in select parameter</li><li>traversedRelationsCount: number of relations of an entity that were traversed with this operation</li><li>untraversedRelationsCount: number of relations of an entity that were not traversed with this operation </li></ul></li></ul>",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/{id}/_raw": {
+			"get": {
+				"operationId": "getDecompressedRawObject",
+				"summary": "GET /entities/{id}/_raw",
+				"description": "This API decompressed raw object entity object by URI from the tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/{id}/_update": {
+			"post": {
+				"operationId": "updateEntityByCumulativeUpdate",
+				"summary": "POST /entities/{id}/_update",
+				"description": "This API makes cumulative updates on a single entity.If the cumulative update request contains a crosswalk of an existing entity that does not belong to the entity being updated, such a request is rejected, and this error message is returned: Cumulative update request should not contain crosswalk of already existing entity",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/batchcleanse": {
+			"post": {
+				"operationId": "batchCleanse",
+				"summary": "POST /entities/batchcleanse",
+				"description": "This API cleanses the entity data in the tenant on-the-fly, using batches. Once the cleansing is done, this API returns the body of the cleansed entities that is not persisted into the database. The response of the entities follow the order provided at input.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/cleanse": {
+			"post": {
+				"operationId": "entityCleanse",
+				"summary": "POST /entities/cleanse",
+				"description": "This API cleanses the entity data in the tenant on-the-fly. Once the cleansing is done, this API returns the body of the cleansed entity that is not persisted into the database.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/recleanse": {
+			"get": {
+				"operationId": "recleanseEntity",
+				"summary": "GET /entities/recleanse",
+				"description": "This is a synchronous API that re-cleanses and persists an existing entity stored in the tenant. This API does not perform a forced data cleansing.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/reverseGeo": {
+			"get": {
+				"operationId": "reverseGeo",
+				"summary": "GET /entities/reverseGeo",
+				"description": "This API takes latitude, longitude, and country code as input and returns the near by addresses for the given geo-codes.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			},
+			"post": {
+				"operationId": "reverseGeoBatchProcess",
+				"summary": "POST /entities/reverseGeo",
+				"description": "This API takes latitude, longitude, and country code as input and returns the near by addresses for the given geo-codes.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/v2/_scan": {
+			"post": {
+				"operationId": "getEntitiesByScanSearch",
+				"summary": "POST /entities/v2/_scan",
+				"description": "This API searches for entities using entities and interaction attributes. The response can include a maximum of 200 entities. If the request consists of the select parameter, then ensure that there is no space between the query parameters. For example: select=URI,label,attributes._lookupCodes,attributes._lookupValues",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/EntityList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/v2/_total": {
+			"get": {
+				"operationId": "getEntitiesByBatchSearchTotal",
+				"summary": "GET /entities/v2/_total",
+				"description": "This API searches for entities using entities and interaction attributes. The response includes only the number of found entities.The API uses a timeout to stop the search if the request was hanging for too long, the default is 2 minutes and 1 minute for requests coming with the header xxx-client = true.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "integer",
+									"description": "Total count."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/segments/{id}/entities": {
+			"get": {
+				"operationId": "getEntitiesBySegment",
+				"summary": "GET /segments/{id}/entities",
+				"description": "This API retrieves the individual entities that belong to the given segment. The response can include a maximum of 10000 entities. If the request consists of the select parameter, then ensure that there is no space between the query parameters. For example: select=URI,label,attributes._lookupCodes,attributes._lookupValues",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/EntityList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/segments/{id}/entities/scan": {
+			"post": {
+				"operationId": "getTotalEntitiesBySegment",
+				"summary": "POST /segments/{id}/entities/scan",
+				"description": "Get the total number of entities that belong to the given segment",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "integer",
+									"description": "Total count."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/segments/{id}/entities/total": {
+			"get": {
+				"operationId": "getTotalEntitiesBySegment",
+				"summary": "GET /segments/{id}/entities/total",
+				"description": "Get the total number of entities that belong to the given segment",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "integer",
+									"description": "Total count."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"Entity": {
+				"type": "object",
+				"description": "A Reltio entity — a single record with attributes, crosswalks (source contributions), and a stable URI.",
+				"properties": {
+					"uri": {
+						"type": "string",
+						"description": "Stable Reltio URI of the entity (e.g. entities/abc123)."
+					},
+					"type": {
+						"type": "string",
+						"description": "Entity type URI (e.g. configuration/entityTypes/Individual)."
+					},
+					"label": {
+						"type": "string",
+						"description": "Human-readable label."
+					},
+					"attributes": {
+						"type": "object",
+						"description": "Map of attribute name to attribute values.",
+						"additionalProperties": true
+					},
+					"crosswalks": {
+						"type": "array",
+						"description": "Source-system contributions for this entity.",
+						"items": {
+							"$ref": "#/components/schemas/Crosswalk"
+						}
+					},
+					"createdTime": {
+						"type": "integer",
+						"description": "Creation timestamp in milliseconds."
+					},
+					"updatedTime": {
+						"type": "integer",
+						"description": "Last update timestamp in milliseconds."
+					}
+				}
+			},
+			"EntityList": {
+				"type": "array",
+				"description": "Array of entity objects.",
+				"items": {
+					"$ref": "#/components/schemas/Entity"
+				}
+			},
+			"EntitySearchResponse": {
+				"type": "object",
+				"description": "Result of a Search Before Create or batch operation — for each input record, indicates whether a matching entity was found and the URIs of created or updated entities.",
+				"properties": {
+					"results": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"uri": {
+									"type": "string",
+									"description": "URI of the created or matched entity."
+								},
+								"status": {
+									"type": "string",
+									"enum": [
+										"CREATED",
+										"MATCHED",
+										"UPDATED",
+										"ERROR"
+									],
+									"description": "Outcome of the operation for this record."
+								},
+								"entity": {
+									"$ref": "#/components/schemas/Entity"
+								}
+							}
+						}
+					}
+				}
+			},
+			"Crosswalk": {
+				"type": "object",
+				"description": "Source-system contribution for an entity attribute or relation.",
+				"properties": {
+					"type": {
+						"type": "string",
+						"description": "Source system URI."
+					},
+					"value": {
+						"type": "string",
+						"description": "External identifier value in the source system."
+					},
+					"sourceTable": {
+						"type": "string",
+						"description": "Source table or feed name."
+					},
+					"createDate": {
+						"type": "string",
+						"description": "Crosswalk creation date."
+					},
+					"updateDate": {
+						"type": "string",
+						"description": "Crosswalk last update date."
+					}
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />

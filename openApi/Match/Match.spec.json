@@ -1,0 +1,1984 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Match API",
+		"version": "1.0.0",
+		"description": "Search and explain matches between entities, mark pairs as match / not-match (single + bulk), inspect match tokens and documents, and call low-level matching tools (comparator classes, token classes, comparison and explanation utilities). Spans entity-scoped operations under /services/reltio/api/{tenantId}/... and global tools under /services/reltio/tools/matching/..."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/services/reltio/api/{tenantId}/entities/_matches": {
+			"post": {
+				"operationId": "getPotentialMatchesByTenant",
+				"summary": "POST /services/reltio/api/{tenantId}/entities/_matches",
+				"description": "This API returns the matches for the records provided in the body of the request. The matches returned in the response are the ones that are identified by all match rules. The information returned in the response can be controlled using the parameters supported by this API",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "rules",
+						"in": "query",
+						"required": false,
+						"description": "The match rules configured in the tenant.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify the maximum number of matches to return in a response. This parameter can be used to organize pagination in combination with the offset parameter",
+						"schema": {
+							"type": "integer",
+							"default": 200
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify starting what element in a result set should be returned in a response. The API can be used to organize pagination in combination with the max parameter",
+						"schema": {
+							"type": "integer",
+							"default": 0
+						}
+					},
+					{
+						"name": "showActions",
+						"in": "query",
+						"required": false,
+						"description": "If enabled, shows the match actions configured as part of the rules",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "cleanse",
+						"in": "query",
+						"required": false,
+						"description": "If enabled, the attributes in the input objects are cleansed",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/entities/_scoredmatches": {
+			"post": {
+				"operationId": "getScoredMatchesByTenant",
+				"summary": "POST /services/reltio/api/{tenantId}/entities/_scoredmatches",
+				"description": "The matches returned in the response are the ones that are identified by all match rules. In addition to match pairs, this API also returns their corresponding match scores. matchScore is an aggregate integer from configured scoreStandalone/scoreIncremental on all matching rules. For relevance-based rules, relevance and actionLabel may be returned when applicable, alongside the other match rule details in each match's matchGroups list.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "cleanse",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "rules",
+						"in": "query",
+						"required": false,
+						"description": "Defines match rule URIs to be used in matching",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify maximum number of matches to return in a response. This parameter can be used to organize pagination in combination with the offset parameter",
+						"schema": {
+							"type": "integer",
+							"default": 200
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify starting what element in a result set should be returned in a response. The API can be used to organize pagination in combination with the max parameter",
+						"schema": {
+							"type": "integer",
+							"default": 0
+						}
+					},
+					{
+						"name": "select",
+						"in": "query",
+						"required": false,
+						"description": "Comma-separated list of properties from the entity structure that must be returned in a response. Allows you to return a partial entity object. Example: select=uri,label,attributes,crosswalks from the referenced object. To ensure improved performance of _scoredMatches, properly define the properties list in the select parameter. The possible variants are: - 'uri' and/or 'type' (select=uri,type). No objects are loaded. The most efficient and recommended way; - Simple or nested attributes from the object are specified. A lightweight operation is performed to retrieve the object without references; - no 'select'; 'select=attributes', contains some reference attributes that are loaded with the object. The above mentioned optimizations work only if there is no configured data security for the entity type, else the object is loaded fully. If there are a a large number of matches for input entities, then the response size can be very large. The size is limited to 100 MB. In such a case, it is recommended to reduce the number of input entities and decrease the value of the max parameter. If the Request has the select parameter, there must not be any space between the query parameters",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/entities/_verifyMatches": {
+			"post": {
+				"operationId": "getMatchExplanationByTenant",
+				"summary": "POST /services/reltio/api/{tenantId}/entities/_verifyMatches",
+				"description": "his can be used for the tuning of match rules and/or for troubleshooting why any pair matched or did not match. The API accepts either the URIs of existing objects or any two records with attribute values. The explanation can be invoked using the existing match groups by default or with the custom match rules",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "rules",
+						"in": "query",
+						"required": false,
+						"description": "The match group URIs to calculate the match explanation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"example": "configuration/entityTypes/Individual/matchGroups/IndividualByEmail"
+							}
+						}
+					},
+					{
+						"name": "hashedTokens",
+						"in": "query",
+						"required": false,
+						"description": "The match tokens might be hashed. The parameter allows you to request the non-hashed values.",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "show",
+						"in": "query",
+						"required": false,
+						"description": "Determines the information that is returned in the response. The user can assign the following values:brief: Returns only rules and their explanations (current behavior).full: Returns information about match documents values and entities versions.",
+						"schema": {
+							"type": "string",
+							"default": "brief"
+						}
+					},
+					{
+						"name": "documentsFromDatabase",
+						"in": "query",
+						"required": false,
+						"description": "The default value is false. If set to true, for existing entities, their actual documents from database are used for explanation. If set to false, the documents are generated by the input entities (default behavior)",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "checkOvercollisionedTokens",
+						"in": "query",
+						"required": false,
+						"description": "If set to true the match token phrases are checked if they are marked in the database as overcollisioned, if yes the match token phrases are represented as overcollisioned and removed from intersection list. If set to false the tokens lists might contain overcollisioned tokens.",
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "time",
+						"in": "query",
+						"required": false,
+						"description": "The point in time for which the matches explanation is required",
+						"schema": {
+							"type": "integer",
+							"format": "int64"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchExplanation"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/entities/_verifyUnmerge": {
+			"post": {
+				"operationId": "getUnmergeExplanation",
+				"summary": "POST /services/reltio/api/{tenantId}/entities/_verifyUnmerge",
+				"description": "This can be used for the tuning of match rules and/or for troubleshooting why an entity unmerged or did not unmerge. The API accepts either the URIs of existing object or an record with attribute values. The explanation can be invoked using the existing match groups by default or with the custom match rules",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "time",
+						"in": "query",
+						"required": false,
+						"description": "The point in time for which the unmerge explanation is required",
+						"schema": {
+							"type": "integer",
+							"format": "int64"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchExplanation"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/entities/{id}/_matches": {
+			"get": {
+				"operationId": "getPotentialMatchesByTenantPerEntity",
+				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/_matches",
+				"description": "The potential matches returned in the response are the ones that are identified by Suspect match rules. The information returned in the response can be controlled using the parameters supported by this API",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "transitive",
+						"in": "query",
+						"required": false,
+						"description": "Flag to return transitive matches as a separate group. If set to true the transitive matches would be presented in 'transitive' block. Otherwise, the transitive matches would be presented with the direct matches as a single list",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "forceMatch",
+						"in": "query",
+						"required": false,
+						"description": "Flag for calculating matches in real time. If set to true potential matches for particular entity would be recalculated. Otherwise, potential matches would be taken from the database.",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "deep",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify the maximum depth of transitive matches. To get direct matches only the parameter should be set to 1",
+						"schema": {
+							"type": "integer",
+							"default": 5
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify the maximum number of matches to return in a response. This parameter can be used to organize pagination in combination with the offset parameter",
+						"schema": {
+							"type": "integer",
+							"default": 200
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify starting what element in a result set should be returned in a response. The API can be used to organize pagination in combination with the max parameter",
+						"schema": {
+							"type": "integer",
+							"default": 0
+						}
+					},
+					{
+						"name": "activeness",
+						"in": "query",
+						"required": false,
+						"description": "Parameter describing what kind of entities should be returned.When it is set to ACTIVE, only active entities are listed in the response for the potential matches. When it is set to NOT_ACTIVE, only inactive entities are listed in the response for the potential matches. Otherwise, all entities are listed as potential matches",
+						"schema": {
+							"type": "string",
+							"default": "ALL",
+							"enum": ["NOT_ACTIVE", "ACTIVE", "ALL"]
+						}
+					},
+					{
+						"name": "showObject",
+						"in": "query",
+						"required": false,
+						"description": "URI of a matched entity. The parameter could be used for pagination instead of offset. If specified, the result will be a page containing the required matched entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "type",
+						"in": "query",
+						"required": false,
+						"description": "Type of the matches to search for. The possible value is either one of the predefined match group type (suspect, automatic, relevance_based) or one of the predefined match actions (potential_match, auto_merge) or one of the custom match action types",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sort",
+						"in": "query",
+						"required": false,
+						"description": "Name of the property that should be used for sorting. Possible value is \"relevance\" - relevance will be used for sorting. \"relevanceScores.relevance\" - relevance will be used for sorting. \"actionLabel\" - Match action label corresponding to the relevance value will be used for sorting. \"relevanceScores.actionLabel\" - Match action label corresponding to the relevance value will be used for sorting. If not provided or value can't be recognized - no sorting will be used",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "order",
+						"in": "query",
+						"required": false,
+						"description": "Order of sorting. Applicable only in combination with \"sort\" parameter. Possible values: asc- the results will be shown in ascending order; desc- the results will be shown in descending order",
+						"schema": {
+							"type": "string",
+							"default": "desc",
+							"enum": ["asc", "desc"]
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/entities/{id}/_notMatch": {
+			"get": {
+				"operationId": "getNotMatchesByTenant",
+				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/_notMatch",
+				"description": "In addition to entity URIs, it also returns the date and time when the entities were updated. The information returned in the response can be controlled using the parameters supported by this API",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "returnObjects",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "activeness",
+						"in": "query",
+						"required": false,
+						"description": "Parameter describing what kind of entities should be returned.When it is set to ACTIVE, only active entities are listed in the response for the potential matches. When it is set to NOT_ACTIVE, only inactive entities are listed in the response for the potential matches. Otherwise, all entities are listed as potential matches",
+						"schema": {
+							"type": "string",
+							"default": "ALL",
+							"enum": ["NOT_ACTIVE", "ACTIVE", "ALL"]
+						}
+					},
+					{
+						"name": "sort",
+						"in": "query",
+						"required": false,
+						"description": "Name of the property that should be used for sorting. Possible value is \"score\" - match score will be used for sorting. \"attributes.\" - match score will be used for sorting. If not provided or value can't be recognized - no sorting will be used",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "order",
+						"in": "query",
+						"required": false,
+						"description": "Order of sorting. Applicable only in combination with \"sort\" parameter. Possible values: asc- the results will be shown in ascending order; desc- the results will be shown in descending order",
+						"schema": {
+							"type": "string",
+							"default": "desc",
+							"enum": ["asc", "desc"]
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"required": false,
+						"description": "Enables entities filtering by a condition. Format for filter query parameter: filter=({Condition Type}[AND/OR {Condition Type}]*). For more information, please visit https://docs.reltio.com",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"post": {
+				"operationId": "postNotMatchesByTenant",
+				"summary": "POST /services/reltio/api/{tenantId}/entities/{id}/_notMatch",
+				"description": "This API allows users to manually mark an entity pair as not a match of each other. In addition to entity URIs, it also returns the date and time when the entities were updated and names of users who updated the entities. The information returned in the response can be controlled using the parameters supported by this API",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "uri",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "unmarkNotMatches",
+				"summary": "DELETE /services/reltio/api/{tenantId}/entities/{id}/_notMatch",
+				"description": "This API removes not a match mark between two entities which was created earlier",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "uri",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/entities/{id}/_setAMatch": {
+			"get": {
+				"operationId": "asMatchesByTenant",
+				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/_setAMatch",
+				"description": "The list of entities returned in the responses are the ones that are marked by the user either using UI or API. The information returned in the response can be controlled using the parameters supported by this API",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "Entity ID",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "returnObjects",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "activeness",
+						"in": "query",
+						"required": false,
+						"description": "Parameter describing what kind of entities should be returned.When it is set to ACTIVE, only active entities are listed in the response for the potential matches. When it is set to NOT_ACTIVE, only inactive entities are listed in the response for the potential matches. Otherwise, all entities are listed as potential matches",
+						"schema": {
+							"type": "string",
+							"default": "ALL",
+							"enum": ["NOT_ACTIVE", "ACTIVE", "ALL"]
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"post": {
+				"operationId": "markAsMatches",
+				"summary": "POST /services/reltio/api/{tenantId}/entities/{id}/_setAMatch",
+				"description": "This API allows users to manually mark an entity pair as a match of each other. In addition to entity URIs, it also returns the date and time when the entities were updated and names of users who updated the entities. The information returned in the response can be controlled using the parameters supported by this API",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "uri",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "unmarkAsMatches",
+				"summary": "DELETE /services/reltio/api/{tenantId}/entities/{id}/_setAMatch",
+				"description": "This API removes potential match between two entities which was created earlier",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "uri",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/entities/{id}/_transitiveMatches": {
+			"get": {
+				"operationId": "getTransitivePotentialMatchesByTenant",
+				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/_transitiveMatches",
+				"description": "Transitive matches are records that matched with the potential matches of an entityThe information returned in the response can be controlled using the parameters supported by this API",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "markMatchedValues",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "showPath",
+						"in": "query",
+						"required": false,
+						"description": "Specifies if the shortest transitive path must be returned",
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "deep",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify the maximum depth of transitive matches",
+						"schema": {
+							"type": "integer",
+							"default": 5
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify the maximum number of matches to return in a response. This parameter can be used to organize pagination in combination with the offset parameter",
+						"schema": {
+							"type": "integer",
+							"default": 200
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify starting what element in a result set should be returned in a response. The API can be used to organize pagination in combination with the max parameter",
+						"schema": {
+							"type": "integer",
+							"default": 0
+						}
+					},
+					{
+						"name": "activeness",
+						"in": "query",
+						"required": false,
+						"description": "Parameter describing what kind of entities should be returned.When it is set to ACTIVE, only active entities are listed in the response for the potential matches. When it is set to NOT_ACTIVE, only inactive entities are listed in the response for the potential matches. Otherwise, all entities are listed as potential matches",
+						"schema": {
+							"type": "string",
+							"default": "ALL",
+							"enum": ["NOT_ACTIVE", "ACTIVE", "ALL"]
+						}
+					},
+					{
+						"name": "showObject",
+						"in": "query",
+						"required": false,
+						"description": "URI of a matched entity. The parameter could be used for pagination instead of offset. If specified, the result will be a page containing the required matched entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sources",
+						"in": "query",
+						"required": false,
+						"description": "This parameter allows to filter matched entities by particular sources",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "rules",
+						"in": "query",
+						"required": false,
+						"description": "This parameter allows to return matching results for particular match rules",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sort",
+						"in": "query",
+						"required": false,
+						"description": "Name of the property that should be used for sorting. Possible value is \"score\" - match score will be used for sorting. \"relevance\" - relevance will be used for sorting. \"relevanceScores.relevance\" - relevance will be used for sorting. \"actionLabel\" - Match action label corresponding to the relevance value will be used for sorting. \"relevanceScores.actionLabel\" - Match action label corresponding to the relevance value will be used for sorting. \"attributes.\" - attribute value (OV only) will be used for sorting. If not provided or value can't be recognized - no sorting will be used",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "order",
+						"in": "query",
+						"required": false,
+						"description": "Order of sorting. Applicable only in combination with \"sort\" parameter. Possible values: asc- the results will be shown in ascending order; desc- the results will be shown in descending order",
+						"schema": {
+							"type": "string",
+							"default": "desc",
+							"enum": ["asc", "desc"]
+						}
+					},
+					{
+						"name": "type",
+						"in": "query",
+						"required": false,
+						"description": "Type of the matches to search for. The possible value is either one of the predefined match group type (suspect, automatic, relevance_based) or one of the predefined match actions (potential_match, auto_merge) or one of the custom match action types",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"required": false,
+						"description": "Enables entities filtering by a condition. Format for filter query parameter: filter=({Condition Type}[AND/OR {Condition Type}]*). For more information, please visit https://docs.reltio.com",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/entities/{id}/matchDocument": {
+			"get": {
+				"operationId": "getMatchDocumentExplanation",
+				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/matchDocument",
+				"description": "This API builds matching documents for a particular entity and compares them. Generated document builds based on current business configuration, the stored document reads from the database",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "db",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "time",
+						"in": "query",
+						"required": false,
+						"description": "The point in time for which the matches explanation is required",
+						"schema": {
+							"type": "integer",
+							"format": "int64"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchTokens"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/entities/{id}/matchedEntities": {
+			"get": {
+				"operationId": "getMatchedEntities",
+				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/matchedEntities",
+				"description": "The potential matches returned in the response are the ones that are identified by Suspect match rules. The information returned in the response can be controlled using the parameters supported by this API",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "rules",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "transitive",
+						"in": "query",
+						"required": false,
+						"description": "Flag to return transitive matches as a separate group. If set to true the transitive matches would be presented in 'transitive' block. Otherwise, the transitive matches would be presented with the direct matches as a single list",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "deep",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify the maximum depth of transitive matches. To get direct matches only the parameter should be set to 1",
+						"schema": {
+							"type": "integer",
+							"default": 5
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify the maximum number of matches to return in a response. This parameter can be used to organize pagination in combination with the offset parameter",
+						"schema": {
+							"type": "integer",
+							"default": 200
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify starting what element in a result set should be returned in a response. The API can be used to organize pagination in combination with the max parameter",
+						"schema": {
+							"type": "integer",
+							"default": 0
+						}
+					},
+					{
+						"name": "activeness",
+						"in": "query",
+						"required": false,
+						"description": "Parameter describing what kind of entities should be returned.When it is set to ACTIVE, only active entities are listed in the response for the potential matches. When it is set to NOT_ACTIVE, only inactive entities are listed in the response for the potential matches. Otherwise, all entities are listed as potential matches",
+						"schema": {
+							"type": "string",
+							"default": "ALL",
+							"enum": ["NOT_ACTIVE", "ACTIVE", "ALL"]
+						}
+					},
+					{
+						"name": "showObject",
+						"in": "query",
+						"required": false,
+						"description": "URI of a matched entity. The parameter could be used for pagination instead of offset. If specified, the result will be a page containing the required matched entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "type",
+						"in": "query",
+						"required": false,
+						"description": "Type of the matches to search for. The possible value is either one of the predefined match group type (suspect, automatic, relevance_based) or one of the predefined match actions (potential_match, auto_merge) or one of the custom match action types",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sort",
+						"in": "query",
+						"required": false,
+						"description": "Name of the property that should be used for sorting. Possible value is \"attributes.\" - attribute value (OV only) will be used for sorting. If not provided or value can't be recognized - no sorting will be used",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "order",
+						"in": "query",
+						"required": false,
+						"description": "Order of sorting. Applicable only in combination with \"sort\" parameter. Possible values: asc- the results will be shown in ascending order; desc- the results will be shown in descending order",
+						"schema": {
+							"type": "string",
+							"default": "desc",
+							"enum": ["asc", "desc"]
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/entities/{id}/matchTokens": {
+			"get": {
+				"operationId": "getMatchTokensExplanation",
+				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/matchTokens",
+				"description": "This API builds matching tokens for a particular entity and compares them. Generated set of tokens built based on current business configuration, the stored set of tokens is read from the database",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "db",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "hashTokens",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "checkDB",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "time",
+						"in": "query",
+						"required": false,
+						"description": "The point in time for which the matches explanation is required",
+						"schema": {
+							"type": "integer",
+							"format": "int64"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchTokens"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/entities/{id}/matchTokensDetailed": {
+			"get": {
+				"operationId": "getMatchTokensDetailedExplanation",
+				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/matchTokensDetailed",
+				"description": "This API explain how each token builds for a particular entity",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "time",
+						"in": "query",
+						"required": false,
+						"description": "The point in time for which the matches explanation is required",
+						"schema": {
+							"type": "integer",
+							"format": "int64"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchTokens"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/entities/findMatchCandidates": {
+			"post": {
+				"operationId": "findMatchCandidates",
+				"summary": "POST /services/reltio/api/{tenantId}/entities/findMatchCandidates",
+				"description": "This API retrieves match candidates for a given entity ID",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "rules",
+						"in": "query",
+						"required": false,
+						"description": "List of match rule URIs to limit candidate search to specific rules",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					{
+						"name": "fromDatabase",
+						"in": "query",
+						"required": false,
+						"description": "When true, uses stored match documents from database instead of generating new ones",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/entities/matchedEntities": {
+			"post": {
+				"operationId": "matchEntities",
+				"summary": "POST /services/reltio/api/{tenantId}/entities/matchedEntities",
+				"description": "This API returns the matches for the records provided in the body of the request. The matches returned in the response are the ones that are identified by all match rules. The information returned in the response can be controlled using the parameters supported by this API",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "rules",
+						"in": "query",
+						"required": false,
+						"description": "The match rules configured in the tenant.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify the maximum number of matches to return in a response. This parameter can be used to organize pagination in combination with the offset parameter",
+						"schema": {
+							"type": "integer",
+							"default": 200
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes a positive integer value to identify starting what element in a result set should be returned in a response. The API can be used to organize pagination in combination with the max parameter",
+						"schema": {
+							"type": "integer",
+							"default": 0
+						}
+					},
+					{
+						"name": "showActions",
+						"in": "query",
+						"required": false,
+						"description": "If enabled, shows the match actions configured as part of the rules",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "cleanse",
+						"in": "query",
+						"required": false,
+						"description": "If enabled, the attributes in the input objects are cleansed",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "sort",
+						"in": "query",
+						"required": false,
+						"description": "Name of the property that should be used for sorting. Possible value is \"attributes.\" - attribute value (OV only) will be used for sorting. If not provided or value can't be recognized - no sorting will be used",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "order",
+						"in": "query",
+						"required": false,
+						"description": "Order of sorting. Applicable only in combination with \"sort\" parameter. Possible values: asc- the results will be shown in ascending order; desc- the results will be shown in descending order",
+						"schema": {
+							"type": "string",
+							"default": "desc",
+							"enum": ["asc", "desc"]
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/api/{tenantId}/matches/_bulkNotMatch": {
+			"post": {
+				"operationId": "bulkNotMatch",
+				"summary": "POST /services/reltio/api/{tenantId}/matches/_bulkNotMatch",
+				"description": "This API returns results for the records provided in the body of the request.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/tools/matching/comparatorClasses": {
+			"get": {
+				"operationId": "getMatchComparatorClasses",
+				"summary": "GET /tools/matching/comparatorClasses",
+				"description": "Returns a list of available comparator classes that can be used in the match rule configuration",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/ComparatorClass"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/tools/matching/compare": {
+			"post": {
+				"operationId": "matchTokenComparison",
+				"summary": "POST /tools/matching/compare",
+				"description": "The endpoint returns a comparison result of given values",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/tools/matching/compare/multi": {
+			"post": {
+				"operationId": "multiComparison",
+				"summary": "POST /tools/matching/compare/multi",
+				"description": "The endpoint returns a comparison result of given values",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/tools/matching/fixGroupingMatchesState": {
+			"post": {
+				"operationId": "fixGroupingMatchesState",
+				"summary": "POST /tools/matching/fixGroupingMatchesState",
+				"description": "Fixes grouping matches and associations state for provided entity and association IDs",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/tools/matching/matchTokenClasses": {
+			"get": {
+				"operationId": "getMatchTokenClasses",
+				"summary": "GET /tools/matching/matchTokenClasses",
+				"description": "Returns a list of available match token classes that can be used in the match rule configuration",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/ComparatorClass"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/tools/matching/matchTokenIntersections": {
+			"post": {
+				"operationId": "findMatchTokenIntersections",
+				"summary": "POST /tools/matching/matchTokenIntersections",
+				"description": "This endpoint calculates the token intersection for a given pair of values using the supplied token class",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchResultList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/tools/matching/matchTokens": {
+			"post": {
+				"operationId": "generateMatchTokens",
+				"summary": "POST /tools/matching/matchTokens",
+				"description": "This API builds matching tokens for a particular entity and compares them. Generated set of tokens builds based on the current business configuration, the stored set of tokens is read from the database",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchTokens"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/tools/matching/matchTokens/multi": {
+			"post": {
+				"operationId": "multiGenerateMatchTokens",
+				"summary": "POST /tools/matching/matchTokens/multi",
+				"description": "This API builds match token phrases for given values based on tokenization classes.",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchTokens"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/services/reltio/tools/matching/tokensExplanation": {
+			"post": {
+				"operationId": "tokensExplanation",
+				"summary": "POST /tools/matching/tokensExplanation",
+				"description": "Explains how match tokens are built for any given entity",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MatchExplanation"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"MatchResult": {
+				"type": "object",
+				"properties": {
+					"uri": {
+						"type": "string",
+						"description": "URI of the matched entity."
+					},
+					"score": {
+						"type": "number",
+						"description": "Match score."
+					},
+					"matchedAttributes": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"MatchResultList": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/MatchResult"
+				}
+			},
+			"MatchTokens": {
+				"type": "object",
+				"properties": {
+					"tokens": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"class": {
+									"type": "string"
+								},
+								"value": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"MatchExplanation": {
+				"type": "object",
+				"description": "Explains why a pair matched or didn't.",
+				"additionalProperties": true
+			},
+			"ComparatorClass": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					}
+				}
+			}
+		}
+	}
+}

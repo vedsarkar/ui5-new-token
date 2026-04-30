@@ -1,0 +1,399 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Databricks Share Management API",
+		"version": "1.0.0",
+		"description": "Provision Databricks Unity Catalog artifacts (catalogs, schemas, recipients, shares, grants) for a Reltio tenant via a configured adapter. Includes a complete-share convenience endpoint that creates the recipient + share + grant in one call."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/services/api/tenants/{tenantId}/adapters/{adapterName}/databricks-share",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				},
+				"tenantId": {
+					"default": "{tenantId}",
+					"description": "Reltio tenant id."
+				},
+				"adapterName": {
+					"default": "{adapterName}",
+					"description": "Configured Databricks adapter name."
+				}
+			}
+		}
+	],
+	"paths": {
+		"/catalog": {
+			"post": {
+				"operationId": "createCatalogForTenant",
+				"summary": "POST /catalog",
+				"description": "Create a catalog for a tenant in Databricks Unity Catalog",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CatalogRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DatabricksOperationResult"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/catalog-schema": {
+			"post": {
+				"operationId": "createCatalogAndSchemaForTenant",
+				"summary": "POST /catalog-schema",
+				"description": "Create a catalog and schema for a tenant in Databricks Unity Catalog",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchemaRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DatabricksOperationResult"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/complete-share": {
+			"post": {
+				"operationId": "createCompleteShare",
+				"summary": "POST /complete-share",
+				"description": "Create recipient, share, and grant access in one operation",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CompleteShareRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DatabricksOperationResult"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/grant": {
+			"post": {
+				"operationId": "grantShareAccessForTenant",
+				"summary": "POST /grant",
+				"description": "Grant access to a share for a tenant-specific recipient",
+				"parameters": [
+					{
+						"name": "recipientIdentifier",
+						"in": "query",
+						"required": false,
+						"description": "Recipient identifier.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GrantRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DatabricksOperationResult"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/recipient": {
+			"post": {
+				"operationId": "createRecipientForTenant",
+				"summary": "POST /recipient",
+				"description": "Create a recipient for a tenant in Databricks Unity Catalog",
+				"parameters": [
+					{
+						"name": "recipientIdentifier",
+						"in": "query",
+						"required": false,
+						"description": "Recipient identifier (Databricks dataRecipientGlobalMetastoreId).",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RecipientRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DatabricksOperationResult"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/schema": {
+			"post": {
+				"operationId": "createSchemaForTenant",
+				"summary": "POST /schema",
+				"description": "Create a schema for a tenant in Databricks Unity Catalog",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchemaRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DatabricksOperationResult"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/share": {
+			"post": {
+				"operationId": "createShareForTenant",
+				"summary": "POST /share",
+				"description": "Create a share for a tenant in Databricks Unity Catalog",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ShareRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DatabricksOperationResult"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"CatalogRequest": {
+				"type": "object",
+				"properties": {
+					"catalogName": {
+						"type": "string",
+						"description": "Unity Catalog catalog name."
+					},
+					"comment": {
+						"type": "string"
+					}
+				},
+				"required": ["catalogName"]
+			},
+			"SchemaRequest": {
+				"type": "object",
+				"properties": {
+					"catalogName": {
+						"type": "string"
+					},
+					"schemaName": {
+						"type": "string",
+						"description": "Unity Catalog schema name."
+					},
+					"comment": {
+						"type": "string"
+					}
+				},
+				"required": ["catalogName", "schemaName"]
+			},
+			"RecipientRequest": {
+				"type": "object",
+				"properties": {
+					"recipientName": {
+						"type": "string",
+						"description": "Unity Catalog recipient name."
+					},
+					"sharingIdentifier": {
+						"type": "string",
+						"description": "Recipient's sharing identifier (Databricks-issued)."
+					}
+				},
+				"required": ["recipientName"]
+			},
+			"ShareRequest": {
+				"type": "object",
+				"properties": {
+					"shareName": {
+						"type": "string",
+						"description": "Unity Catalog share name."
+					},
+					"comment": {
+						"type": "string"
+					}
+				},
+				"required": ["shareName"]
+			},
+			"GrantRequest": {
+				"type": "object",
+				"properties": {
+					"shareName": {
+						"type": "string"
+					},
+					"recipientName": {
+						"type": "string"
+					},
+					"privileges": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"description": "Privileges to grant (e.g. SELECT)."
+					}
+				},
+				"required": ["shareName", "recipientName", "privileges"]
+			},
+			"CompleteShareRequest": {
+				"type": "object",
+				"description": "Combines recipient + share + grant fields into a single request.",
+				"properties": {
+					"recipientName": {
+						"type": "string"
+					},
+					"sharingIdentifier": {
+						"type": "string"
+					},
+					"shareName": {
+						"type": "string"
+					},
+					"privileges": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"comment": {
+						"type": "string"
+					}
+				},
+				"required": ["recipientName", "shareName"]
+			},
+			"DatabricksOperationResult": {
+				"type": "object",
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": ["SUCCESS", "FAILED"]
+					},
+					"resourceName": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					}
+				}
+			}
+		}
+	}
+}

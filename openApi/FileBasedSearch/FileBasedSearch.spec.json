@@ -1,0 +1,84 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "File Based Search API",
+		"version": "1.0.0",
+		"description": "Upload a file with a list of values to a private bucket so it can be referenced as input to subsequent searches against entity attributes (e.g. \"find entities whose externalId is in this 10,000-item list\")."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/valueList": {
+			"post": {
+				"operationId": "uploadValueList",
+				"summary": "POST /valueList",
+				"description": "This API allows to upload a file with a list of values to internal cloud storage to use this file in the search filter later. It also provides temporary direct access to the file via presigned URL.Note: Only TXT and CSV file extensions are supported. CSV file must contain only one column without a header.Limitation for supported file size is 10MB or 5000 values.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant to upload a file for",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValueListUploadResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"ValueListUploadResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "Identifier of the uploaded value list."
+					},
+					"filename": {
+						"type": "string"
+					},
+					"valueCount": {
+						"type": "integer",
+						"description": "Number of values uploaded."
+					}
+				}
+			}
+		}
+	}
+}

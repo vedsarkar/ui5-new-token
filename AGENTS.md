@@ -187,16 +187,19 @@ openspec validate [item] --strict # Validate changes
 
 ## MCP Servers
 
-AI agents in this project have access to two MCP servers configured in `.mcp.json` and `.claude/settings.json`:
+AI agents in this project have access to MCP servers configured in `.mcp.json` and `.claude/settings.json`:
 
 | Server | Source | What it provides |
 |--------|--------|-----------------|
 | **reltio-design** (Storybook MCP) | `http://localhost:6006/mcp` | Existing components, documentation, stories, API references |
+| **Atlassian MCP** | `https://mcp.atlassian.com/v1/mcp/authv2` | Jira and Confluence access |
 | **Figma MCP** (plugin) | `https://mcp.figma.com/mcp` | Design context, screenshots, variables, design system search |
 
 **Storybook MCP** requires `npm run dev` to be running BEFORE starting the Claude Code session. MCP servers are connected at session startup — if Storybook is not running, the server will show "Failed to connect" and its tools will be unavailable for the entire session. Tools: `list-all-documentation`, `get-documentation`, `get-documentation-for-story`, `preview-stories`, `run-story-tests`.
 
 **Figma MCP** requires one-time OAuth authorization per developer. Tools: `get_design_context`, `get_screenshot`, `get_variable_defs`, `search_design_system`, `get_metadata`.
+
+**Atlassian MCP** requires OAuth authorization per developer on first use.
 
 ## Agent Skills
 

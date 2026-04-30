@@ -1,0 +1,340 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Common Assets API",
+		"version": "1.0.0",
+		"description": "Manage common assets in a Reltio tenant — assets (typically attachments) shared/linked across multiple entities. Provides query (get/total/check), mutation (status/synchronize), and entity-scoped read operations."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/assets/_get": {
+			"post": {
+				"operationId": "getCommonAsset",
+				"summary": "POST /assets/_get",
+				"description": "Returns common asset.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/assets/_total": {
+			"post": {
+				"operationId": "getCommonAssetCount",
+				"summary": "POST /assets/_total",
+				"description": "Supports flexible querying to get the total count of common assets based on various filter criteria.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "integer",
+									"description": "Total count."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/assets/status": {
+			"put": {
+				"operationId": "markOrUnmarkAssetAsCommon",
+				"summary": "PUT /assets/status",
+				"description": "Manually marks an asset as common or removes it from being a common asset.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/assets/status/check": {
+			"post": {
+				"operationId": "checkAssetStatus",
+				"summary": "POST /assets/status/check",
+				"description": "Returns the status of an asset, indicating whether it is a common asset.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/assets/synchronize": {
+			"put": {
+				"operationId": "synchronizeAssetFrequency",
+				"summary": "PUT /assets/synchronize",
+				"description": "This endpoint triggers on-demand synchronization of a specific asset identified by key between the MATCH_ASSETS and COMMON_ASSETS tables.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/{id}/assets": {
+			"get": {
+				"operationId": "getCommonAssets",
+				"summary": "GET /entities/{id}/assets",
+				"description": "Fetches the list of common assets associated with the specified entity.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "frequency",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"format": "int32",
+							"default": 0
+						}
+					},
+					{
+						"name": "manual",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": ["YES", "NO", "DEFAULT"]
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"AssetReference": {
+				"type": "object",
+				"description": "Addresses a Reltio asset by entity URI, attribute path, and crosswalk.",
+				"properties": {
+					"entityURI": {
+						"type": "string",
+						"description": "URI of the entity owning the asset."
+					},
+					"attributePath": {
+						"type": "string",
+						"description": "Path to the attribute storing the asset."
+					},
+					"crosswalk": {
+						"type": "string",
+						"description": "Crosswalk URI of the asset contributor."
+					}
+				}
+			},
+			"AssetStatusUpdate": {
+				"type": "object",
+				"description": "Marks or unmarks an asset as common.",
+				"properties": {
+					"entityURI": {
+						"type": "string"
+					},
+					"attributePath": {
+						"type": "string"
+					},
+					"crosswalk": {
+						"type": "string"
+					},
+					"isCommon": {
+						"type": "boolean",
+						"description": "True to mark as common, false to unmark."
+					}
+				}
+			}
+		}
+	}
+}

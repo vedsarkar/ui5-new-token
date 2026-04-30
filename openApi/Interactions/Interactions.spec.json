@@ -1,0 +1,543 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Interactions API",
+		"version": "1.0.0",
+		"description": "Manage interactions in a Reltio tenant — create (collection of interactions, raw collection), retrieve (by id, raw by id, by entity), search and counts (by tenant, by group key, total), and delete (single by id, batch by URIs). Combines, in one place, the two POST creation endpoints exposed under the developer portal's Ingest module and the rest of the Interactions tag from the Operate module."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/entities/{id}/_interactions": {
+			"get": {
+				"operationId": "getEntityInteractionsByTenant",
+				"summary": "GET /entities/{id}/_interactions",
+				"description": "This API retrieves a list of interactions for an entity (interactions, where this entity is the member). You can sort (using the sort and order parameters) and filter (using the filter parameter) interactions in the response. By default, the retrieved interactions are sorted using the timestamp property in descending order. Note: There is a limit for reading interactions from the database for tenant. Only this amount of interactions are read from the database and only these interactions participate in filtering and sorting. If there are more interactions in the database for the given entity, then it means that the fetchedAll property is set to false in the response.</br> If you want to change the maximum number of interactions received for one entity, please contact Reltio support.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InteractionList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/interactions": {
+			"get": {
+				"operationId": "getCollectionByTenant",
+				"summary": "GET /interactions",
+				"description": "This API searches for interactions in a tenant",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InteractionList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			},
+			"post": {
+				"operationId": "saveInteractions",
+				"summary": "POST /interactions",
+				"description": "Creates a collection of interactions in a tenant. Accepts an array of interaction objects and returns the created interactions with their assigned URIs.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/Interaction"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Interactions created.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InteractionList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/interactions/_byGroupKey": {
+			"get": {
+				"operationId": "getCollectionByTenant",
+				"summary": "GET /interactions/_byGroupKey",
+				"description": "This API searches for interactions and groups it by groupKey if provided in a tenant",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InteractionList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/interactions/_deleteByUris": {
+			"post": {
+				"operationId": "deleteInteractionsByUrisByTenant",
+				"summary": "POST /interactions/_deleteByUris",
+				"description": "This API deletes a batch of interactions by interaction URIs from a tenant, the max number of interaction URIs in one batch is 150",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Interaction"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/interactions/_total": {
+			"get": {
+				"operationId": "getTotalByTenant",
+				"summary": "GET /interactions/_total",
+				"description": "This API returns the total number of interactions matching the specified filter criteria",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "integer",
+									"description": "Total count."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/interactions/{id}": {
+			"delete": {
+				"operationId": "deleteFromCollectionByTenant",
+				"summary": "DELETE /interactions/{id}",
+				"description": "This API deletes an interaction by interaction ID from a tenant",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Deletion result."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"get": {
+				"operationId": "getObjectByTenant",
+				"summary": "GET /interactions/{id}",
+				"description": "This API returns an interaction by interaction ID from a tenant",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Interaction"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/rawInteractions": {
+			"post": {
+				"operationId": "saveRawInteractions",
+				"summary": "POST /rawInteractions",
+				"description": "Creates a raw collection of interactions in a tenant. Accepts an array of raw interaction objects (without applying entity resolution) and returns the created raw interactions with their assigned URIs.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/RawInteraction"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Raw interactions created.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/RawInteraction"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/rawInteractions/{id}": {
+			"get": {
+				"operationId": "getRawObjectByTenant",
+				"summary": "GET /rawInteractions/{id}",
+				"description": "This API returns an raw interaction by interaction ID from a tenant",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RawInteraction"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"Interaction": {
+				"type": "object",
+				"description": "A Reltio interaction — an event that links one or more member entities (e.g. a phone call, a transaction, a visit). Has a stable URI, a type, attributes, and the participating entity members.",
+				"properties": {
+					"uri": {
+						"type": "string",
+						"description": "Stable Reltio URI of the interaction (e.g. interactions/abc123)."
+					},
+					"type": {
+						"type": "string",
+						"description": "Interaction type URI (e.g. configuration/interactionTypes/PhoneCall)."
+					},
+					"attributes": {
+						"type": "object",
+						"description": "Map of attribute name to attribute values.",
+						"additionalProperties": true
+					},
+					"members": {
+						"type": "array",
+						"description": "Participating entities, by URI and role.",
+						"items": {
+							"type": "object",
+							"properties": {
+								"objectURI": {
+									"type": "string",
+									"description": "URI of the participating entity."
+								},
+								"role": {
+									"type": "string",
+									"description": "Role of the entity in the interaction (e.g. caller, callee)."
+								}
+							}
+						}
+					},
+					"crosswalks": {
+						"type": "array",
+						"description": "Source-system contributions for this interaction.",
+						"items": {
+							"$ref": "#/components/schemas/Crosswalk"
+						}
+					},
+					"timestamp": {
+						"type": "integer",
+						"description": "Event timestamp in milliseconds since epoch."
+					},
+					"createdTime": {
+						"type": "integer",
+						"description": "Creation timestamp in milliseconds."
+					},
+					"updatedTime": {
+						"type": "integer",
+						"description": "Last update timestamp in milliseconds."
+					}
+				}
+			},
+			"InteractionList": {
+				"type": "array",
+				"description": "Array of interaction objects.",
+				"items": {
+					"$ref": "#/components/schemas/Interaction"
+				}
+			},
+			"RawInteraction": {
+				"type": "object",
+				"description": "A raw interaction — an interaction record stored without entity resolution. Used for high-throughput ingestion and historical replay.",
+				"properties": {
+					"uri": {
+						"type": "string",
+						"description": "Stable Reltio URI of the raw interaction (e.g. rawInteractions/abc123)."
+					},
+					"type": {
+						"type": "string",
+						"description": "Interaction type URI."
+					},
+					"attributes": {
+						"type": "object",
+						"description": "Map of attribute name to attribute values.",
+						"additionalProperties": true
+					},
+					"crosswalks": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Crosswalk"
+						}
+					},
+					"timestamp": {
+						"type": "integer",
+						"description": "Event timestamp in milliseconds since epoch."
+					}
+				}
+			},
+			"Crosswalk": {
+				"type": "object",
+				"description": "Source-system contribution for an interaction.",
+				"properties": {
+					"type": {
+						"type": "string",
+						"description": "Source system URI."
+					},
+					"value": {
+						"type": "string",
+						"description": "External identifier value in the source system."
+					},
+					"sourceTable": {
+						"type": "string",
+						"description": "Source table or feed name."
+					},
+					"createDate": {
+						"type": "string",
+						"description": "Crosswalk creation date."
+					},
+					"updateDate": {
+						"type": "string",
+						"description": "Crosswalk last update date."
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,1912 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: Export.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./Export.spec.json";
+import * as ExportStories from "./Export.stories";
+
+<Meta of={ExportStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Export API",
+		"version": "1.0.0",
+		"description": "Submit and manage async export jobs in the Reltio /services/jobs subsystem. Submitters POST to start an export of activities, entities (with variants), hierarchies, relations, or segments-bound entities. Task-management endpoints list, get, manifest, pause, resume, and stop tasks at both the global and tenant-scoped level."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/services/jobs",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/tasks": {
+			"get": {
+				"operationId": "getAllPeriodicJobsByTenant",
+				"summary": "GET /tasks",
+				"description": "This API is available to Administrator and Tenant's Administrator and returns export tasks for the specified tenant with the statuses: SCHEDULED - Indicates that the task is ready to be executed.SCHEDULED_POLL - Indicates that the task is rescheduled due to a node failure or waiting for other tasks to complete their work.PROCESSING - Indicates that the task is being executed now.PAUSING - Indicates that the task is preparing to turn into the PAUSED status.PAUSED - Indicates that the task was paused.CANCELING - Indicates that the task is preparing to turn into the CANCELED status.WAITING - Indicates that the task is waiting for other tasks that belong to the same export job.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify the maximum number of tasks to return in a response.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify starting what element in a result set should be returned in a response. Can be used to organize pagination in combination with max parameter.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ExportTaskList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/_total": {
+			"get": {
+				"operationId": "getAllPeriodicJobsCountByTenant",
+				"summary": "GET /tasks/_total",
+				"description": "This API is available to the Administrator or the Tenant's Administrator and returns the total count of export tasks for the specified tenant with the following statuses: SCHEDULED - Indicates that the task is ready to be executed.SCHEDULED_POLL - Indicates that the task is rescheduled due to a node failure or waiting for other tasks to complete their work.PROCESSING - Indicates that the task is being executed now.PAUSING - Indicates that the task is preparing to turn into the PAUSED status.PAUSED - Indicates that the task was paused.CANCELING - Indicates that the task is preparing to turn into the CANCELED status.WAITING - Indicates that the task is waiting for other tasks that belong to the same export job.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "integer",
+									"description": "Total count."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/{taskId}": {
+			"get": {
+				"operationId": "getByTenant",
+				"summary": "GET /tasks/{taskId}",
+				"description": "This API returns the task with the given ID or an error if there is no task with this ID. This task is available to Administrator and the Tenant's Administrator.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ExportTask"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/{taskId}/_pause": {
+			"put": {
+				"operationId": "pauseByTenant",
+				"summary": "PUT /tasks/{taskId}/_pause",
+				"description": "This API initiates the process of pausing a task with a particular ID for the specified tenant. This API is available to the Administrator and the Tenant's Administrator.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/{taskId}/_resume": {
+			"put": {
+				"operationId": "resumeByTenant",
+				"summary": "PUT /tasks/{taskId}/_resume",
+				"description": "This API resumes paused task with given ID for specified tenant. The task returns to the SCHEDULED tasks queue and then a free node of Export Service starts executing this task.Available to Administrator and the Tenant's Administrator.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/{taskId}/_stop": {
+			"put": {
+				"operationId": "stopByTenant",
+				"summary": "PUT /tasks/{taskId}/_stop",
+				"description": "This API initiates the process of stopping a task with a particular ID for the specified tenant. This API is available to the Administrator and the Tenant's Administrator.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/history": {
+			"get": {
+				"operationId": "getAllPeriodicJobsHistoryByTenant",
+				"summary": "GET /tasks/history",
+				"description": "This API is available to Administrator and Tenant's Administrator and returns export tasks for the specified tenant with the following statuses: CANCELED - Indicates that the task was canceled.COMPLETED - Indicates that the task was completed.FAILED - Indicates that an error occurred during execution of a task.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify the maximum number of tasks to return in a response.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify starting what element in a result set should be returned in a response. Can be used to organize pagination in combination with max parameter.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ExportTaskList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/history/_total": {
+			"get": {
+				"operationId": "getAllPeriodicJobsHistoryCountByTenant",
+				"summary": "GET /tasks/history/_total",
+				"description": "This API is available to Administrator and Tenant's Administrator and returns the total count of export tasks for the specified tenant with the following statuses: CANCELED - Indicates that the task was canceled.COMPLETED - Indicates that the task was completed.FAILED - Indicates that an error occurred during execution of a task.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "integer",
+									"description": "Total count."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/export/{tenantId}/activities": {
+			"post": {
+				"operationId": "exportActivitiesByTenant",
+				"summary": "POST /export/{tenantId}/activities",
+				"description": "This API exports activities from a tenant, uploads a CSV file or JSON file to the appropriate storage, and sends a link to the exported data (if post-processing is enabled and the partSize parameter was not specified) or a link to the Export Console UI page (in the other cases) to your email address.Note: For details about S3, GCS, or an Azure Storage destination for export, please see Storing Export Results. Only one storage destination can be specified for one export request.By default, the Activity Log Export API returns results for the last four months. To retrieve data for a different time range, specify the filter query parameter for timestamp. For example, by using the filter=gt(timestamp,1560800276000) query, all activities more recent than June 17, 2019, 7:37:56 PM are returned. The timestamp must be mentioned in milliseconds.Note: As a best practice, we recommend that you specify the time period filter when searching/exporting the activity log data.Retention, exporting, and searching against the activity log data is governed by Quotas and Limits. For more information, please see Quotas and Limits.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "email",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates the comma-separated list of custom email addresses to which the notification is sent after the export is completed. If the parameter is not specified, the Export Service notifies the Reltio user who submitted the export request",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "dateFormat",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates the format of the date and time attribute values",
+						"schema": {
+							"type": "string",
+							"default": "TIMESTAMP",
+							"enum": [
+								"TIMESTAMP",
+								"READABLE"
+							]
+						}
+					},
+					{
+						"name": "fileFormat",
+						"in": "query",
+						"required": false,
+						"description": "This parameter defines what output format must be used for export. Note that export to JSON is more efficient compared to export to CSV",
+						"schema": {
+							"type": "string",
+							"default": "CSV",
+							"enum": [
+								"CSV",
+								"JSON"
+							]
+						}
+					},
+					{
+						"name": "distributed",
+						"in": "query",
+						"required": false,
+						"description": "This parameter is applied only for Export Version 1. If set to true, then the export task is divided into parts that can be executed in parallel on different nodes. If not specified, then one task is created",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "taskPartsCount",
+						"in": "query",
+						"required": false,
+						"description": "This parameter is applied only for Export Version 1. It indicates the number of distributed task parts. This parameter is used only when the distributed parameter is set to true. If not specified, then auto-calculated number of tasks are created",
+						"schema": {
+							"type": "integer",
+							"default": 2
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates a filter condition to filter activity log items. The format is the same as that for the ActivityLogRecordsSearch request. For more information, see Filtering Activities",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "partSize",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates a human-readable part size. The Export Service splits result files depending on this setting. For more information, please see Export Data into Multiple Files",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "name",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates a name of the export task displayed in the task status. The name is also used by the Export UI. For more information, please see Naming an Export Job",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "skipPostprocessing",
+						"in": "query",
+						"required": false,
+						"description": "During data extraction, the Export Service generates multiple smaller in size, partial files that contain export results. If this parameter is enabled, the Export Service returns links to these files as the result, and the partSize parameter is ignored. Otherwise, the Export Service combines the partial files into one or several files depending on the partSize parameter and returns links to the combined files as the result. The default value is false for Export Version 1 and true for Export Version 2",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "filenameTemplate",
+						"in": "query",
+						"required": false,
+						"description": "It defines a filename template that will be used to generate filenames. A filename template might contain the {{n}} placeholder, the Export Service will replace that placeholder with actual file numbers. If the placeholder is not specified, the Export Service will add file numbers at the end of filenames. Allowed characters: a-z, A-Z, 0-9, _, - Max length: 512 A filename template cannot be empty: \"\" - invalid \"x{{n}}\" - valid Examples: filenameTemplate → result files: unspecified → part-00000.zip, part-00001.zip, part-00002.zip, ... export-file → export-file-00000.zip, export-file-00001.zip, export-file-00002.zip, ... results-{{n}} → results-00000.zip, results-00001.zip, results-00002.zip, ...",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ExportJobRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ExportTask"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/export/{tenantId}/entities": {
+			"post": {
+				"operationId": "exportEntitiesByTenant",
+				"summary": "POST /export/{tenantId}/entities",
+				"description": "This API exports entities from a tenant, uploads a CSV file or JSON file to the appropriate storage, and sends a link to the exported data (if post-processing is enabled and the partSize parameter was not specified) or a link to the Export Console UI page (in the other cases) to your email address.Note: For details about S3, GCS, or an Azure Storage destination for export, please see Storing Export Results. Only one storage destination can be specified for one export request.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "email",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates the comma-separated list of custom email addresses to which the notification is sent after the export is completed. If the parameter is not specified, the Export Service notifies the Reltio user who submitted the export request",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "dateFormat",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates the format of the date and time attribute values",
+						"schema": {
+							"type": "string",
+							"default": "TIMESTAMP",
+							"enum": [
+								"TIMESTAMP",
+								"READABLE"
+							]
+						}
+					},
+					{
+						"name": "fileFormat",
+						"in": "query",
+						"required": false,
+						"description": "This parameter defines what output format must be used for export. Note that export to JSON is more efficient compared to export to CSV",
+						"schema": {
+							"type": "string",
+							"default": "CSV",
+							"enum": [
+								"CSV",
+								"JSON"
+							]
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"required": false,
+						"description": "This parameter enables you to filter entities by a condition. Format for filter query parameter: filter=({Condition Type}[AND/OR {Condition Type}]*). For more information, see Filtering Entities.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "select",
+						"in": "query",
+						"required": false,
+						"description": "This parameter accepts a list of entity fields to be exported. If not specified, then all fields are present in export.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "options",
+						"in": "query",
+						"required": false,
+						"description": "Comma-separated list of different options which affect endpoints behaviour. Available options:searchByOv - Disabled by default, to search by attributes with Operational Values (OV) only.",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"example": "searchByOv",
+								"enum": [
+									"searchByOv"
+								]
+							}
+						}
+					},
+					{
+						"name": "partSize",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates a human-readable part size. The Export Service splits result files depending on this setting. For more information, please see Export Data into Multiple Files",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "activeness",
+						"in": "query",
+						"required": false,
+						"description": "This parameter determines how the Export Service should process active and expired objects. Possible values:ALL - This option enables exporting of active and expired objects. This is the default value. ACTIVE - This option enables only exporting of active objects. NOT_ACTIVE - This option enables only exporting of expired objects.",
+						"schema": {
+							"type": "string",
+							"default": "ALL",
+							"enum": [
+								"ALL",
+								"ACTIVE",
+								"NOT_ACTIVE"
+							]
+						}
+					},
+					{
+						"name": "name",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates a name of the export task displayed in the task status. The name is also used by the Export UI. For more information, please see Naming an Export Job",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "headersStyle",
+						"in": "query",
+						"required": false,
+						"description": "This parameter defines how the Export Service must name the CSV columns that represent the attribute values. It is only applicable for CSV export.",
+						"schema": {
+							"type": "string",
+							"default": "NAME",
+							"enum": [
+								"NAME",
+								"LABEL"
+							]
+						}
+					},
+					{
+						"name": "skipPostprocessing",
+						"in": "query",
+						"required": false,
+						"description": "During data extraction, the Export Service generates multiple smaller in size, partial files that contain export results. If this parameter is enabled, the Export Service returns links to these files as the result, and the partSize parameter is ignored. Otherwise, the Export Service combines the partial files into one or several files depending on the partSize parameter and returns links to the combined files as the result. The default value is false for Export Version 1 and true for Export Version 2",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "exploded",
+						"in": "query",
+						"required": false,
+						"description": "This parameter is only applicable for CSV export. If the parameter is specified and equals to true, then all attribute values for the same attribute must be within one column (multiple rows will be used for one entity). In other words, if the parameter equals to true, then each entity is represented as a set of CSV lines, where the set is a cartesian product of the entity's attributes. There is a restriction to explode up to 100K rows per one entity. For more information, see Exploded format in CSV entities export.",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "filenameTemplate",
+						"in": "query",
+						"required": false,
+						"description": "It defines a filename template that will be used to generate filenames. A filename template might contain the {{n}} placeholder, the Export Service will replace that placeholder with actual file numbers. If the placeholder is not specified, the Export Service will add file numbers at the end of filenames. Allowed characters: a-z, A-Z, 0-9, _, - Max length: 512 A filename template cannot be empty: \"\" - invalid \"x{{n}}\" - valid Examples: filenameTemplate → result files: unspecified → part-00000.zip, part-00001.zip, part-00002.zip, ... export-file → export-file-00000.zip, export-file-00001.zip, export-file-00002.zip, ... results-{{n}} → results-00000.zip, results-00001.zip, results-00002.zip, ...",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sendHidden",
+						"in": "query",
+						"required": false,
+						"description": "This parameter allows to include or exclude \"hidden\" attributes to the export result. By default all \"hidden\" attributes are included.",
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "anchorAttribute",
+						"in": "query",
+						"required": false,
+						"description": "This parameter is only applicable for CSV export. Specifies an anchor attribute, it will precede all attributes, only a single OV value will be present on a CSV line for an entity. If it's used in combination with the slicedByCrosswalks option, the value will be put on each CSV line no matter which crosswalk that value belongs to. This option is not affected by the select parameter.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "slicedByCrosswalks",
+						"in": "query",
+						"required": false,
+						"description": "This parameter is only applicable for CSV export. If true, objects will be sliced by crosswalks, each set of attribute values will be placed on a separate CSV line that represents a crosswalk these attributes belong to. This option cannot be used in combination with the exploded option.",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ExportJobRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ExportTask"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/export/{tenantId}/entities/_crosswalksTree": {
+			"post": {
+				"operationId": "exportEntityCrosswalksTreeByTenant",
+				"summary": "POST /export/{tenantId}/entities/_crosswalksTree",
+				"description": "This endpoint allows you to export the merge tree data for all entities in a tenant. This is an asynchronous request that returns the IDs of tasks, which export data. Using these IDs you can track the status of these tasks. After completion of the tasks, a link to the result files is sent to the specified email address. The file with the exported data is a multi-line text file and every line has a separate JSON object that stands for one entity merge tree:<Contributor Tree JSON Node><Contributor Tree JSON Node>",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "email",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates the comma-separated list of custom email addresses to which the notification is sent after the export is completed. If the parameter is not specified, the Export Service notifies the Reltio user who submitted the export request",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "partSize",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates a human-readable part size. The Export Service splits result files depending on this setting. For more information, please see Export Data into Multiple Files",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "activeness",
+						"in": "query",
+						"required": false,
+						"description": "This parameter determines how the Export Service should process active and expired objects. Possible values:ALL - This option enables exporting of active and expired objects. This is the default value. ACTIVE - This option enables only exporting of active objects. NOT_ACTIVE - This option enables only exporting of expired objects.",
+						"schema": {
+							"type": "string",
+							"default": "ALL",
+							"enum": [
+								"ALL",
+								"ACTIVE",
+								"NOT_ACTIVE"
+							]
+						}
+					},
+					{
+						"name": "name",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates a name of the export task displayed in the task status. The name is also used by the Export UI. For more information, please see Naming an Export Job",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "skipPostprocessing",
+						"in": "query",
+						"required": false,
+						"description": "During data extraction, the Export Service generates multiple smaller in size, partial files that contain export results. If this parameter is enabled, the Export Service returns links to these files as the result, and the partSize parameter is ignored. Otherwise, the Export Service combines the partial files into one or several files depending on the partSize parameter and returns links to the combined files as the result. The default value is false for Export Version 1 and true for Export Version 2",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "filenameTemplate",
+						"in": "query",
+						"required": false,
+						"description": "It defines a filename template that will be used to generate filenames. A filename template might contain the {{n}} placeholder, the Export Service will replace that placeholder with actual file numbers. If the placeholder is not specified, the Export Service will add file numbers at the end of filenames. Allowed characters: a-z, A-Z, 0-9, _, - Max length: 512 A filename template cannot be empty: \"\" - invalid \"x{{n}}\" - valid Examples: filenameTemplate → result files: unspecified → part-00000.zip, part-00001.zip, part-00002.zip, ... export-file → export-file-00000.zip, export-file-00001.zip, export-file-00002.zip, ... results-{{n}} → results-00000.zip, results-00001.zip, results-00002.zip, ...",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ExportJobRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ExportTask"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/export/{tenantId}/entities/segments": {
+			"post": {
+				"operationId": "exportEntitiesBySegment",
+				"summary": "POST /export/{tenantId}/entities/segments",
+				"description": "This API exports entities from a tenant which are linked to a segment id, uploads a CSV file or JSON file to the appropriate storage, and sends a link to the exported data (if post-processing is enabled and the partSize parameter was not specified) or a link to the Export Console UI page (in the other cases) to your email address.Note: For details about S3, GCS, or an Azure Storage destination for export, please see Storing Export Results. Only one storage destination can be specified for one export request.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "email",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates the comma-separated list of custom email addresses to which the notification is sent after the export is completed. If the parameter is not specified, the Export Service notifies the Reltio user who submitted the export request",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "dateFormat",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates the format of the date and time attribute values",
+						"schema": {
+							"type": "string",
+							"default": "TIMESTAMP",
+							"enum": [
+								"TIMESTAMP",
+								"READABLE"
+							]
+						}
+					},
+					{
+						"name": "fileFormat",
+						"in": "query",
+						"required": false,
+						"description": "This parameter defines what output format must be used for export. Note that export to JSON is more efficient compared to export to CSV",
+						"schema": {
+							"type": "string",
+							"default": "CSV",
+							"enum": [
+								"CSV",
+								"JSON"
+							]
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"required": false,
+						"description": "This parameter enables you to filter entities by a condition. Format for filter query parameter: filter=({Condition Type}[AND/OR {Condition Type}]*). For more information, see Filtering Entities.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "select",
+						"in": "query",
+						"required": false,
+						"description": "This parameter accepts a list of entity fields to be exported. If not specified, then all fields are present in export.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "options",
+						"in": "query",
+						"required": false,
+						"description": "Comma-separated list of different options which affect endpoints behaviour. Available options:searchByOv - Disabled by default, to search by attributes with Operational Values (OV) only.",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"example": "searchByOv",
+								"enum": [
+									"searchByOv"
+								]
+							}
+						}
+					},
+					{
+						"name": "partSize",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates a human-readable part size. The Export Service splits result files depending on this setting. For more information, please see Export Data into Multiple Files",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "activeness",
+						"in": "query",
+						"required": false,
+						"description": "This parameter determines how the Export Service should process active and expired objects. Possible values:ALL - This option enables exporting of active and expired objects. This is the default value. ACTIVE - This option enables only exporting of active objects. NOT_ACTIVE - This option enables only exporting of expired objects.",
+						"schema": {
+							"type": "string",
+							"default": "ALL",
+							"enum": [
+								"ALL",
+								"ACTIVE",
+								"NOT_ACTIVE"
+							]
+						}
+					},
+					{
+						"name": "name",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates a name of the export task displayed in the task status. The name is also used by the Export UI. For more information, please see Naming an Export Job",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "headersStyle",
+						"in": "query",
+						"required": false,
+						"description": "This parameter defines how the Export Service must name the CSV columns that represent the attribute values. It is only applicable for CSV export.",
+						"schema": {
+							"type": "string",
+							"default": "NAME",
+							"enum": [
+								"NAME",
+								"LABEL"
+							]
+						}
+					},
+					{
+						"name": "skipPostprocessing",
+						"in": "query",
+						"required": false,
+						"description": "During data extraction, the Export Service generates multiple smaller in size, partial files that contain export results. If this parameter is enabled, the Export Service returns links to these files as the result, and the partSize parameter is ignored. Otherwise, the Export Service combines the partial files into one or several files depending on the partSize parameter and returns links to the combined files as the result. The default value is false for Export Version 1 and true for Export Version 2",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "exploded",
+						"in": "query",
+						"required": false,
+						"description": "This parameter is only applicable for CSV export. If the parameter is specified and equals to true, then all attribute values for the same attribute must be within one column (multiple rows will be used for one entity). In other words, if the parameter equals to true, then each entity is represented as a set of CSV lines, where the set is a cartesian product of the entity's attributes. There is a restriction to explode up to 100K rows per one entity. For more information, see Exploded format in CSV entities export.",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "filenameTemplate",
+						"in": "query",
+						"required": false,
+						"description": "It defines a filename template that will be used to generate filenames. A filename template might contain the {{n}} placeholder, the Export Service will replace that placeholder with actual file numbers. If the placeholder is not specified, the Export Service will add file numbers at the end of filenames. Allowed characters: a-z, A-Z, 0-9, _, - Max length: 512 A filename template cannot be empty: \"\" - invalid \"x{{n}}\" - valid Examples: filenameTemplate → result files: unspecified → part-00000.zip, part-00001.zip, part-00002.zip, ... export-file → export-file-00000.zip, export-file-00001.zip, export-file-00002.zip, ... results-{{n}} → results-00000.zip, results-00001.zip, results-00002.zip, ...",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sendHidden",
+						"in": "query",
+						"required": false,
+						"description": "This parameter allows to include or exclude \"hidden\" attributes to the export result. By default all \"hidden\" attributes are included.",
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "anchorAttribute",
+						"in": "query",
+						"required": false,
+						"description": "This parameter is only applicable for CSV export. Specifies an anchor attribute, it will precede all attributes, only a single OV value will be present on a CSV line for an entity. If it's used in combination with the slicedByCrosswalks option, the value will be put on each CSV line no matter which crosswalk that value belongs to. This option is not affected by the select parameter.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "slicedByCrosswalks",
+						"in": "query",
+						"required": false,
+						"description": "This parameter is only applicable for CSV export. If true, objects will be sliced by crosswalks, each set of attribute values will be placed on a separate CSV line that represents a crosswalk these attributes belong to. This option cannot be used in combination with the exploded option.",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ExportJobRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ExportTask"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/export/{tenantId}/hierarchies": {
+			"post": {
+				"operationId": "exportHierarchyByTenant",
+				"summary": "POST /export/{tenantId}/hierarchies",
+				"description": "This API exports hierarchy connections from a tenant, uploads a CSV file or JSON file to the appropriate storage, and sends a link to the exported data or a link to the Export Console UI page (in the other cases) to your email address.Note: For details about S3, GCS, or an Azure Storage destination for export, please see Storing Export Results. Only one storage destination can be specified for one export request.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "hierarchyId",
+						"in": "query",
+						"required": true,
+						"description": "Hierarchy ID or hierarchy instance ID to export.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "effectiveDate",
+						"in": "query",
+						"required": false,
+						"description": "Effective date used to filter hierarchy connections. Expected format is yyyy-MM-dd.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "select",
+						"in": "query",
+						"required": false,
+						"description": "Comma-separated list of stable hierarchy export field identifiers.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "email",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates the comma-separated list of custom email addresses to which the notification is sent after the export is completed. If the parameter is not specified, the Export Service notifies the Reltio user who submitted the export request",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "fileFormat",
+						"in": "query",
+						"required": false,
+						"description": "This parameter defines what output format must be used for export. Note that export to JSON is more efficient compared to export to CSV",
+						"schema": {
+							"type": "string",
+							"default": "CSV",
+							"enum": [
+								"CSV",
+								"JSON"
+							]
+						}
+					},
+					{
+						"name": "dateFormat",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates the format of the date and time attribute values",
+						"schema": {
+							"type": "string",
+							"default": "TIMESTAMP",
+							"enum": [
+								"TIMESTAMP",
+								"READABLE"
+							]
+						}
+					},
+					{
+						"name": "partSize",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates a human-readable part size. The Export Service splits result files depending on this setting. For more information, please see Export Data into Multiple Files",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "name",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates a name of the export task displayed in the task status. The name is also used by the Export UI. For more information, please see Naming an Export Job",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "skipPostprocessing",
+						"in": "query",
+						"required": false,
+						"description": "During data extraction, the Export Service generates multiple smaller in size, partial files that contain export results. If this parameter is enabled, the Export Service returns links to these files as the result, and the partSize parameter is ignored. Otherwise, the Export Service combines the partial files into one or several files depending on the partSize parameter and returns links to the combined files as the result. The default value is false for Export Version 1 and true for Export Version 2",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "filenameTemplate",
+						"in": "query",
+						"required": false,
+						"description": "It defines a filename template that will be used to generate filenames. A filename template might contain the {{n}} placeholder, the Export Service will replace that placeholder with actual file numbers. If the placeholder is not specified, the Export Service will add file numbers at the end of filenames. Allowed characters: a-z, A-Z, 0-9, _, - Max length: 512 A filename template cannot be empty: \"\" - invalid \"x{{n}}\" - valid Examples: filenameTemplate → result files: unspecified → part-00000.zip, part-00001.zip, part-00002.zip, ... export-file → export-file-00000.zip, export-file-00001.zip, export-file-00002.zip, ... results-{{n}} → results-00000.zip, results-00001.zip, results-00002.zip, ...",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ExportJobRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ExportTask"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/export/{tenantId}/relations": {
+			"post": {
+				"operationId": "exportRelationsByTenant",
+				"summary": "POST /export/{tenantId}/relations",
+				"description": "This API exports relations from a tenant, uploads a CSV file or JSON file to the appropriate storage, and sends a link to the exported data (if post-processing is enabled and the partSize parameter was not specified) or a link to the Export Console UI page (in the other cases) to your email address.Note: For details about S3, GCS, or an Azure Storage destination for export, please see Storing Export Results. Only one storage destination can be specified for one export request.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "email",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates the comma-separated list of custom email addresses to which the notification is sent after the export is completed. If the parameter is not specified, the Export Service notifies the Reltio user who submitted the export request",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "dateFormat",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates the format of the date and time attribute values",
+						"schema": {
+							"type": "string",
+							"default": "TIMESTAMP",
+							"enum": [
+								"TIMESTAMP",
+								"READABLE"
+							]
+						}
+					},
+					{
+						"name": "fileFormat",
+						"in": "query",
+						"required": false,
+						"description": "This parameter defines what output format must be used for export. Note that export to JSON is more efficient compared to export to CSV",
+						"schema": {
+							"type": "string",
+							"default": "CSV",
+							"enum": [
+								"CSV",
+								"JSON"
+							]
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"required": false,
+						"description": "This parameter enables you to filter relations by a condition. Format for filter parameter: filter=({Condition Type}[AND/OR {Condition Type}]*). For more information, see Relations Filtering.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "select",
+						"in": "query",
+						"required": false,
+						"description": "This parameter accepts a list of entity fields to be exported. If not specified, then all fields are present in export.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "options",
+						"in": "query",
+						"required": false,
+						"description": "Comma-separated list of different options which affect endpoints behaviour. Available options:resolveMergedEntities - This option is used for resolving winner URIs in relationsresolveRelationEdgeTypes - This option is used for resolving start/end entities types in relations RI exportsearchByOv - Disabled by default, to search by attributes with Operational Values (OV) only.",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"example": "searchByOv",
+								"enum": [
+									"searchByOv",
+									"resolveMergedEntities",
+									"resolveRelationEdgeTypes"
+								]
+							}
+						}
+					},
+					{
+						"name": "partSize",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates a human-readable part size. The Export Service splits result files depending on this setting. For more information, please see Export Data into Multiple Files",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "activeness",
+						"in": "query",
+						"required": false,
+						"description": "This parameter determines how the Export Service should process active and expired objects. Possible values:ALL - This option enables exporting of active and expired objects. This is the default value. ACTIVE - This option enables only exporting of active objects. NOT_ACTIVE - This option enables only exporting of expired objects.",
+						"schema": {
+							"type": "string",
+							"default": "ALL",
+							"enum": [
+								"ALL",
+								"ACTIVE",
+								"NOT_ACTIVE"
+							]
+						}
+					},
+					{
+						"name": "name",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates a name of the export task displayed in the task status. The name is also used by the Export UI. For more information, please see Naming an Export Job",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "headersStyle",
+						"in": "query",
+						"required": false,
+						"description": "This parameter defines how the Export Service must name the CSV columns that represent the attribute values. It is only applicable for CSV export.",
+						"schema": {
+							"type": "string",
+							"default": "NAME",
+							"enum": [
+								"NAME",
+								"LABEL"
+							]
+						}
+					},
+					{
+						"name": "skipPostprocessing",
+						"in": "query",
+						"required": false,
+						"description": "During data extraction, the Export Service generates multiple smaller in size, partial files that contain export results. If this parameter is enabled, the Export Service returns links to these files as the result, and the partSize parameter is ignored. Otherwise, the Export Service combines the partial files into one or several files depending on the partSize parameter and returns links to the combined files as the result. The default value is false for Export Version 1 and true for Export Version 2",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "sePrefix",
+						"in": "query",
+						"required": false,
+						"description": "This sePrefix query parameter defines whether headers for fields related to startObjects and endObjects will have prefix StartObject or EndObject. This parameter is only applicable for CSV export. For more information, see sePrefix query parameter in CSV relations export",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "filenameTemplate",
+						"in": "query",
+						"required": false,
+						"description": "It defines a filename template that will be used to generate filenames. A filename template might contain the {{n}} placeholder, the Export Service will replace that placeholder with actual file numbers. If the placeholder is not specified, the Export Service will add file numbers at the end of filenames. Allowed characters: a-z, A-Z, 0-9, _, - Max length: 512 A filename template cannot be empty: \"\" - invalid \"x{{n}}\" - valid Examples: filenameTemplate → result files: unspecified → part-00000.zip, part-00001.zip, part-00002.zip, ... export-file → export-file-00000.zip, export-file-00001.zip, export-file-00002.zip, ... results-{{n}} → results-00000.zip, results-00001.zip, results-00002.zip, ...",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sendHidden",
+						"in": "query",
+						"required": false,
+						"description": "This parameter allows to include or exclude \"hidden\" attributes to the export result. By default all \"hidden\" attributes are included.",
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "returnVotes",
+						"in": "query",
+						"required": false,
+						"description": "This parameter denotes that votes must be returned.",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "anchorAttribute",
+						"in": "query",
+						"required": false,
+						"description": "This parameter is only applicable for CSV export. Specifies an anchor attribute, it will precede all attributes, only a single OV value will be present on a CSV line for an entity. If it's used in combination with the slicedByCrosswalks option, the value will be put on each CSV line no matter which crosswalk that value belongs to. This option is not affected by the select parameter.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "slicedByCrosswalks",
+						"in": "query",
+						"required": false,
+						"description": "This parameter is only applicable for CSV export. If true, objects will be sliced by crosswalks, each set of attribute values will be placed on a separate CSV line that represents a crosswalk these attributes belong to. This option cannot be used in combination with the exploded option.",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ExportJobRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ExportTask"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/tasks": {
+			"get": {
+				"operationId": "getAllPeriodicJobs",
+				"summary": "GET /tasks",
+				"description": "This API is available to everyone and returns export tasks for all tenants with the statuses: SCHEDULED - Indicates that the task is ready to be executed.SCHEDULED_POLL - Indicates that the task is rescheduled due to a node failure or waiting for other tasks to complete their work.PROCESSING - Indicates that the task is being executed now.PAUSING - Indicates that the task is preparing to turn into the PAUSED status.PAUSED - Indicates that the task was paused.CANCELING - Indicates that the task is preparing to turn into the CANCELED status.WAITING - Indicates that the task is waiting for other tasks that belong to the same export job.",
+				"parameters": [
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify the maximum number of tasks to return in a response.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify starting what element in a result set should be returned in a response. Can be used to organize pagination in combination with max parameter.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ExportTaskList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/tasks/_total": {
+			"get": {
+				"operationId": "getAllPeriodicJobsCount",
+				"summary": "GET /tasks/_total",
+				"description": "This API is available to everyone and returns the total count of export tasks for all tenants with the following statuses: SCHEDULED - Indicates that the task is ready to be executed.SCHEDULED_POLL - Indicates that the task is rescheduled due to a node failure or waiting for other tasks to complete their work.PROCESSING - Indicates that the task is being executed now.PAUSING - Indicates that the task is preparing to turn into the PAUSED status.PAUSED - Indicates that the task was paused.CANCELING - Indicates that the task is preparing to turn into the CANCELED status.WAITING - Indicates that the task is waiting for other tasks that belong to the same export job.",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "integer",
+									"description": "Total count."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/tasks/{taskId}": {
+			"get": {
+				"operationId": "get",
+				"summary": "GET /tasks/{taskId}",
+				"description": "This API returns the task with the given ID or an error if there is no task with this ID. This task is available to Administrator.",
+				"parameters": [
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ExportTask"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/tasks/{taskId}/_manifest": {
+			"get": {
+				"operationId": "getManifest",
+				"summary": "GET /tasks/{taskId}/_manifest",
+				"description": "This API provides information about the exported files for a particular export task.",
+				"parameters": [
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Task manifest with file URLs."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/tasks/{taskId}/_pause": {
+			"put": {
+				"operationId": "pause",
+				"summary": "PUT /tasks/{taskId}/_pause",
+				"description": "This API initiates the process of pausing a task with a particular ID.This API is available to the Administrator.",
+				"parameters": [
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/tasks/{taskId}/_resume": {
+			"put": {
+				"operationId": "resume",
+				"summary": "PUT /tasks/{taskId}/_resume",
+				"description": "This API resumes paused task with given ID. The task returns to the SCHEDULED tasks queue and then a free node of Export Service starts executing this task.Available to Administrator.",
+				"parameters": [
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/tasks/{taskId}/_stop": {
+			"put": {
+				"operationId": "stop",
+				"summary": "PUT /tasks/{taskId}/_stop",
+				"description": "This API initiates the process of stopping a task with a particular ID. This API is available to the Administrator.",
+				"parameters": [
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/tasks/history": {
+			"get": {
+				"operationId": "getAllPeriodicJobsHistory",
+				"summary": "GET /tasks/history",
+				"description": "This API is available to Administrator and returns export tasks for all tenants with the following statuses: CANCELED - Indicates that the task was canceled.COMPLETED - Indicates that the task was completed.FAILED - Indicates that an error occurred during execution of a task.",
+				"parameters": [
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify the maximum number of tasks to return in a response.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify starting what element in a result set should be returned in a response. Can be used to organize pagination in combination with max parameter.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ExportTaskList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/tasks/history/_total": {
+			"get": {
+				"operationId": "getAllPeriodicJobsHistoryCount",
+				"summary": "GET /tasks/history/_total",
+				"description": "This API is available to Administrator and returns the total count of export tasks for all tenants with the following statuses: CANCELED - Indicates that the task was canceled.COMPLETED - Indicates that the task was completed.FAILED - Indicates that an error occurred during execution of a task.",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "integer",
+									"description": "Total count."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"ExportJobRequest": {
+				"type": "object",
+				"description": "Request body for an export submitter.",
+				"properties": {
+					"format": {
+						"type": "string",
+						"enum": [
+							"CSV",
+							"JSON",
+							"XLSX"
+						],
+						"description": "Output file format."
+					},
+					"filter": {
+						"type": "string",
+						"description": "Reltio filter expression to scope the export."
+					},
+					"select": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"description": "Optional list of fields to include."
+					},
+					"notifyEmail": {
+						"type": "string",
+						"format": "email",
+						"description": "Optional address to notify on completion."
+					}
+				}
+			},
+			"ExportTask": {
+				"type": "object",
+				"description": "Async export task descriptor.",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"tenantId": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string",
+						"description": "Export type (entities, relations, etc.)."
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"SUBMITTED",
+							"RUNNING",
+							"PAUSED",
+							"STOPPED",
+							"COMPLETED",
+							"FAILED"
+						]
+					},
+					"submittedAt": {
+						"type": "integer"
+					},
+					"completedAt": {
+						"type": "integer"
+					},
+					"progress": {
+						"type": "integer",
+						"description": "Completion percentage (0-100)."
+					}
+				}
+			},
+			"ExportTaskList": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/ExportTask"
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />

@@ -1,0 +1,754 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Data Change Requests API",
+		"version": "1.0.0",
+		"description": "Manage Data Change Requests (DCRs) — proposals to mutate entities/relations that go through an approval workflow before being applied. Provides search, CRUD, apply/reject lifecycle, external info, and change-item access."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/changeRequests": {
+			"get": {
+				"operationId": "searchChangeRequests",
+				"summary": "GET /changeRequests",
+				"description": "Allows to search Data Change Request by users (createdBy field) and/or URIs of the affected objects. The filter must contain at least one \"equals\" or \"in\" condition for createdBy or objectURI properties, otherwise, CHANGE_REQUEST_SEARCH_FILTER_INCORRECT error will be returned. Note: the search and filtering is supported only for createdBy and objectURI (URIs of affected objects in the Data Change Request).Note: only Data Change Requests which are allowed to be viewed by the user according to the permissions can be returned.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"required": true,
+						"description": "Enables data change request filtering by a condition. Format for filter query parameter: filter=({Condition Type}[AND/OR {Condition Type}]*)Only the following conditions are supported:equals(property, 'value') - exact match conditionin(property,'value1,value2,...') - returns Data Change Requests which have property value contained in the specified values listSearch by the following properties is supported:createdByobjectURINote:Search is case sensitiveEmpty filter is not allowed",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify the maximum number of Data Change Requests to return in a response. Can be used to organize pagination in combination with the offset parameter.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify the starting element in a result set to be returned in a response. Can be used to organize pagination in combination with the max parameter.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					{
+						"name": "select",
+						"in": "query",
+						"required": false,
+						"description": "Comma-separated list of properties from Data Change Request structure that should be returned in a response. Allows to return a partial object. The list of properties can be found at the response model",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChangeRequestList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			},
+			"post": {
+				"operationId": "createChangeRequests",
+				"summary": "POST /changeRequests",
+				"description": "Creates an empty Data Change Request. This endpoint is needed just to get a unique change request ID. This ID can be used (changeRequestId={ID}) in endpoints for objects modification (POST {TenantURL}/entities, for example) - the changes will be added to the Data Change Request with ID which was specified instead of applying directly to the objects.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChangeRequest"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/changeRequests/_byUris": {
+			"post": {
+				"operationId": "getChangeRequestByUris",
+				"summary": "POST /changeRequests/_byUris",
+				"description": "Allows getting several Data Change Requests by the provided URIs.JSON array representing Data Change Requests will be returned in the response in the same order as the incoming URIs. If for any URI there is no Data Change Request (or the user has no access to that Data Change Request) then an empty element in the array will be at the appropriate place.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChangeRequestList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/changeRequests/{id}": {
+			"get": {
+				"operationId": "getChangeRequestById",
+				"summary": "GET /changeRequests/{id}",
+				"description": "Returns a Data Change Request by ID",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of a Data Change Request",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "showConflicts",
+						"in": "query",
+						"required": false,
+						"description": "The Data Change Request will be checked for conflicts, \"conflict\" and \"conflictDetails\" properties with the type of the conflict and additional information will be present in all conflicted change request items",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "showObjectsMetadata",
+						"in": "query",
+						"required": false,
+						"description": "If this parameter is set to true, additional information about objects participating in the Data Change Request will be present",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "select",
+						"in": "query",
+						"required": false,
+						"description": "Comma-separated list of properties from Data Change Request structure that should be returned in a response. Allows to return a partial object. The list of properties can be found at the response model",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChangeRequest"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteChangeRequestById",
+				"summary": "DELETE /changeRequests/{id}",
+				"description": "Deletes the Data Change Request with the given ID",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of a Data Change Request",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChangeRequest"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/changeRequests/{id}/_apply": {
+			"post": {
+				"operationId": "applyChangeRequestById",
+				"summary": "POST /changeRequests/{id}/_apply",
+				"description": "By default, the Data Change Request can be applied only if all attributes which are going to be updated by this change request have not been changed in real objects since they have been added to this request. Otherwise, items inside the Data Change Request related to the attributes which have been changed/removed in the real object will be marked as 'conflict'. The user will have to manually resolve all conflicts by removing and optionally re-adding items into the Data Change Request. Also, it's possible to execute 'ignoreConflicts' apply (with ignoreConflicts=true parameter) - all changes will be applied 'as is' in this case.For example, there is a change request with only one item: update 'FirstName' attribute in entity AAA from 'Alex' to 'Alexey'. If the value of the 'FirstName' attribute of entity AAA is still 'Alex' it will be possible to apply this change request. But if 'Alex' has been changed to 'Aleks' or removed, we will have a conflict.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of a Data Change Request",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "ignoreConflicts",
+						"in": "query",
+						"required": false,
+						"description": "Allows to apply Data Change Requests even if change items have conflicts",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChangeRequest"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/changeRequests/{id}/_externalInfo": {
+			"get": {
+				"operationId": "getDCRExternalInfoById",
+				"summary": "GET /changeRequests/{id}/_externalInfo",
+				"description": "Returns External Info (a set of custom fields as JSON) from the specified Data Change Request",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of a Data Change Request",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "External info object (free-form).",
+									"additionalProperties": true
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"post": {
+				"operationId": "addDCRExternalInfoById",
+				"summary": "POST /changeRequests/{id}/_externalInfo",
+				"description": "Adds External Info (a set of custom fields as JSON) to the specified Data Change Request",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of a Data Change Request",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "External info object (free-form).",
+									"additionalProperties": true
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteDCRExternalInfoById",
+				"summary": "DELETE /changeRequests/{id}/_externalInfo",
+				"description": "Deletes External Info from the specified Data Change Request",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of a Data Change Request",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "External info object (free-form).",
+									"additionalProperties": true
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/changeRequests/{id}/_reject": {
+			"post": {
+				"operationId": "rejectChangeRequestById",
+				"summary": "POST /changeRequests/{id}/_reject",
+				"description": "Rejects the Data Change Request",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of a Data Change Request",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChangeRequest"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/changeRequests/{id}/changes/{changeItemId}": {
+			"get": {
+				"operationId": "getChangeRequestItemById",
+				"summary": "GET /changeRequests/{id}/changes/{changeItemId}",
+				"description": "Returns a single change item from the Data Change Request by item ID",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of a Data Change Request",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "changeItemId",
+						"in": "path",
+						"required": true,
+						"description": "ID of a Data Change Request item",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "showConflicts",
+						"in": "query",
+						"required": false,
+						"description": "The change item will be checked for conflicts, \"conflict\" and \"conflictDetails\" properties with the type of the conflict and additional information will be present in the items with conflicts",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChangeItem"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteChangeRequestItemById",
+				"summary": "DELETE /changeRequests/{id}/changes/{changeItemId}",
+				"description": "Deletes a particular item from the Data Change Request",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of a Data Change Request",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "changeItemId",
+						"in": "path",
+						"required": true,
+						"description": "ID of a Data Change Request item",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChangeItem"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"ChangeRequest": {
+				"type": "object",
+				"description": "A Data Change Request — a draft set of mutations awaiting approval.",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string",
+						"enum": ["DRAFT", "PENDING", "APPROVED", "REJECTED", "APPLIED"]
+					},
+					"userId": {
+						"type": "string",
+						"description": "User who created the DCR."
+					},
+					"affectedUris": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"description": "URIs of entities/relations the DCR will affect."
+					},
+					"changes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ChangeItem"
+						}
+					},
+					"externalInfo": {
+						"type": "object",
+						"description": "Free-form custom fields attached to the DCR.",
+						"additionalProperties": true
+					},
+					"createdTime": {
+						"type": "integer"
+					},
+					"updatedTime": {
+						"type": "integer"
+					}
+				}
+			},
+			"ChangeItem": {
+				"type": "object",
+				"description": "A single mutation inside a Data Change Request.",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"objectURI": {
+						"type": "string",
+						"description": "URI of the affected object."
+					},
+					"operation": {
+						"type": "string",
+						"enum": ["ADD", "UPDATE", "DELETE"]
+					},
+					"attribute": {
+						"type": "string",
+						"description": "Attribute path."
+					},
+					"oldValue": {
+						"description": "Previous value (for UPDATE/DELETE)."
+					},
+					"newValue": {
+						"description": "New value (for ADD/UPDATE)."
+					}
+				}
+			},
+			"ChangeRequestList": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/ChangeRequest"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,163 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: DataQuality.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./DataQuality.spec.json";
+import * as DataQualityStories from "./DataQuality.stories";
+
+<Meta of={DataQualityStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Data Quality API",
+		"version": "1.0.0",
+		"description": "ML-driven attribute-level data quality time series. Returns per-attribute quality scores over time, scoped to a tenant + entity type. Lives at a different root than the rest of the Operate APIs (no /reltio/api prefix)."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/entityType/{entityTypeID}/ml/dataQuality/v1/attributeLevel/timeSeries/": {
+			"post": {
+				"operationId": "get_attribute__tenant__entityType__entityTypeID__ml_dataQuality_v1_attributeLevel_timeSeries__post",
+				"summary": "POST /entityType/{entityTypeID}/ml/dataQuality/v1/attributeLevel/timeSeries/",
+				"description": "Get Attribute",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "entityTypeID",
+						"in": "path",
+						"required": true,
+						"description": "The entity type id pattern used in your time series. Just pass the shorthand entity type URI, for instance 'Customer' and not configuration/entityTypes/Customer.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "permission",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"default": "READ",
+							"title": "Permission"
+						}
+					},
+					{
+						"name": "permission_resource",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"default": "MDM:data.entities.*",
+							"title": "Permission Resource"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DataQualityTimeSeriesRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DataQualityTimeSeriesResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"DataQualityTimeSeriesRequest": {
+				"type": "object",
+				"description": "Selects which attributes to score and the time window.",
+				"properties": {
+					"attributes": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"description": "Attribute names to score."
+					},
+					"from": {
+						"type": "integer",
+						"description": "Start of the window in milliseconds since epoch."
+					},
+					"to": {
+						"type": "integer",
+						"description": "End of the window in milliseconds since epoch."
+					}
+				}
+			},
+			"DataQualityTimeSeriesResponse": {
+				"type": "array",
+				"description": "Per-attribute time series of quality scores.",
+				"items": {
+					"type": "object",
+					"properties": {
+						"attribute": {
+							"type": "string"
+						},
+						"points": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"timestamp": {
+										"type": "integer"
+									},
+									"score": {
+										"type": "number",
+										"description": "Quality score in [0, 1]."
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />

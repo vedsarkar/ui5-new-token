@@ -1,0 +1,146 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: Graph.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./Graph.spec.json";
+import * as GraphStories from "./Graph.stories";
+
+<Meta of={GraphStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Graph API",
+		"version": "1.0.0",
+		"description": "Get a single entity's one-hop connections — every entity it relates to via any relation type, in a single graph-traversal call."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/entities/{id}/_connections": {
+			"post": {
+				"operationId": "getEntityConnections",
+				"summary": "POST /entities/{id}/_connections",
+				"description": "This request returns a paginated list of direct connections for a specific entity that match conditions. A connection for an entity is a pair of a relation and a connected entity. A condition can be setup by:Type and direction of relationsType of connected entitiesPage size and offsetFilters on entities and relations propertiesNote: there is the limit of relations per entity for this request. If an entity has more than 500K relations, then only the first 500K of relations will be read from the primary store and will be used to build the response. If it happens, then the additional property - \"limitExceeded\": true - will be added to the response.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "Entity ID",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "options",
+						"in": "query",
+						"required": false,
+						"description": "Comma-separated list of different options which affect endpoints behaviour. Available options:resolveMergedEntities - This option is used for resolving winner URIs in relationssearchByOv - Disabled by default, to search by attributes with Operational Values (OV) only.",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"example": "searchByOv",
+								"enum": [
+									"searchByOv",
+									"resolveMergedEntities"
+								]
+							}
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ConnectionsResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"ConnectionsResponse": {
+				"type": "object",
+				"description": "One-hop neighbours of the requested entity.",
+				"properties": {
+					"connections": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"uri": {
+									"type": "string",
+									"description": "URI of the neighbour entity."
+								},
+								"relationType": {
+									"type": "string",
+									"description": "Relation type connecting the two entities."
+								},
+								"direction": {
+									"type": "string",
+									"enum": [
+										"OUTGOING",
+										"INCOMING",
+										"BOTH"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />

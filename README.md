@@ -317,12 +317,14 @@ This project is equipped with MCP (Model Context Protocol) servers for AI-assist
 | Server | URL | Purpose |
 |--------|-----|---------|
 | **Storybook MCP** | `http://localhost:6006/mcp` | Component docs, stories, API references |
+| **Atlassian MCP** | `https://mcp.atlassian.com/v1/mcp/authv2` | Jira and Confluence access |
 | **Figma MCP** | `https://mcp.figma.com/mcp` | Design context from Reltio Design System |
 
 ### Setup for AI Agents
 
 1. **Storybook MCP** — start `npm run dev` BEFORE launching a Claude Code session (MCP servers connect at session startup)
-2. **Figma MCP** — requires one-time OAuth authorization per developer:
+2. **Atlassian MCP** — requires OAuth authorization per developer on first use
+3. **Figma MCP** — requires one-time OAuth authorization per developer:
    - The `figma@claude-plugins-official` plugin is pre-configured in `.claude/settings.json`
    - On first use, Claude Code will open browser for Figma OAuth login
 

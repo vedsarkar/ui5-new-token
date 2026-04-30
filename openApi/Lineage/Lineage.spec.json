@@ -1,0 +1,375 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Lineage API",
+		"version": "1.0.0",
+		"description": "Read and delete the change history of entities. Provides a history endpoint, a history-with-total variant, and a bulk delete-history operation."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/entities/_deleteHistory": {
+			"post": {
+				"operationId": "deleteHistoryByTenant",
+				"summary": "POST /entities/_deleteHistory",
+				"description": "This API performs bulk delete of history and activity logs for either a single entity or multiple entities. To use this API, you must have the DELETE privilege for the MDM.Data.Entities.History resource (or ROLE_ADMIN_TENANT). You can specify the URIs of the entities in the request body of the API. A maximum of 100 URIs can be specified in a single request. For all the specified entities, complete history and activity log entries are removed by default. The system retains the entity URI and type details from the first and last entries only. However, if you want to retain all the details in the first and last entries, you must enable the retainAuditTrail option. Additionally, when you delete the history/activity details of an entity, Reltio automatically deletes the history/activity details of the related loser entities as well. Similarly, if a loser entity is sent for history/activity deletion, then the system looks up all the related loser entities and the winner entity and deletes the history/activity details of all the related entities. After you delete entities’ history/activity log, if you use the GET /entities/id1?time={currentTimeInMillis} API call to view the details of entities based on the value of the specified time, a blank display appears as the Time parameter uses the entity history to show the details. However, if a change was made to the entity after its history was deleted, the system shows those results. You can use the GET Entities API to view the entity details. Note: To keep the information in the entity's first and last entries as is, you must enable the retainAuditTrail option.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "options",
+						"in": "query",
+						"required": false,
+						"description": "Comma-separated list of different options which affect endpoints behaviour. Available options:retainAuditTrail - This option declares, whether or not boundary values should be cleared in DeleteEntityHistoryOperation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"example": "retainAuditTrail",
+								"enum": ["retainAuditTrail"]
+							}
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/{id}/_changes": {
+			"get": {
+				"operationId": "getChangesByTenant",
+				"summary": "GET /entities/{id}/_changes",
+				"description": "This API retrieves the timestamps (UTC) reflecting when an entity was modified, the user who made the change and type of change, for example ENTITY_CHANGED, ENTITY_CREATED. Note: There is a hard limit of 1000 most recent events retrieved from the database, unless showMajorEventsOnly is disabled.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the entity for which the history is to be retrieved.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify maximum number of entities to return in a response. Can be used to organize pagination in combination with \"offset\" parameter. Has a hard limit of 1000 records.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify starting what element in a result set should be returned in a response. Can be used to organize pagination in combination with \"max\" parameter.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					{
+						"name": "order",
+						"in": "query",
+						"required": false,
+						"description": "Order of sorting. Possible values: asc - results are shown in ascending order.desc - results are shown in descending order.",
+						"schema": {
+							"type": "string",
+							"default": "asc",
+							"enum": ["asc", "desc"]
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"required": false,
+						"description": "Enables entities filtering by a condition. Format for filter query parameter: filter=({Condition Type}[AND/OR {Condition Type}]*)There are tree Condition Types: equals(property, value): exact match condition ignoring caselt(property, value): 'less than' conditionlte(property, value): 'less than or equals' conditiongt(property, value): 'greater than' conditiongte(property, value): 'greater than' or 'equals' conditionchanges(attribute): match changes for a specific attributesThe 'equals' match condition is applicable for filtering users, who made changes, for history event type, and for timestamps. The 'lt', 'lte', 'gt', and 'gte' conditions are applicable only for timestamps. The 'changes' condition is applicable only for filtering events with certain attribute changes. For more information see https://docs.reltio.com/entitiesapi/entitiesfiltering.html",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "options",
+						"in": "query",
+						"required": false,
+						"description": "Comma-separated list of different options which affect endpoints behaviour. Available options:skipReferenceAttributesProcessing - This option declares, whether or not new deltas for reference attributes should be calculated in GetBusinessObjectChangesOperation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"example": "skipReferenceAttributesProcessing",
+								"enum": ["skipReferenceAttributesProcessing"]
+							}
+						}
+					},
+					{
+						"name": "historicURIs",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates the subset of entity URIs (entity URIs delimited by comma) returned by _historicURIs request. The result contains history tree events for the current entity and for entities specified in the parameter.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "showAll",
+						"in": "query",
+						"required": false,
+						"description": "This parameter specifies if the response must contain all historical events, despite any real changes on attributes. Filter is ignored if the showAll parameter is set to true.",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "showMajorEventsOnly",
+						"in": "query",
+						"required": false,
+						"description": "This parameter specifies if the response must contain only major events, and defaults to true. When enabled, only the 1000 most recent major events are returned (max and offset parameters in this mode are restricted to these events). When disabled however, all events are able to be retrieved, paginated by the max and offset parameters.",
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/ChangeEntry"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/{id}/_changesWithTotal": {
+			"get": {
+				"operationId": "getChangesWithTotalByTenant",
+				"summary": "GET /entities/{id}/_changesWithTotal",
+				"description": "This API is an extension of the Entity History (GET {TenantURL} /entities/{entity object URI}/_changes) request. It works in the same way (retrieves the history of changes in an entity), but additionally returns the total number of entity changes.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the entity for which the history is to be retrieved.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify maximum number of entities to return in a response. Can be used to organize pagination in combination with \"offset\" parameter.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "Positive Integer value to identify starting what element in a result set should be returned in a response. Can be used to organize pagination in combination with \"max\" parameter.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					{
+						"name": "order",
+						"in": "query",
+						"required": false,
+						"description": "Order of sorting. Possible values: asc - results are shown in ascending order.desc - results are shown in descending order.",
+						"schema": {
+							"type": "string",
+							"default": "asc",
+							"enum": ["asc", "desc"]
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"required": false,
+						"description": "Enables entities filtering by a condition. Format for filter query parameter: filter=({Condition Type}[AND/OR {Condition Type}]*)There are tree Condition Types: equals(property, value): exact match condition ignoring caselt(property, value): 'less than' conditionlte(property, value): 'less than or equals' conditiongt(property, value): 'greater than' conditiongte(property, value): 'greater than' or 'equals' conditionchanges(attribute): match changes for a specific attributesThe 'equals' match condition is applicable for filtering users, who made changes, for history event type, and for timestamps. The 'lt', 'lte', 'gt', and 'gte' conditions are applicable only for timestamps. The 'changes' condition is applicable only for filtering events with certain attribute changes. For more information see https://docs.reltio.com/entitiesapi/entitiesfiltering.html",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "options",
+						"in": "query",
+						"required": false,
+						"description": "Comma-separated list of different options which affect endpoints behaviour. Available options:skipReferenceAttributesProcessing - This option declares, whether or not new deltas for reference attributes should be calculated in GetBusinessObjectChangesOperation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"example": "skipReferenceAttributesProcessing",
+								"enum": ["skipReferenceAttributesProcessing"]
+							}
+						}
+					},
+					{
+						"name": "historicURIs",
+						"in": "query",
+						"required": false,
+						"description": "This parameter indicates the subset of entity URIs (entity URIs delimited by comma) returned by _historicURIs request. The result contains history tree events for the current entity and for entities specified in the parameter.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "showAll",
+						"in": "query",
+						"required": false,
+						"description": "This parameter specifies if the response must contain all historical events, despite any real changes on attributes. Filter is ignored if the showAll parameter is set to true.",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChangesWithTotalResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"ChangeEntry": {
+				"type": "object",
+				"description": "A single change recorded in entity history.",
+				"properties": {
+					"timestamp": {
+						"type": "integer",
+						"description": "Change timestamp in milliseconds."
+					},
+					"userId": {
+						"type": "string",
+						"description": "User who made the change."
+					},
+					"operation": {
+						"type": "string",
+						"enum": ["CREATE", "UPDATE", "DELETE"]
+					},
+					"attribute": {
+						"type": "string",
+						"description": "Attribute path that changed."
+					},
+					"oldValue": {
+						"description": "Previous value."
+					},
+					"newValue": {
+						"description": "New value."
+					}
+				}
+			},
+			"ChangesWithTotalResponse": {
+				"type": "object",
+				"properties": {
+					"total": {
+						"type": "integer",
+						"description": "Total number of changes."
+					},
+					"changes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ChangeEntry"
+						}
+					}
+				}
+			}
+		}
+	}
+}

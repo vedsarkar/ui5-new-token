@@ -1,0 +1,373 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: SavedSearch.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./SavedSearch.spec.json";
+import * as SavedSearchStories from "./SavedSearch.stories";
+
+<Meta of={SavedSearchStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Saved Search API",
+		"version": "1.0.0",
+		"description": "Manage per-user saved searches — list shared/own, find by criteria, create, update, and delete."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/personal/allSavedSearches": {
+			"get": {
+				"operationId": "getAllUsersSearchRequestsByTenant",
+				"summary": "GET /personal/allSavedSearches",
+				"description": "Retrieve the details of all the shared saved searches with isPublic = true.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SavedSearchList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/personal/findSavedSearches": {
+			"post": {
+				"operationId": "findSearchRequestsByTenant",
+				"summary": "POST /personal/findSavedSearches",
+				"description": "You can search for saved searches that you own, or, those that are shared with everyone. The results of the search for saved searches depend upon the filtering, ordering and paging parameters specified in the request.You can use the following fields as part of the Request body to search for some saved searches that match the specified criteria:offset - The number of requests to skip from the beginning of the result set (useful for pagination)max - The maximum number of records that can be listed in a page (page size)startsWith - A letter or string with which the name of a saved search starts.favoriteOnly - The filter that allows you to search for saved searches based on the setting of the isFavorite field.sortBy - The option by which the search results can be sorted. You can set it to NAME, CREATE_DATE, or, UPDATE_DATE.sortOrder - The order by which the search results can be sorted. You can set it as ASC for ascending order, or, DESC for descending order.includes - The array of strings which are used to search by full equality of name. The search results that match the criteria mentioned in 'includes' are appended to each page besides the regular page size (max).",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "countResults",
+						"in": "query",
+						"required": false,
+						"description": "This parameter specifies whether the number of profiles found for each query must be displayed or not. This can be true or false. Set this parameter to true to display the number of results retrieved.",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "findPublic",
+						"in": "query",
+						"required": false,
+						"description": "This parameter sets the boundary for searching the saved searches. This can be true or false. If it is set to true, public saved searches are also searched.",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SavedSearchList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/personal/savedSearches": {
+			"get": {
+				"operationId": "getAllMySearchRequestsByTenant",
+				"summary": "GET /personal/savedSearches",
+				"description": "Retrieves the details of all the saved searches that belong to the user invoking the API.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SavedSearchList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			},
+			"post": {
+				"operationId": "createSavedRequestsByTenant",
+				"summary": "POST /personal/savedSearches",
+				"description": "Create saved search query creates a new saved search query. If you have administrative privileges, you can create saved searches for other users too within the same tenant.While creating a saved search, you must specify a valid search query string and a name for saving the search. In addition, you can specify a description, set the saved search as a favorite by using the isFavorite flag, or, make it available for others by setting the isPublic flag.You can use the following fields in the body of the request:name - The Name of the search that is being saved.description - A Desciption of the search that is being saved.query - A valid search query string.isFavorite - The flag for marking the saved search as a favorite. You can set it to true or false.isPublic - The flag that specifies whether other users of the same tenant can use this request (in Read-only mode) or not. You can set it to true or false. If true, the saved search would be available to others. The following information is provided as part of the Response: count - Number of profiles found by the Query.uiState - A valid JSON, which is used for keeping the state of visual controls for query editing.owner - The owner of the saved search.createDate - The date on which the search was saved.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "onBehalfOf",
+						"in": "query",
+						"required": false,
+						"description": "Tenant administrators can specify the name of the user on whose behalf the saved search must be created.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SavedSearch"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/personal/savedSearches/{id}": {
+			"put": {
+				"operationId": "updateSavedRequestByTenant",
+				"summary": "PUT /personal/savedSearches/{id}",
+				"description": "You can modify the details of a saved search only if you are the owner of that search. In addition, if you have administrative privileges, you can modify it for other users too within the same tenant.While modifying an existing saved search, you can modify any of the following details:name - The name of the saved search.description - The desciption of the saved search.query - The search query string used in the saved search.isFavorite - The flag for marking the saved search as a favorite. You can set it to true or false.isPublic - The flag that specifies whether other users of the same tenant can use this request (in Read-only mode) or not. You can set it to true or false. If true, the saved search would be available to others.The following information is provided as part of the Response:count - Number of profiles found by the Query.uiState - A valid JSON, which is used for keeping the state of visual controls for query editing.owner - The owner of the saved search.createDate - The date on which the search was saved.updateDate - The date on which the saved search is modified.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the saved search that must be modified.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "onBehalfOf",
+						"in": "query",
+						"required": false,
+						"description": "Tenant administrators can specify the name of the user on whose behalf the saved search must be modified.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SavedSearch"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteSavedRequestByTenant",
+				"summary": "DELETE /personal/savedSearches/{id}",
+				"description": "Delete Saved Search API deletes an existing saved search by specifying the saved search ID in the API call. You can only delete a saved search that belongs to you.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the saved search that must be deleted.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SavedSearch"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"SavedSearch": {
+				"type": "object",
+				"description": "A persisted search query.",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"query": {
+						"type": "string",
+						"description": "Reltio filter expression."
+					},
+					"objectType": {
+						"type": "string",
+						"description": "Entity type the search applies to."
+					},
+					"shared": {
+						"type": "boolean",
+						"description": "Whether the search is shared with other users."
+					},
+					"owner": {
+						"type": "string",
+						"description": "User ID of the owner."
+					},
+					"createdTime": {
+						"type": "integer"
+					},
+					"updatedTime": {
+						"type": "integer"
+					}
+				}
+			},
+			"SavedSearchList": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/SavedSearch"
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />

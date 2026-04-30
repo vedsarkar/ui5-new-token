@@ -1,0 +1,1461 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: DataLoadJob.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./DataLoadJob.spec.json";
+import * as DataLoadJobStories from "./DataLoadJob.stories";
+
+<Meta of={DataLoadJobStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Data Load Job API",
+		"version": "1.0.0",
+		"description": "Manage data loading into Reltio — mappings, custom buckets, job definitions (projects), data sources, job lifecycle (create, run, pause, resume, stop), error/source file downloads, and storage account management."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/dataloader/api/{tenantId}/_mapping": {
+			"post": {
+				"operationId": "createMapping",
+				"summary": "POST /_mapping",
+				"description": "Creates a new mapping based on the details provided in the request.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Mapping created."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/_mapping/{mappingId}": {
+			"get": {
+				"operationId": "getMapping",
+				"summary": "GET /_mapping/{mappingId}",
+				"description": "Retrieves the existing mapping details using an ID.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "mappingId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Mapping details."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Mapping not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateMapping",
+				"summary": "PUT /_mapping/{mappingId}",
+				"description": "Updates existing mapping based on the details provided in the request.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "mappingId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Mapping updated."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Mapping not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteMapping",
+				"summary": "DELETE /_mapping/{mappingId}",
+				"description": "Deletes an existing mapping.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "mappingId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Mapping deleted."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Mapping not found."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/_mappings": {
+			"get": {
+				"operationId": "getMappings",
+				"summary": "GET /_mappings",
+				"description": "Retrieves all the existing mappings.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "List of mappings."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/customBuckets": {
+			"post": {
+				"operationId": "createCustomBuckets",
+				"summary": "POST /customBuckets",
+				"description": "Creates custom buckets.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Custom buckets created."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/customBuckets/{id}": {
+			"get": {
+				"operationId": "getCustomBuckets",
+				"summary": "GET /customBuckets/{id}",
+				"description": "Returns the custom buckets for the provided ID.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Custom buckets details."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateCustomBuckets",
+				"summary": "PUT /customBuckets/{id}",
+				"description": "Updates the existing custom buckets with the details provided.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Custom buckets updated."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project": {
+			"post": {
+				"operationId": "createProject",
+				"summary": "POST /project",
+				"description": "Creates job definitions with the provided details.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Job definition created."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/{projectId}": {
+			"get": {
+				"operationId": "getProject",
+				"summary": "GET /project/{projectId}",
+				"description": "Retrieves existing job definition by ID.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "projectId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Job definition details."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateProject",
+				"summary": "PUT /project/{projectId}",
+				"description": "Updates existing job definition.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "projectId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Job definition updated."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteProject",
+				"summary": "DELETE /project/{projectId}",
+				"description": "Deletes existing job definition by ID.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "projectId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Job definition deleted."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/{projectId}/jobs": {
+			"get": {
+				"operationId": "getProjectJobs",
+				"summary": "GET /project/{projectId}/jobs",
+				"description": "Gets jobs for a job definition.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "projectId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "List of jobs."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			},
+			"post": {
+				"operationId": "createJob",
+				"summary": "POST /project/{projectId}/jobs",
+				"description": "Creates a job.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "projectId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Job created."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/{projectId}/jobs/run": {
+			"post": {
+				"operationId": "createAndRunJob",
+				"summary": "POST /project/{projectId}/jobs/run",
+				"description": "Creates and runs a job.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "projectId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Job created and started."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/data/source": {
+			"get": {
+				"operationId": "getDataSources",
+				"summary": "GET /project/data/source",
+				"description": "Returns source details matching the criteria for the tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "List of data sources."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			},
+			"post": {
+				"operationId": "createDataSource",
+				"summary": "POST /project/data/source",
+				"description": "Creates a new source based on the provided source details.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Source created."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/data/source/{sourceId}": {
+			"get": {
+				"operationId": "getDataSource",
+				"summary": "GET /project/data/source/{sourceId}",
+				"description": "Returns the source details for the provided Source ID.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sourceId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Source details."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Source not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateDataSource",
+				"summary": "PUT /project/data/source/{sourceId}",
+				"description": "Updates the existing source details with the details provided.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sourceId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Source updated."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Source not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteDataSource",
+				"summary": "DELETE /project/data/source/{sourceId}",
+				"description": "Deletes the source details for the provided Source ID.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sourceId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Source deleted."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Source not found."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/job/{jobId}": {
+			"get": {
+				"operationId": "getJob",
+				"summary": "GET /project/job/{jobId}",
+				"description": "Gets job details.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "jobId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Job details."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Job not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateJob",
+				"summary": "PUT /project/job/{jobId}",
+				"description": "Updates a job.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "jobId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Job updated."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Job not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteJob",
+				"summary": "DELETE /project/job/{jobId}",
+				"description": "Deletes a job.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "jobId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Job deleted."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Job not found."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/job/{jobId}/_pause": {
+			"put": {
+				"operationId": "pauseJob",
+				"summary": "PUT /project/job/{jobId}/_pause",
+				"description": "Pauses a running job.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "jobId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Job paused."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Job not found."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/job/{jobId}/_priority": {
+			"put": {
+				"operationId": "setJobPriority",
+				"summary": "PUT /project/job/{jobId}/_priority",
+				"description": "Sets job priority.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "jobId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Priority set."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Job not found."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/job/{jobId}/_resume": {
+			"put": {
+				"operationId": "resumeJob",
+				"summary": "PUT /project/job/{jobId}/_resume",
+				"description": "Resumes a paused job.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "jobId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Job resumed."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Job not found."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/job/{jobId}/_stop": {
+			"put": {
+				"operationId": "stopJob",
+				"summary": "PUT /project/job/{jobId}/_stop",
+				"description": "Stops a running job.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "jobId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Job stopped."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Job not found."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/job/{jobId}/errors": {
+			"get": {
+				"operationId": "downloadErrors",
+				"summary": "GET /project/job/{jobId}/errors",
+				"description": "Downloads the error file for a job.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "jobId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Error file."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Job not found."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/job/{jobId}/source": {
+			"get": {
+				"operationId": "downloadJobSource",
+				"summary": "GET /project/job/{jobId}/source",
+				"description": "Downloads source files as a zip file.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "jobId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Source files zip."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Job not found."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/jobs": {
+			"get": {
+				"operationId": "getAllJobs",
+				"summary": "GET /project/jobs",
+				"description": "Returns all the existing jobs for a tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "List of jobs."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/project/jobs/_facets": {
+			"get": {
+				"operationId": "getJobsFacets",
+				"summary": "GET /project/jobs/_facets",
+				"description": "Returns requested fields from all the existing jobs for a tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Job facets."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/projects": {
+			"get": {
+				"operationId": "getProjects",
+				"summary": "GET /projects",
+				"description": "Returns existing job definitions matching provided criteria.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "List of job definitions."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/storage/_account": {
+			"post": {
+				"operationId": "createStorageAccount",
+				"summary": "POST /storage/_account",
+				"description": "Creates a storage account.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Storage account created."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/storage/_account/{accountId}": {
+			"get": {
+				"operationId": "getStorageAccount",
+				"summary": "GET /storage/_account/{accountId}",
+				"description": "Gets storage account details.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "accountId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Storage account details."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateStorageAccount",
+				"summary": "PUT /storage/_account/{accountId}",
+				"description": "Updates a storage account.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "accountId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Storage account updated."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteStorageAccount",
+				"summary": "DELETE /storage/_account/{accountId}",
+				"description": "Deletes a storage account.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "accountId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Storage account deleted."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/storage/_accounts": {
+			"get": {
+				"operationId": "getStorageAccounts",
+				"summary": "GET /storage/_accounts",
+				"description": "Retrieves all storage account details.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "List of storage accounts."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/storage/{directory}/upload": {
+			"post": {
+				"operationId": "uploadFiles",
+				"summary": "POST /storage/{directory}/upload",
+				"description": "Uploads files from a local machine to load data.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "directory",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Files uploaded."
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/storage/{sourceId}": {
+			"delete": {
+				"operationId": "removeUploadedFile",
+				"summary": "DELETE /storage/{sourceId}",
+				"description": "Removes the uploaded file from Cloud Storage.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sourceId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "File removed."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "File not found."
+					}
+				}
+			}
+		},
+		"/dataloader/api/{tenantId}/storage/{sourceId}/read": {
+			"get": {
+				"operationId": "readSourceFiles",
+				"summary": "GET /storage/{sourceId}/read",
+				"description": "Reads existing source files.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sourceId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Source file contents."
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "File not found."
+					}
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />

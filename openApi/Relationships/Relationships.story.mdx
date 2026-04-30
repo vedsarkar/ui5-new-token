@@ -1,0 +1,291 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: Relationships.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./Relationships.spec.json";
+import * as RelationshipsStories from "./Relationships.stories";
+
+<Meta of={RelationshipsStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Relationships API",
+		"version": "1.0.0",
+		"description": "Manage relations between entities in a Reltio tenant — create relations (Save Relationships), search/list (by start/end object, attributes, tags, type), retrieve a single relation by URI, and delete a relation. Combines, in one place, the POST creation endpoint exposed under the developer portal's Ingest module and the rest of the Relationships tag from the Operate module."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/relations": {
+			"post": {
+				"operationId": "saveRelations",
+				"summary": "POST /relations",
+				"description": "Save Relationships API creates relations between entities. Accepts an array of relation objects (each linking a startObject to an endObject by a relation type) and returns the created relations with their assigned URIs.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/Relation"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Relations created.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RelationList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			},
+			"get": {
+				"operationId": "getRelationshipsCollectionByTenant",
+				"summary": "GET /relations",
+				"description": "Search or Get Relationships API. Searches for relations by the start and/or end objects, attribute values, tags, or type. Returns non-empty results when relation indexing is enabled in tenant configuration via the indexRelations property. The response can include a maximum of 200 relations. If the request consists of the select parameter, ensure there is no space between the query parameters.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Matching relations.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RelationList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/relations/{id}": {
+			"get": {
+				"operationId": "getRelationByUri",
+				"summary": "GET /relations/{id}",
+				"description": "Get Relationship API retrieves a relation based on the relation object URI specified in the request.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "The relation.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Relation"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Relation not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteRelationByUri",
+				"summary": "DELETE /relations/{id}",
+				"description": "Deletes a relation between two entities by the URI specified in the request.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Relation deleted.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Deletion result."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Relation not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"Relation": {
+				"type": "object",
+				"description": "A Reltio relation — a typed link between two entities (startObject and endObject). Has a stable URI, a relation type, optional attributes, and source-system contributions via crosswalks.",
+				"properties": {
+					"uri": {
+						"type": "string",
+						"description": "Stable Reltio URI of the relation (e.g. relations/abc123)."
+					},
+					"type": {
+						"type": "string",
+						"description": "Relation type URI (e.g. configuration/relationTypes/HasAddress)."
+					},
+					"startObject": {
+						"type": "object",
+						"description": "The source side of the relation.",
+						"properties": {
+							"objectURI": {
+								"type": "string",
+								"description": "URI of the start entity (e.g. entities/abc123)."
+							}
+						}
+					},
+					"endObject": {
+						"type": "object",
+						"description": "The target side of the relation.",
+						"properties": {
+							"objectURI": {
+								"type": "string",
+								"description": "URI of the end entity (e.g. entities/def456)."
+							}
+						}
+					},
+					"attributes": {
+						"type": "object",
+						"description": "Map of attribute name to attribute values.",
+						"additionalProperties": true
+					},
+					"crosswalks": {
+						"type": "array",
+						"description": "Source-system contributions for this relation.",
+						"items": {
+							"$ref": "#/components/schemas/Crosswalk"
+						}
+					},
+					"createdTime": {
+						"type": "integer",
+						"description": "Creation timestamp in milliseconds."
+					},
+					"updatedTime": {
+						"type": "integer",
+						"description": "Last update timestamp in milliseconds."
+					}
+				}
+			},
+			"RelationList": {
+				"type": "array",
+				"description": "Array of relation objects.",
+				"items": {
+					"$ref": "#/components/schemas/Relation"
+				}
+			},
+			"Crosswalk": {
+				"type": "object",
+				"description": "Source-system contribution for a relation.",
+				"properties": {
+					"type": {
+						"type": "string",
+						"description": "Source system URI."
+					},
+					"value": {
+						"type": "string",
+						"description": "External identifier value in the source system."
+					},
+					"sourceTable": {
+						"type": "string",
+						"description": "Source table or feed name."
+					},
+					"createDate": {
+						"type": "string",
+						"description": "Crosswalk creation date."
+					},
+					"updateDate": {
+						"type": "string",
+						"description": "Crosswalk last update date."
+					}
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />

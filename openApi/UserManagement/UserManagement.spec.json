@@ -1,0 +1,903 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "User Management API",
+		"version": "1.0.0",
+		"description": "Manage users in a Reltio customer — list/get/create/update/delete users, manage their group membership, run the multi-factor authentication enrollment lifecycle (TOTP/QRCode and email; with and without state_token; self vs admin-initiated), and revoke tokens. Sibling page to API/Client Management; both live under the /oauth subsystem."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/oauth",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/users": {
+			"get": {
+				"operationId": "getAllUsers",
+				"summary": "GET /users",
+				"description": "Gets list of all the existing users which the logged in user is entitled to read, based on the assigned user Role(s).",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			},
+			"post": {
+				"operationId": "addUsersToCollection",
+				"summary": "POST /users",
+				"description": "Adds list of users",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/users/{username}": {
+			"get": {
+				"operationId": "getUserByEmailorUserName",
+				"summary": "GET /users/{username}",
+				"description": "Retrieves the user details identified by username or email",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "resolveGroups",
+						"in": "query",
+						"required": false,
+						"description": "With this parameter set to true, roles of groups also will be displayed as part of the roles list",
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateUserbyEmailorUsername",
+				"summary": "PUT /users/{username}",
+				"description": "This API enables you to update the user details with the data sent in the request body. User details include user roles, groups",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "skipTokenRevocation",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/User"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteUserbyUsername",
+				"summary": "DELETE /users/{username}",
+				"description": "This API will delete the user specified in path parameter",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/users/{username}/groups": {
+			"get": {
+				"operationId": "getGroupsforUser",
+				"summary": "GET /users/{username}/groups",
+				"description": "This API gives the List of groups for the username/emails passed",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateUserGroups",
+				"summary": "PUT /users/{username}/groups",
+				"description": "This API will update the groups for the username/email specified",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "skipTokenRevocation",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/users/{username}/mfa/resetQRCodeEnroll": {
+			"put": {
+				"operationId": "resets the MFA enrollments of the user",
+				"summary": "PUT /users/{username}/mfa/resetQRCodeEnroll",
+				"description": "resets the mfa enrollments of the user",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MfaEnrollRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/users/{username}/mfaDetails": {
+			"get": {
+				"operationId": "get mfa details of the user",
+				"summary": "GET /users/{username}/mfaDetails",
+				"description": "Retrieves the users mfa details identified by username",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MfaDetails"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/users/{username}/revoketokens": {
+			"put": {
+				"operationId": "revokeTokens",
+				"summary": "PUT /users/{username}/revoketokens",
+				"description": "Revokes all tokens of the user",
+				"parameters": [
+					{
+						"name": "username",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/users/groups/{groupId}": {
+			"get": {
+				"operationId": "getUsersByGroupId",
+				"summary": "GET /users/groups/{groupId}",
+				"description": "This Api will return the list of users that belong to a group passed in the path parameter",
+				"parameters": [
+					{
+						"name": "groupId",
+						"in": "path",
+						"required": true,
+						"description": "Group Id for which users needs to be fetched. The API will search across all customers the user has access to.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/users/mfa/associateQRCode": {
+			"put": {
+				"operationId": "associateQrCode",
+				"summary": "PUT /users/mfa/associateQRCode",
+				"description": "Generates the QR Code for the user to associate the MFA",
+				"parameters": [
+					{
+						"name": "mfatype",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MfaEnrollRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MfaQRCodeResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/users/mfa/associateQRCodeStateToken": {
+			"put": {
+				"operationId": "associateEmailMFAState_token",
+				"summary": "PUT /users/mfa/associateQRCodeStateToken",
+				"description": "Associates the Authenticator MFA for the user with the state_token",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MfaEnrollRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MfaQRCodeResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/users/mfa/enrollEmail": {
+			"put": {
+				"operationId": "associateEmailMFA",
+				"summary": "PUT /users/mfa/enrollEmail",
+				"description": "Associates the Email MFA for the user",
+				"parameters": [
+					{
+						"name": "mfatype",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MfaEnrollRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/users/mfa/enrollEmailWithStateToken": {
+			"put": {
+				"operationId": "enrollEmailWithStateToken",
+				"summary": "PUT /users/mfa/enrollEmailWithStateToken",
+				"description": "Associates the Authenticator MFA for the user with the state_token",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MfaEnrollRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/users/mfa/resetMyQRCodeEnroll": {
+			"put": {
+				"operationId": "resets the self MFA enrollments of the user",
+				"summary": "PUT /users/mfa/resetMyQRCodeEnroll",
+				"description": "resets the self mfa enrollments of the user",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MfaEnrollRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/users/mfa/verifyEnrollWithStateToken": {
+			"put": {
+				"operationId": "Verify the mfa enrollment with state token",
+				"summary": "PUT /users/mfa/verifyEnrollWithStateToken",
+				"description": "Verify the mfa enrollment with state token",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MfaEnrollRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/users/mfa/verifyQRCodeEnroll": {
+			"put": {
+				"operationId": "Verify the mfa enrollment",
+				"summary": "PUT /users/mfa/verifyQRCodeEnroll",
+				"description": "Verify the mfa enrollment",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MfaEnrollRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/users/mfaDetails": {
+			"get": {
+				"operationId": "get mfa self  details ",
+				"summary": "GET /users/mfaDetails",
+				"description": "Retrieves the users mfa details",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MfaDetails"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/users/tenants/{tenantId}": {
+			"get": {
+				"operationId": "getUserAndEmailPairsForTenant",
+				"summary": "GET /users/tenants/{tenantId}",
+				"description": "You may have certain access limitations while processing this API based on your role.The following users have the corresponding access permissions:ROLE_ADMIN_TENANT_tenant - Access depends on the tenantROLE_ADMIN_CUSTOMER_{customer_Id} - Restricted accessROLE_USER - Restricted access",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/UsernameEmailPair"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"User": {
+				"type": "object",
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string",
+						"format": "email"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"groups": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"tenants": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"mfaEnabled": {
+						"type": "boolean"
+					}
+				}
+			},
+			"UserList": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/User"
+				}
+			},
+			"UsernameEmailPair": {
+				"type": "object",
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string",
+						"format": "email"
+					}
+				}
+			},
+			"MfaDetails": {
+				"type": "object",
+				"properties": {
+					"factors": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"type": {
+									"type": "string",
+									"description": "Factor type (TOTP, EMAIL)."
+								},
+								"status": {
+									"type": "string",
+									"description": "Enrollment status."
+								}
+							}
+						}
+					},
+					"requiredAtNextLogin": {
+						"type": "boolean"
+					}
+				}
+			},
+			"MfaEnrollRequest": {
+				"type": "object",
+				"description": "Generic enroll/verify request — fields used depend on the variant.",
+				"properties": {
+					"secret": {
+						"type": "string",
+						"description": "TOTP shared secret."
+					},
+					"otp": {
+						"type": "string",
+						"description": "One-time password to verify enrollment."
+					},
+					"stateToken": {
+						"type": "string",
+						"description": "Login-flow state token (required for *WithStateToken variants)."
+					},
+					"qrCodeId": {
+						"type": "string",
+						"description": "QR code session id."
+					},
+					"email": {
+						"type": "string",
+						"format": "email",
+						"description": "Email address (for email factor enrollment)."
+					}
+				}
+			},
+			"MfaQRCodeResponse": {
+				"type": "object",
+				"properties": {
+					"secret": {
+						"type": "string",
+						"description": "Shared secret to show in the authenticator app."
+					},
+					"qrCodeImage": {
+						"type": "string",
+						"description": "Base64-encoded QR code image."
+					},
+					"qrCodeId": {
+						"type": "string",
+						"description": "Session id used to verify the enrollment."
+					}
+				}
+			}
+		}
+	}
+}

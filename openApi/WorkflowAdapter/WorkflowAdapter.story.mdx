@@ -1,0 +1,2563 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: WorkflowAdapter.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./WorkflowAdapter.spec.json";
+import * as WorkflowAdapterStories from "./WorkflowAdapter.stories";
+
+<Meta of={WorkflowAdapterStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Workflow Adapter API",
+		"version": "1.0.0",
+		"description": "BPMN-style workflow engine that powers stewardship/approval automation in Reltio. Provides workflow process deployment, process instance management (start/suspend/activate/terminate/search), tasks (CRUD, history, validation, group tasks, action handlers), JAR deployments, jobs, and process definitions."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/workflow-adapter/workflow",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/assignee": {
+			"post": {
+				"operationId": "getPossibleAssigneeByTenant",
+				"summary": "POST /{tenantId}/assignee",
+				"description": "Retrieves the details of possible assignees for a task",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/assignee/examine": {
+			"post": {
+				"operationId": "checkAssigneeForTask",
+				"summary": "POST /{tenantId}/assignee/examine",
+				"description": "Verifies all the requirements of the user must meet to become an assignee of the task, clause by clause",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/deployments/{processDefinitionId}": {
+			"get": {
+				"operationId": "getDeploymentById",
+				"summary": "GET /{tenantId}/deployments/{processDefinitionId}",
+				"description": "Retrieves the process definition deployment by the specified process definition id",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "processDefinitionId",
+						"in": "path",
+						"required": true,
+						"description": "Process definition ID",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Deployment"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/groupTasks": {
+			"post": {
+				"operationId": "retrieveGroupTasksByTenant",
+				"summary": "POST /{tenantId}/groupTasks",
+				"description": "Retrieves the details of the group tasks. Group tasks are open tasks where the current user is a possible assignee but not the current assignee",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/groupTasks/_withFilter": {
+			"put": {
+				"operationId": "updateGroupTasks",
+				"summary": "PUT /{tenantId}/groupTasks/_withFilter",
+				"description": "Update group tasks with the specified filter. Group tasks are open tasks where the current user is a possible assignee but not the current assignee",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "tenantId",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/jarDeployments": {
+			"get": {
+				"operationId": "getTenantJarDeployments",
+				"summary": "GET /{tenantId}/jarDeployments",
+				"description": "Retrieves the dynamically deployed tenant JARs",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "tenantId",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JarDeploymentList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/jarDeployments/{name}": {
+			"get": {
+				"operationId": "getGlobalJarDetails",
+				"summary": "GET /{tenantId}/jarDeployments/{name}",
+				"description": "Retrieves the specified dynamically deployed JAR",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "tenantId",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "name",
+						"in": "path",
+						"required": true,
+						"description": "Jar deployment name",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JarDeployment"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteTenantJarDeployment",
+				"summary": "DELETE /{tenantId}/jarDeployments/{name}",
+				"description": "Deletes the dynamically deployed tenant JAR",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "tenantId",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "name",
+						"in": "path",
+						"required": true,
+						"description": "Jar deployment name",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JarDeployment"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/jobs": {
+			"get": {
+				"operationId": "getJobsByTenant",
+				"summary": "GET /{tenantId}/jobs",
+				"description": "Retrieves the active jobs",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/jobs/{jobId}": {
+			"get": {
+				"operationId": "getTenantJobByUUID",
+				"summary": "GET /{tenantId}/jobs/{jobId}",
+				"description": "Retrieves the tenant job using ID",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "jobId",
+						"in": "path",
+						"required": true,
+						"description": "jobId",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Job"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/jobs/actions": {
+			"post": {
+				"operationId": "performBulkActionsByTenant",
+				"summary": "POST /{tenantId}/jobs/actions",
+				"description": "Enables to act on tasks using filters",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Job"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/jobs/syncBusinessProcessData": {
+			"post": {
+				"operationId": "syncBusinessProcessDataByTenant",
+				"summary": "POST /{tenantId}/jobs/syncBusinessProcessData",
+				"description": "Synchronizes the business process data",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Job"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/jobs/syncStreamingWithGBQ": {
+			"post": {
+				"operationId": "syncStreamingWithGBQByTenant",
+				"summary": "POST /{tenantId}/jobs/syncStreamingWithGBQ",
+				"description": "Read the data from GBQ and stream it to the streaming hub",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Job"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/jobs/terminateProcessInstances": {
+			"post": {
+				"operationId": "terminateProcessByTenantJob",
+				"summary": "POST /{tenantId}/jobs/terminateProcessInstances",
+				"description": "Terminates process instances on the tenant using filters",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Job"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/jobs/updateTasks": {
+			"post": {
+				"operationId": "updateTasksByTenantJob",
+				"summary": "POST /{tenantId}/jobs/updateTasks",
+				"description": "Updates due date, process comments, assignee or priority details of tasks using the filter",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Job"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/listJars": {
+			"post": {
+				"operationId": "getAvailableJars",
+				"summary": "POST /{tenantId}/listJars",
+				"description": "Searches the tenant specific folder on S3 for the list of JARs that could be deployed on the tenant",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "tenantId",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/operations": {
+			"get": {
+				"operationId": "retrieveOperationsForTenant",
+				"summary": "GET /{tenantId}/operations",
+				"description": "Retrieves operations that can be done on the tenant as specified in the API request.The response includes the list of operations that can be done on the specified tenant. For example: 'VIEW_TASKS', 'VIEW_PROCESS_DEFINITIONS', 'START_JOB' and so on.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant from which the operation details must be retrieved",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/processCount": {
+			"get": {
+				"operationId": "listOfProcessCountByTenant",
+				"summary": "GET /{tenantId}/processCount",
+				"description": "Retrieves the number of process instances",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "startedBefore",
+						"in": "query",
+						"required": false,
+						"description": "Time in milliseconds",
+						"schema": {
+							"type": "integer",
+							"format": "int64"
+						}
+					},
+					{
+						"name": "startedAfter",
+						"in": "query",
+						"required": false,
+						"description": "Time in milliseconds",
+						"schema": {
+							"type": "integer",
+							"format": "int64"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "integer"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/processDefinitions": {
+			"get": {
+				"operationId": "listDeploymentsByTenant",
+				"summary": "GET /{tenantId}/processDefinitions",
+				"description": "List the deployments by the tenant",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "Offset. Skip N records",
+						"schema": {
+							"type": "integer",
+							"format": "int64"
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "Max. Return N records or less",
+						"schema": {
+							"type": "integer",
+							"format": "int64"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProcessDefinitionList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/processDefinitions/{processType}": {
+			"get": {
+				"operationId": "getDeploymentWithTenantId",
+				"summary": "GET /{tenantId}/processDefinitions/{processType}",
+				"description": "Retrieves the process definition for the specified tenant",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "processType",
+						"in": "path",
+						"required": true,
+						"description": "Process type",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProcessDefinition"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteDeployWithTenantId",
+				"summary": "DELETE /{tenantId}/processDefinitions/{processType}",
+				"description": "Deletes the business workflow process definition for the specified tenant",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "processType",
+						"in": "path",
+						"required": true,
+						"description": "Process type",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProcessDefinition"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/processDefinitions/{processType}/history": {
+			"post": {
+				"operationId": "getProcessDefinitionHistory",
+				"summary": "POST /{tenantId}/processDefinitions/{processType}/history",
+				"description": "Retrieves the deployment history of business process definition",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "processType",
+						"in": "path",
+						"required": true,
+						"description": "Process type",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProcessDefinition"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/processInstances": {
+			"post": {
+				"operationId": "startProcessInstanceByTenant",
+				"summary": "POST /{tenantId}/processInstances",
+				"description": "The Workflow service enables processes and tasks management, including the assignment and tracking of tasks",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProcessInstance"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "terminateProcessByTenantInBackground",
+				"summary": "DELETE /{tenantId}/processInstances",
+				"description": "Terminates the process instances in the background",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "tenantId",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "background",
+						"in": "query",
+						"required": false,
+						"description": "background",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProcessInstance"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/processInstances/_generateFromQuery": {
+			"post": {
+				"operationId": "startProcessInstanceFromSearchQueryByTenant",
+				"summary": "POST /{tenantId}/processInstances/_generateFromQuery",
+				"description": "Starts review processes from the search query",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "background",
+						"in": "query",
+						"required": false,
+						"description": "Execute in background",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProcessInstance"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/processInstances/_search": {
+			"post": {
+				"operationId": "getProcessInstanceForEntityByTenant",
+				"summary": "POST /{tenantId}/processInstances/_search",
+				"description": "Retrieves the details of the process instances for an entity using the specified filters",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProcessInstanceList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/processInstances/{processInstanceId}": {
+			"get": {
+				"operationId": "getProcessInstanceDetailsByTenant",
+				"summary": "GET /{tenantId}/processInstances/{processInstanceId}",
+				"description": "Retrieves the details of the process instances associated with an entity",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "processInstanceId",
+						"in": "path",
+						"required": true,
+						"description": "The ID of the process instance for which the details must be retrieved",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "showProcessVariables",
+						"in": "query",
+						"required": false,
+						"description": "This parameter enables you to choose to retrieve the details of the process variables or not",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "showTaskVariables",
+						"in": "query",
+						"required": false,
+						"description": "This parameter enables you to choose to retrieve the details of the task variables or not",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "showTaskLocalVariables",
+						"in": "query",
+						"required": false,
+						"description": "This parameter enables you to choose to retrieve the details of the task local variables or not",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProcessInstance"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "terminateProcessByTenant",
+				"summary": "DELETE /{tenantId}/processInstances/{processInstanceId}",
+				"description": "Terminates a process instance using the Process Instance ID in the request",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "processInstanceId",
+						"in": "path",
+						"required": true,
+						"description": "The ID of the process instance which must be terminated",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProcessInstance"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/processInstances/{processInstanceId}/_activate": {
+			"put": {
+				"operationId": "activateProcessByTenant",
+				"summary": "PUT /{tenantId}/processInstances/{processInstanceId}/_activate",
+				"description": "Activates a suspended process instance using the Process Instance ID in the request",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "processInstanceId",
+						"in": "path",
+						"required": true,
+						"description": "The ID of the process instance which must be activated",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProcessInstance"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/processInstances/{processInstanceId}/_comment": {
+			"get": {
+				"operationId": "getProcessInstanceCommentsByTenant",
+				"summary": "GET /{tenantId}/processInstances/{processInstanceId}/_comment",
+				"description": "Retrieves the comments of a process instance",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "processInstanceId",
+						"in": "path",
+						"required": true,
+						"description": "processInstanceId",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProcessInstance"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/processInstances/{processInstanceId}/_suspend": {
+			"put": {
+				"operationId": "suspendProcessByTenant",
+				"summary": "PUT /{tenantId}/processInstances/{processInstanceId}/_suspend",
+				"description": "Suspends a specific process instance by specifying the Process Instance ID in the request. Suspending a process instance stops it temporarily until it is activated again. To activate a suspended process instance, you can use the Activate Process Instance API.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "processInstanceId",
+						"in": "path",
+						"required": true,
+						"description": "The ID of the process instance which must be suspended",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProcessInstance"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks": {
+			"get": {
+				"operationId": "retrieveAllTasksForEntityByTenant",
+				"summary": "GET /{tenantId}/tasks",
+				"description": "Retrieves the details of the open/closed tasks for an Object URI based on the URI specified in the request. In addition, you can choose to view the details of the task variables and/or task local variables.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "objectURI",
+						"in": "query",
+						"required": true,
+						"description": "The URI of the object (entity or relation) for which the task details must be retrieved",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "The start position of the search results",
+						"schema": {
+							"type": "integer",
+							"format": "int32",
+							"default": 0
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "The maximum number of results that can be displayed",
+						"schema": {
+							"type": "integer",
+							"format": "int32",
+							"default": 2000
+						}
+					},
+					{
+						"name": "showTaskVariables",
+						"in": "query",
+						"required": false,
+						"description": "This parameter enables you to choose to retrieve the details of the task variables or not",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "showTaskLocalVariables",
+						"in": "query",
+						"required": false,
+						"description": "This parameter enables you to choose to retrieve the details of the task local variables or not",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TaskList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateTasksByTenant",
+				"summary": "PUT /{tenantId}/tasks",
+				"description": "Update Tasks API can update due date,process comments, assignee or priority details of a task",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TaskList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"post": {
+				"operationId": "retrieveTasks",
+				"summary": "POST /{tenantId}/tasks",
+				"description": "Retrieve open tasks by filter. API retrieves the details of the tasks by using the specified filters",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "checkAccess",
+						"in": "query",
+						"required": false,
+						"description": "true - returns a task only if the user has access to the task's objects (entities, change requests or relations).",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TaskList"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/_validate": {
+			"post": {
+				"operationId": "validateTasksByTenant",
+				"summary": "POST /{tenantId}/tasks/_validate",
+				"description": "Validates tasks in the background using a filter in the request",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Task"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/_withFilter": {
+			"put": {
+				"operationId": "updateTasksByTenantWithFilter",
+				"summary": "PUT /{tenantId}/tasks/_withFilter",
+				"description": "Update tasks with the specified filter",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "tenantId",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Task"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/{taskId}": {
+			"get": {
+				"operationId": "getTaskDetailsByTenant",
+				"summary": "GET /{tenantId}/tasks/{taskId}",
+				"description": "You can retrieve the details of the task based on the Task ID specified in the request. In addition, you can choose to view the details of the task variables and/or task local variables.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task for which the details must be retrieved",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "showTaskVariables",
+						"in": "query",
+						"required": false,
+						"description": "This parameter enables you to choose to retrieve the details of the task variables or not",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "showTaskLocalVariables",
+						"in": "query",
+						"required": false,
+						"description": "This parameter enables you to choose to retrieve the details of the task local variables or not",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Task"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateTaskByTenant",
+				"summary": "PUT /{tenantId}/tasks/{taskId}",
+				"description": "Updates different parameters of an existing task. For example: due date, assignee or priority",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task that must be modified",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Task"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/{taskId}/_action": {
+			"post": {
+				"operationId": "executeActionByTenant",
+				"summary": "POST /{tenantId}/tasks/{taskId}/_action",
+				"description": "Execute a specified action on a task",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task on which an action must be taken",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Task"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/{taskId}/_validate": {
+			"get": {
+				"operationId": "validateTaskByTenant",
+				"summary": "GET /{tenantId}/tasks/{taskId}/_validate",
+				"description": "Validates a task specified by Task ID in the request",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task that must be validated",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Task"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/assignees": {
+			"post": {
+				"operationId": "assignees",
+				"summary": "POST /{tenantId}/tasks/assignees",
+				"description": "Scans the tasks and retrieves all the possible assignee values",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Task"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/creators": {
+			"post": {
+				"operationId": "creators",
+				"summary": "POST /{tenantId}/tasks/creators",
+				"description": "Scans the tasks and retrieves all the possible owner values",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Task"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/history": {
+			"post": {
+				"operationId": "retrieveAllTasksByFilterByTenant",
+				"summary": "POST /{tenantId}/tasks/history",
+				"description": "Retrieves the details of the tasks by using the specified filters provided user has READ access objects for entities, change requests, or relations any if any of these used task filters",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Task"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/history/{taskId}": {
+			"get": {
+				"operationId": "getHistoricTaskDetails",
+				"summary": "GET /{tenantId}/tasks/history/{taskId}",
+				"description": "The response contains the details of the historic task if it exists. In addition, you can also view the content of the task variables.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "taskId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the task for which the details must be retrieved",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "showTaskVariables",
+						"in": "query",
+						"required": false,
+						"description": "This parameter enables you to choose to retrieve the details of the task variables or not",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "showTaskLocalVariables",
+						"in": "query",
+						"required": false,
+						"description": "This parameter enables you to choose to retrieve the details of the task local variables or not",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Task"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/history/variables": {
+			"post": {
+				"operationId": "retrieveHistoryVariableNames",
+				"summary": "POST /{tenantId}/tasks/history/variables",
+				"description": "Retrieve variable names by filter for closed tasks. API retrieves names of existing variables by using the specified filters",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "tenantId",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Task"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/tasks/variables": {
+			"post": {
+				"operationId": "retrieveVariableNames",
+				"summary": "POST /{tenantId}/tasks/variables",
+				"description": "Retrieve variable names by filter. API retrieves names of existing variables by using the specified filters",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "tenantId",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Task"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/deployments": {
+			"post": {
+				"operationId": "deployByTenant",
+				"summary": "POST /deployments",
+				"description": "Deploys the process definition file to create a workflow",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "query",
+						"required": false,
+						"description": "ID of the tenant for which the process definition must be deployed",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "name",
+						"in": "query",
+						"required": false,
+						"description": "The name of the deployment that must be completed",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Deployment"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/jobs/syncActivitiCommentsWithGBQ": {
+			"post": {
+				"operationId": "syncActivitiCommentsWithGBQByTenant",
+				"summary": "POST /jobs/syncActivitiCommentsWithGBQ",
+				"description": "Read all Activiti comments and stream it to GBQ",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Job"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"Deployment": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"tenantId": {
+						"type": "string"
+					},
+					"processDefinitionId": {
+						"type": "string"
+					},
+					"deploymentTime": {
+						"type": "integer"
+					},
+					"jarName": {
+						"type": "string"
+					}
+				}
+			},
+			"ProcessDefinition": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"key": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"version": {
+						"type": "integer"
+					},
+					"tenantId": {
+						"type": "string"
+					},
+					"processType": {
+						"type": "string"
+					}
+				}
+			},
+			"ProcessDefinitionList": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/ProcessDefinition"
+				}
+			},
+			"ProcessInstance": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"processDefinitionId": {
+						"type": "string"
+					},
+					"businessKey": {
+						"type": "string",
+						"description": "Typically the affected entity URI."
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"ACTIVE",
+							"SUSPENDED",
+							"COMPLETED",
+							"TERMINATED"
+						]
+					},
+					"startTime": {
+						"type": "integer"
+					},
+					"endTime": {
+						"type": "integer"
+					},
+					"variables": {
+						"type": "object",
+						"additionalProperties": true
+					}
+				}
+			},
+			"ProcessInstanceList": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/ProcessInstance"
+				}
+			},
+			"Task": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"assignee": {
+						"type": "string"
+					},
+					"processInstanceId": {
+						"type": "string"
+					},
+					"dueDate": {
+						"type": "integer"
+					},
+					"priority": {
+						"type": "integer"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"OPEN",
+							"COMPLETED",
+							"CANCELLED"
+						]
+					}
+				}
+			},
+			"TaskList": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/Task"
+				}
+			},
+			"Job": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					},
+					"executionTime": {
+						"type": "integer"
+					},
+					"errorMessage": {
+						"type": "string"
+					}
+				}
+			},
+			"JobList": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/Job"
+				}
+			},
+			"JarDeployment": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"version": {
+						"type": "string"
+					},
+					"deployedAt": {
+						"type": "integer"
+					}
+				}
+			},
+			"JarDeploymentList": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/JarDeployment"
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />

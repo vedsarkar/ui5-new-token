@@ -301,6 +301,270 @@ import * as ReferenceDataManagementStories from "./ReferenceDataManagement.stori
 					}
 				}
 			}
+		},
+		"/lookups/{tenantId}": {
+			"post": {
+				"operationId": "rdmSaveLookups",
+				"summary": "POST /lookups/{tenantId}",
+				"description": "Saves lookups in the RDM tenant. Accepts an array of lookup objects spanning one or more lookup types.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/Lookup"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Lookups saved.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Lookup"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					}
+				}
+			}
+		},
+		"/lookups/{tenantId}/{type}": {
+			"post": {
+				"operationId": "rdmSaveLookupsByType",
+				"summary": "POST /lookups/{tenantId}/{type}",
+				"description": "Saves lookups for the specified lookup type. Accepts an array of lookup objects scoped to the given type.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "type",
+						"in": "path",
+						"description": "Lookup type name.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/Lookup"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Lookups saved.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Lookup"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"404": {
+						"description": "Lookup type not found."
+					}
+				}
+			}
+		},
+		"/lookups/{tenantId}/{type}/{code}": {
+			"put": {
+				"operationId": "rdmSaveLookupByTypeAndCode",
+				"summary": "PUT /lookups/{tenantId}/{type}/{code}",
+				"description": "Saves a single lookup for the specified lookup type and canonical code. Replaces the lookup if it already exists.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "type",
+						"in": "path",
+						"description": "Lookup type name.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "code",
+						"in": "path",
+						"description": "Canonical code of the lookup value.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Lookup"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Lookup saved.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Lookup"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"404": {
+						"description": "Lookup type not found."
+					}
+				}
+			}
+		},
+		"/unmapped/{tenantId}": {
+			"post": {
+				"operationId": "rdmSaveUnmappedValues",
+				"summary": "POST /unmapped/{tenantId}",
+				"description": "Saves lookup values that are not mapped to a canonical value. Accepts an array of unmapped string values to be reviewed and later mapped to canonical lookups.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Unmapped values saved."
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					}
+				}
+			}
+		},
+		"/unmapped/{tenantId}/{type}": {
+			"post": {
+				"operationId": "rdmSaveUnmappedValuesByType",
+				"summary": "POST /unmapped/{tenantId}/{type}",
+				"description": "Saves lookup values that are not mapped to a canonical value for the specified lookup type. Accepts an array of unmapped string values scoped to the given type.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "type",
+						"in": "path",
+						"description": "Lookup type name.",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Unmapped values saved."
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"404": {
+						"description": "Lookup type not found."
+					}
+				}
+			}
 		}
 	},
 	"components": {
@@ -337,6 +601,32 @@ import * as ReferenceDataManagementStories from "./ReferenceDataManagement.stori
 					"description": {
 						"type": "string",
 						"description": "Human-readable description."
+					}
+				}
+			},
+			"Lookup": {
+				"type": "object",
+				"description": "A reference data lookup — a single canonical value within a lookup type.",
+				"properties": {
+					"code": {
+						"type": "string",
+						"description": "Canonical code that uniquely identifies the lookup within its type."
+					},
+					"value": {
+						"type": "string",
+						"description": "Human-readable value displayed to users."
+					},
+					"description": {
+						"type": "string",
+						"description": "Optional description of the lookup."
+					},
+					"source": {
+						"type": "string",
+						"description": "Source system that contributed this lookup value."
+					},
+					"parent": {
+						"type": "string",
+						"description": "Code of the parent lookup, when lookups form a hierarchy."
 					}
 				}
 			}

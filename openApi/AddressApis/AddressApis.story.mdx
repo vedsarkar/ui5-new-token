@@ -1,0 +1,224 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: AddressApis.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./AddressApis.spec.json";
+import * as AddressApisStories from "./AddressApis.stories";
+
+<Meta of={AddressApisStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Address APIs",
+		"version": "1.0.0",
+		"description": "Look up real-world postal addresses through Reltio's address provider integration. Provides text-based candidate search and single-address fetch by provider id — typically called in tandem (search returns ids, fetch resolves a chosen id to its full details)."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/address/search": {
+			"get": {
+				"operationId": "searchAddress",
+				"summary": "GET /address/search",
+				"description": "Searches for possible addresses matching the given text and returns a list of candidate addresses with their provider ids. Use the returned id with GET /address/fetch to get full details for a chosen candidate. Container can be used to drill into the children of a previous candidate (e.g. expanding a country into its regions); Countries scopes the search to specific ISO country codes; Language controls the language of returned address parts.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "Text",
+						"in": "query",
+						"required": true,
+						"description": "Search text to match against candidate addresses.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "Container",
+						"in": "query",
+						"required": false,
+						"description": "Continuation token from a previous candidate to drill into its children.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "Countries",
+						"in": "query",
+						"required": false,
+						"description": "Comma-separated ISO country codes scoping the search.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "Language",
+						"in": "query",
+						"required": false,
+						"description": "Language code controlling the language of returned address parts.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "Limit",
+						"in": "query",
+						"required": true,
+						"description": "Maximum number of candidate addresses to return.",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Candidate addresses.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/AddressCandidate"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/address/fetch": {
+			"get": {
+				"operationId": "retrieveAddress",
+				"summary": "GET /address/fetch",
+				"description": "Retrieves the full details for a single candidate address by its provider-specific id. The id is typically a value previously returned by GET /address/search.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "Id",
+						"in": "query",
+						"required": true,
+						"description": "Provider-specific identifier of the address to fetch.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Resolved address.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AddressCandidate"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Address not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"AddressCandidate": {
+				"type": "object",
+				"description": "A candidate postal address returned by the address provider.",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "Provider-specific identifier of the candidate address. Pass to GET /address/fetch to resolve to full details."
+					},
+					"text": {
+						"type": "string",
+						"description": "Primary display text for the candidate (e.g. the matched street line)."
+					},
+					"description": {
+						"type": "string",
+						"description": "Secondary display text for the candidate (e.g. city, region, country)."
+					},
+					"type": {
+						"type": "string",
+						"description": "Provider-specific candidate type (e.g. Address, Container, Postcode)."
+					},
+					"countryCode": {
+						"type": "string",
+						"description": "ISO country code of the candidate."
+					},
+					"address": {
+						"type": "object",
+						"description": "Structured address parts.",
+						"properties": {
+							"street": {
+								"type": "string"
+							},
+							"city": {
+								"type": "string"
+							},
+							"region": {
+								"type": "string"
+							},
+							"postalCode": {
+								"type": "string"
+							},
+							"country": {
+								"type": "string"
+							}
+						}
+					},
+					"latitude": {
+						"type": "number",
+						"description": "Approximate latitude of the candidate."
+					},
+					"longitude": {
+						"type": "number",
+						"description": "Approximate longitude of the candidate."
+					}
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />

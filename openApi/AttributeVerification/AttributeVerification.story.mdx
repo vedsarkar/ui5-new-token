@@ -1,0 +1,265 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: AttributeVerification.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./AttributeVerification.spec.json";
+import * as AttributeVerificationStories from "./AttributeVerification.stories";
+
+<Meta of={AttributeVerificationStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Attribute Verification API",
+		"version": "1.0.0",
+		"description": "Validate email and phone attributes through Reltio's pluggable verification providers. Provides one entity-scoped verifier (runs the configured verifiers on a single entity and persists results) and two batch verifiers (one for emails, one for phone numbers, both accepting an array of input records)."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/entities/{id}/attributeVerification/_verify": {
+			"post": {
+				"operationId": "verifyEntityAttributes",
+				"summary": "POST /entities/{id}/attributeVerification/_verify",
+				"description": "Runs attribute verification for the specified entity. Reuses existing valid results (within maxVerificationAge) unless forceVerify is true. If clientFilter is omitted, all applicable verifiers run. Persists verification results on the entity and returns the updated entity.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/VerifyEntityRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Updated entity with verification results.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Updated entity object with verification results persisted on its attributes."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Entity not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/verification/email/_batchVerify": {
+			"post": {
+				"operationId": "batchVerifyEmail",
+				"summary": "POST /verification/email/_batchVerify",
+				"description": "Batch-verifies a list of email addresses without persisting results to any entity. Accepts a JSON array of objects of the shape `{ email }`.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/EmailToVerify"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Per-email verification results.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/VerificationResult"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		},
+		"/{tenantId}/verification/phone/_batchVerify": {
+			"post": {
+				"operationId": "batchVerifyPhone",
+				"summary": "POST /verification/phone/_batchVerify",
+				"description": "Batch-verifies a list of phone numbers without persisting results to any entity. Accepts a JSON array of objects of the shape `{ phone, ctry? }`. `phone` may be E.164 or national format. If `ctry` is provided, the number is treated as national; if omitted, it is treated as international (E.164).",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/PhoneToVerify"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Per-phone verification results.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/VerificationResult"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"VerifyEntityRequest": {
+				"type": "object",
+				"description": "Request body for the entity-scoped attribute verifier.",
+				"properties": {
+					"forceVerify": {
+						"type": "boolean",
+						"description": "When true, re-runs verifiers even if cached results are still within maxVerificationAge. Defaults to false.",
+						"default": false
+					},
+					"clientFilter": {
+						"type": "array",
+						"description": "Optional list of attribute names limiting which verifiers run. If omitted, all applicable verifiers run.",
+						"items": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"EmailToVerify": {
+				"type": "object",
+				"description": "A single email address to verify in a batch request.",
+				"required": [
+					"email"
+				],
+				"properties": {
+					"email": {
+						"type": "string",
+						"format": "email",
+						"description": "Email address to verify."
+					}
+				}
+			},
+			"PhoneToVerify": {
+				"type": "object",
+				"description": "A single phone number to verify in a batch request.",
+				"required": [
+					"phone"
+				],
+				"properties": {
+					"phone": {
+						"type": "string",
+						"description": "Phone number in E.164 (e.g. +14155551234) or national format. When in national format, supply ctry."
+					},
+					"ctry": {
+						"type": "string",
+						"description": "Optional ISO country code (e.g. GB, US). Selects national interpretation of phone."
+					}
+				}
+			},
+			"VerificationResult": {
+				"type": "object",
+				"description": "Result of verifying a single email or phone value. Provider-specific fields may vary.",
+				"properties": {
+					"input": {
+						"type": "string",
+						"description": "The original input value that was verified."
+					},
+					"normalizedValue": {
+						"type": "string",
+						"description": "Provider-normalized form of the input (e.g. E.164 for phones, lowercased for emails)."
+					},
+					"status": {
+						"type": "string",
+						"description": "Provider-specific verification status (e.g. VERIFIED, INVALID, UNVERIFIABLE)."
+					},
+					"reason": {
+						"type": "string",
+						"description": "Human-readable explanation of the status when applicable."
+					}
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />

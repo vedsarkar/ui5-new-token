@@ -1,0 +1,184 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Merge & Unmerge API",
+		"version": "1.0.0",
+		"description": "Manually merge two entities together (_sameAs) and unmerge a part of a previously-merged entity (_unmerge). Core entity-resolution operations."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio/api",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/{tenantId}/entities/{id}/_sameAs": {
+			"post": {
+				"operationId": "manualMerge",
+				"summary": "POST /entities/{id}/_sameAs",
+				"description": "This API can be used to manually merge two entities. One of the entities (the oldest one by default) will be selected as \"winner\" and all attributes, crosswalks, roles, and tags from the second \"loser\" entity will be moved to the \"winner\". After the merge, the resulting entity can be accessed by both URIs through the API. An ENTITIES_MERGED_MANUALLY event (match queue) with URI of \"loser\" in uris field and ENTITY_CHANGED event (CRUD queue) will be generated for the \"winner\". An ENTITY_LOST_MERGE event (CRUD queue) will be generated for \"loser\".",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of the first entity to merge",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "uri",
+						"in": "query",
+						"required": true,
+						"description": "ID or URI of the second entity to merge",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "explicitWinner",
+						"in": "query",
+						"required": false,
+						"description": "URI of the first or the second entity. Can be used to explicitly define which of two entities will be selected as \"winner\"",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Resulting entity object."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/{tenantId}/entities/{id}/_unmerge": {
+			"post": {
+				"operationId": "unmergeContributor",
+				"summary": "POST /entities/{id}/_unmerge",
+				"description": "If an entity is composite (result of merge), every component (contributor) can be unmerged to be a standalone entity again. Let us call the composite entity \"origin\" and the unmerging one \"spawn\". An ENTITIES_SPLITTED event (CRUD queue) with URI of \"spawn\" in uris field and ENTITY_CHANGED event (CRUD queue) will be generated for the \"origin\". An ENTITY_CREATED event (CRUD queue) will be generated for \"spawn\".",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "ID of an entity from which a contributor will be unmerged",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "contributorURI",
+						"in": "query",
+						"required": true,
+						"description": "URI of the contributor (some other entity that has been merged to \"origin\" previously) to unmerge",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Resulting entity object."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"MergeRequest": {
+				"type": "object",
+				"required": ["uri"],
+				"properties": {
+					"uri": {
+						"type": "string",
+						"description": "URI of the entity to merge into the path-supplied entity."
+					}
+				}
+			},
+			"UnmergeRequest": {
+				"type": "object",
+				"required": ["contributor"],
+				"properties": {
+					"contributor": {
+						"type": "string",
+						"description": "Crosswalk/contributor identifier of the part to extract back into a separate entity."
+					}
+				}
+			}
+		}
+	}
+}
