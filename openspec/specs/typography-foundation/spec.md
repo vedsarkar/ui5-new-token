@@ -5,9 +5,7 @@
 The Typography Foundation defines the default font for the entire Reltio Design Platform. It establishes SAP 72 as the system-wide typeface (text and monospace), self-hosted from the `public/fonts/` directory and loaded via `public/fonts.css`. The foundation is consumed implicitly by every component through CSS inheritance from the `:root` element. Components MUST NOT declare `font-family` — the only allowed declarations are `font-family: inherit` on form controls and the canonical 72 Mono stack in monospace contexts.
 
 This capability aligns the platform with the SAP Fiori reference baseline declared in the `design-package-v1` change and removes the previous reliance on third-party CDN fonts (Google Fonts).
-
 ## Requirements
-
 ### Requirement: Default Font Family
 
 The platform SHALL set SAP 72 as the default `font-family` on the `:root` element. All components SHALL inherit this default.
@@ -24,12 +22,12 @@ The platform SHALL set SAP 72 as the default `font-family` on the `:root` elemen
 
 ### Requirement: Self-Hosted Font Assets
 
-The platform SHALL self-host SAP 72 font files in `public/fonts/`. No third-party CDN SHALL be used to load the default font.
+The platform SHALL self-host SAP 72 font files in `public/fonts/`. No third-party CDN SHALL be used to load the default font from a domain outside the platform's own deployment.
 
 #### Scenario: Fonts are served from same origin
 - **WHEN** a Storybook page loads
-- **THEN** all font requests target the same origin as the application
-- **AND** no requests are made to `fonts.googleapis.com`, `fonts.gstatic.com`, or any third-party font CDN
+- **THEN** all font requests target either the same origin as the application or the platform's own deployment domain (`reltio.design`)
+- **AND** no requests are made to `fonts.googleapis.com`, `fonts.gstatic.com`, or any third-party font CDN unrelated to the platform
 
 #### Scenario: Only `.woff2` is shipped
 - **WHEN** inspecting `public/fonts/`
@@ -38,20 +36,20 @@ The platform SHALL self-host SAP 72 font files in `public/fonts/`. No third-part
 
 #### Scenario: Flat directory layout for consumer simplicity
 - **WHEN** inspecting `public/fonts/`
-- **THEN** all 16 font files live directly in that directory with no subdirectories
-- **AND** the file set consists of 12 weights for the `"72"` family (six Latin-subset files such as `72-Regular.woff2` plus six extended `-full` counterparts such as `72-Regular-full.woff2`) and 4 weights for the `"72 Mono"` family (`72Mono-Regular.woff2`, `72Mono-Regular-full.woff2`, `72Mono-Bold.woff2`, `72Mono-Bold-full.woff2`)
+- **THEN** all 20 font files live directly in that directory with no subdirectories
+- **AND** the file set consists of 16 weights for the `"72"` family (eight Latin-subset files: `72-Light.woff2`, `72-Regular.woff2`, `72-Italic.woff2`, `72-Semibold.woff2`, `72-SemiboldDuplex.woff2`, `72-Bold.woff2`, `72-BoldItalic.woff2`, `72-Black.woff2`, plus eight extended `-full` counterparts) and 4 weights for the `"72 Mono"` family (`72Mono-Regular.woff2`, `72Mono-Regular-full.woff2`, `72Mono-Bold.woff2`, `72Mono-Bold-full.woff2`)
 - **AND** file names follow SAP's original convention so consumers can self-host by copying the entire directory in a single step
 
 ### Requirement: Font Face Declarations
 
-The platform SHALL declare `@font-face` rules for SAP 72 (six weights) and 72 Mono (two weights) in `public/fonts.css`. Each weight SHALL be declared twice with different `unicode-range` values to enable per-subset on-demand downloads.
+The platform SHALL declare `@font-face` rules for SAP 72 (eight text weights) and 72 Mono (two weights) in the runtime-injected `<style>` produced by the `ThemeProvider` component as well as in the static `public/fonts.css` fallback file. Each weight SHALL be declared twice with different `unicode-range` values to enable per-subset on-demand downloads.
 
-#### Scenario: Six text weights are available
-- **WHEN** `public/fonts.css` is loaded
-- **THEN** the family `"72"` provides Light (300), Regular (400), Italic (400 italic), Semibold (600), Bold (700), and BoldItalic (700 italic) weights
+#### Scenario: Eight text weights are available
+- **WHEN** any code path that registers SAP 72 `@font-face` rules has been activated (either via `ThemeProvider` mount or via `<link rel="stylesheet" href="/fonts.css">`)
+- **THEN** the family `"72"` provides Light (300), Regular (400), Italic (400 italic), Semibold (600), SemiboldDuplex (600 with width-stable duplex), Bold (700), BoldItalic (700 italic), and Black (900) weights
 
 #### Scenario: Two monospace weights are available
-- **WHEN** `public/fonts.css` is loaded
+- **WHEN** SAP 72 `@font-face` rules are active
 - **THEN** the family `"72 Mono"` provides Regular (400) and Bold (700) weights
 
 #### Scenario: Hybrid `unicode-range` selects the correct subset
@@ -105,13 +103,18 @@ Component CSS files SHALL NOT declare `font-family` except as permitted by the "
 
 ### Requirement: Storybook Preview Loads Typography Foundation
 
-The Storybook preview SHALL load `public/fonts.css` before `public/global.css` so that `@font-face` declarations are registered before the `:root` selector references them.
+The Storybook preview SHALL register SAP 72 `@font-face` rules through the `ThemeProvider` decorator wrapping every story. The `preview-head.html` file SHALL load the platform's own non-design-system stylesheets (currently `/global.css`) only.
 
-#### Scenario: Stylesheet load order
+#### Scenario: ThemeProvider decorator activates fonts
+- **WHEN** Storybook serves any story or docs page
+- **THEN** the page is wrapped in `<ThemeProvider>` (via the global decorator in `.storybook/preview.tsx`)
+- **AND** the provider injects a `<style>` element into `<head>` containing `@font-face` rules for all 10 SAP 72 face variants (eight text + two monospace), each in two unicode subsets (20 declarations total)
+
+#### Scenario: preview-head.html no longer references design-system CSS
 - **WHEN** Storybook serves `preview-head.html`
-- **THEN** `<link rel="stylesheet" href="/variables.css">` appears
-- **AND** `<link rel="stylesheet" href="/fonts.css">` appears next
-- **AND** `<link rel="stylesheet" href="/global.css">` appears last
+- **THEN** the file does NOT contain a `<link rel="stylesheet" href="/variables.css">` declaration
+- **AND** the file does NOT contain a `<link rel="stylesheet" href="/fonts.css">` declaration
+- **AND** the file MAY contain a `<link rel="stylesheet" href="/global.css">` declaration (or equivalent) for non-design-system Storybook setup
 - **AND** no Google Fonts `<link>` tags are present
 
 ### Requirement: Typography Guide
@@ -122,3 +125,4 @@ The platform SHALL provide a Storybook documentation page describing the typogra
 - **WHEN** viewing Storybook
 - **THEN** a `Guides / Typography` page is available
 - **AND** the page documents the six text weights, the two monospace weights, the inheritance rule, and the consumer-side requirement to serve `public/fonts/` and load `public/fonts.css`
+
