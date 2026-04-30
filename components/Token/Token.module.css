@@ -1,0 +1,94 @@
+/* Root token wrapper */
+.root {
+	display: inline-flex;
+	align-items: center;
+	height: 26px;
+	padding: 0 5px;
+	border: var(--sapButton_BorderWidth) solid var(--sapButton_TokenBorderColor);
+	border-radius: 6px;
+	background-color: var(--sapButton_TokenBackground);
+	color: var(--sapTextColor);
+	font-family: var(--sapFontFamily);
+	font-size: var(--sapFontSize);
+	line-height: 1;
+	box-sizing: border-box;
+	white-space: nowrap;
+	cursor: default;
+	user-select: none;
+	transition:
+		background-color 150ms ease,
+		border-color 150ms ease;
+}
+
+/* Hover */
+.root:hover:not(.disabled):not(.readOnly) {
+	background-color: var(--sapButton_Hover_Background);
+}
+
+/* Focus */
+.root:focus-visible {
+	outline: 2px solid var(--sapContent_FocusColor);
+	outline-offset: -1px;
+	border-radius: 8px;
+}
+
+/* Selected */
+.selected {
+	background-color: var(--sapButton_Selected_Background);
+	border-color: var(--sapButton_Selected_BorderColor);
+	color: var(--sapButton_Selected_TextColor);
+	font-family: var(--sapFontSemiboldDuplexFamily);
+}
+
+.selected:hover:not(.disabled) {
+	background-color: var(--sapButton_Selected_Hover_Background);
+}
+
+.selected:focus-visible {
+	outline-color: var(--sapContent_FocusColor);
+}
+
+/* ReadOnly */
+.readOnly {
+	border-color: var(--sapField_ReadOnly_BorderColor);
+	color: var(--sapContent_LabelColor);
+	padding: 4px 5px;
+}
+
+/* Disabled */
+.disabled {
+	opacity: 0.4;
+	pointer-events: none;
+}
+
+/* Text */
+.text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Close icon button */
+.closeButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 12px;
+	height: 12px;
+	padding: 4px 8px;
+	margin: 0;
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: inherit;
+	border-radius: 50%;
+}
+
+.closeButton:hover {
+	opacity: 0.8;
+}
+
+.closeButton:focus-visible {
+	outline: 2px solid var(--sapContent_FocusColor);
+	outline-offset: 1px;
+}

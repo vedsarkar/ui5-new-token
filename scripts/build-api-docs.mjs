@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
-const API_DIR = path.join(ROOT, "api");
+const API_DIR = path.join(ROOT, "openApi");
 const SCHEMAS_DIR = path.join(ROOT, "public", "schemas");
 
 const SCHEMA_PUBLIC_URL_BASE = "/schemas";

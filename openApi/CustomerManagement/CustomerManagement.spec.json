@@ -1,0 +1,822 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Customer Management API",
+		"version": "1.0.0",
+		"description": "Manage Reltio customers, including customer details, MFA configuration, password policies, roles, and role permissions."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/oauth",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/customers": {
+			"get": {
+				"operationId": "getCustomers",
+				"summary": "GET /customers",
+				"description": "Retrieves a list of all customers. Each entry includes tenant assignments, external provider configuration, password policy, MFA settings, and application clients.",
+				"responses": {
+					"200": {
+						"description": "List of customers.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Customer"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					}
+				}
+			}
+		},
+		"/customers/{customerId}": {
+			"get": {
+				"operationId": "getCustomerById",
+				"summary": "GET /{customerId}",
+				"description": "Retrieves the customer details. The user must have the ROLE_CUSTOMER_ADMIN role.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Customer details.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Customer"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Customer not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateCustomer",
+				"summary": "PUT /{customerId}",
+				"description": "Updates the customer details. The user must have the ROLE_CUSTOMER_ADMIN role.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"description": "Customer object with updated details.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Customer"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Customer updated successfully.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Customer"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Customer not found."
+					}
+				}
+			}
+		},
+		"/services/oauth/customers/{customerId}/mfa": {
+			"get": {
+				"operationId": "getMFADetails",
+				"summary": "GET /{customerId}/mfa",
+				"description": "Retrieves the MFA enablement details for the customer. Status values: ENROLL, ENFORCE, DISABLED.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "MFA configuration.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MFAConfig"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Customer not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateMFADetails",
+				"summary": "PUT /{customerId}/mfa",
+				"description": "Updates the MFA enablement details for the customer. Status values: ENROLL, ENFORCE, DISABLED.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"description": "MFA configuration to set.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MFAConfig"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "MFA configuration updated.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MFAConfig"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Customer not found."
+					}
+				}
+			}
+		},
+		"/services/oauth/customers/{customerId}/passwordPolicy": {
+			"get": {
+				"operationId": "getCustomerPasswordPolicy",
+				"summary": "GET /{customerId}/passwordPolicy",
+				"description": "Retrieves the password policy of a customer.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Password policy.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PasswordPolicy"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Customer not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateCustomerPasswordPolicy",
+				"summary": "PUT /{customerId}/passwordPolicy",
+				"description": "Updates the password policy of a customer. Configure password rules, expiration period, inactive period, failed login attempts, and session timeout.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"description": "Password policy details.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PasswordPolicy"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Password policy updated.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PasswordPolicy"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Customer not found."
+					}
+				}
+			}
+		},
+		"/services/oauth/customers/{customerId}/roles": {
+			"get": {
+				"operationId": "getRolesByCustomer",
+				"summary": "GET /{customerId}/roles",
+				"description": "Returns roles that are available for assignment for users of that customer.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "for",
+						"in": "query",
+						"description": "Filter roles by target (e.g. 'clients').",
+						"schema": {
+							"type": "string",
+							"enum": ["clients"]
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "List of role names.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": { "type": "string" }
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Customer not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateCustomerRoles",
+				"summary": "PUT /{customerId}/roles",
+				"description": "Updates the customer-specific roles.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"description": "Array of role names.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": { "type": "string" }
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Customer updated with new roles.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Customer"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Customer not found."
+					}
+				}
+			},
+			"post": {
+				"operationId": "addCustomerRoles",
+				"summary": "POST /{customerId}/roles",
+				"description": "Adds customer-specific roles.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"description": "Array of role names to add.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": { "type": "string" }
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Customer updated with added roles.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Customer"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Customer not found."
+					}
+				}
+			}
+		},
+		"/services/oauth/customers/{customerId}/roles/permissions": {
+			"post": {
+				"operationId": "createCustomRolePermissions",
+				"summary": "POST /{customerId}/roles/permissions",
+				"description": "Adds permissions to a role under the customer. Requires ROLE_CUSTOMER_ADMIN.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"description": "Array of role permissions to create.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/RolesPermissions"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Permissions created.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/RolesPermissions"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Customer not found."
+					}
+				}
+			}
+		},
+		"/services/oauth/customers/{customerId}/roles/permissions/{roleName}": {
+			"get": {
+				"operationId": "getCustomRolePermissionsByRole",
+				"summary": "GET /{customerId}/roles/permissions/{roleName}",
+				"description": "Retrieves all permissions configured for the specified role under the customer. Requires ROLE_CUSTOMER_ADMIN.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "roleName",
+						"in": "path",
+						"description": "Customer role name.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Role permissions.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RolesPermissions"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Role permissions not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateCustomRolePermissions",
+				"summary": "PUT /{customerId}/roles/permissions/{roleName}",
+				"description": "Updates the permissions configured for the specified role under the customer. Requires ROLE_CUSTOMER_ADMIN.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "roleName",
+						"in": "path",
+						"description": "Customer role name.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"description": "Updated role permissions.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RolesPermissions"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Role permissions updated.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RolesPermissions"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Role not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteCustomRolePermissions",
+				"summary": "DELETE /{customerId}/roles/permissions/{roleName}",
+				"description": "Deletes all permissions configured for the specified role under the customer. Only customer-specific roles can be deleted; system roles cannot. Requires ROLE_CUSTOMER_ADMIN.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "roleName",
+						"in": "path",
+						"description": "Customer role name.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Role permissions deleted.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OperationStatus"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					}
+				}
+			}
+		},
+		"/services/oauth/roles/permissions/{roleName}": {
+			"get": {
+				"operationId": "getSystemRolePermissionsByRole",
+				"summary": "GET /roles/permissions/{roleName}",
+				"description": "Retrieves the permissions configured for the specified system role.",
+				"parameters": [
+					{
+						"name": "roleName",
+						"in": "path",
+						"description": "System role name.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "System role permissions.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RolesPermissions"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Role not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"Customer": {
+				"type": "object",
+				"required": ["id", "tenants"],
+				"description": "Customer object containing details, tenants, password policy, MFA configuration, and external provider settings.",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "Unique customer identifier."
+					},
+					"tenants": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "List of tenant IDs belonging to this customer."
+					},
+					"description": {
+						"type": "string",
+						"description": "Human-readable description of the customer."
+					},
+					"passwordPolicy": {
+						"$ref": "#/components/schemas/PasswordPolicy"
+					},
+					"caseSensitiveLoginEnabled": {
+						"type": "boolean",
+						"description": "When true, user logins are validated case-sensitively."
+					},
+					"applicationClients": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "List of application client IDs for this customer."
+					},
+					"customerSpecificRoles": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "Customer-specific role names."
+					},
+					"mfa": {
+						"$ref": "#/components/schemas/MFAConfig"
+					},
+					"externalProviderConfig": {
+						"type": "array",
+						"items": { "type": "object" },
+						"description": "External identity provider configurations (e.g. Okta, Azure AD)."
+					}
+				}
+			},
+			"PasswordPolicy": {
+				"type": "object",
+				"description": "Password policy configuration for a customer.",
+				"properties": {
+					"passwordRules": {
+						"type": "array",
+						"items": { "type": "object" },
+						"description": "Password validation rules (e.g. length, character requirements, history)."
+					},
+					"expirePeriodInDays": {
+						"type": "integer",
+						"description": "Number of days before a password expires."
+					},
+					"inactivePeriodInDays": {
+						"type": "integer",
+						"description": "Number of days of inactivity before the account is disabled."
+					},
+					"numberOfFailedLoginAttempts": {
+						"type": "integer",
+						"description": "Number of failed login attempts before the account is locked."
+					},
+					"userSessionTimeoutSeconds": {
+						"type": "integer",
+						"description": "Idle session timeout in seconds."
+					}
+				}
+			},
+			"MFAConfig": {
+				"type": "object",
+				"required": ["status", "availables"],
+				"description": "Multi-factor authentication configuration.",
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": ["ENROLL", "ENFORCE", "DISABLED"],
+						"description": "MFA enablement status."
+					},
+					"availables": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"enum": ["AUTHENTICATOR", "EMAIL"]
+						},
+						"description": "Available MFA methods."
+					}
+				}
+			},
+			"RolesPermissions": {
+				"type": "object",
+				"required": ["roleName"],
+				"description": "Role with its associated service permissions.",
+				"properties": {
+					"roleName": {
+						"type": "string",
+						"description": "Name of the role."
+					},
+					"isMFAExempted": {
+						"type": "boolean",
+						"description": "Whether this role is exempt from MFA."
+					},
+					"roleScope": {
+						"type": "string",
+						"enum": ["CUSTOMER", "TENANT"],
+						"description": "Scope of the role. CUSTOMER: all customer tenants auto-assigned. TENANT: tenants must be explicitly specified."
+					},
+					"servicePermissions": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ReltioServiceResourcePermissions"
+						},
+						"description": "Service-level permissions for this role."
+					}
+				}
+			},
+			"ReltioServiceResourcePermissions": {
+				"type": "object",
+				"required": ["id"],
+				"description": "Hierarchical service/resource permission node.",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "Service or resource identifier."
+					},
+					"allowedPrivileges": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "Privileges granted (e.g. READ, CREATE, UPDATE, DELETE, EXECUTE)."
+					},
+					"resourcePermissions": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ReltioServiceResourcePermissions"
+						},
+						"description": "Nested child resource permissions."
+					}
+				}
+			},
+			"OperationStatus": {
+				"type": "object",
+				"description": "Generic operation result.",
+				"properties": {
+					"status": {
+						"type": "string",
+						"description": "Result status (e.g. \"success\")."
+					}
+				}
+			}
+		}
+	}
+}

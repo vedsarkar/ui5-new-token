@@ -1,68 +1,41 @@
-import type { ComponentProps } from "react";
 import {
 	buildCurl,
 	Fetcher,
-	type FetcherMethod,
 	type FetcherStatus,
 	STATUS_TEXT,
 } from "../blocks/Fetcher";
-import { fakeFromOpenApi, fakeFromSchema } from "./fakeFromSchema";
+import { fakeFromOpenApi } from "./fakeFromSchema";
 import type { OpenApiSpec } from "./openapi";
 
 type ApiFetcherProps = Omit<ComponentProps<typeof Fetcher>, "url"> & {
-	environment?: string;
-	tenantId?: string;
+	[key: string]: unknown;
 };
 
 type ApiMetaOptions = {
-	/**
-	 * Full endpoint URL template. May contain `{environment}` and `{tenantId}`
-	 * placeholders that get substituted from story args at runtime
-	 * (e.g. `"https://{environment}.reltio.com/reltio/api/{tenantId}/configuration"`).
-	 */
-	url: string;
-	/** @deprecated Use `spec` instead. URL to the JSON Schema for generating fake response data. */
-	schema?: string;
 	/** Imported OpenAPI 3.1 spec object. */
-	spec?: OpenApiSpec;
-	/** Path within the spec used to extract the response schema for fake data (e.g. "/configuration"). */
-	defaultPath?: string;
-	/** Override or add demo responses. Key: status code, value: JSON body. */
+	spec: OpenApiSpec;
+	/** Override or add mock response bodies. Keys are HTTP status codes (e.g. `"200"`, `"404"`). */
 	responses?: Record<string, unknown>;
 };
 
-type ApiStoryOptions = {
-	/** Display name in Storybook (e.g. "GET /configuration") */
-	name: string;
-	/** HTTP method */
-	method: FetcherMethod;
-	/** Markdown description of the endpoint */
-	description: string;
-	/** Request body. Pass a value or Promise to include it in the request. */
-	body?: unknown;
+const extractUrlVariables = (template: string): string[] => {
+	const matches = template.matchAll(/\{(\w+)\}/g);
+	return [...new Set([...matches].map((m) => m[1]))];
 };
 
 const buildEndpointUrl = (
 	template: string,
-	environment?: string,
-	tenantId?: string,
-): string =>
-	template
-		.replaceAll("{environment}", environment || "{environment}")
-		.replaceAll("{tenantId}", tenantId || "{tenantId}");
+	variables: Record<string, string | undefined>,
+): string => {
+	let result = template;
+	for (const [key, value] of Object.entries(variables)) {
+		result = result.replaceAll(`{${key}}`, value || `{${key}}`);
+	}
+	return result;
+};
 
-export const apiMetaConfig = ({
-	url,
-	schema,
-	spec,
-	defaultPath,
-	responses,
-}: ApiMetaOptions) => {
-	const sampleData = spec
-		? fakeFromOpenApi(spec, { path: defaultPath })
-		: schema
-			? fakeFromSchema(schema)
-			: {};
+export const apiMetaConfig = ({ spec, responses }: ApiMetaOptions) => {
+	const sampleData = fakeFromOpenApi(spec);
 
 	const defaultResponses: Record<string, unknown> = {
 		"200": sampleData,
@@ -82,12 +55,28 @@ export const apiMetaConfig = ({
 
 	const responseOptions = Object.keys(responseMapping);
 
-	const ApiFetcher = ({ environment, tenantId, ...rest }: ApiFetcherProps) => (
-		<Fetcher
-			{...rest}
-			url={buildEndpointUrl(rest.request?.url || url, environment, tenantId)}
-		/>
-	);
+	const pickVariables = (args: ApiFetcherProps, effectiveUrl: string) => {
+		const vars: Record<string, string | undefined> = {};
+		for (const key of extractUrlVariables(effectiveUrl)) {
+			vars[key] = args[key] as string | undefined;
+		}
+		return vars;
+	};
+
+	const ApiFetcher = (props: ApiFetcherProps) => {
+		const { request, accessToken, description, response } = props;
+		const effectiveUrl = request?.url || "";
+		const vars = pickVariables(props, effectiveUrl);
+		return (
+			<Fetcher
+				request={request}
+				accessToken={accessToken as string}
+				description={description as string}
+				response={response}
+				url={buildEndpointUrl(effectiveUrl, vars)}
+			/>
+		);
+	};
 
 	const config = {
 		component: ApiFetcher,
@@ -99,21 +88,22 @@ export const apiMetaConfig = ({
 					transform: (_code: string, ctx: { args: ApiFetcherProps }) => {
 						const args = ctx.args;
 						const method = args.request?.method ?? "GET";
-						const endpointUrl = buildEndpointUrl(
-							args.request?.url || url,
-							args.environment,
-							args.tenantId,
-						);
+						const effectiveUrl = args.request?.url || "";
+						const vars = pickVariables(args, effectiveUrl);
+						const endpointUrl = buildEndpointUrl(effectiveUrl, vars);
 						const hasBody =
 							args.request?.body !== undefined && args.request?.body !== null;
-						return buildCurl(method, endpointUrl, hasBody, args.accessToken);
+						return buildCurl(
+							method,
+							endpointUrl,
+							hasBody,
+							args.accessToken as string,
+						);
 					},
 				},
 			},
 		},
 		argTypes: {
-			environment: { control: "text" },
-			tenantId: { control: "text" },
 			accessToken: { control: "text" },
 			request: { control: "object" },
 			description: { table: { disable: true } },

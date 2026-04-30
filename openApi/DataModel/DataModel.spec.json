@@ -1,0 +1,545 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Data Model API",
+		"version": "1.0.0",
+		"description": "Manage the data model configuration for a Reltio tenant. Provides CRUD operations on the full configuration, entity types, relation types, sources, cleanse configuration, and matching tools."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/reltio",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/api/{tenantId}/configuration": {
+			"get": {
+				"operationId": "getConfigurationByTenant",
+				"summary": "GET /configuration",
+				"description": "Gets the configuration for a tenant with inheritance from verticals.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Full tenant configuration.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Configuration"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Tenant not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "setConfigurationForTenant",
+				"summary": "PUT /configuration",
+				"description": "Sets the configuration for a tenant. If a configuration was already defined, it is overridden. Supports If-Unmodified-Since header for optimistic concurrency control.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"description": "Full configuration object.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Configuration"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Configuration saved successfully.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Configuration"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Tenant not found."
+					}
+				}
+			}
+		},
+		"/api/{tenantId}/configuration/_noInheritance": {
+			"get": {
+				"operationId": "getConfigurationByTenantNoInheritance",
+				"summary": "GET /configuration/_noInheritance",
+				"description": "Gets the configuration for a tenant without any inheritance from verticals.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Tenant-specific configuration (L3 only).",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Configuration"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Tenant not found."
+					}
+				}
+			}
+		},
+		"/api/{tenantId}/configuration/{objectType}/{typeName}": {
+			"get": {
+				"operationId": "getObjectTypeByName",
+				"summary": "GET /configuration/{objectType}/{typeName}",
+				"description": "Gets the specific object type based on name configured for a tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "objectType",
+						"in": "path",
+						"description": "Type category (e.g. entityTypes, relationTypes).",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "typeName",
+						"in": "path",
+						"description": "Name of the specific type (e.g. Person, Organization).",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Object type definition.",
+						"content": {
+							"application/json": {
+								"schema": { "type": "object" }
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Type not found."
+					}
+				}
+			}
+		},
+		"/api/{tenantId}/configuration/entityTypes": {
+			"get": {
+				"operationId": "getEntityTypes",
+				"summary": "GET /configuration/entityTypes",
+				"description": "Gets the entity types configured for a tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Array of entity type definitions.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": { "type": "object" }
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Tenant not found."
+					}
+				}
+			}
+		},
+		"/api/{tenantId}/configuration/relationTypes": {
+			"get": {
+				"operationId": "getRelationTypes",
+				"summary": "GET /configuration/relationTypes",
+				"description": "Gets the relation types configured for a tenant (e.g. Employment, Subsidiary, HasAddress).",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Array of relation type definitions.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": { "type": "object" }
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Tenant not found."
+					}
+				}
+			}
+		},
+		"/api/{tenantId}/configuration/sources": {
+			"post": {
+				"operationId": "appendSource",
+				"summary": "POST /configuration/sources",
+				"description": "Appends a source system to an existing configuration.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"description": "Source system definition to append.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Source"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Source appended successfully.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Source"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Tenant not found."
+					}
+				}
+			}
+		},
+		"/tenants/{tenantId}/cleanse": {
+			"put": {
+				"operationId": "setCleanseConfiguration",
+				"summary": "PUT /tenants/{tenantId}/cleanse",
+				"description": "Sets the cleanse configuration for a tenant. If a configuration was already defined, it is overridden.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"description": "Cleanse configuration object.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": { "type": "object" }
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Cleanse configuration saved.",
+						"content": {
+							"application/json": {
+								"schema": { "type": "object" }
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Tenant not found."
+					}
+				}
+			}
+		},
+		"/tools/matching/{tenantId}/matchGroupFactorsSummary": {
+			"get": {
+				"operationId": "getMatchGroupFactorsSummary",
+				"summary": "GET /matchGroupFactorsSummary",
+				"description": "Returns the matching factors summary based on the tenant configuration.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Match group factors summary.",
+						"content": {
+							"application/json": {
+								"schema": { "type": "object" }
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Tenant not found."
+					}
+				}
+			}
+		},
+		"/tools/matching/{tenantId}/tokenizationSchemes/{entityType}": {
+			"get": {
+				"operationId": "getTokenizationSchemes",
+				"summary": "GET /tokenizationSchemes/{entityType}",
+				"description": "Get tokenization schemes explanation of match groups for the specified entity type.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "entityType",
+						"in": "path",
+						"description": "Entity type name (e.g. Person, Organization).",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Tokenization schemes for the entity type.",
+						"content": {
+							"application/json": {
+								"schema": { "type": "object" }
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Tenant or entity type not found."
+					}
+				}
+			}
+		},
+		"/tools/matching/{tenantId}/validateRegexpDictionaries": {
+			"get": {
+				"operationId": "validateRegexpDictionaries",
+				"summary": "GET /validateRegexpDictionaries",
+				"description": "Gets all the RegexpReplaceCleansers dictionaries validation notes for the tenant.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"description": "ID of the tenant.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Validation results for regexp dictionaries.",
+						"content": {
+							"application/json": {
+								"schema": { "type": "object" }
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Tenant not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"Configuration": {
+				"type": "object",
+				"description": "Root configuration object (L3) that defines the complete data model for a Reltio MDM tenant — entity types, relation types, matching logic, survivorship rules, and data governance.",
+				"properties": {
+					"uri": {
+						"type": "string",
+						"description": "Resource identifier (always \"configuration\" for the root)."
+					},
+					"schemaVersion": {
+						"type": "string",
+						"description": "Version of the configuration schema format."
+					},
+					"label": {
+						"type": "string",
+						"description": "Display name of the data model."
+					},
+					"description": {
+						"type": "string",
+						"description": "Human-readable description of the configuration."
+					},
+					"sources": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Source"
+						},
+						"description": "Registry of all source systems that contribute data."
+					},
+					"entityTypes": {
+						"type": "array",
+						"items": { "type": "object" },
+						"description": "Business entity type definitions (e.g. Person, Organization)."
+					},
+					"relationTypes": {
+						"type": "array",
+						"items": { "type": "object" },
+						"description": "Relationship type definitions connecting entities."
+					},
+					"interactionTypes": {
+						"type": "array",
+						"items": { "type": "object" },
+						"description": "Interaction (event) type definitions."
+					},
+					"survivorshipStrategies": {
+						"type": "array",
+						"items": { "type": "object" },
+						"description": "Named strategies for resolving conflicting attribute values."
+					}
+				}
+			},
+			"Source": {
+				"type": "object",
+				"description": "A source system that contributes data to the tenant.",
+				"properties": {
+					"uri": {
+						"type": "string",
+						"description": "Source identifier URI (e.g. \"configuration/sources/CRM\")."
+					},
+					"name": {
+						"type": "string",
+						"description": "Display name of the source."
+					},
+					"description": {
+						"type": "string",
+						"description": "Human-readable description."
+					},
+					"priority": {
+						"type": "integer",
+						"description": "Priority for survivorship (lower number = higher priority)."
+					}
+				}
+			}
+		}
+	}
+}

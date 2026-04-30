@@ -26,7 +26,7 @@ export default defineConfig({
 					// Exclude Storybook template files from tests
 					exclude: [
 						"**/node_modules/**",
-						"api/**",
+						"openApi/**",
 						"test-utils/**",
 						"**/*.json",
 					],
@@ -41,7 +41,7 @@ export default defineConfig({
 				"**/node_modules/**",
 				".storybook/**",
 				"**/*.module.css",
-				"api/**",
+				"openApi/**",
 				"test-utils/**",
 				"**/*.json",
 			],

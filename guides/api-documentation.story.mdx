@@ -19,23 +19,23 @@ API documentation is built from two files:
 	</thead>
 	<tbody>
 		<tr>
-			<td><code>api/&lt;Name&gt;/&lt;name&gt;.spec.json</code></td>
+			<td><code>openApi/&lt;Name&gt;/&lt;Name&gt;.spec.json</code></td>
 			<td>OpenAPI 3.1 specification — the single source of truth for the API contract (endpoints, schemas, servers)</td>
 		</tr>
 		<tr>
-			<td><code>api/&lt;Name&gt;/&lt;Name&gt;.stories.tsx</code></td>
+			<td><code>openApi/&lt;Name&gt;/&lt;Name&gt;.stories.tsx</code></td>
 			<td>Storybook stories — one per endpoint, with interactive curl preview and live request testing</td>
 		</tr>
 	</tbody>
 </table>
 
-A third file — `api/<Name>/<Name>.story.mdx` — is **auto-generated** by the build script. Never edit it by hand.
+A third file — `openApi/<Name>/<Name>.story.mdx` — is **auto-generated** by the build script. Never edit it by hand.
 
 ## Step-by-Step Guide
 
 ### 1. Create the OpenAPI Spec
 
-Place your OpenAPI 3.1 JSON file at `api/<Name>/<name>.spec.json` — colocated with the stories file. The filename must be **lowercase** (e.g. `api/Metadata/metadata.spec.json`).
+Place your OpenAPI 3.1 JSON file at `openApi/<Name>/<Name>.spec.json` — colocated with the stories file. The filename uses **PascalCase** matching the directory name (e.g. `openApi/ClientManagement/ClientManagement.spec.json`).
 
 Here is the minimal structure:
 
@@ -105,12 +105,13 @@ Here is the minimal structure:
 
 ### 2. Create the Stories File
 
-Create `api/<Name>/<Name>.stories.tsx`. Each exported story represents one API endpoint.
+Create `openApi/<Name>/<Name>.stories.tsx`. Each exported story represents one API endpoint.
 
 ```tsx
 import preview from "@/.storybook/preview";
 import { apiMetaConfig } from "@/.storybook/utils/apiMetaConfig";
-import spec from "./<name>.spec.json";
+import { urlControls } from "@/.storybook/utils/urlControls";
+import spec from "./<Name>.spec.json";
 
 // 1. Configure the API
 const api = apiMetaConfig({
@@ -127,10 +128,12 @@ const meta = preview.meta({
 });
 
 // 3. Export one story per endpoint
+// urlControls() auto-detects {placeholders} in the URL and creates controls
 export const GetMyResource = meta.story({
   name: "GET /my-resource",
-  description: "Returns the resource.",
+  ...urlControls("https://{environment}.reltio.com/reltio/api/{tenantId}/my-resource"),
   args: {
+    description: "Returns the resource.",
     request: {
       method: "GET",
     },
@@ -139,8 +142,9 @@ export const GetMyResource = meta.story({
 
 export const CreateMyResource = meta.story({
   name: "POST /my-resource",
-  description: "Creates a new resource.",
+  ...urlControls("https://{environment}.reltio.com/reltio/api/{tenantId}/my-resource"),
   args: {
+    description: "Creates a new resource.",
     request: {
       method: "POST",
       body: {
@@ -159,7 +163,7 @@ Run the build script to generate the MDX documentation file:
 npm run build-api-docs
 ```
 
-This creates `api/<Name>/<Name>.story.mdx` which ties together:
+This creates `openApi/<Name>/<Name>.story.mdx` which ties together:
 - The `<OpenApi>` component (renders API info, servers, and data models from the spec)
 - The `<Stories>` block (renders interactive endpoint testing from your stories)
 
@@ -193,12 +197,12 @@ The `apiMetaConfig()` function connects your stories to the OpenAPI spec.
 		<tr>
 			<td><code>url</code></td>
 			<td><code>string</code></td>
-			<td>Full endpoint URL template. Use <code>{`{environment}`}</code> and <code>{`{tenantId}`}</code> as placeholders — they become editable controls in Storybook.</td>
+			<td>Full endpoint URL template. Use <code>{`{placeholder}`}</code> syntax for variables — they are auto-detected by <code>urlControls()</code> and become editable controls in Storybook.</td>
 		</tr>
 		<tr>
 			<td><code>spec</code></td>
 			<td><code>OpenApiSpec</code></td>
-			<td>The imported OpenAPI spec object (e.g. <code>import spec from "./metadata.spec.json"</code>).</td>
+			<td>The imported OpenAPI spec object (e.g. <code>import spec from "./ClientManagement.spec.json"</code>).</td>
 		</tr>
 		<tr>
 			<td><code>defaultPath</code></td>
@@ -212,6 +216,27 @@ The `apiMetaConfig()` function connects your stories to the OpenAPI spec.
 		</tr>
 	</tbody>
 </table>
+
+## `urlControls` Reference
+
+The `urlControls()` function auto-detects `{placeholder}` variables in a URL and returns per-story `argTypes` so each story shows only the controls it needs.
+
+```tsx
+import { urlControls } from "@/.storybook/utils/urlControls";
+
+// Returns { argTypes: { environment: { control: "text" }, tenantId: { control: "text" } } }
+urlControls("https://{environment}.reltio.com/reltio/api/{tenantId}/resource")
+```
+
+Spread it into `meta.story()` before `args`:
+
+```tsx
+export const MyStory = meta.story({
+  name: "GET /resource",
+  ...urlControls("https://{environment}.reltio.com/reltio/api/{tenantId}/resource"),
+  args: { ... },
+});
+```
 
 ## Story Options
 
@@ -254,7 +279,7 @@ Each `meta.story()` call defines one interactive endpoint.
 Every story has a **Send** button that sends a real HTTP request to the upstream API:
 
 1. Open a story (e.g. "GET /configuration")
-2. Fill in `environment` and `tenantId` in the Controls panel
+2. Fill in the URL variable controls (e.g. `environment`, `tenantId`, `customerId`) in the Controls panel
 3. Paste your access token
 4. Click **Send**
 
@@ -273,23 +298,23 @@ The response shows the live status code and JSON body with a "Live" badge. Witho
 	<tbody>
 		<tr>
 			<td>OpenAPI spec</td>
-			<td><code>api/&lt;Name&gt;/&lt;name&gt;.spec.json</code></td>
-			<td><code>api/Metadata/metadata.spec.json</code></td>
+			<td><code>openApi/&lt;Name&gt;/&lt;Name&gt;.spec.json</code></td>
+			<td><code>openApi/ClientManagement/ClientManagement.spec.json</code></td>
 		</tr>
 		<tr>
 			<td>Stories</td>
-			<td><code>api/&lt;Name&gt;/&lt;Name&gt;.stories.tsx</code></td>
-			<td><code>api/Metadata/Metadata.stories.tsx</code></td>
+			<td><code>openApi/&lt;Name&gt;/&lt;Name&gt;.stories.tsx</code></td>
+			<td><code>openApi/ClientManagement/ClientManagement.stories.tsx</code></td>
 		</tr>
 		<tr>
 			<td>Docs (auto-generated)</td>
-			<td><code>api/&lt;Name&gt;/&lt;Name&gt;.story.mdx</code></td>
-			<td><code>api/Metadata/Metadata.story.mdx</code></td>
+			<td><code>openApi/&lt;Name&gt;/&lt;Name&gt;.story.mdx</code></td>
+			<td><code>openApi/ClientManagement/ClientManagement.story.mdx</code></td>
 		</tr>
 	</tbody>
 </table>
 
-All three files live in the same directory. The build script looks for `<name>.spec.json` (lowercase) next to `<Name>.stories.tsx`.
+All three files live in the same directory. The build script looks for `<Name>.spec.json` next to `<Name>.stories.tsx`.
 
 ## Checklist
 
@@ -297,7 +322,7 @@ Before submitting your API documentation:
 
 - OpenAPI spec is valid 3.1 JSON with `info`, `paths`, and `components.schemas`
 - Stories file has one exported story per endpoint
-- Each story has `name`, `description`, and `args.request.method`
+- Each story has `name`, `...urlControls(url)`, and `args.request.method`
 - POST/PUT/PATCH stories include `args.request.body`
 - `npm run build-api-docs` generated the `.story.mdx` file
 - `npm run dev` shows the docs page with correct rendering

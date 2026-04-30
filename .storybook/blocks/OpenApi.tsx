@@ -1,4 +1,3 @@
-import { Markdown } from "@/components/Markdown";
 import { classNames } from "@/utils/classNames";
 import type { OpenApiSpec, SchemaNode } from "../utils/openapi";
 import { resolveSchema } from "../utils/openapi";
@@ -29,94 +28,96 @@ function inferType(node: SchemaNode): string {
 	return "unknown";
 }
 
-function formatValue(value: unknown): string {
-	if (typeof value === "string") return value;
-	if (value === null) return "null";
-	try {
-		return JSON.stringify(value);
-	} catch {
-		return String(value);
-	}
-}
-
 function hasStructure(node: SchemaNode): boolean {
 	return Boolean(node.properties || node.items || node.enum);
 }
 
-function renderField(
-	fieldPath: string,
-	node: SchemaNode,
-	required: boolean,
-): string {
-	const lines = [`### \`${fieldPath}\``];
-	const meta: string[] = [];
-	meta.push(
-		`- **Type:** <span class="${styles.typeValue}">${formatType(node)}</span>`,
-	);
-	if (required) meta.push("- **Required**");
-	if (node.default !== undefined)
-		meta.push(`- **Default:** ${formatValue(node.default)}`);
-	if (node.enum && node.enum.length > 0)
-		meta.push(`- **Enum:** ${node.enum.map((v) => formatValue(v)).join(", ")}`);
-	if (node.format) meta.push(`- **Format:** ${node.format}`);
-	if (node.pattern) meta.push(`- **Pattern:** \`${node.pattern}\``);
-	const range: string[] = [];
-	if (node.minimum !== undefined) range.push(`min ${node.minimum}`);
-	if (node.maximum !== undefined) range.push(`max ${node.maximum}`);
-	if (node.minLength !== undefined) range.push(`minLength ${node.minLength}`);
-	if (node.maxLength !== undefined) range.push(`maxLength ${node.maxLength}`);
-	if (range.length > 0) meta.push(`- **Range:** ${range.join(", ")}`);
-	if (node.readOnly) meta.push("- **Read-only**");
-
-	if (meta.length > 0) {
-		lines.push("");
-		lines.push(...meta);
-	}
-	if (node.description) {
-		lines.push("");
-		lines.push(node.description);
-	}
-	return lines.join("\n");
-}
-
-function walk(
+function collectFields(
 	node: SchemaNode,
 	pathPrefix: string,
-	sections: string[],
 	depth: number,
-): void {
-	if (depth > MAX_DEPTH) return;
+): { path: string; node: SchemaNode; required: boolean }[] {
+	if (depth > MAX_DEPTH) return [];
+	const fields: { path: string; node: SchemaNode; required: boolean }[] = [];
+
 	if (node.properties) {
-		const required = new Set(node.required ?? []);
+		const requiredSet = new Set(node.required ?? []);
 		for (const [key, child] of Object.entries(node.properties)) {
 			const childPath = pathPrefix ? `${pathPrefix}.${key}` : key;
-			sections.push(renderField(childPath, child, required.has(key)));
+			fields.push({
+				path: childPath,
+				node: child,
+				required: requiredSet.has(key),
+			});
 			if (child.properties) {
-				walk(child, childPath, sections, depth + 1);
+				fields.push(...collectFields(child, childPath, depth + 1));
 			} else if (child.items && hasStructure(child.items)) {
-				walk(child.items, `${childPath}[]`, sections, depth + 1);
+				fields.push(...collectFields(child.items, `${childPath}[]`, depth + 1));
 			}
 		}
 	} else if (node.items && hasStructure(node.items)) {
-		walk(node.items, `${pathPrefix}[]`, sections, depth + 1);
+		fields.push(...collectFields(node.items, `${pathPrefix}[]`, depth + 1));
 	}
+
+	return fields;
 }
 
-function schemaToMarkdown(name: string, schema: SchemaNode): string {
-	const sections: string[] = [];
-	sections.push(`## ${schema.title ?? name}`);
-	if (schema.description) sections.push(schema.description);
-	walk(schema, "", sections, 0);
-	return sections.join("\n\n");
-}
+const SchemaBlock = ({
+	name,
+	schema,
+	spec,
+}: {
+	name: string;
+	schema: SchemaNode;
+	spec: OpenApiSpec;
+}) => {
+	const resolved = resolveSchema(spec, schema);
+	const fields = collectFields(resolved, "", 0);
+
+	return (
+		<div>
+			<h2>{resolved.title ?? name}</h2>
+			{resolved.description && <p>{resolved.description}</p>}
+			{fields.length > 0 && (
+				<table className={classNames(styles.fieldsTable)}>
+					<thead>
+						<tr>
+							<th>Property</th>
+							<th>Type</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						{fields.map((f) => (
+							<tr key={f.path}>
+								<td>
+									<code>{f.path}</code>
+									{f.required && (
+										<span className={classNames(styles.requiredBadge)}>
+											required
+										</span>
+									)}
+								</td>
+								<td>
+									<code>{formatType(f.node)}</code>
+								</td>
+								<td>{f.node.description}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			)}
+		</div>
+	);
+};
 
 const InfoSection = ({ spec }: { spec: OpenApiSpec }) => (
 	<div className={classNames(styles.info)}>
 		<h1 className={classNames(styles.title)}>{spec.info.title}</h1>
 		{spec.info.description && (
-			<div className={classNames(styles.infoDescription)}>
-				<Markdown>{spec.info.description}</Markdown>
-			</div>
+			<p className={classNames(styles.infoDescription)}>
+				{spec.info.description}
+			</p>
 		)}
 	</div>
 );
@@ -125,7 +126,7 @@ const ServersSection = ({ spec }: { spec: OpenApiSpec }) => {
 	if (!spec.servers?.length) return null;
 	return (
 		<section className={classNames(styles.section)}>
-			<h2 className={classNames(styles.sectionTitle)}>Servers</h2>
+			<h3 className={classNames(styles.sectionTitle)}>Servers</h3>
 			{spec.servers.map((server) => (
 				<div key={server.url} className={classNames(styles.server)}>
 					<code className={classNames(styles.serverUrl)}>{server.url}</code>
@@ -164,12 +165,10 @@ const SchemasSection = ({ spec }: { spec: OpenApiSpec }) => {
 	if (!schemas || Object.keys(schemas).length === 0) return null;
 	return (
 		<section className={classNames(styles.section)}>
-			<h2 className={classNames(styles.sectionTitle)}>Data Models</h2>
-			{Object.entries(schemas).map(([name, schema]) => {
-				const resolved = resolveSchema(spec, schema);
-				const markdown = schemaToMarkdown(name, resolved);
-				return <Markdown key={name}>{markdown}</Markdown>;
-			})}
+			<h3 className={classNames(styles.sectionTitle)}>Data Models</h3>
+			{Object.entries(schemas).map(([name, schema]) => (
+				<SchemaBlock key={name} name={name} schema={schema} spec={spec} />
+			))}
 		</section>
 	);
 };

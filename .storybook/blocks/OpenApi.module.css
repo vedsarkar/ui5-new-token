@@ -20,6 +20,7 @@
 }
 
 .infoDescription {
+	margin: 0;
 	color: var(--sapContent_LabelColor);
 	line-height: 1.6;
 }
@@ -83,8 +84,65 @@
 	}
 }
 
+.schema {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.schemaTitle {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 600;
+	color: var(--sapTitleColor);
+}
+
+.schemaDescription {
+	margin: 0;
+	color: var(--sapContent_LabelColor);
+	line-height: 1.6;
+}
+
+.fieldsTable {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+
+	& th {
+		text-align: left;
+		font-weight: 600;
+		color: var(--sapContent_LabelColor);
+		padding: 6px 12px;
+		border-bottom: 1px solid var(--sapGroup_ContentBorderColor);
+	}
+
+	& td {
+		padding: 6px 12px;
+		border-bottom: 1px solid var(--sapGroup_ContentBorderColor);
+		vertical-align: top;
+		line-height: 1.5;
+	}
+
+	& code {
+		font-family: "72 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+		font-size: 12px;
+		padding: 1px 5px;
+		background: var(--sapNeutralBackground);
+		border-radius: 3px;
+	}
+}
+
+.requiredBadge {
+	display: inline-block;
+	margin-left: 6px;
+	font-size: 10px;
+	font-weight: 600;
+	color: var(--sapNegativeTextColor);
+	vertical-align: middle;
+}
+
 .typeValue {
 	font-family: "72 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-	font-size: 13px;
+	font-size: 12px;
 	color: var(--sapContent_LabelColor);
 }

@@ -1,0 +1,470 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Client Management API",
+		"version": "1.0.0",
+		"description": "Manage OAuth application clients associated with a customer. Provides CRUD operations on clients, multitoken status inspection, and token revocation."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com/oauth",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/services/oauth/customers/{customerId}/clients": {
+			"get": {
+				"operationId": "getCustomerClients",
+				"summary": "GET /clients",
+				"description": "Displays a list of details of application clients associated with a specific customer.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "transform",
+						"in": "query",
+						"schema": { "type": "boolean", "default": true }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "List of client details.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/ClientDetailsWrapper"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Customer not found."
+					}
+				}
+			},
+			"post": {
+				"operationId": "addCustomerClients",
+				"summary": "POST /clients",
+				"description": "Creates clients with the specific roles configured for the customer.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "Valid Customer ID.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"requestBody": {
+					"description": "Array of client details to create.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/ClientDetailsWrapper"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Clients created successfully.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/ClientDetailsWrapper"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Customer not found."
+					}
+				}
+			}
+		},
+		"/services/oauth/customers/{customerId}/clients/{clientId}": {
+			"get": {
+				"operationId": "getCustomerClient",
+				"summary": "GET /clients/{clientId}",
+				"description": "Displays the details of an application client for a specific customer, based on the Client ID and Customer ID.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "clientId",
+						"in": "path",
+						"description": "ID of the client.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Client details.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientDetailsWrapper"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Client not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateCustomerClient",
+				"summary": "PUT /clients/{clientId}",
+				"description": "Updates the client associated with the customer with the JSON object sent in the request body.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "Valid Customer ID.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "clientId",
+						"in": "path",
+						"description": "Unique ID of the client.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "skipTokenRevocation",
+						"in": "query",
+						"schema": { "type": "boolean" }
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ClientDetailsWrapper"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Client updated successfully.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientDetailsWrapper"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Client not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteCustomerClient",
+				"summary": "DELETE /clients/{clientId}",
+				"description": "Deletes the client associated with the specified customer.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "Valid Customer ID.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "clientId",
+						"in": "path",
+						"description": "Unique ID of the client to be deleted.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Client deleted successfully.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OperationStatus"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Client not found."
+					}
+				}
+			}
+		},
+		"/services/oauth/customers/{customerId}/clients/{clientId}/multitokens": {
+			"get": {
+				"operationId": "getMultitokenStatsForCustomerClient",
+				"summary": "GET /clients/{clientId}/multitokens",
+				"description": "Returns the status of multitokens usage for the specified client and customer.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "clientId",
+						"in": "path",
+						"description": "ID of the client.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Multitoken stats.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientMultitokenStats"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Client not found."
+					}
+				}
+			}
+		},
+		"/services/oauth/customers/{customerId}/clients/{clientId}/revoketokens": {
+			"put": {
+				"operationId": "revokeTokensForCustomerClient",
+				"summary": "PUT /clients/{clientId}/revoketokens",
+				"description": "Revokes all active client credentials tokens for the specified client and customer.",
+				"parameters": [
+					{
+						"name": "customerId",
+						"in": "path",
+						"description": "ID of the customer.",
+						"required": true,
+						"schema": { "type": "string" }
+					},
+					{
+						"name": "clientId",
+						"in": "path",
+						"description": "ID of the client.",
+						"required": true,
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Tokens revoked successfully.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OperationStatus"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized — missing or invalid access token."
+					},
+					"403": {
+						"description": "Forbidden — insufficient permissions."
+					},
+					"404": {
+						"description": "Client not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"ClientDetailsWrapper": {
+				"type": "object",
+				"description": "Wrapper object containing client details and an optional flag to expose the client secret.",
+				"properties": {
+					"clientId": {
+						"type": "string",
+						"description": "Unique client identifier."
+					},
+					"clientDescription": {
+						"type": "string",
+						"description": "Human-readable description of the client."
+					},
+					"clientName": {
+						"type": "string",
+						"description": "Display name of the client."
+					},
+					"clientEmail": {
+						"type": "string",
+						"description": "Contact email for the client."
+					},
+					"clientSecret": {
+						"type": "string",
+						"description": "Client secret (only returned when exposeSecret is true)."
+					},
+					"consumer": {
+						"type": "string",
+						"description": "Consumer identifier associated with the client."
+					},
+					"authorizedGrantTypes": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "OAuth grant types the client is authorized to use (e.g. client_credentials)."
+					},
+					"redirectUri": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "Registered redirect URIs for the client."
+					},
+					"clientAuthenticationMethods": {
+						"type": "array",
+						"items": { "type": "string" },
+						"description": "Authentication methods the client supports (e.g. client_secret_post, client_secret_basic)."
+					},
+					"accessTokenValidity": {
+						"type": "integer",
+						"description": "Access token validity in seconds."
+					},
+					"refreshTokenValidity": {
+						"type": "integer",
+						"description": "Refresh token validity in seconds."
+					},
+					"clientPermissions": {
+						"$ref": "#/components/schemas/ReltioUserPermissions"
+					}
+				}
+			},
+			"ReltioUserPermissions": {
+				"type": "object",
+				"description": "Roles and permissions assigned to a client or user.",
+				"properties": {
+					"roles": {
+						"type": "object",
+						"description": "Map of role names to arrays of tenant IDs the role is granted for.",
+						"additionalProperties": {
+							"type": "array",
+							"items": { "type": "string" }
+						}
+					},
+					"permissions": {
+						"type": "object",
+						"description": "Fine-grained permissions by service and resource.",
+						"additionalProperties": {
+							"type": "object",
+							"additionalProperties": {
+								"type": "array",
+								"items": { "type": "string" }
+							}
+						}
+					},
+					"permissionsByService": {
+						"type": "object",
+						"description": "Permissions grouped by service name.",
+						"additionalProperties": {
+							"type": "object",
+							"additionalProperties": {
+								"type": "array",
+								"items": { "type": "string" }
+							}
+						}
+					}
+				}
+			},
+			"ClientMultitokenStats": {
+				"type": "object",
+				"description": "Multitoken usage status for a client.",
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": ["disabled", "enabled"],
+						"description": "Whether multitokens are enabled or disabled for this client."
+					},
+					"tokensCount": {
+						"type": "integer",
+						"description": "Number of active tokens."
+					}
+				}
+			},
+			"OperationStatus": {
+				"type": "object",
+				"description": "Generic operation result.",
+				"properties": {
+					"status": {
+						"type": "string",
+						"description": "Result status (e.g. \"success\")."
+					}
+				}
+			}
+		}
+	}
+}
