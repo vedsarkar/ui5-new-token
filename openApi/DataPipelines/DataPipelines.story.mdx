@@ -1,0 +1,2229 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Source: DataPipelines.spec.json
+  Run: npm run build-api-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { OpenApi } from "@/.storybook/blocks/OpenApi";
+import spec from "./DataPipelines.spec.json";
+import * as DataPipelinesStories from "./DataPipelines.stories";
+
+<Meta of={DataPipelinesStories} />
+
+<OpenApi spec={spec} />
+
+{/* __RAW_OPENAPI_SPEC__
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Data Pipelines API",
+		"version": "1.0.0",
+		"description": "Reltio Data Pipelines Hub (DPH) — adapter operations (actions, status, validation, scripts, auth info), workspace management (Lakehouse, Fabric, shortcuts, share links, connection strings), DLT pipeline observability (start/stop/events), monitoring (event status, failed events, aggregated counts), secrets CRUD, reindex jobs, tenant queue status, and writeback config. Combines, in one place, the 32 endpoints split across 12 separate `DPH *` Swagger tags in the developer portal's Manage module."
+	},
+	"servers": [
+		{
+			"url": "https://{environment}.reltio.com",
+			"variables": {
+				"environment": {
+					"default": "{environment}",
+					"description": "Reltio environment name (e.g. dev, qa, prod)"
+				}
+			}
+		}
+	],
+	"paths": {
+		"/api/tenants/{tenantId}/adapters/{adapterName}/actions": {
+			"get": {
+				"operationId": "getAction",
+				"summary": "GET /api/tenants/{tenantId}/adapters/{adapterName}/actions",
+				"description": "It calls the corresponding Adapter based on the parameters",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant for which action to be retrieved.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Name of the Adapter for which action to be retrieved.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "actionType",
+						"in": "query",
+						"required": false,
+						"description": "Type of action to be retrieved.",
+						"schema": {
+							"type": "string",
+							"enum": [
+								"recreate_objects",
+								"compact_tables",
+								"create-assume-role",
+								"update-assume-role",
+								"delete-assume-role"
+							]
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/AdapterAction"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/adapters/{adapterName}/actions/{actionType}": {
+			"post": {
+				"operationId": "performAction",
+				"summary": "POST /api/tenants/{tenantId}/adapters/{adapterName}/actions/{actionType}",
+				"description": "It calls the corresponding Adapter based on the parameters",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant for which action to be performed.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Name of the Adapter for which action to be performed.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "actionType",
+						"in": "path",
+						"required": true,
+						"description": "Type of action to be performed.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/adapters/{adapterName}/connectionString": {
+			"get": {
+				"operationId": "getConnectionString",
+				"summary": "GET /api/tenants/{tenantId}/adapters/{adapterName}/connectionString",
+				"description": "Get Connection String",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which the connection string needs to be retrieved.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/WorkspaceConnectionString"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"post": {
+				"operationId": "createConnectionString",
+				"summary": "POST /api/tenants/{tenantId}/adapters/{adapterName}/connectionString",
+				"description": "Create Connection String",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which the connection string needs to be created.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which the connection string needs to be created.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/WorkspaceConnectionString"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/adapters/{adapterName}/dltPipeline": {
+			"post": {
+				"operationId": "manageDLTPipeline",
+				"summary": "POST /api/tenants/{tenantId}/adapters/{adapterName}/dltPipeline",
+				"description": "Manage DLT Pipeline",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which the DLT pipeline operation should be performed.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which the DLT pipeline operation should be performed.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "actionName",
+						"in": "query",
+						"required": true,
+						"description": "Action to perform on the DLT pipeline (CREATE, DELETE, START, STOP).",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/adapters/{adapterName}/fabricResources/region/{region}": {
+			"post": {
+				"operationId": "createWorkspaceAndLakehouse",
+				"summary": "POST /api/tenants/{tenantId}/adapters/{adapterName}/fabricResources/region/{region}",
+				"description": "Create Workspace and Lakehouse",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which fabric resources need to be created.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which fabric resources need to be created.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "region",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/adapters/{adapterName}/fabricSchemaEvolution": {
+			"post": {
+				"operationId": "processFabricSchemaEvolution",
+				"summary": "POST /api/tenants/{tenantId}/adapters/{adapterName}/fabricSchemaEvolution",
+				"description": "Process Fabric Schema Evolution",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which fabric schema evolution needs to be processed.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which fabric schema evolution needs to be processed.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/adapters/{adapterName}/lakehouse": {
+			"get": {
+				"operationId": "getLakehouse",
+				"summary": "GET /api/tenants/{tenantId}/adapters/{adapterName}/lakehouse",
+				"description": "Get Lakehouse",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which the lakehouse needs to be fetched.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which the lakehouse needs to be fetched.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Lakehouse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/adapters/{adapterName}/scripts": {
+			"post": {
+				"operationId": "fetchScript",
+				"summary": "POST /api/tenants/{tenantId}/adapters/{adapterName}/scripts",
+				"description": "This API allows you to get the script content for the Adapters",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant for which script to be retrieved.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Name of the Adapter for which script to be retrieved.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "name",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/adapters/{adapterName}/secrets": {
+			"get": {
+				"operationId": "fetchSecret",
+				"summary": "GET /api/tenants/{tenantId}/adapters/{adapterName}/secrets",
+				"description": "Fetch Secrets",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which Secrets need to be fetched.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which Secrets need to be fetched.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Secret"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"put": {
+				"operationId": "storeSecret",
+				"summary": "PUT /api/tenants/{tenantId}/adapters/{adapterName}/secrets",
+				"description": "Store Secrets",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which Secrets need to be stored.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which Secrets need to be stored.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Secret"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"post": {
+				"operationId": "createSecret",
+				"summary": "POST /api/tenants/{tenantId}/adapters/{adapterName}/secrets",
+				"description": "Create Secrets",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which Secrets need to be stored.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which Secrets need to be stored.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Secret"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteSecret",
+				"summary": "DELETE /api/tenants/{tenantId}/adapters/{adapterName}/secrets",
+				"description": "Delete Secrets",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which Secrets need to be deleted.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which Secrets need to be deleted.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Secret"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/adapters/{adapterName}/shareLink": {
+			"get": {
+				"operationId": "shareDataWithExternalUsers",
+				"summary": "GET /api/tenants/{tenantId}/adapters/{adapterName}/shareLink",
+				"description": "Share Data with External Users",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which data needs to be shared.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which data needs to be shared.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ShareLink"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			},
+			"post": {
+				"operationId": "shareDataWithExternalUsers",
+				"summary": "POST /api/tenants/{tenantId}/adapters/{adapterName}/shareLink",
+				"description": "Share Data with External Users",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which data needs to be shared.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which data needs to be shared.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ShareLink"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/adapters/{adapterName}/shortcuts": {
+			"post": {
+				"operationId": "createShortcuts",
+				"summary": "POST /api/tenants/{tenantId}/adapters/{adapterName}/shortcuts",
+				"description": "Create Shortcuts",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which the shortcuts need to be created.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which the shortcuts need to be created.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/adapters/{adapterName}/validate": {
+			"post": {
+				"operationId": "validateAdapter",
+				"summary": "POST /api/tenants/{tenantId}/adapters/{adapterName}/validate",
+				"description": "Validate if Adapter configured correctly",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which adapter needs to be validated.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which adapter needs to be validated.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/adapters/{adapterName}/workspace": {
+			"get": {
+				"operationId": "getWorkspace",
+				"summary": "GET /api/tenants/{tenantId}/adapters/{adapterName}/workspace",
+				"description": "Get Workspace",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which the workspace needs to be fetched.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "path",
+						"required": true,
+						"description": "Adapter Name for which the workspace needs to be fetched.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Workspace"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/authInfo": {
+			"get": {
+				"operationId": "fetchAuthInfo",
+				"summary": "GET /api/tenants/{tenantId}/authInfo",
+				"description": "This API allows you to get the auth info for the Adapters",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant for which auth info to be retrieved.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "storageCloudProvider",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterType",
+						"in": "query",
+						"required": true,
+						"description": "Type of the Adapter for which auth info to be retrieved.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/monitoring/_entityMonitoring": {
+			"get": {
+				"operationId": "getDataPipelineEntityEventsMonitoringReport",
+				"summary": "GET /api/tenants/{tenantId}/monitoring/_entityMonitoring",
+				"description": "get Datapipeline entity events report",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of Tenant to get get Monitoring Report",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "entityId",
+						"in": "query",
+						"required": true,
+						"description": "Identifier of entity",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "from",
+						"in": "query",
+						"required": false,
+						"description": "Start timestamp to select events - default value 1 day before to 1",
+						"schema": {
+							"minimum": 0,
+							"type": "integer",
+							"format": "int64"
+						}
+					},
+					{
+						"name": "to",
+						"in": "query",
+						"required": false,
+						"description": "End timestamp to select events - default value current time",
+						"schema": {
+							"minimum": 0,
+							"type": "integer",
+							"format": "int64"
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "Max results to return- default value 10",
+						"schema": {
+							"minimum": 0,
+							"type": "integer",
+							"format": "int32",
+							"default": 10
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/MonitoringEvent"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/monitoring/_eventFailed": {
+			"get": {
+				"operationId": "getFailedEvents",
+				"summary": "GET /api/tenants/{tenantId}/monitoring/_eventFailed",
+				"description": "Returns events that reached DATAPIPELINE_PROCESSED state but were skipped due to processing failures. Response includes the count of failed events and a list of events with their event_id, event_type, and error_message (skippedProcessingReason). The 'from' and 'to' timestamps MUST fall within the same calendar day in UTC timezone. Requests spanning multiple days will be rejected with a 400 Bad Request error. Supports page-based pagination with default size of 100 and maximum size of 1000.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of Tenant to get failed events",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "from",
+						"in": "query",
+						"required": false,
+						"description": "Start timestamp in milliseconds (UTC). Must be within the same day as 'to' parameter. Default: start of today (UTC 00:00:00)",
+						"schema": {
+							"minimum": 0,
+							"type": "integer",
+							"format": "int64"
+						}
+					},
+					{
+						"name": "to",
+						"in": "query",
+						"required": false,
+						"description": "End timestamp in milliseconds (UTC). Must be within the same day as 'from' parameter. Default: current time",
+						"schema": {
+							"minimum": 0,
+							"type": "integer",
+							"format": "int64"
+						}
+					},
+					{
+						"name": "objectUri",
+						"in": "query",
+						"required": false,
+						"description": "Optional object URI to filter events for a specific entity or relationship",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "page",
+						"in": "query",
+						"required": false,
+						"description": "Page number to retrieve (default: 1, first page)",
+						"schema": {
+							"minimum": 1,
+							"type": "integer",
+							"format": "int32",
+							"default": 1
+						}
+					},
+					{
+						"name": "size",
+						"in": "query",
+						"required": false,
+						"description": "Number of results per page (default: 100, max: 1000)",
+						"schema": {
+							"maximum": 1000,
+							"minimum": 1,
+							"type": "integer",
+							"format": "int32",
+							"default": 100
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/MonitoringEvent"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/monitoring/_eventMonitoring": {
+			"get": {
+				"operationId": "getDataPipelineEventMonitoringReport",
+				"summary": "GET /api/tenants/{tenantId}/monitoring/_eventMonitoring",
+				"description": "get Datapipeline event monitoring report",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of Tenant to get get Monitoring Report",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "from",
+						"in": "query",
+						"required": false,
+						"description": "Start timestamp to select events - default value last 4 hrs",
+						"schema": {
+							"minimum": 0,
+							"type": "integer",
+							"format": "int64"
+						}
+					},
+					{
+						"name": "to",
+						"in": "query",
+						"required": false,
+						"description": "End timestamp to select events - default value current time",
+						"schema": {
+							"minimum": 0,
+							"type": "integer",
+							"format": "int64"
+						}
+					},
+					{
+						"name": "detailed",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "max",
+						"in": "query",
+						"required": false,
+						"description": "Max results to return- default value 10",
+						"schema": {
+							"minimum": 0,
+							"type": "integer",
+							"format": "int32",
+							"default": 10
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/MonitoringEvent"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/monitoring/_eventStatus": {
+			"get": {
+				"operationId": "getEventStatus",
+				"summary": "GET /api/tenants/{tenantId}/monitoring/_eventStatus",
+				"description": "Returns event counts grouped by state (CREATED, SENT, DATAPIPELINE_PROCESSED, DEAD). The 'from' and 'to' timestamps MUST fall within the same calendar day in UTC timezone. Requests spanning multiple days will be rejected with a 400 Bad Request error.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of Tenant to get event status",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "from",
+						"in": "query",
+						"required": false,
+						"description": "Start timestamp in milliseconds (UTC). Must be within the same day as 'to' parameter. Default: start of today (UTC 00:00:00)",
+						"schema": {
+							"minimum": 0,
+							"type": "integer",
+							"format": "int64"
+						}
+					},
+					{
+						"name": "to",
+						"in": "query",
+						"required": false,
+						"description": "End timestamp in milliseconds (UTC). Must be within the same day as 'from' parameter. Default: current time",
+						"schema": {
+							"minimum": 0,
+							"type": "integer",
+							"format": "int64"
+						}
+					},
+					{
+						"name": "objectUri",
+						"in": "query",
+						"required": false,
+						"description": "Optional object URI to filter events for a specific entity or relationship",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/MonitoringEvent"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/pipelines/{pipelineId}/events": {
+			"get": {
+				"operationId": "getPipelineEvents",
+				"summary": "GET /api/tenants/{tenantId}/pipelines/{pipelineId}/events",
+				"description": "Returns pipeline error events from Databricks. Errors sorted by timestamp (latest first). Use 'expanded=false' for latest update only, 'expanded=true' for all errors. Supports offset/limit pagination.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "pipelineId",
+						"in": "path",
+						"required": true,
+						"description": "Pipeline ID to get events for",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "expanded",
+						"in": "query",
+						"required": false,
+						"description": "If true, returns all errors. If false (default), returns only errors from the latest update_id.",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "Number of records to skip for pagination (default: 0)",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"required": false,
+						"description": "Maximum number of results per page (default: 1000, max: 1000)",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/PipelineEvent"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/pipelines/{pipelineId}/stop": {
+			"put": {
+				"operationId": "stopPipelineUpdate",
+				"summary": "PUT /api/tenants/{tenantId}/pipelines/{pipelineId}/stop",
+				"description": "Stops the pipeline by canceling the active update. If there is no active update for the pipeline, this request is a no-op.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "pipelineId",
+						"in": "path",
+						"required": true,
+						"description": "Pipeline ID to stop",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/pipelines/{pipelineId}/trigger": {
+			"put": {
+				"operationId": "triggerPipelineUpdate",
+				"summary": "PUT /api/tenants/{tenantId}/pipelines/{pipelineId}/trigger",
+				"description": "Starts a new update for the specified pipeline. Supports full refresh and validation-only modes. All pipeline triggers are recorded with cause set to API_CALL. If no request body is provided, triggers a standard pipeline update.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "pipelineId",
+						"in": "path",
+						"required": true,
+						"description": "Pipeline ID to trigger",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Successful response."
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/pipelines/status": {
+			"get": {
+				"operationId": "listTenantPipelines",
+				"summary": "GET /api/tenants/{tenantId}/pipelines/status",
+				"description": "Returns DLT pipelines from both Fabric and Deltashare Databricks workspaces for the specified tenant with pagination support. Includes pipeline ID, name, adapter ID, current pipeline state (RUNNING, IDLE), and latest update state (COMPLETED, FAILED, etc.). Use offset-based pagination with offset and limit parameters.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID to list pipelines for",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"description": "Number of records to skip for pagination (default: 0)",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"required": false,
+						"description": "Maximum number of results per page (default: 1000, max: 1000)",
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/AdapterStatus"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/shareLinks": {
+			"get": {
+				"operationId": "shareDataWithExternalUsers",
+				"summary": "GET /api/tenants/{tenantId}/shareLinks",
+				"description": "Share Data with External Users",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "tenantId",
+						"in": "query",
+						"required": true,
+						"description": "Tenant ID for which data needs to be shared.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "query",
+						"required": false,
+						"description": "Multiple adapterNames, e.g., ?adapterName=1&adapterName=2",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ShareLink"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/api/tenants/{tenantId}/status": {
+			"get": {
+				"operationId": "getAdapterStatuses",
+				"summary": "GET /api/tenants/{tenantId}/status",
+				"description": "Get Adapter Statuses",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "Tenant ID for which adapter statuses need to be retrieved.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "adapterName",
+						"in": "query",
+						"required": false,
+						"description": "Multiple adapter names to get status for, e.g., ?adapterName=adapter1&adapterName=adapter2",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/AdapterStatus"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/config/{tenantId}/writeback": {
+			"get": {
+				"operationId": "getWritebackConfig",
+				"summary": "GET /config/{tenantId}/writeback",
+				"description": "get writeback config paramaters",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "showHidden",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/WritebackConfig"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/reltio/api/{tenantId}/syncToDataPipeline": {
+			"post": {
+				"operationId": "syncToDataPipeline",
+				"summary": "POST /reltio/api/{tenantId}/syncToDataPipeline",
+				"description": "Reindexes all data in a tenant to DPH, including entities, relations, interactions, matches and merges.Stop and Pause are supported.",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"description": "ID of the tenant to reindex all data ie, entities, relations, interaction, potential matches and merges",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "updatedSince",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"format": "int64",
+							"default": 0
+						}
+					},
+					{
+						"name": "adapters",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "distributed",
+						"in": "query",
+						"required": false,
+						"description": "If set to true the job is run in distributed mode",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "distributedTaskIndex",
+						"in": "query",
+						"required": false,
+						"description": "The parameter specifies which part of the distributed job needs running. The parameter is applicable if distributed=true. The option is designed to rerun a specific job part that was previously failed. 1 <= distributedTaskIndex <= taskPartsCount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						}
+					},
+					{
+						"name": "taskPartsCount",
+						"in": "query",
+						"required": false,
+						"description": "The number of tasks which are created for distributed reindexing. Each task reindexes its own subset of objects. And all tasks can run in parallel. Should not exceed maxTaskPartsCount property of Tenant Configuration.Note: This parameter is used only in distributed mode (distributed=true); otherwise, its ignored",
+						"schema": {
+							"minimum": 1,
+							"type": "integer",
+							"default": 2
+						}
+					},
+					{
+						"name": "reindexDeleted",
+						"in": "query",
+						"required": false,
+						"description": "If set to true the job will add sub task for deleted Entities and Relations",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "dataTypes",
+						"in": "query",
+						"required": false,
+						"description": "Comma-separated list of data types to be synchronized",
+						"schema": {
+							"type": "string",
+							"enum": [
+								"entities",
+								"relations",
+								"interactions",
+								"matches",
+								"merges",
+								"activities",
+								"deleted_entities",
+								"deleted_relations",
+								"deleted_interactions"
+							]
+						}
+					},
+					{
+						"name": "entityType",
+						"in": "query",
+						"required": false,
+						"description": "If provided, the task restricts the reindexing scope of entities to only provided type, while reindexing entities",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "relationType",
+						"in": "query",
+						"required": false,
+						"description": "If provided, the task restricts the reindexing scope of entities to only provided type, while reindexing relations",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ReindexJobResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		},
+		"/status/tenant/{tenantId}/details": {
+			"get": {
+				"operationId": "getQueueInfo",
+				"summary": "GET /status/tenant/{tenantId}/details",
+				"description": "get Datapipeline Queue Tenant Info",
+				"parameters": [
+					{
+						"name": "tenantId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "showHidden",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TenantQueueDetails"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized."
+					},
+					"404": {
+						"description": "Not found."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"AdapterAction": {
+				"type": "object",
+				"properties": {
+					"type": {
+						"type": "string",
+						"description": "Action type identifier."
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					}
+				}
+			},
+			"AdapterStatus": {
+				"type": "object",
+				"properties": {
+					"adapterName": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"UP",
+							"DOWN",
+							"DEGRADED",
+							"UNKNOWN"
+						]
+					},
+					"lastUpdated": {
+						"type": "integer",
+						"description": "Last status update timestamp in milliseconds."
+					},
+					"message": {
+						"type": "string",
+						"description": "Status detail message."
+					}
+				}
+			},
+			"Secret": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "Secret name."
+					},
+					"value": {
+						"type": "string",
+						"description": "Secret value (omitted on GET)."
+					}
+				}
+			},
+			"Pipeline": {
+				"type": "object",
+				"properties": {
+					"pipelineId": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"RUNNING",
+							"PAUSED",
+							"STOPPED",
+							"FAILED"
+						]
+					},
+					"lastEventTime": {
+						"type": "integer"
+					}
+				}
+			},
+			"PipelineEvent": {
+				"type": "object",
+				"properties": {
+					"timestamp": {
+						"type": "integer"
+					},
+					"level": {
+						"type": "string",
+						"enum": [
+							"INFO",
+							"WARN",
+							"ERROR"
+						]
+					},
+					"message": {
+						"type": "string"
+					},
+					"eventCode": {
+						"type": "string"
+					}
+				}
+			},
+			"MonitoringEvent": {
+				"type": "object",
+				"properties": {
+					"timestamp": {
+						"type": "integer"
+					},
+					"eventType": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"count": {
+						"type": "integer"
+					},
+					"details": {
+						"type": "object",
+						"additionalProperties": true
+					}
+				}
+			},
+			"WorkspaceConnectionString": {
+				"type": "object",
+				"properties": {
+					"connectionString": {
+						"type": "string"
+					},
+					"expiresAt": {
+						"type": "integer"
+					}
+				}
+			},
+			"Lakehouse": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"region": {
+						"type": "string"
+					},
+					"schema": {
+						"type": "string"
+					},
+					"tables": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"Workspace": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"region": {
+						"type": "string"
+					},
+					"lakehouseId": {
+						"type": "string"
+					}
+				}
+			},
+			"ShareLink": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"expiresAt": {
+						"type": "integer"
+					},
+					"recipientEmail": {
+						"type": "string",
+						"format": "email"
+					}
+				}
+			},
+			"ReindexJobResponse": {
+				"type": "object",
+				"properties": {
+					"jobId": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"SUBMITTED",
+							"RUNNING",
+							"COMPLETED",
+							"FAILED"
+						]
+					},
+					"submittedAt": {
+						"type": "integer"
+					}
+				}
+			},
+			"TenantQueueDetails": {
+				"type": "object",
+				"properties": {
+					"queueLength": {
+						"type": "integer"
+					},
+					"lastProcessedAt": {
+						"type": "integer"
+					},
+					"throughput": {
+						"type": "number",
+						"description": "Events per second."
+					}
+				}
+			},
+			"WritebackConfig": {
+				"type": "object",
+				"properties": {
+					"enabled": {
+						"type": "boolean"
+					},
+					"schedule": {
+						"type": "string",
+						"description": "Cron expression."
+					},
+					"target": {
+						"type": "string",
+						"description": "Writeback target identifier."
+					}
+				}
+			}
+		}
+	}
+}
+*/}
+
+<Stories />
