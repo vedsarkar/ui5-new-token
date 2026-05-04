@@ -6,7 +6,9 @@
 	"exports": {
 		".": "./index.ts",
 		"./icons": "./icons/index.ts",
-		"./icons/*": "./icons/*.tsx"
+		"./icons/*": "./icons/*.tsx",
+		"./illustrations": "./illustrations/index.ts",
+		"./illustrations/*": "./illustrations/*.tsx"
 	},
 	"keywords": [
 		"Reltio",
@@ -38,6 +40,7 @@
 		"build-css": "node scripts/build-css.mjs",
 		"build-tokens": "node scripts/build-tokens.mjs",
 		"build-icons": "node scripts/build-icons.mjs",
+		"build-illustrations": "node scripts/build-illustrations.mjs",
 		"build-api-docs": "node scripts/build-api-docs.mjs",
 		"deploy": "chromatic --exit-zero-on-changes --exit-once-uploaded",
 		"lint": "biome check .",

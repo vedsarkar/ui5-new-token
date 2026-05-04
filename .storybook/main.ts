@@ -20,6 +20,10 @@ export default defineMain({
 
 	staticDirs: ["../public"],
 
+	features: {
+		componentsManifest: true,
+	},
+
 	viteFinal: async (config) => {
 		config.plugins = config.plugins ?? [];
 		config.plugins.push(reltioProxyDevPlugin());
@@ -30,7 +34,12 @@ export default defineMain({
 		reactDocgen: "react-docgen-typescript",
 		reactDocgenTypescriptOptions: {
 			shouldExtractLiteralValuesFromEnum: true,
-			include: ["components/**/*.tsx", "charts/**/*.tsx", "icons/**/*.tsx"],
+			include: [
+				"components/**/*.tsx",
+				"charts/**/*.tsx",
+				"icons/**/*.tsx",
+				"illustrations/**/*.tsx",
+			],
 		},
 	},
 });
