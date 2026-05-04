@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 
-const ICONS_SOURCE_DIR = "public/icons";
+const ICONS_SOURCE_DIR = "icons/_source";
 const ICONS_OUTPUT_DIR = "icons";
 
 function toKebabCase(name) {
@@ -128,9 +128,16 @@ function generateUnifiedStories(icons) {
 				`export const ${name}: Story = {
 	render: () => (
 		<div className={styles.story}>
-			<Icons.${name} size="small" color="success" />
-			<Icons.${name} />
-			<Icons.${name} size="large" color="error" />
+			<div data-theme="horizon-light" className={styles.row}>
+				<Icons.${name} size="small" color="success" />
+				<Icons.${name} />
+				<Icons.${name} size="large" color="error" />
+			</div>
+			<div data-theme="horizon-dark" className={styles.row}>
+				<Icons.${name} size="small" color="success" />
+				<Icons.${name} />
+				<Icons.${name} size="large" color="error" />
+			</div>
 		</div>
 	),
 };`,

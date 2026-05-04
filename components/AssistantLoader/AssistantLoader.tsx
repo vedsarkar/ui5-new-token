@@ -2,7 +2,7 @@ import { classNames } from "@/utils/classNames";
 import styles from "./AssistantLoader.module.css";
 import type { AssistantLoaderProps } from "./AssistantLoader.types";
 
-const LOADING_GIF_SRC = "https://reltio.design/icons/loading.gif";
+const LOADING_GIF_SRC = "https://reltio.design/assistant-loader/loading.gif";
 const DEFAULT_LABEL = "thinking";
 
 /**

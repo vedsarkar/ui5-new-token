@@ -5,7 +5,6 @@ import { Accept } from "./Accept";
 import { Accessibility } from "./Accessibility";
 import { AccidentalLeave } from "./AccidentalLeave";
 import { Account } from "./Account";
-import { AccountCircle } from "./AccountCircle";
 import { AccountingDocumentVerification } from "./AccountingDocumentVerification";
 import { Action } from "./Action";
 import { ActionSettings } from "./ActionSettings";
@@ -113,7 +112,6 @@ import { CartFull } from "./CartFull";
 import { Cause } from "./Cause";
 import { ChainLink } from "./ChainLink";
 import { Chalkboard } from "./Chalkboard";
-import { Chat } from "./Chat";
 import { ChartAxis } from "./ChartAxis";
 import { ChartTableView } from "./ChartTableView";
 import { ChartTreeMap } from "./ChartTreeMap";
@@ -156,7 +154,6 @@ import { Competitor } from "./Competitor";
 import { Complete } from "./Complete";
 import { Connected } from "./Connected";
 import { Contacts } from "./Contacts";
-import { ContentCopy } from "./ContentCopy";
 import { Copy } from "./Copy";
 import { CourseBook } from "./CourseBook";
 import { CourseProgram } from "./CourseProgram";
@@ -241,7 +238,6 @@ import { EnergySavingLightbulb } from "./EnergySavingLightbulb";
 import { EnterMore } from "./EnterMore";
 import { Eraser } from "./Eraser";
 import { Error } from "./Error";
-import { ErrorCircle } from "./ErrorCircle";
 import { Example } from "./Example";
 import { ExcelAttachment } from "./ExcelAttachment";
 import { ExitFullscreen } from "./ExitFullscreen";
@@ -715,7 +711,6 @@ export {
 	Accessibility,
 	AccidentalLeave,
 	Account,
-	AccountCircle,
 	AccountingDocumentVerification,
 	Action,
 	ActionSettings,
@@ -823,7 +818,6 @@ export {
 	Cause,
 	ChainLink,
 	Chalkboard,
-	Chat,
 	ChartAxis,
 	ChartTableView,
 	ChartTreeMap,
@@ -866,7 +860,6 @@ export {
 	Complete,
 	Connected,
 	Contacts,
-	ContentCopy,
 	Copy,
 	CourseBook,
 	CourseProgram,
@@ -951,7 +944,6 @@ export {
 	EnterMore,
 	Eraser,
 	Error,
-	ErrorCircle,
 	Example,
 	ExcelAttachment,
 	ExitFullscreen,
@@ -1429,7 +1421,6 @@ export const iconMap: Record<
 	Accessibility: Accessibility,
 	AccidentalLeave: AccidentalLeave,
 	Account: Account,
-	AccountCircle: AccountCircle,
 	AccountingDocumentVerification: AccountingDocumentVerification,
 	Action: Action,
 	ActionSettings: ActionSettings,
@@ -1537,7 +1528,6 @@ export const iconMap: Record<
 	Cause: Cause,
 	ChainLink: ChainLink,
 	Chalkboard: Chalkboard,
-	Chat: Chat,
 	ChartAxis: ChartAxis,
 	ChartTableView: ChartTableView,
 	ChartTreeMap: ChartTreeMap,
@@ -1580,7 +1570,6 @@ export const iconMap: Record<
 	Complete: Complete,
 	Connected: Connected,
 	Contacts: Contacts,
-	ContentCopy: ContentCopy,
 	Copy: Copy,
 	CourseBook: CourseBook,
 	CourseProgram: CourseProgram,
@@ -1665,7 +1654,6 @@ export const iconMap: Record<
 	EnterMore: EnterMore,
 	Eraser: Eraser,
 	Error: Error,
-	ErrorCircle: ErrorCircle,
 	Example: Example,
 	ExcelAttachment: ExcelAttachment,
 	ExitFullscreen: ExitFullscreen,

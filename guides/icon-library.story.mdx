@@ -4,7 +4,9 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Icon Library Guide
 
-The Reltio Design System provides a comprehensive icon library with 44+ Material Design 3 icons. Icons are available through two access patterns: direct URL access for raw SVG files and npm imports for React components.
+The Reltio Design System provides a comprehensive icon library distributed exclusively as tree-shakable React components. Icons share a single access path — the npm package import — so consumers always benefit from type safety, theme awareness, and bundle optimization.
+
+> **🎯 Key Principle:** Icons ship only as React components. There is no public CDN URL for raw SVG files.
 
 ## Overview
 
@@ -19,64 +21,75 @@ The icon library is built on these principles:
 	</thead>
 	<tbody>
 		<tr>
-			<td>🎨 <strong>Consistent Style</strong></td>
-			<td>All icons follow Material Design 3 outlined style at weight 400</td>
+			<td>🎨 <strong>SAP Horizon Style</strong></td>
+			<td>Sourced from the official SAP `theming-base-content` repository, fully aligned with the SAP Fiori visual language</td>
 		</tr>
 		<tr>
-			<td>📦 <strong>Dual Access</strong></td>
-			<td>Use icons via URL (CDN) or npm package (React components)</td>
+			<td>📦 <strong>Single Access Path</strong></td>
+			<td>Use icons exclusively as React components imported from `@reltio/design/icons`</td>
 		</tr>
 		<tr>
 			<td>🔧 <strong>Customizable</strong></td>
-			<td>Size, color, and custom CSS properties supported</td>
+			<td>Size and color variants supported through props; pass any HTML attribute via rest props</td>
 		</tr>
 		<tr>
 			<td>♿ <strong>Accessible</strong></td>
-			<td>Built-in aria support for decorative and meaningful icons</td>
+			<td>Built-in `aria-hidden` for decorative icons, opt-in `aria-label` for meaningful ones</td>
 		</tr>
 		<tr>
-			<td>🌳 <strong>Tree-shakeable</strong></td>
-			<td>Import only what you need for optimal bundle size</td>
+			<td>🌳 <strong>Tree-shakable</strong></td>
+			<td>Import only the icons you use; unused icons are stripped from the bundle</td>
+		</tr>
+		<tr>
+			<td>🌓 <strong>Theme-aware</strong></td>
+			<td>Color tokens resolve through the active SAP theme (`horizon-light` / `horizon-dark`)</td>
 		</tr>
 	</tbody>
 </table>
 
-## Access Patterns
+## Why no public URL?
 
-### 1. Direct URL Access (CDN)
+Earlier versions of the library exposed a parallel raw-SVG endpoint at `https://reltio.design/icons/<name>.svg`. That surface was retired for several reasons:
 
-Raw SVG files are served from the public folder and accessible via URL:
+- **Consistency with illustrations.** The illustration library was designed from the start as a single-access library because SAP design tokens only resolve when SVGs are inlined into the host DOM. Aligning icons with the same model removes a confusing "two ways to use" question.
+- **Smaller, simpler API surface.** A second access path doubles the maintenance cost (URL stability, CDN caching, naming, attribution, theming) for a use case that no internal product actually needs.
+- **Future-proofing.** As icons evolve toward richer semantics (multi-color, theme-aware fills), the React component is the only path that can reliably honor the host's CSS-variable cascade.
 
-```
-https://reltio.design/icons/chevron-down.svg
-https://reltio.design/icons/account-circle.svg
-```
+If a future use case truly demands non-React consumption (email templates, marketing pages, partner integrations), we can introduce a baked-fill SVG distribution as a follow-up change. For now, every consumer uses the React import.
 
-Use this pattern when you need:
-- Raw SVG files for non-React applications
-- Embedding icons in external tools or documentation
-- Using icons in CSS as background images
+## Usage
 
-### 2. NPM Package Import (React)
-
-Import React components for full functionality:
+Import the icon component you need:
 
 ```tsx
 import { SlimArrowDown, AccountCircle } from "@reltio/design/icons";
 
 function MyComponent() {
-  return (
-    <div>
-      <SlimArrowDown size="medium" />
-      <AccountCircle color="primary" />
-    </div>
-  );
+	return (
+		<div>
+			<SlimArrowDown size="medium" />
+			<AccountCircle color="primary" />
+		</div>
+	);
+}
+```
+
+Every named export under `@reltio/design/icons` is a tree-shakable React component. Importing `SlimArrowDown` does NOT pull any other icon's code into the bundle.
+
+For dynamic icon rendering (e.g. picking an icon by name at runtime), import the `iconMap`:
+
+```tsx
+import { iconMap, type IconProps } from "@reltio/design/icons";
+
+function DynamicIcon({ name, ...rest }: IconProps & { name: string }) {
+	const Icon = iconMap[name];
+	return Icon ? <Icon {...rest} /> : null;
 }
 ```
 
 ## Available Props
 
-All icon components accept the following props:
+All icon components accept the following props.
 
 ### `size`
 
@@ -118,39 +131,39 @@ Controls the icon dimensions.
 
 ### `color`
 
-Controls the icon fill color.
+Controls the icon fill color via the SAP Horizon palette.
 
 <table>
 	<thead>
 		<tr>
 			<th>Value</th>
-			<th>Description</th>
+			<th>SAP Token</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td><code>"inherited"</code></td>
-			<td>Uses <code>currentColor</code> (default)</td>
+			<td><code>"inherited"</code> (default)</td>
+			<td>Uses <code>currentColor</code></td>
 		</tr>
 		<tr>
 			<td><code>"primary"</code></td>
-			<td>Design system primary color</td>
+			<td><code>--sapBrandColor</code></td>
 		</tr>
 		<tr>
 			<td><code>"secondary"</code></td>
-			<td>Design system secondary color</td>
+			<td><code>--sapNeutralColor</code></td>
 		</tr>
 		<tr>
 			<td><code>"success"</code></td>
-			<td>Green semantic color</td>
+			<td><code>--sapPositiveColor</code></td>
 		</tr>
 		<tr>
 			<td><code>"warning"</code></td>
-			<td>Yellow/orange semantic color</td>
+			<td><code>--sapCriticalColor</code></td>
 		</tr>
 		<tr>
 			<td><code>"error"</code></td>
-			<td>Red semantic color</td>
+			<td><code>--sapNegativeColor</code></td>
 		</tr>
 	</tbody>
 </table>
@@ -161,217 +174,127 @@ Controls the icon fill color.
 <ErrorCircle color="error" />
 ```
 
-### `className`
+### `className`, `style`, and other HTML attributes
 
-Add custom CSS classes:
+`IconProps` extends the standard `<svg>` HTML props, so all native SVG attributes pass through to the rendered element:
 
 ```tsx
 <Search className="my-custom-class" />
-```
-
-### `style`
-
-Apply inline styles, including CSS custom properties:
-
-```tsx
-<Search style={{ "--reltio-icon-size": "20px" }} />
+<Search style={{ marginInline: 8 }} />
+<Search data-testid="search-icon" />
 ```
 
 ### `aria-label`
 
-Add accessible label for meaningful icons:
+Add an accessible label for meaningful icons:
 
 ```tsx
 <Close aria-label="Close dialog" />
 ```
 
-## CSS Customization
+## Theming
 
-Icons use CSS custom properties defined on the root element. Override these for custom styling:
+Icons that use `color="inherited"` follow the host's `currentColor`. Icons that use a semantic color (`primary`, `success`, etc.) read the corresponding SAP Horizon token, which automatically swaps when an ancestor element carries `data-theme="horizon-dark"`.
 
-```css
-.my-custom-icon {
-  --reltio-icon-size: 40px;
-  --reltio-icon-color: #ff6b6b;
-}
+```tsx
+<div data-theme="horizon-light">
+	<CheckCircle color="success" /> {/* renders the light-theme positive color */}
+</div>
+
+<div data-theme="horizon-dark">
+	<CheckCircle color="success" /> {/* renders the dark-theme positive color */}
+</div>
 ```
 
-Available CSS variables:
-
-<table>
-	<thead>
-		<tr>
-			<th>Variable</th>
-			<th>Description</th>
-			<th>Default</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td><code>--reltio-icon-size</code></td>
-			<td>Custom size override</td>
-			<td>(based on size prop)</td>
-		</tr>
-		<tr>
-			<td><code>--reltio-icon-color</code></td>
-			<td>Custom color override</td>
-			<td>(based on color prop)</td>
-		</tr>
-		<tr>
-			<td><code>--reltio-icon-size-small</code></td>
-			<td>Small size value</td>
-			<td>16px</td>
-		</tr>
-		<tr>
-			<td><code>--reltio-icon-size-medium</code></td>
-			<td>Medium size value</td>
-			<td>24px</td>
-		</tr>
-		<tr>
-			<td><code>--reltio-icon-size-large</code></td>
-			<td>Large size value</td>
-			<td>32px</td>
-		</tr>
-		<tr>
-			<td><code>--reltio-icon-size-xlarge</code></td>
-			<td>XLarge size value</td>
-			<td>48px</td>
-		</tr>
-	</tbody>
-</table>
+The Storybook page for each icon renders the icon under both themes side-by-side so the regression coverage doubles per snapshot.
 
 ## Accessibility
 
-Icons support two accessibility modes:
+Icons support two accessibility modes.
 
-### Decorative Icons (Default)
+### Decorative icons (default)
 
 When no `aria-label` is provided, icons are hidden from screen readers:
 
 ```tsx
-// Decorative icon - hidden from screen readers
 <Search />
-// Renders with aria-hidden="true"
+{/* renders <svg aria-hidden="true"> */}
 ```
 
 Use decorative icons when:
-- The icon accompanies visible text
-- The icon is purely decorative
+
+- The icon accompanies visible text (e.g. button labels)
+- The icon is purely visual reinforcement
 - The meaning is conveyed by surrounding context
 
-### Meaningful Icons
+### Meaningful icons
 
-When `aria-label` is provided, icons are announced to screen readers:
+When `aria-label` is provided, icons are announced to screen readers. Add `role="img"` so the SVG is treated as an image:
 
 ```tsx
-// Meaningful icon - announced to screen readers
-<Search aria-label="Search" />
-// Renders with role="img" and aria-label="Search"
+<Search aria-label="Search" role="img" />
 ```
 
 Use meaningful icons when:
-- The icon is the only content in a button
-- The icon conveys information not available in text
-- The icon is interactive without surrounding text
 
-## How to Add a New Icon
+- The icon is the only content of a button
+- The icon conveys information not available in surrounding text
 
-Adding icons is automated through a generation script:
+## Adding a New Icon
 
-### Step 1: Add SVG File
+Adding icons is a fully automated build-script flow.
 
-Place your SVG file in `public/icons/` using kebab-case naming:
+### Step 1: Add the SVG
+
+Place your SVG file in `icons/_source/` using kebab-case naming:
 
 ```
-public/icons/my-new-icon.svg
+icons/_source/my-new-icon.svg
 ```
 
 SVG requirements:
-- Use 24×24 viewBox (Material Design 3 standard)
-- Use outlined style for consistency
-- Remove fixed colors (use currentColor for fill)
 
-### Step 2: Run Generation Script
+- 16×16 viewBox preferred (matches the SAP Horizon icon set)
+- Single-color shapes — fills are stripped automatically and replaced with `currentColor`
+- White (`#fff`) and `#d9d9d9` fills are preserved as-is when present (used by SAP for explicit highlights)
 
-Execute the icon generation script:
+> **⚠️ Note:** `icons/_source/` is a build-artifact folder. Files placed there are NOT served at any public URL — they exist only as input to the build script. The published artifact is the React component generated in `icons/`.
 
-```bash
-node scripts/generate-icons.mjs
-```
-
-This automatically generates:
-- React component: `icons/MyNewIcon.tsx`
-- Storybook stories: `icons/MyNewIcon.stories.tsx`
-- Updated barrel export: `icons/index.ts`
-- Updated manifest: `icons/manifest.json`
-
-### Step 3: Format Code
-
-Run the formatter to ensure consistency:
+### Step 2: Run the generator
 
 ```bash
-npm run format
+npm run build-icons
 ```
 
-### Step 4: Verify in Storybook
+This regenerates:
 
-Start Storybook to verify your new icon:
+- React components (`icons/<PascalName>.tsx`)
+- Barrel export (`icons/index.ts`)
+- Unified Storybook stories (`icons/Icons.stories.tsx`)
+- Biome formatting across all generated files
+
+### Step 3: Verify in Storybook
 
 ```bash
 npm run dev
 ```
 
-Your icon will appear in:
-- The Icon Library grid
-- Individual icon story pages
+Your icon appears in:
 
-## Icon Categories
-
-The library includes icons from these categories:
-
-<table>
-	<thead>
-		<tr>
-			<th>Category</th>
-			<th>Examples</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td><strong>Navigation</strong></td>
-			<td>ArrowBack, ArrowForward, ChevronLeft, ChevronRight, Menu, Close</td>
-		</tr>
-		<tr>
-			<td><strong>Actions</strong></td>
-			<td>Search, Add, Remove, Edit, Delete, Save, Refresh, Download, Upload</td>
-		</tr>
-		<tr>
-			<td><strong>Status</strong></td>
-			<td>Check, CheckCircle, ErrorCircle, Warning, Info, Help</td>
-		</tr>
-		<tr>
-			<td><strong>Content</strong></td>
-			<td>ContentCopy, ContentPaste, FilterList, Sort, Visibility, VisibilityOff</td>
-		</tr>
-		<tr>
-			<td><strong>Communication</strong></td>
-			<td>Email, Notifications, Chat, Comment</td>
-		</tr>
-		<tr>
-			<td><strong>File</strong></td>
-			<td>Folder, Description, Attachment</td>
-		</tr>
-		<tr>
-			<td><strong>User</strong></td>
-			<td>Person, People, AccountCircle, Settings, Logout</td>
-		</tr>
-	</tbody>
-</table>
+- The Icon Library catalog on the Docs page
+- An individual story rendering the light/dark matrix
 
 ## Best Practices
 
-1. **Use semantic colors appropriately** - Success for positive actions, Warning for caution, Error for destructive actions
-2. **Always provide aria-label for icon-only buttons** - Screen reader users need context
-3. **Keep sizes consistent** - Use the standard size props rather than custom sizes
-4. **Prefer React components over raw SVGs** - Better tree-shaking and type safety
-5. **Follow naming conventions** - Use kebab-case for files, PascalCase for components
+1. **Use semantic colors appropriately** — `success` for positive actions, `warning` for caution, `error` for destructive actions
+2. **Always provide `aria-label` for icon-only buttons** — screen reader users need context
+3. **Keep sizes consistent** — use the standard `size` prop rather than custom dimensions
+4. **Prefer named imports** — they enable tree-shaking; avoid the `iconMap` for known icons
+5. **Follow naming conventions** — kebab-case for source files, PascalCase for components
+
+## Sources and References
+
+- [SAP Theming Base Content](https://github.com/SAP/theming-base-content) — upstream icon source
+- [SAP Fiori Design Web — Icons](https://www.sap.com/design-system/fiori-design-web/v1-90/foundation/icons.html) — semantic guidance
+- [Illustration Library Guide](/?path=/docs/guides-illustration-library--docs) — sibling library that inspired the single-access-path model
+- [WCAG 2.1 — Non-text Content](https://www.w3.org/WAI/WCAG21/quickref/#non-text-content) — accessibility requirements for image-like content

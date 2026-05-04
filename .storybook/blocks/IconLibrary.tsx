@@ -14,7 +14,6 @@ const icons = Object.keys(iconMap).map((name) => {
 	return {
 		name,
 		kebabName,
-		path: `/icons/${kebabName}.svg`,
 		importStr: `import { ${name} } from "@reltio/design/icons"`,
 	};
 });
@@ -34,9 +33,7 @@ export const IconLibrary = () => {
 				<tbody>
 					{icons.map((icon) => {
 						const IconComponent = iconMap[icon.name];
-						const url = `https://reltio.design${icon.path}`;
 						const isImportCopied = copiedId === `import-${icon.name}`;
-						const isUrlCopied = copiedId === `url-${icon.name}`;
 						return (
 							<tr key={icon.name}>
 								<td className={styles.iconCell} style={{ width: "1px" }}>
@@ -65,19 +62,6 @@ export const IconLibrary = () => {
 												{' } from "@reltio/design/icons"'}
 											</>
 										)}
-									</code>
-								</td>
-								<td
-									className={styles.copyCell}
-									onClick={() => copy(url, `url-${icon.name}`)}
-									onKeyDown={(e) => {
-										if (e.key === "Enter" || e.key === " ")
-											copy(url, `url-${icon.name}`);
-									}}
-									title="Click to copy"
-								>
-									<code className={isUrlCopied ? styles.codeCopied : undefined}>
-										{isUrlCopied ? "Copied!" : icon.path}
 									</code>
 								</td>
 							</tr>

@@ -12,7 +12,7 @@ The AssistantLoader component SHALL display a loading GIF animation that clearly
 
 #### Scenario: Loading GIF displays correctly
 - **WHEN** AssistantLoader component is rendered
-- **THEN** a loading GIF image is displayed from `/icons/loading.gif`
+- **THEN** a loading GIF image is displayed from `/assistant-loader/loading.gif`
 - **AND** the GIF plays continuously
 - **AND** the GIF image has an empty `alt` attribute (decorative)
 - **AND** the GIF image is marked `aria-hidden="true"`

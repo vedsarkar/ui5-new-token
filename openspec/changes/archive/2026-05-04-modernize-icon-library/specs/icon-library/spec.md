@@ -1,12 +1,14 @@
-# icon-library Specification
+# Specification Delta: icon-library
 
-## Purpose
+## REMOVED Requirements
 
-SAP Fiori Icon Library — a collection of SVG icons sourced from the SAP `theming-base-content` repository, automatically converted to React components via a build script. The library exposes every icon exclusively as a tree-shakable React component imported from `@reltio/design/icons`. Raw SVG files are private build artifacts and are NOT served at any public URL.
+### Requirement: Dual Access Patterns
 
-Icon source: SAP `theming-base-content` repository (https://github.com/SAP/theming-base-content). SVG sources live in `icons/_source/` as build artifacts; React components are generated into `icons/` via `npm run build-icons`.
+**Reason:** The icon library is unifying on a single React-component access path, mirroring the illustration library. Raw SVG files are no longer served via a public URL. Consumers must import the React component instead.
 
-## Requirements
+The previous requirement bundled three scenarios (NPM import, Direct URL, Icon map) into one. The NPM import and Icon map scenarios are preserved verbatim under the new single-access-path requirement below.
+
+## MODIFIED Requirements
 
 ### Requirement: SVG Source Management
 
@@ -21,16 +23,6 @@ The icon library SHALL store SVG sources in `icons/_source/` as private build ar
 - **WHEN** naming an SVG file
 - **THEN** use kebab-case (e.g., `chevron-down.svg`, `arrow-right.svg`)
 - **AND** the build script normalizes filenames to kebab-case automatically
-
-### Requirement: SAP Icon Set
-
-The icon set SHALL use SAP Fiori icons from the SAP `theming-base-content` repository for visual consistency with the SAP Horizon design system.
-
-#### Scenario: SAP icons as source
-- **WHEN** selecting icons for the library
-- **THEN** icons MUST be downloaded from the SAP theming-base-content repository
-- **AND** hardcoded fill colors are stripped (except white `#fff` / `#d9d9d9` which are preserved)
-- **AND** icons use `currentColor` via `fill="currentColor"` on the root `<svg>`
 
 ### Requirement: React Component Generation
 
@@ -50,31 +42,16 @@ The `npm run build-icons` script SHALL convert SVG files in `icons/_source/` to 
 - **AND** accepts `{ size, color, className, ...props }: IconProps`
 - **AND** renders an `<svg>` with `fill="currentColor"` and `aria-hidden="true"`
 
-### Requirement: Icon Component Props
+### Requirement: Storybook Icon Library Page
 
-#### Scenario: Size prop
-- **WHEN** `size` is `"small"` → 16x16px
-- **WHEN** `size` is `"medium"` (default) → 24x24px
-- **WHEN** `size` is `"large"` → 32x32px
-- **WHEN** `size` is `"xlarge"` → 48x48px
+The Storybook Docs page for the `Icons` group SHALL render every icon in a catalog table along with a copyable React import snippet. The catalog MUST NOT expose a raw SVG URL — only the React component import path is shown.
 
-#### Scenario: Color prop
-- **WHEN** `color` is `"inherited"` (default) → `color: inherit` (uses `currentColor`)
-- **WHEN** `color` is `"primary"` → `--sapBrandColor`
-- **WHEN** `color` is `"secondary"` → `--sapNeutralColor`
-- **WHEN** `color` is `"success"` → `--sapPositiveColor`
-- **WHEN** `color` is `"warning"` → `--sapCriticalColor`
-- **WHEN** `color` is `"error"` → `--sapNegativeColor`
+#### Scenario: Icon catalog with import snippets
+- **THEN** all icons display in a table with name labels, an icon preview, and a copyable React import snippet
+- **AND** click copies the import statement to clipboard
+- **AND** no public URL is shown — the catalog exposes only the React import path
 
-### Requirement: Icon Accessibility
-
-#### Scenario: Decorative icon
-- **WHEN** no `aria-label` is provided
-- **THEN** icon has `aria-hidden="true"` (default)
-
-#### Scenario: Meaningful icon
-- **WHEN** `aria-label` is provided
-- **THEN** icon should have `role="img"` and the label announced by screen readers
+## ADDED Requirements
 
 ### Requirement: React component as the single access path
 
@@ -105,15 +82,6 @@ The icon library SHALL expose every icon exclusively as a named React component 
 - **WHEN** a consumer attempts to import a raw SVG path such as `@reltio/design/icons/_source/search.svg`
 - **THEN** the import fails because the package `exports` field's `*.tsx` glob does not match SVG files
 
-### Requirement: Storybook Icon Library Page
-
-The Storybook Docs page for the `Icons` group SHALL render every icon in a catalog table along with a copyable React import snippet. The catalog MUST NOT expose a raw SVG URL — only the React component import path is shown.
-
-#### Scenario: Icon catalog with import snippets
-- **THEN** all icons display in a table with name labels, an icon preview, and a copyable React import snippet
-- **AND** click copies the import statement to clipboard
-- **AND** no public URL is shown — the catalog exposes only the React import path
-
 ### Requirement: Per-icon stories render the full theme × size matrix
 
 Every per-icon Story SHALL render a 2-row matrix containing the existing size/color preview combinations (small/success, medium/inherited, large/error) under both light and dark themes simultaneously. The two rows MUST force their theme via explicit `data-theme="horizon-light"` and `data-theme="horizon-dark"` wrappers so the snapshot is deterministic regardless of the active Storybook toolbar theme. Each row MUST use `background: var(--sapBackgroundColor)` so the theme context is visually obvious.
@@ -127,11 +95,3 @@ This makes every Storybook story a self-contained visual regression case for bot
 #### Scenario: Snapshot is deterministic across toolbar selections
 - **WHEN** the Storybook toolbar theme is changed (light, dark, auto) and a story is re-rendered
 - **THEN** the rendered output for the matrix MUST remain identical because each row's `data-theme` overrides the toolbar-set ancestor
-
-### Requirement: TypeScript Types
-
-Shared types in `Icon.types.ts`: `IconProps = HtmlProps<"svg", { size, color }>`. Exported types: `IconSize`, `IconColor`, `IconProps`.
-
-### Requirement: CSS Styling
-
-**SAP tokens used:** `--sapBrandColor` (primary), `--sapNeutralColor` (secondary), `--sapPositiveColor` (success), `--sapCriticalColor` (warning), `--sapNegativeColor` (error).
