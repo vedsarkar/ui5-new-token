@@ -4,7 +4,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Component Typing
 
-This guide explains how to type React component props in the Reltio Design Platform. It covers the `HtmlProps` utility, rest-prop forwarding, Storybook integration, and patterns for common scenarios like polymorphic components.
+This guide explains how to type React component props in the Reltio Design Platform. It covers the `HtmlProps` utility for components that wrap a native HTML element, rest-prop forwarding, Storybook integration, and patterns for common scenarios like polymorphic components and wrapping a UI5 web component.
 
 > **🎯 Key Principle:** Declare custom props once. Let `HtmlProps` handle the rest — native HTML attributes, `Omit` conflicts, and Storybook visibility.
 
@@ -189,6 +189,55 @@ export type ButtonProps = AsButton | AsAnchor;
 
 Each branch gets its own `HtmlProps` call. `BaseButtonProps` is shared and spread into both — ensuring `size` and `disabled` are properly omitted from the native types of both `<button>` and `<a>`.
 
+### Wrapping a UI5 component
+
+When the wrapper element is **not** a plain HTML tag but a UI5 component (e.g. you build a Reltio business component on top of `Button` from `@ui5/webcomponents-react`), do NOT use `HtmlProps`. Derive the prop type from the UI5 component itself with `ComponentPropsWithoutRef<typeof X>` — this keeps the wrapper aligned with UI5's evolving API and inherits every UI5 prop automatically.
+
+```tsx
+// SaveEntityButton.types.ts
+import type { ComponentPropsWithoutRef } from "react";
+import type { Button } from "@ui5/webcomponents-react/Button";
+
+type Ui5ButtonProps = ComponentPropsWithoutRef<typeof Button>;
+
+export type SaveEntityButtonProps = Omit<Ui5ButtonProps, "design" | "onClick"> & {
+  /** ID of the Reltio entity to save */
+  entityId: string;
+  /** Fired after the entity has been persisted */
+  onSaved?: (entityId: string) => void;
+};
+```
+
+```tsx
+// SaveEntityButton.tsx
+import { Button } from "@ui5/webcomponents-react/Button";
+import { classNames } from "@/utils/classNames";
+import styles from "./SaveEntityButton.module.css";
+import type { SaveEntityButtonProps } from "./SaveEntityButton.types";
+
+export const SaveEntityButton = ({
+  entityId,
+  onSaved,
+  className,
+  ...rest
+}: SaveEntityButtonProps) => {
+  return (
+    <Button
+      design="Emphasized"
+      className={classNames(styles.root, className)}
+      onClick={() => onSaved?.(entityId)}
+      {...rest}
+    />
+  );
+};
+```
+
+**Rules for UI5 wrappers:**
+1. Always derive the base type from the UI5 component (`ComponentPropsWithoutRef<typeof Button>`), never re-list its props by hand.
+2. `Omit` UI5 props you fully control internally (e.g. fixed `design`, an overridden `onClick`) so consumers cannot accidentally override them.
+3. Spread `...rest` onto the UI5 root and forward `className` through `classNames()` so external customization keeps working.
+4. Storybook's auto-docs picks up the wrapper's custom props from `.types.ts` automatically; UI5's own props remain documented on the upstream component page.
+
 ## What Not to Declare in Custom Props
 
 Native attributes that keep their standard type and semantics should **not** be re-declared:
@@ -278,8 +327,12 @@ No additional Storybook configuration is required.
       <td>Discriminated union with <code>HtmlProps</code> per branch</td>
     </tr>
     <tr>
+      <td>Wrapping a UI5 component</td>
+      <td><code>ComponentPropsWithoutRef&lt;typeof Ui5Component&gt;</code> + <code>Omit</code> as needed</td>
+    </tr>
+    <tr>
       <td>Rest spreading</td>
-      <td>Always spread <code>...rest</code> onto wrapper element</td>
+      <td>Always spread <code>...rest</code> onto wrapper element (HTML tag or UI5 root)</td>
     </tr>
     <tr>
       <td>Import</td>

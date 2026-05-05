@@ -11,9 +11,7 @@
 			"**",
 			"!public/mockServiceWorker.js",
 			"!.claude",
-			"!public/themes",
-			"!public/fonts.css",
-			"!tokens/Tokens.stories.tsx"
+			"!public/fonts.css"
 		]
 	},
 	"formatter": {

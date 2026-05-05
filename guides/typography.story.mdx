@@ -6,47 +6,28 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 `@reltio/design` ships **SAP 72** as the default text font and **72 Mono** as the default monospace font. This guide shows how to load them in your application and how to use them when writing your own CSS on top of the design system.
 
-> **🎯 Key Principle:** Once the fonts are loaded and the root `font-family` is set, every Reltio component renders in SAP 72 automatically. Your own elements inherit the same family through standard CSS inheritance — you almost never need to declare `font-family` yourself.
+The same `@font-face` rules feed both **Reltio components** and **UI5 web components** from `@ui5/webcomponents-react` — UI5's default `--sapFontFamily` token already resolves to `"72"`, so once the fonts are loaded UI5 picks them up automatically.
 
-## Quick Start (Recommended — React)
+> **🎯 Key Principle:** Once `fonts.css` is loaded, every UI5 and Reltio component renders in SAP 72. Your own elements inherit the same family through standard CSS inheritance — you almost never need to declare `font-family` yourself.
 
-The simplest path is to wrap your application in `<ThemeProvider>`. It activates the active theme **and** registers all SAP 72 `@font-face` rules in one step, with all assets served from the `reltio.design` CDN by default.
+## Quick Start
 
-```jsx
-import { ThemeProvider } from "@reltio/design";
-
-export default function App() {
-	return (
-		<ThemeProvider>
-			<YourApp />
-		</ThemeProvider>
-	);
-}
-```
-
-That's it — fonts are loaded, `--sap*` design tokens are on `:root`, and every Reltio component renders in SAP 72. The provider listens to the system `prefers-color-scheme` media query and picks the right theme automatically. You can override with `<ThemeProvider defaultTheme="horizon-light">` (or `"horizon-dark"`) if you want to lock the choice.
-
-The root `font-family` SAP 72 declaration is part of the platform's global CSS — you do not need to add anything to your own global stylesheet for the default text family to apply.
-
-## Alternative — non-React consumers
-
-For static sites, server-rendered pages where you can't control `<head>` from React, or MDX docs that render outside a `ThemeProvider`, use raw `<link>` references to the same CDN files:
+There is no `ThemeProvider` to set up. Load the platform's static CSS files in `<head>` and you are done:
 
 ```html
-<link rel="stylesheet" href="https://reltio.design/themes/horizon-light.theme.css" />
-<link rel="stylesheet" href="https://reltio.design/fonts.css" />
+<link rel="stylesheet" href="/variables.css" />
+<link rel="stylesheet" href="/fonts.css" />
+
+<div data-theme="horizon-light">
+  <!-- Your app — UI5 + Reltio components both use SAP 72 -->
+</div>
 ```
 
-Or import them through the npm package (works in any bundler that handles CSS-as-asset):
+`variables.css` declares all `--sap*` design tokens (including `--sapFontFamily`); `fonts.css` registers the SAP 72 `@font-face` rules and points the document root at the SAP 72 stack. Toggle the active theme by setting `data-theme="horizon-light"` or `data-theme="horizon-dark"` on any ancestor element.
 
-```js
-import "@reltio/design/themes/horizon-light.css";
-import "@reltio/design/fonts.css";
-```
+Where do these files come from? They are generated from the [`@sap-theming/theming-base-content`](https://github.com/SAP/theming-base-content) npm package via `npm run build-tokens`. The output (`public/variables.css`, `public/fonts.css`, `public/fonts/*.woff2`) is committed to the repo and shipped as static assets by every Reltio app.
 
-The npm versions contain absolute CDN URLs to the font files internally, so no extra static-asset configuration is needed. The browser still downloads the actual `.woff2` files from `reltio.design`.
-
-> **💡 Self-hosting fonts?** If you need to serve the assets from your own origin (offline, air-gapped, locked-down CSP, or production version pinning), `<ThemeProvider>` accepts URL overrides via the `fontUrls` and `fontBaseUrl` props — see the `ThemeProvider` story in Storybook. For non-React setups, download the `.woff2` files directly from SAP ([Fiori Design Web — Font 72 downloads](https://www.sap.com/design-system/fiori-design-web/resources/downloads#font-72)), copy them next to a hand-written `fonts.css`, and adjust the `url(...)` paths inside to point at your own origin.
+> **💡 Self-hosting fonts?** Copy `public/fonts/*.woff2` to your own static hosting and serve `fonts.css` from the same origin so that the relative `url(...)` paths inside resolve correctly. For air-gapped/CSP-locked environments, you can also download the `.woff2` files directly from SAP ([Fiori Design Web — Font 72 downloads](https://www.sap.com/design-system/fiori-design-web/resources/downloads#font-72)).
 
 ## Available Faces
 

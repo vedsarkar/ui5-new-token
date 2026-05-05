@@ -1,5 +1,5 @@
+import { MessageStrip } from "@ui5/webcomponents-react/MessageStrip";
 import type React from "react";
-import { ErrorMessage } from "@/components/ErrorMessage";
 import { Markdown } from "@/components/Markdown";
 import { classNames } from "@/utils/classNames";
 import styles from "./AssistantMessage.module.css";
@@ -13,7 +13,11 @@ const normalizeError = (
 	}
 	if (typeof errorMessage === "string") {
 		const trimmed = errorMessage.trim();
-		return trimmed ? <ErrorMessage>{trimmed}</ErrorMessage> : null;
+		return trimmed ? (
+			<MessageStrip design="Negative" hideCloseButton>
+				{trimmed}
+			</MessageStrip>
+		) : null;
 	}
 	return errorMessage;
 };

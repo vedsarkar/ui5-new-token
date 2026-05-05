@@ -1,7 +1,7 @@
+import { Button } from "@ui5/webcomponents-react/Button";
 import type { MarkdownToJSX } from "markdown-to-jsx";
 import type React from "react";
 import { Children, isValidElement } from "react";
-import { Button } from "@/components/Button";
 import { Details } from "@/components/Details";
 import { classNames } from "@/utils/classNames";
 import styles from "./Markdown.module.css";

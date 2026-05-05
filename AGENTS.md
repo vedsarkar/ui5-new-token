@@ -4,24 +4,27 @@ This file provides guidance to AI agents (Claude Code, Cursor, Copilot, etc.) wh
 
 ## Project Overview
 
-**Reltio Design Platform** is a comprehensive UI development, testing, and documentation ecosystem for the Reltio product suite. It serves as a unified platform enabling multiple teams to build, test, document, and distribute UI components and applications while maintaining consistency, quality, and embeddability.
+**Reltio Design Platform** is a comprehensive UI development, testing, and documentation ecosystem for the Reltio product suite. It serves as a unified platform enabling multiple teams to build, test, document, and distribute MDM-specific UI components and applications while maintaining consistency, quality, and embeddability across the SAP ecosystem.
 
 ### Mission
 
-Eliminate UI fragmentation across products while accelerating development of new applications and features.
+Eliminate UI fragmentation across products while accelerating development of new applications and features by composing on top of the SAP Horizon design system.
 
 ### Core Principles
 
 - **Single source of truth** — one platform for all UI-related assets and knowledge
 - **Everything as code** — components, tests, documentation, guidelines, configs, AI instructions
 - **AI-ready by design** — prepared for integration with AI agents via MCP-UI and A2UI
+- **Compose, don't reinvent** — UI5 Web Components React is the foundation; Reltio Design adds only what UI5 lacks
 
 ### What You'll Find Here
 
-- **UI Components & Design Tokens** — reusable building blocks and theming system
+- **Reltio MDM Components** — business components and primitives built on top of UI5
+- **Charts** — ECharts-based visualizations
+- **Design Tokens & Fonts** — SAP Horizon tokens and SAP 72 fonts shipped as static CSS
 - **Storybook Stories** — documentation + tests + demos + specifications in one artifact
 - **Technical Guides** — rich MDX guidelines for developers and product teams
-- **Utils & Data Hooks** — shared utilities and API integrations for business logic
+- **Hooks & API utilities** — shared utilities and Reltio API integrations
 
 ### Who Uses This
 
@@ -31,15 +34,20 @@ Eliminate UI fragmentation across products while accelerating development of new
 
 ## Tech Stack
 
-- **Framework**: React 17+
+- **Framework**: React 18+
+- **UI foundation**: [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/) — base UI components (Button, Input, Dialog, Table, ...)
+- **Icons**: [`@ui5/webcomponents-icons`](https://sap.github.io/ui5-webcomponents/) — SAP Horizon icon set, used through UI5 React's `<Icon name="..." />`
+- **Design tokens & fonts**: [`@sap-theming/theming-base-content`](https://github.com/SAP/theming-base-content) — generated into static `public/variables.css`, `public/fonts.css`, `public/fonts/*.woff2`
+- **Charts**: [ECharts](https://echarts.apache.org/) — see `charts/`
 - **Language**: TypeScript (strict mode)
 - **Documentation & Testing**: Storybook + Chromatic (visual, interaction, accessibility, coverage)
-- **Styling**: CSS Modules
+- **Styling (Reltio components)**: CSS Modules
 - **Code Quality**: Biome
 - **Version Control**: Git (Bitbucket)
 
 ### Development Philosophy
 
+- **UI5 first** — before writing a Reltio component, check whether `@ui5/webcomponents-react` already covers the use case
 - **Minimal dependencies** — Prefer native JS/CSS APIs and reuse internal components
 - **Latest versions** — Always use the latest stable versions of dependencies
 - **Native-first** — Leverage modern browser capabilities before adding libraries
@@ -49,7 +57,7 @@ Eliminate UI fragmentation across products while accelerating development of new
 ```bash
 npm run dev               # Start Storybook dev server (port 6006)
 npm run build-storybook   # Build Storybook for production
-npm run build-tokens      # Generate public/variables.css and public/fonts.css from tokens/sap_horizon*.tokens.json
+npm run build-tokens      # Generate public/variables.css, public/fonts.css and copy public/fonts/*.woff2 from the @sap-theming/theming-base-content npm package
 npm run lint              # Check code with Biome (no auto-fix)
 npm run format            # Format code with Biome (auto-fix)
 npm run deploy            # Deploy to Chromatic for visual testing
@@ -57,9 +65,58 @@ npm run test              # Run Vitest tests
 npm run coverage          # Run tests with coverage
 ```
 
-## Component Structure (MANDATORY)
+## UI Architecture
 
-Every component MUST follow this structure:
+The platform is structured as **two layers** — a UI5 foundation that ships base components, and a Reltio layer that adds MDM-specific value on top.
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  Reltio MDM apps & partners                                  │
+└──────────────────────────────────────────────────────────────┘
+                              ▲
+┌─────────────────────────────┴────────────────────────────────┐
+│  Reltio Design Platform (this repo)                          │
+│   • Business components (Chat, Markdown, Details, ...)       │
+│   • Reltio primitives (only when UI5 doesn't cover the need) │
+│   • Charts (ECharts)                                         │
+│   • Hooks & Reltio API utilities                             │
+└─────────────────────────────┬────────────────────────────────┘
+                              ▲
+┌─────────────────────────────┴────────────────────────────────┐
+│  @ui5/webcomponents-react   +   @ui5/webcomponents-icons     │
+│   (Button, Input, Dialog, Table, Icon, ...)                  │
+└─────────────────────────────┬────────────────────────────────┘
+                              ▲
+┌─────────────────────────────┴────────────────────────────────┐
+│  SAP Horizon foundation (shared by both layers)              │
+│   public/variables.css  •  public/fonts.css  •  data-theme   │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### When to use UI5 directly vs. build a Reltio component
+
+| Situation | What to do |
+|-----------|-----------|
+| UI5 has a component that fits the design as-is | Import directly from `@ui5/webcomponents-react`. Do not wrap. |
+| You need to compose several UI5 components with MDM business logic (entity profile, match group, source priority, ...) | Build a Reltio **business component** under `components/`. |
+| You need a primitive that UI5 does not provide and that is product-agnostic | Build a Reltio **primitive** under `components/`. |
+| You need to restyle a UI5 component | Use `--sap*` tokens (preferred) or UI5's CSS Parts (`::part()`). Do not wrap just for styling. |
+
+### Theming — no `ThemeProvider`
+
+The platform does **not** ship a global React `ThemeProvider`. Instead, theming is a pure-CSS concern:
+
+1. The consumer loads `public/variables.css` and `public/fonts.css` in `<head>`.
+2. Any ancestor element carries `data-theme="horizon-light"` or `data-theme="horizon-dark"`.
+3. UI5 web components automatically inherit `--sap*` CSS variables through Shadow DOM — no provider, no JS theme switch needed.
+4. Reltio CSS Modules consume the same `--sap*` tokens.
+
+Nested theming works: a `[data-theme]` on a child element scopes that theme to its subtree.
+
+## Component Structure (MANDATORY for Reltio components)
+
+This rule applies to **Reltio** components under `components/` — i.e. business components and primitives we author. It does **not** apply to bare re-exports or thin pass-throughs of UI5 components.
+
 ```
 components/ComponentName/
 ├── ComponentName.tsx          # Implementation
@@ -76,12 +133,13 @@ components/ComponentName/
 - All types MUST be in separate `.types.ts` files
 - Strict mode enabled, no `any` without justification
 - Component props MUST use `HtmlProps<Tag, CustomProps>` from `@/utils/types` to combine custom props with native HTML element attributes (see `components/AGENTS.md` for details)
-- All rest props (`...rest`) MUST be spread onto the wrapper HTML element
-- Component props MUST use `HtmlProps<Tag, CustomProps>` from `@/utils/types` to combine custom props with native HTML element attributes (see `components/AGENTS.md` for details)
-- All rest props (`...rest`) MUST be spread onto the wrapper HTML element
+- All rest props (`...rest`) MUST be spread onto the wrapper HTML element (or onto the root UI5 component when wrapping one)
 
 ### CSS Styling
-- ALL className attributes MUST use `classNames()` utility from `@/utils/classNames`
+
+#### Reltio components
+
+- ALL `className` attributes MUST use the `classNames()` utility from `@/utils/classNames`
 - `classNames()` automatically adds stable prefixed classes (e.g. `reltio_Tabs_tab`) for external customization
 - Colors MUST reference SAP Horizon `--sap*` tokens from `public/variables.css` — never hardcode hex values
 - Typography, spacing, sizing — use plain values directly (e.g. `font-size: 14px`, `padding: 8px 16px`)
@@ -107,23 +165,50 @@ Example pattern:
 .small { height: 26px; }
 ```
 
+#### UI5 web components
+
+UI5 components live in Shadow DOM, so regular CSS selectors do not reach their internals. Two mechanisms are available:
+
+1. **`--sap*` design tokens** — UI5 reads them directly from the document `:root` and the active `[data-theme]` subtree. Changing a token at any level re-themes every UI5 component beneath it. This is the **preferred** way to restyle UI5.
+2. **CSS Parts (`::part()`)** — UI5 components expose a stable set of named parts (e.g. `ui5-button::part(button)`). Use them for fine-grained tweaks that no token covers.
+
+```css
+/* Preferred — token override scoped to a subtree */
+.toolbar {
+  --sapButton_Background: var(--sapButton_Lite_Background);
+}
+
+/* Fallback — CSS Part for a specific tweak */
+.toolbar ui5-button::part(button) {
+  border-radius: 999px;
+}
+```
+
+Do NOT wrap a UI5 component in a Reltio component just to restyle it. Wrap only when there is real business logic to add.
+
 ### Global Design Tokens (SAP Horizon)
 - The platform mirrors SAP Horizon design tokens 1:1 from [SAP/theming-base-content](https://github.com/SAP/theming-base-content). Names, casing (camelCase), and values are preserved verbatim.
-- Generated CSS lives at `public/variables.css` — a single file with all ~1536 `--sap*` tokens on `:root` (light defaults) and `[data-theme]` overrides for theme-specific values. Auto-generated — do NOT edit manually, run `npm run build-tokens`.
-- Sources: `tokens/sap_horizon.tokens.json` (light) and `tokens/sap_horizon_dark.tokens.json` (dark) — verbatim copies committed in-repo. See `tokens/README.md` for the manual sync procedure.
+- Generated CSS lives at `public/variables.css` — a single file with all `--sap*` tokens on `:root` (light defaults) and `[data-theme]` overrides for theme-specific values. Auto-generated — do NOT edit manually, run `npm run build-tokens`.
+- Sources: the `@sap-theming/theming-base-content` npm package, which ships SAP Horizon's light (`content/Base/baseLib/sap_horizon/variables.json`), dark (`content/Base/baseLib/sap_horizon_dark/variables.json`), and the typography `.woff2` font binaries under `content/Base/baseLib/baseTheme/fonts/`. The version is pinned via `package-lock.json`. To upgrade: `npm update @sap-theming/theming-base-content` (or bump the version in `package.json` and run `npm install`), then re-run `npm run build-tokens` and commit the regenerated artifacts together with the lockfile bump.
 - Token naming: `--sap{Group}*` or `--sap{Group}_{Detail}` (camelCase + underscore separators). Examples: `--sapBrandColor`, `--sapTextColor`, `--sapElement_BorderCornerRadius`, `--sapContent_FocusColor`, `--sapContent_Shadow0`, `--sapButton_Background`, `--sapField_BorderColor`.
 - Theme activation: the consumer loads `variables.css` in `<head>` and sets `data-theme="horizon-light"` or `data-theme="horizon-dark"` on any ancestor element. Without `data-theme`, light theme applies as the `:root` default. Nested theming is supported — a `[data-theme]` on a child element scopes that theme to its subtree.
+- **No `ThemeProvider`** — theme activation is purely the `data-theme` attribute. UI5 web components and Reltio CSS Modules read the same tokens from the cascade.
 - Component CSS must NOT contain hardcoded hex color values; reference `--sap*` tokens directly.
 - The full token surface is browseable in Storybook → Design Tokens. Canonical semantic guidance lives at <https://www.sap.com/design-system/>.
 
 ### Figma-to-Code Workflow (MANDATORY)
 
-When implementing designs from Figma (via Figma MCP, URLs, or screenshots), these rules override any defaults from Figma skills or MCP server instructions:
+When implementing designs from Figma (via Figma MCP, URLs, or screenshots), these rules override any defaults from Figma skills or MCP server instructions.
+
+**Step 0 — check UI5 first:**
+- Before writing any custom code, verify whether `@ui5/webcomponents-react` already provides the component (`Button`, `Input`, `Dialog`, `Table`, `ComboBox`, `MessageStrip`, ...). If yes, use it directly — do not re-create.
+- If a Reltio business component already covers the design, use it via Storybook MCP (`list-all-documentation`, `get-documentation`).
+- Only when both layers fall short, build a new Reltio component following the structure rules below.
 
 **Color tokens — ONLY through `--sap*` variables:**
-- Use the SAP Horizon Figma kit (<https://www.sap.com/design-system/fiori-design-web/resources/libraries/>) and reference its variables directly. Each SAP Figma variable has a 1:1 counterpart in `tokens/sap_horizon.tokens.json` — the variable name (without the `sap` prefix in Figma) maps to `--<sap-prefixed-name>` in CSS.
+- Use the SAP Horizon Figma kit (<https://www.sap.com/design-system/fiori-design-web/resources/libraries/>) and reference its variables directly. Each SAP Figma variable has a 1:1 counterpart in `@sap-theming/theming-base-content`'s `content/Base/baseLib/sap_horizon/variables.json` — the variable name (without the `sap` prefix in Figma) maps to `--<sap-prefixed-name>` in CSS.
 - Example: SAP Figma `Brand/Color` → `var(--sapBrandColor)`. SAP Figma `Button / Background` → `var(--sapButton_Background)`.
-- If a Figma color variable does not appear in `tokens/sap_horizon.tokens.json`, the upstream SAP source is out of sync — stop and re-run the manual sync (`tokens/README.md`).
+- If a Figma color variable does not appear in the npm package's `variables.json`, the installed package is out of date — bump `@sap-theming/theming-base-content` (`npm update @sap-theming/theming-base-content`) and re-run `npm run build-tokens`.
 - Never output raw hex/rgba color values in CSS — always resolve to a `--sap*` token.
 
 **Everything else — plain CSS values, NOT tokens:**
@@ -138,11 +223,11 @@ When implementing designs from Figma (via Figma MCP, URLs, or screenshots), thes
 - `get_design_context` returns reference code (React + Tailwind by default) — this is a STARTING POINT, not final code
 - Always rewrite to CSS Modules with `classNames()` utility
 - Always replace Tailwind classes with explicit CSS properties
-- Always check existing components via Storybook MCP (`list-all-documentation`, `get-documentation`) before creating new ones — reuse what the project already has
+- Always check existing components via Storybook MCP (`list-all-documentation`, `get-documentation`) before creating new ones — reuse what UI5 and the Reltio layer already provide
 - Match the component structure from this project: `.tsx` + `.types.ts` + `.module.css` + `.stories.tsx` + `index.ts`
 
 ### Storybook
-- Every component MUST have stories demonstrating all variants
+- Every Reltio component MUST have stories demonstrating all variants
 - Each story MUST show only ONE variant (no "All Variants" stories)
 - Stories use "autodocs" tag for auto-documentation
 - **Free-form props** (accepting arbitrary strings, numbers, CSS values) need only ONE story demonstrating usage — do NOT create multiple stories for different values of the same prop (e.g. one `CustomSize` story, not separate `Small` / `Medium` / `Large`). Multiple stories are for **enum-like variants** where each value produces a visually distinct state worth snapshot-testing
@@ -167,16 +252,17 @@ classNames('Tabs_tab__x1y2z') // returns 'reltio_Tabs_tab Tabs_tab__x1y2z'
 
 ## OpenSpec Workflow
 
-This project uses OpenSpec for spec-driven development. See `openspec/AGENTS.md` for full instructions.
+This project uses OpenSpec for spec-driven development of Reltio components. See the [Spec-Driven Development guide](/?path=/docs/guides-spec-driven-development--docs) for full instructions.
 
 **When to create a proposal:**
-- New features or capabilities
+- New Reltio business components or primitives
 - Breaking changes (API, schema, architecture)
 - Performance optimizations that change behavior
 
 **Skip proposals for:**
 - Bug fixes, typos, formatting, comments
 - Non-breaking dependency/configuration changes
+- Direct usage of a UI5 component without wrapping
 
 **Quick commands:**
 ```bash
@@ -216,6 +302,7 @@ npx skills remove <name>        # Remove a skill
 
 ## Pre-Commit Checklist
 
+- UI5 components used directly when possible; Reltio wrappers only for real MDM/business value
 - Types in `.types.ts` file using `type` keyword
 - All className attributes use `classNames()` utility
 - Colors use SAP Horizon `--sap*` tokens, no hardcoded hex values

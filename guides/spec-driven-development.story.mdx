@@ -4,7 +4,9 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Spec-Driven Development Guide
 
-Welcome to the Reltio Design Platform's spec-driven development workflow. This guide explains how we use **OpenSpec (OPSX)** with **Claude Skills** to ensure predictable, high-quality component development. The skills work across both **Cursor IDE** and **Claude Code**, giving every AI agent the same workflow capabilities.
+Welcome to the Reltio Design Platform's spec-driven development workflow. This guide explains how we use **OpenSpec (OPSX)** with **Claude Skills** to ensure predictable, high-quality development of Reltio components. The skills work across both **Cursor IDE** and **Claude Code**, giving every AI agent the same workflow capabilities.
+
+> **Compose, don't reinvent.** Reltio Design builds on `@ui5/webcomponents-react`. Most spec-driven changes here describe **MDM business components** and **primitives** that compose UI5 components with Reltio-specific data, behavior, and semantics — not from-scratch reimplementations of base controls. See the [UI Architecture guide](?path=/docs/guides-ui-architecture--docs) for the layering rationale.
 
 ## What is Spec-Driven Development?
 
@@ -110,11 +112,11 @@ This makes OpenSpec suitable for any project — not just this design platform. 
 	</thead>
 	<tbody>
 		<tr>
-			<td>New features or components</td>
+			<td>New Reltio business components or primitives</td>
 			<td>Bug fixes (restoring spec behavior)</td>
 		</tr>
 		<tr>
-			<td>Breaking API changes</td>
+			<td>Breaking API changes on Reltio components</td>
 			<td>Typos, formatting, comments</td>
 		</tr>
 		<tr>
@@ -127,12 +129,16 @@ This makes OpenSpec suitable for any project — not just this design platform. 
 		</tr>
 		<tr>
 			<td>New patterns or conventions</td>
-			<td>Tests for existing behavior</td>
+			<td>Direct usage of a UI5 component without wrapping</td>
+		</tr>
+		<tr>
+			<td>MDM-specific compositions on top of UI5</td>
+			<td>Visual restyling of UI5 via tokens / <code>::part()</code></td>
 		</tr>
 	</tbody>
 </table>
 
-> **Rule of Thumb:** If you're unsure whether to create a change, create one. It's safer to over-specify than to discover scope issues during implementation.
+> **Rule of Thumb:** If you're unsure whether to create a change, create one. It's safer to over-specify than to discover scope issues during implementation. But if all you need is a `Button` from `@ui5/webcomponents-react`, just import it — no spec required.
 
 ## Bottom-Up Development: From Components to Features
 
@@ -189,50 +195,64 @@ One of the most important principles in spec-driven development is **decompositi
 	</tbody>
 </table>
 
-### Real Example: Building a Product Page
+### Real Example: Building a Match Group Resolution Page
+
+> Imagine an MDM screen that lets a steward review duplicate entity candidates, compare attributes side-by-side, pick a survivor, and merge.
 
 **❌ Don't:** Create one massive change
 
 ```
-/openspec-new-change create a Product Page with header, image gallery,
-price section, add-to-cart button, reviews section, and related products
+/openspec-new-change create a Match Group page with header, attribute compare table,
+source priority controls, survivor picker, merge button, and activity log
 ```
 
 This creates a massive change that is hard for AI to implement correctly, takes days to review, has dozens of interconnected tasks, is impossible to estimate accurately, and cannot be deployed incrementally.
 
-**✅ Do:** Decompose into focused changes
+**✅ Do:** Decompose into focused changes — and reuse UI5 wherever possible
 
-First, use explore mode to help decompose:
+First, use explore mode to help decompose **and** to identify which parts UI5 already covers:
 
 ```
-/openspec-explore Help me decompose a Product Page into individual component changes.
-I need: header, image gallery, price, cart button, reviews, related products.
+/openspec-explore Help me decompose a Match Group resolution page into individual
+Reltio component changes. The page needs: page header, attribute compare table,
+source priority controls, survivor picker, merge action, and an activity log.
+For each piece, decide whether @ui5/webcomponents-react already has it (use directly,
+no spec) or whether we need a Reltio business component / primitive.
+```
+
+A typical outcome of that exploration:
+
+```
+Use UI5 directly (no spec required):
+  - Page header → ui5 ObjectPageHeader
+  - Merge action → ui5 Button (design="Emphasized")
+  - Activity timeline list → ui5 List
+
+Reltio business components (require spec-driven changes):
+  - add-attribute-compare-table        → Reltio composition over ui5 Table + cell renderers
+  - add-source-priority-control        → Reltio primitive (no ui5 equivalent)
+  - add-survivor-picker                → Reltio composition over ui5 RadioButton + popovers
+  - add-match-group-resolution-page    → top-level assembly
 ```
 
 Then create changes in order, from specific to general:
 
 ```
-# Phase 1: Foundation components (can run in parallel)
-/openspec-new-change add-product-image
-/openspec-new-change add-price-display
-/openspec-new-change add-cart-button
-/openspec-new-change add-star-rating
+# Phase 1: Foundation Reltio pieces (can run in parallel)
+/openspec-new-change add-source-priority-control
+/openspec-new-change add-attribute-compare-table
+/openspec-new-change add-survivor-picker
 
-# Phase 2: Composite components (after Phase 1)
-/openspec-new-change add-image-gallery
-/openspec-new-change add-review-card
-/openspec-new-change add-reviews-list
-
-# Phase 3: Page assembly (after Phase 2)
-/openspec-new-change add-product-page
+# Phase 2: Page assembly (after Phase 1)
+/openspec-new-change add-match-group-resolution-page
 ```
 
-**Result:** 8 simple changes instead of 1 complex one. Each can be:
+**Result:** 4 focused Reltio changes instead of 1 complex one — and a long list of UI5 pieces that need no spec at all because they ship out of the box. Each Reltio change can be:
 - Implemented in hours, not days
 - Reviewed in minutes
 - Tested independently
 - Deployed incrementally
-- Reused in other pages
+- Reused in other MDM screens
 
 ### Benefits for Developers
 
@@ -462,9 +482,9 @@ Browse the archive to understand project history:
 
 ```
 openspec/changes/archive/
-├── 2025-12-15-add-button-component/
-├── 2025-12-20-add-treelist-component/
-└── 2026-01-10-update-button-variants/
+├── 2026-04-12-add-attribute-compare-table/
+├── 2026-04-18-add-source-priority-control/
+└── 2026-05-02-add-match-group-resolution-page/
 ```
 
 ## AI-Assisted Development Workflow

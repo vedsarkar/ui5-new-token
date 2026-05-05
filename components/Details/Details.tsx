@@ -1,13 +1,13 @@
+import { Icon } from "@ui5/webcomponents-react/Icon";
 import React, { useEffect, useState } from "react";
-
-import { CodeBrackets } from "@/icons/CodeBrackets";
-import { ExpandLess } from "@/icons/ExpandLess";
-import { ExpandMore } from "@/icons/ExpandMore";
 import { classNames } from "@/utils/classNames";
 
 import styles from "./Details.module.css";
 
 import type { DetailsProps } from "./Details.types";
+import "@ui5/webcomponents-icons/dist/navigation-up-arrow.js";
+import "@ui5/webcomponents-icons/dist/navigation-down-arrow.js";
+import "@ui5/webcomponents-icons/dist/source-code.js";
 
 /**
  * Enhanced details component for rendering collapsible content blocks
@@ -55,16 +55,16 @@ export const Details = ({
 		>
 			<summary className={classNames(styles.summary)}>
 				<span className={classNames(styles.icon)} aria-hidden="true">
-					<CodeBrackets size="small" />
+					<Icon name="source-code" />
 				</span>
 				<span className={classNames(styles.summaryText)}>{summary}</span>
 				<span
 					className={classNames(styles.chevron, isOpen && styles.chevronOpen)}
 				>
 					{isOpen ? (
-						<ExpandLess size="small" aria-hidden="true" />
+						<Icon name="navigation-up-arrow" aria-hidden="true" />
 					) : (
-						<ExpandMore size="small" aria-hidden="true" />
+						<Icon name="navigation-down-arrow" aria-hidden="true" />
 					)}
 				</span>
 			</summary>

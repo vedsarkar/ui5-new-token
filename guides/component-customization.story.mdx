@@ -4,9 +4,26 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Component Customization
 
-This guide explains how to customize the appearance of Reltio Design components in your application. It covers the two main customization mechanisms: **stable CSS classes** for targeted overrides and **global CSS custom properties** for system-wide theming.
+This guide explains how to customize the appearance of every component you can render from a Reltio app — both the **UI5 web components** (Button, Input, Dialog, ...) that come from `@ui5/webcomponents-react` and the **Reltio MDM components** (Chat, Markdown, Details, ...) built on top.
 
-> **🎯 Key Principle:** Every component exposes stable, prefixed CSS class names that act as public selectors for external styling. Use them to override any CSS property without modifying the component library.
+Each layer uses a different mechanism, but they share the same theming foundation: SAP Horizon `--sap*` design tokens delivered through `public/variables.css` and the `data-theme` attribute.
+
+> **🎯 Key Principle:** Restyle UI5 components by overriding `--sap*` tokens or using their CSS Parts. Restyle Reltio components by targeting their stable `reltio_*` CSS classes.
+
+## Two layers, one foundation
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  Reltio components       → stable .reltio_* CSS classes      │
+│  UI5 web components      → --sap* tokens, ::part() selectors │
+└──────────────────────────────────────────────────────────────┘
+                              ▲
+┌─────────────────────────────┴────────────────────────────────┐
+│  SAP Horizon tokens (--sap*) on :root and [data-theme]       │
+└──────────────────────────────────────────────────────────────┘
+```
+
+Token overrides cascade into both layers automatically. Class-based and `::part()` overrides are the right tool when you need to change something that no token covers.
 
 ## Business Value
 
@@ -24,11 +41,11 @@ This guide explains how to customize the appearance of Reltio Design components 
     </tr>
     <tr>
       <td>Theme consistency</td>
-      <td>Global color tokens ensure all components adapt to light/dark mode together</td>
+      <td>SAP tokens on <code>:root</code> ensure UI5 and Reltio components adapt to light/dark mode together</td>
     </tr>
     <tr>
       <td>Upgrade-safe</td>
-      <td>Stable class names are part of the public API — they do not change between builds</td>
+      <td>Stable class names and UI5 CSS Parts are part of the public API — they do not change between builds</td>
     </tr>
     <tr>
       <td>Familiar workflow</td>
@@ -37,40 +54,110 @@ This guide explains how to customize the appearance of Reltio Design components 
   </tbody>
 </table>
 
-## Architecture Overview
+## Theming foundation (shared)
 
-Reltio Design uses a two-layer styling architecture:
+Reltio Design ships SAP Horizon tokens and SAP 72 fonts as static CSS. There is no React `ThemeProvider` — load the files in `<head>` and toggle `data-theme` on any ancestor:
 
-<table>
-  <thead>
-    <tr>
-      <th>Layer</th>
-      <th>Mechanism</th>
-      <th>Purpose</th>
-      <th>Scope</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Global tokens</td>
-      <td>CSS custom properties on <code>:root</code></td>
-      <td>Colors, theming, light/dark mode</td>
-      <td>All components</td>
-    </tr>
-    <tr>
-      <td>Stable classes</td>
-      <td>Prefixed CSS class names on every element</td>
-      <td>Targeted per-component overrides</td>
-      <td>Individual elements</td>
-    </tr>
-  </tbody>
-</table>
+```html
+<link rel="stylesheet" href="/variables.css" />
+<link rel="stylesheet" href="/fonts.css" />
 
-Components reference global tokens for colors internally, so changing a token propagates to every component that uses it. Stable classes let you override any specific property on a specific element when global tokens are not enough.
+<div data-theme="horizon-light">
+  <!-- All UI5 and Reltio components here render in light theme -->
+</div>
 
-## Stable CSS Classes
+<div data-theme="horizon-dark">
+  <!-- And here in dark theme — nested theming is supported -->
+</div>
+```
 
-### How It Works
+Switching the attribute swaps every `--sap*` value in the cascade. UI5 web components see the change through Shadow DOM automatically; Reltio CSS Modules see it through normal cascade.
+
+See the [Design Tokens guide](?path=/docs/design-tokens--docs) for the full token surface.
+
+### Overriding tokens
+
+Override any `--sap*` token at any DOM level — the change cascades into both UI5 and Reltio components beneath it:
+
+```css
+/* Restyle every brand-coloured surface inside .promo */
+.promo {
+  --sapBrandColor: #e91e63;
+  --sapButton_Emphasized_Background: #e91e63;
+}
+```
+
+```css
+/* App-wide override (loaded after variables.css) */
+:root {
+  --sapBrandColor: #e91e63;
+}
+```
+
+## Customizing UI5 web components
+
+UI5 components run inside Shadow DOM, so regular CSS class selectors do not reach their internals. Two mechanisms are available, in order of preference:
+
+### 1. `--sap*` design tokens (preferred)
+
+Tokens cross the Shadow DOM boundary natively. Scope them to a parent class to limit blast radius:
+
+```css
+.toolbar {
+  --sapButton_Background: var(--sapButton_Lite_Background);
+  --sapButton_BorderColor: transparent;
+  --sapButton_TextColor: var(--sapBrandColor);
+}
+```
+
+```tsx
+import { Button } from "@ui5/webcomponents-react/Button";
+
+<div className="toolbar">
+  <Button>Filter</Button>
+  <Button>Sort</Button>
+</div>;
+```
+
+Both buttons render with the lite background, transparent border, and brand text — without touching `::part()` and without wrapping anything.
+
+### 2. CSS Parts (`::part()`)
+
+When no token covers what you need, fall back to UI5's documented CSS Parts:
+
+```css
+.pill-bar ui5-button::part(button) {
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+```
+
+Each UI5 component documents its parts in the [UI5 Web Components docs](https://sap.github.io/ui5-webcomponents/) — look for the **CSS Parts** section on the component page.
+
+### 3. CSS shadow parts inheritance — what does NOT work
+
+Regular descendant selectors do not pierce Shadow DOM:
+
+```css
+/* ❌ Does NOT work — `.icon` lives inside the button's Shadow DOM */
+ui5-button .icon { color: red; }
+
+/* ✅ Works — token is inherited through Shadow DOM */
+ui5-button { --sapButton_Background: red; }
+
+/* ✅ Works — explicit CSS Part */
+ui5-button::part(button) { background: red; }
+```
+
+### Restyling vs. wrapping
+
+Do **not** create a Reltio wrapper component just to restyle UI5. Tokens and CSS Parts cover almost every visual tweak. Build a Reltio component only when there is real MDM business logic to add (see [components/AGENTS.md](http://github.com/) and the [UI Architecture guide](?path=/docs/guides-ui-architecture--docs)).
+
+## Customizing Reltio components
+
+Reltio components ship as React components with CSS Modules — regular DOM, no Shadow boundary. Target them via stable, prefixed CSS classes.
+
+### How stable classes work
 
 Every rendered element in a Reltio Design component carries two CSS classes:
 
@@ -79,60 +166,37 @@ Every rendered element in a Reltio Design component carries two CSS classes:
 
 ```html
 <!-- Rendered DOM -->
-<button class="reltio_Tabs_tab Tabs_tab__L1VzZ">
-  First Tab
-</button>
+<div class="reltio_Chat_root Chat_root__L1VzZ">
+  ...
+</div>
 ```
 
-The stable class `reltio_Tabs_tab` is the public selector you target in your CSS. The hashed class `Tabs_tab__L1VzZ` is an implementation detail — never depend on it.
+The stable class `reltio_Chat_root` is the public selector you target in your CSS. The hashed class `Chat_root__L1VzZ` is an implementation detail — never depend on it.
 
-### Discovering Available Classes
+### Discovering available classes
 
-Every component's documentation page includes a **CSS Classes** table that lists all available stable selectors. Click any selector to copy it to your clipboard.
+Every Reltio component's documentation page includes a **CSS Classes** table that lists all available stable selectors. Click any selector to copy it to your clipboard.
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Selector</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>root</code></td>
-      <td><code>.reltio_Tabs_root</code></td>
-    </tr>
-    <tr>
-      <td><code>tab</code></td>
-      <td><code>.reltio_Tabs_tab</code></td>
-    </tr>
-    <tr>
-      <td><code>active</code></td>
-      <td><code>.reltio_Tabs_active</code></td>
-    </tr>
-  </tbody>
-</table>
-
-### Overriding Styles
+### Overriding styles
 
 Target the stable class in your application's CSS:
 
 ```css
-/* Change tab text color and font size */
-.reltio_Tabs_tab {
-  color: #333;
-  font-size: 16px;
+/* Tweak the chat scroll-to-bottom button */
+.reltio_Chat_scrollToBottom {
+  background: var(--sapButton_Emphasized_Background);
+  color: var(--sapButton_Emphasized_TextColor);
 }
 
-/* Change the active tab indicator color */
-.reltio_Tabs_active::after {
-  background-color: hotpink;
+/* Customize a markdown heading colour */
+.reltio_Markdown_root h2 {
+  color: var(--sapBrandColor);
 }
 ```
 
 ### Specificity
 
-Component styles use the hashed class selector (single class specificity). Your override with the stable class has the same specificity. The CSS cascade determines which wins — **the stylesheet loaded last takes precedence**.
+Component styles use a single hashed class selector. Your override with the stable class has the same specificity. The CSS cascade determines which wins — **the stylesheet loaded last takes precedence**.
 
 In most setups, your application's CSS loads after the component library's CSS, so your overrides win naturally.
 
@@ -141,12 +205,12 @@ If you need guaranteed specificity regardless of load order:
 **✅ Do:** Double the selector or use a parent context
 
 ```css
-.reltio_Tabs_tab.reltio_Tabs_tab {
+.reltio_Chat_root.reltio_Chat_root {
   font-size: 16px;
 }
 
 /* or */
-.my-app .reltio_Tabs_tab {
+.my-app .reltio_Chat_root {
   font-size: 16px;
 }
 ```
@@ -154,12 +218,12 @@ If you need guaranteed specificity regardless of load order:
 **❌ Don't:** Use `!important`
 
 ```css
-.reltio_Tabs_tab {
+.reltio_Chat_root {
   font-size: 16px !important;
 }
 ```
 
-### Naming Convention
+### Naming convention
 
 Stable classes follow the pattern `reltio_{ComponentName}_{element}`:
 
@@ -178,12 +242,12 @@ Stable classes follow the pattern `reltio_{ComponentName}_{element}`:
       <td>Namespace prefix, prevents collisions with your CSS</td>
     </tr>
     <tr>
-      <td><code>Tabs_</code></td>
+      <td><code>Chat_</code></td>
       <td></td>
       <td>Component name (PascalCase)</td>
     </tr>
     <tr>
-      <td><code>tab</code></td>
+      <td><code>scrollToBottom</code></td>
       <td></td>
       <td>Element or state within the component</td>
     </tr>
@@ -192,140 +256,27 @@ Stable classes follow the pattern `reltio_{ComponentName}_{element}`:
 
 Underscores are used throughout so the entire class name can be selected with a double-click in any text editor or browser DevTools.
 
-## Global CSS Custom Properties
+## Combining all three approaches
 
-### Loading the Tokens
-
-Reltio Design mirrors the SAP Horizon design-token system 1:1. Activate the active theme by wrapping your React app in `<ThemeProvider>` from `@reltio/design`:
-
-```jsx
-import { ThemeProvider } from "@reltio/design";
-
-<ThemeProvider>
-  <App />
-</ThemeProvider>;
-```
-
-The provider injects the appropriate per-theme stylesheet (`https://reltio.design/themes/horizon-{light,dark}.theme.css`) and registers the SAP 72 `@font-face` rules. After that, every `--sap*` design token is available on `:root` for components and your own CSS.
-
-For non-React consumers (static sites, MDX docs, server-rendered pages without React control over `<head>`), reference the same files via raw CSS:
-
-```js
-// npm subpath import
-import "@reltio/design/themes/horizon-light.css";
-```
-
-```html
-<!-- or via CDN -->
-<link rel="stylesheet" href="https://reltio.design/themes/horizon-light.theme.css" />
-```
-
-### Token Surface
-
-The full token surface is browseable on the [Design Tokens](?path=/docs/design-tokens--docs) page. Canonical semantic guidance — when to use which token, how SAP's primary / accent / semantic concepts relate, the formal contrast rules — lives at the [SAP Design System site](https://www.sap.com/design-system/). A few of the most-used groups:
-
-<table>
-  <thead>
-    <tr>
-      <th>Category</th>
-      <th>Pattern</th>
-      <th>Examples</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Brand &amp; foundation</td>
-      <td><code>--sap&#123;Brand,Highlight,Base,Background,Text,Title,Link&#125;*</code></td>
-      <td><code>--sapBrandColor</code>, <code>--sapTextColor</code>, <code>--sapBackgroundColor</code></td>
-    </tr>
-    <tr>
-      <td>Semantic</td>
-      <td><code>--sap&#123;Negative,Critical,Positive,Informative,Neutral&#125;*</code></td>
-      <td><code>--sapNegativeColor</code>, <code>--sapPositiveTextColor</code>, <code>--sapInformativeBackground</code></td>
-    </tr>
-    <tr>
-      <td>Element foundations</td>
-      <td><code>--sapElement_*</code></td>
-      <td><code>--sapElement_BorderCornerRadius</code>, <code>--sapElement_Height</code></td>
-    </tr>
-    <tr>
-      <td>Content foundations</td>
-      <td><code>--sapContent_*</code></td>
-      <td><code>--sapContent_FocusColor</code>, <code>--sapContent_LabelColor</code>, <code>--sapContent_Shadow0..3</code></td>
-    </tr>
-    <tr>
-      <td>Per-control parameters</td>
-      <td><code>--sap&#123;Button,Field,Tab,List,Tile,Avatar,Chart,Shell,…&#125;_*</code></td>
-      <td><code>--sapButton_Background</code>, <code>--sapField_BorderColor</code></td>
-    </tr>
-    <tr>
-      <td>Indication / accent palettes</td>
-      <td><code>--sapIndicationColor_1..10</code>, <code>--sapAccentColor1..10</code></td>
-      <td>Industry- and product-specific accents</td>
-    </tr>
-  </tbody>
-</table>
-
-### Using Tokens in Your Application
-
-Reference tokens in your own CSS to stay consistent with the design system:
+Token overrides re-theme everything; UI5 CSS Parts handle web-component tweaks; Reltio stable classes handle our wrapper components. They compose freely:
 
 ```css
-.my-card {
-  background: var(--sapBaseColor);
-  border: 1px solid var(--sapField_BorderColor);
-  border-radius: var(--sapElement_BorderCornerRadius);
-  color: var(--sapTextColor);
-}
-
-.my-card-title {
-  color: var(--sapBrandColor);
-}
-```
-
-When the active theme switches (light ↔ dark), every `--sap*` token re-resolves to its theme-specific value and your component re-renders automatically.
-
-### Theming model
-
-Themes are mutually exclusive at runtime — only one is loaded into the page at a time, via a `<link rel="stylesheet">` injected by `<ThemeProvider>`. Switch with the `useTheme` hook:
-
-```jsx
-import { useTheme } from "@reltio/design";
-
-const ToggleButton = () => {
-  const { resolved, setTheme } = useTheme();
-  return (
-    <button type="button" onClick={() => setTheme(resolved === "horizon-dark" ? "horizon-light" : "horizon-dark")}>
-      Switch to {resolved === "horizon-dark" ? "light" : "dark"}
-    </button>
-  );
-};
-```
-
-The previous `[data-theme="dark"]` attribute mechanism — and the corresponding ability to nest themes inside a subtree — is no longer supported. One theme per page; this aligns with the SAP UI5 / Fundamental Library Styles convention.
-
-## Combining Both Approaches
-
-For maximum flexibility, combine SAP token references with stable class selectors:
-
-```css
-/* Override the brand color for the entire app */
+/* Re-brand everything */
 :root {
   --sapBrandColor: #e91e63;
+  --sapButton_Emphasized_Background: #e91e63;
 }
 
-/* Then fine-tune a specific component */
-.reltio_Tabs_tab {
-  font-weight: 700;
-  text-transform: uppercase;
+/* Tweak a UI5 button's shape inside a specific bar */
+.pill-bar ui5-button::part(button) {
+  border-radius: 999px;
 }
 
-.reltio_Chip_root {
-  border-radius: 4px;
+/* Adjust a Reltio component */
+.reltio_Markdown_root pre {
+  border-left: 3px solid var(--sapBrandColor);
 }
 ```
-
-> **Note on `:root` overrides.** The active per-theme stylesheet declares all `--sap*` values on `:root` too. Your override needs to load **after** the per-theme file so the cascade resolves in your favour — when using `<ThemeProvider>`, place your global CSS import after the React entry point that mounts the provider, or use a more specific selector than `:root`.
 
 ## Quick Reference
 
@@ -339,41 +290,56 @@ For maximum flexibility, combine SAP token references with stable class selector
   </thead>
   <tbody>
     <tr>
-      <td>Change the brand colour everywhere</td>
-      <td>Override SAP token on <code>:root</code></td>
+      <td>Re-theme everything</td>
+      <td>Override <code>--sap*</code> tokens on <code>:root</code> or any ancestor</td>
       <td><code>--sapBrandColor: #e91e63</code></td>
     </tr>
     <tr>
-      <td>Change a specific component's style</td>
-      <td>Target stable class</td>
-      <td><code>.reltio_Button_root &#123; ... &#125;</code></td>
+      <td>Switch theme</td>
+      <td>Toggle <code>data-theme</code> on any ancestor element</td>
+      <td><code>data-theme="horizon-dark"</code></td>
     </tr>
     <tr>
-      <td>Switch theme</td>
-      <td><code>useTheme().setTheme(...)</code></td>
-      <td><code>setTheme("horizon-dark")</code></td>
+      <td>Restyle a UI5 component (general)</td>
+      <td>Override its <code>--sap*</code> token</td>
+      <td><code>--sapButton_Background: ...</code></td>
+    </tr>
+    <tr>
+      <td>Restyle a UI5 component (no token)</td>
+      <td>Use the documented CSS Part</td>
+      <td><code>ui5-button::part(button)</code></td>
+    </tr>
+    <tr>
+      <td>Restyle a Reltio component</td>
+      <td>Target its stable <code>reltio_*</code> class</td>
+      <td><code>.reltio_Chat_root &#123; ... &#125;</code></td>
     </tr>
     <tr>
       <td>Use design tokens in your own CSS</td>
-      <td>Reference tokens</td>
+      <td>Reference tokens directly</td>
       <td><code>color: var(--sapTextColor)</code></td>
     </tr>
   </tbody>
 </table>
 
-## Similar Approaches in Popular Libraries
+## Similar approaches in popular libraries
 
-This architecture follows established patterns from major UI libraries:
+The two-layer architecture (tokens + stable selectors) follows established patterns:
 
 <table>
   <thead>
     <tr>
       <th>Library</th>
-      <th>Stable Class Pattern</th>
-      <th>Theming Mechanism</th>
+      <th>Stable selector pattern</th>
+      <th>Theming mechanism</th>
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <td><a href="https://sap.github.io/ui5-webcomponents/">UI5 Web Components</a></td>
+      <td>CSS Parts (<code>ui5-button::part(button)</code>)</td>
+      <td>SAP Horizon design tokens (<code>--sap*</code>) + theme switching</td>
+    </tr>
     <tr>
       <td><a href="https://ant.design/docs/react/customize-theme">Ant Design</a></td>
       <td><code>.ant-btn</code>, <code>.ant-tabs-tab</code></td>
@@ -394,8 +360,10 @@ This architecture follows established patterns from major UI libraries:
 
 ## Sources and References
 
+- [UI5 Web Components — CSS Parts](https://sap.github.io/ui5-webcomponents/) — official `::part()` reference per component
+- [SAP Design System](https://www.sap.com/design-system/) — semantic guidance for SAP Horizon tokens
+- [MDN — `::part()` pseudo-element](https://developer.mozilla.org/en-US/docs/Web/CSS/::part) — Shadow DOM customization primitives
 - [Ant Design — Customize Theme](https://ant.design/docs/react/customize-theme) — ConfigProvider theming and CSS variable mode
 - [Material UI — How to Customize](https://mui.com/material-ui/customization/how-to-customize/) — global class names, sx prop, theme overrides
 - [Mantine — Styles API](https://mantine.dev/styles/styles-api) — classNames prop, static selectors, Styles API selectors
 - [CSS Custom Properties: The Complete Guide](https://css-tricks.com/a-complete-guide-to-custom-properties/) — comprehensive reference on CSS variables cascade and inheritance
-- [The Developer's Guide to Design Tokens and CSS Variables](https://penpot.app/blog/the-developers-guide-to-design-tokens-and-css-variables) — design token architecture patterns

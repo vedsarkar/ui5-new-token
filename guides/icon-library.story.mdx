@@ -4,13 +4,11 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Icon Library Guide
 
-The Reltio Design System provides a comprehensive icon library distributed exclusively as tree-shakable React components. Icons share a single access path — the npm package import — so consumers always benefit from type safety, theme awareness, and bundle optimization.
+Reltio Design uses the SAP Horizon icon set distributed by [`@ui5/webcomponents-icons`](https://sap.github.io/ui5-webcomponents/). Icons are rendered by UI5 React's `<Icon>` component. There is no Reltio-specific icon component — we consume UI5's set directly so that every Reltio surface stays visually aligned with the rest of the SAP ecosystem.
 
-> **🎯 Key Principle:** Icons ship only as React components. There is no public CDN URL for raw SVG files.
+> **🎯 Key Principle:** Use `<Icon name="..." />` from `@ui5/webcomponents-react`, and import the icon's data module from `@ui5/webcomponents-icons` to register it on demand.
 
 ## Overview
-
-The icon library is built on these principles:
 
 <table>
 	<thead>
@@ -22,279 +20,286 @@ The icon library is built on these principles:
 	<tbody>
 		<tr>
 			<td>🎨 <strong>SAP Horizon Style</strong></td>
-			<td>Sourced from the official SAP `theming-base-content` repository, fully aligned with the SAP Fiori visual language</td>
+			<td>Sourced from <code>@ui5/webcomponents-icons</code>; same iconography that UI5 components themselves use</td>
 		</tr>
 		<tr>
-			<td>📦 <strong>Single Access Path</strong></td>
-			<td>Use icons exclusively as React components imported from `@reltio/design/icons`</td>
-		</tr>
-		<tr>
-			<td>🔧 <strong>Customizable</strong></td>
-			<td>Size and color variants supported through props; pass any HTML attribute via rest props</td>
-		</tr>
-		<tr>
-			<td>♿ <strong>Accessible</strong></td>
-			<td>Built-in `aria-hidden` for decorative icons, opt-in `aria-label` for meaningful ones</td>
+			<td>📦 <strong>One renderer</strong></td>
+			<td>Render any icon with <code>&lt;Icon name="..." /&gt;</code> from <code>@ui5/webcomponents-react</code></td>
 		</tr>
 		<tr>
 			<td>🌳 <strong>Tree-shakable</strong></td>
-			<td>Import only the icons you use; unused icons are stripped from the bundle</td>
+			<td>Only the icon data modules you import are bundled; unused icons are stripped</td>
+		</tr>
+		<tr>
+			<td>🔧 <strong>CSS-driven sizing & color</strong></td>
+			<td>Sizes via <code>font-size</code>/<code>width</code>/<code>height</code>; colors inherit <code>currentColor</code> by default</td>
+		</tr>
+		<tr>
+			<td>♿ <strong>Accessible</strong></td>
+			<td>Decorative by default; opt in to a screen-reader label via <code>accessibleName</code></td>
 		</tr>
 		<tr>
 			<td>🌓 <strong>Theme-aware</strong></td>
-			<td>Color tokens resolve through the active SAP theme (`horizon-light` / `horizon-dark`)</td>
+			<td>Inherits the active <code>data-theme</code> through the SAP Horizon token cascade</td>
 		</tr>
 	</tbody>
 </table>
 
-## Why no public URL?
+## Icon Collections
 
-Earlier versions of the library exposed a parallel raw-SVG endpoint at `https://reltio.design/icons/<name>.svg`. That surface was retired for several reasons:
+`@ui5/webcomponents-icons` ships three SAP Horizon icon collections. Pick the right one for the use case:
 
-- **Consistency with illustrations.** The illustration library was designed from the start as a single-access library because SAP design tokens only resolve when SVGs are inlined into the host DOM. Aligning icons with the same model removes a confusing "two ways to use" question.
-- **Smaller, simpler API surface.** A second access path doubles the maintenance cost (URL stability, CDN caching, naming, attribution, theming) for a use case that no internal product actually needs.
-- **Future-proofing.** As icons evolve toward richer semantics (multi-color, theme-aware fills), the React component is the only path that can reliably honor the host's CSS-variable cascade.
+<table>
+	<thead>
+		<tr>
+			<th>Collection</th>
+			<th>Use for</th>
+			<th>Import path prefix</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>SAP-icons</code> (default)</td>
+			<td>General-purpose UI icons (navigation, actions, status)</td>
+			<td><code>@ui5/webcomponents-icons/dist/&lt;name&gt;.js</code></td>
+		</tr>
+		<tr>
+			<td><code>tnt</code></td>
+			<td>Technical / IT visuals (servers, databases, networking)</td>
+			<td><code>@ui5/webcomponents-icons-tnt/dist/&lt;name&gt;.js</code> *</td>
+		</tr>
+		<tr>
+			<td><code>business-suite</code></td>
+			<td>Domain icons for business apps (manufacturing, logistics, finance)</td>
+			<td><code>@ui5/webcomponents-icons-business-suite/dist/&lt;name&gt;.js</code> *</td>
+		</tr>
+	</tbody>
+</table>
 
-If a future use case truly demands non-React consumption (email templates, marketing pages, partner integrations), we can introduce a baked-fill SVG distribution as a follow-up change. For now, every consumer uses the React import.
+\* The `tnt` and `business-suite` collections are separate npm packages — install them on demand.
+
+Browse the full visual catalog in the [SAP Icon Explorer](https://sap.github.io/ui5-webcomponents/nightly/symbols-explorer/).
 
 ## Usage
 
-Import the icon component you need:
+### 1. Register the icon (tree-shakable side-effect import)
+
+```ts
+import "@ui5/webcomponents-icons/dist/save.js";
+import "@ui5/webcomponents-icons/dist/navigation-down-arrow.js";
+```
+
+Each side-effect import registers a single icon's SVG data with UI5's icon registry. Only the icons you import end up in the bundle.
+
+### 2. Render with `<Icon>`
 
 ```tsx
-import { SlimArrowDown, AccountCircle } from "@reltio/design/icons";
+import { Icon } from "@ui5/webcomponents-react/Icon";
+import "@ui5/webcomponents-icons/dist/save.js";
 
-function MyComponent() {
+function SaveButton() {
 	return (
-		<div>
-			<SlimArrowDown size="medium" />
-			<AccountCircle color="primary" />
-		</div>
+		<button type="button">
+			<Icon name="save" />
+			Save
+		</button>
 	);
 }
 ```
 
-Every named export under `@reltio/design/icons` is a tree-shakable React component. Importing `SlimArrowDown` does NOT pull any other icon's code into the bundle.
+### 3. Use icons inside UI5 components by name
 
-For dynamic icon rendering (e.g. picking an icon by name at runtime), import the `iconMap`:
+Most UI5 components that accept an icon (e.g. `Button`, `MessageStrip`, `ListItem`) expose an `icon` prop that takes the same name string. As long as the icon module is imported once anywhere in the app, the name resolves globally.
 
 ```tsx
-import { iconMap, type IconProps } from "@reltio/design/icons";
+import { Button } from "@ui5/webcomponents-react/Button";
+import "@ui5/webcomponents-icons/dist/save.js";
 
-function DynamicIcon({ name, ...rest }: IconProps & { name: string }) {
-	const Icon = iconMap[name];
-	return Icon ? <Icon {...rest} /> : null;
-}
+<Button icon="save" design="Emphasized">Save</Button>;
 ```
 
-## Available Props
+### Icons from non-default collections
 
-All icon components accept the following props.
-
-### `size`
-
-Controls the icon dimensions.
-
-<table>
-	<thead>
-		<tr>
-			<th>Value</th>
-			<th>Dimensions</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td><code>"small"</code></td>
-			<td>16×16px</td>
-		</tr>
-		<tr>
-			<td><code>"medium"</code></td>
-			<td>24×24px (default)</td>
-		</tr>
-		<tr>
-			<td><code>"large"</code></td>
-			<td>32×32px</td>
-		</tr>
-		<tr>
-			<td><code>"xlarge"</code></td>
-			<td>48×48px</td>
-		</tr>
-	</tbody>
-</table>
+Prefix the icon `name` with the collection identifier:
 
 ```tsx
-<Search size="small" />
-<Search size="medium" />
-<Search size="large" />
-<Search size="xlarge" />
+import { Icon } from "@ui5/webcomponents-react/Icon";
+import "@ui5/webcomponents-icons-tnt/dist/network.js";
+
+<Icon name="tnt/network" />;
 ```
 
-### `color`
+## Sizing
 
-Controls the icon fill color via the SAP Horizon palette.
-
-<table>
-	<thead>
-		<tr>
-			<th>Value</th>
-			<th>SAP Token</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td><code>"inherited"</code> (default)</td>
-			<td>Uses <code>currentColor</code></td>
-		</tr>
-		<tr>
-			<td><code>"primary"</code></td>
-			<td><code>--sapBrandColor</code></td>
-		</tr>
-		<tr>
-			<td><code>"secondary"</code></td>
-			<td><code>--sapNeutralColor</code></td>
-		</tr>
-		<tr>
-			<td><code>"success"</code></td>
-			<td><code>--sapPositiveColor</code></td>
-		</tr>
-		<tr>
-			<td><code>"warning"</code></td>
-			<td><code>--sapCriticalColor</code></td>
-		</tr>
-		<tr>
-			<td><code>"error"</code></td>
-			<td><code>--sapNegativeColor</code></td>
-		</tr>
-	</tbody>
-</table>
+`<Icon>` renders an SVG that follows the surrounding `font-size` (or explicit `width`/`height`).
 
 ```tsx
-<Check color="success" />
-<Warning color="warning" />
-<ErrorCircle color="error" />
+<Icon name="save" style={{ fontSize: "1rem" }} />     {/* 16px */}
+<Icon name="save" style={{ fontSize: "1.5rem" }} />   {/* 24px */}
+<Icon name="save" style={{ width: "32px", height: "32px" }} />
 ```
 
-### `className`, `style`, and other HTML attributes
+Inside a button or a row of text, simply leave the size to the surrounding `font-size` — the icon will match the line height naturally.
 
-`IconProps` extends the standard `<svg>` HTML props, so all native SVG attributes pass through to the rendered element:
+## Color
+
+By default `<Icon>` paints with `currentColor`, so it inherits the parent's text color. To switch palette, set `color` on the icon (or any ancestor) to a SAP Horizon token:
 
 ```tsx
-<Search className="my-custom-class" />
-<Search style={{ marginInline: 8 }} />
-<Search data-testid="search-icon" />
+<Icon name="save" style={{ color: "var(--sapBrandColor)" }} />
+<Icon name="status-positive" style={{ color: "var(--sapPositiveColor)" }} />
+<Icon name="status-negative" style={{ color: "var(--sapNegativeColor)" }} />
+<Icon name="status-critical" style={{ color: "var(--sapCriticalColor)" }} />
 ```
 
-### `aria-label`
-
-Add an accessible label for meaningful icons:
+UI5 also exposes a small set of semantic `design` values on `<Icon>` that map to standard SAP token combinations (e.g. `Negative`, `Positive`, `Critical`, `Information`, `Neutral`, `Contrast`, `Default`):
 
 ```tsx
-<Close aria-label="Close dialog" />
+<Icon name="status-positive" design="Positive" />
+<Icon name="status-negative" design="Negative" />
 ```
 
 ## Theming
 
-Icons that use `color="inherited"` follow the host's `currentColor`. Icons that use a semantic color (`primary`, `success`, etc.) read the corresponding SAP Horizon token, which automatically swaps when an ancestor element carries `data-theme="horizon-dark"`.
+Icons automatically follow the active SAP theme through the `data-theme` cascade — no React provider needed:
 
 ```tsx
 <div data-theme="horizon-light">
-	<CheckCircle color="success" /> {/* renders the light-theme positive color */}
+	<Icon name="status-positive" design="Positive" /> {/* light-theme positive color */}
 </div>
 
 <div data-theme="horizon-dark">
-	<CheckCircle color="success" /> {/* renders the dark-theme positive color */}
+	<Icon name="status-positive" design="Positive" /> {/* dark-theme positive color */}
 </div>
 ```
 
-The Storybook page for each icon renders the icon under both themes side-by-side so the regression coverage doubles per snapshot.
+See the [Design Tokens guide](./?path=/docs/design-tokens--docs) for how the cascade reaches UI5's Shadow DOM.
 
 ## Accessibility
 
-Icons support two accessibility modes.
+Icons are decorative by default — UI5 hides them from assistive tech.
 
-### Decorative icons (default)
-
-When no `aria-label` is provided, icons are hidden from screen readers:
+**Decorative icons** (default) — when the icon accompanies visible text or surrounding context conveys the meaning:
 
 ```tsx
-<Search />
-{/* renders <svg aria-hidden="true"> */}
+<button type="button">
+	<Icon name="save" />
+	Save
+</button>
 ```
 
-Use decorative icons when:
-
-- The icon accompanies visible text (e.g. button labels)
-- The icon is purely visual reinforcement
-- The meaning is conveyed by surrounding context
-
-### Meaningful icons
-
-When `aria-label` is provided, icons are announced to screen readers. Add `role="img"` so the SVG is treated as an image:
+**Meaningful icons** — when the icon is the only content of an interactive element (e.g. icon-only button), provide an accessible name:
 
 ```tsx
-<Search aria-label="Search" role="img" />
+<button type="button" aria-label="Save">
+	<Icon name="save" accessibleName="Save" />
+</button>
 ```
 
-Use meaningful icons when:
+For icon-only UI5 buttons, the equivalent prop is `accessibleName` on the `Button` itself:
 
-- The icon is the only content of a button
-- The icon conveys information not available in surrounding text
-
-## Adding a New Icon
-
-Adding icons is a fully automated build-script flow.
-
-### Step 1: Add the SVG
-
-Place your SVG file in `icons/_source/` using kebab-case naming:
-
-```
-icons/_source/my-new-icon.svg
+```tsx
+<Button icon="save" accessibleName="Save" />
 ```
 
-SVG requirements:
+## Updating the Icon Set
 
-- 16×16 viewBox preferred (matches the SAP Horizon icon set)
-- Single-color shapes — fills are stripped automatically and replaced with `currentColor`
-- White (`#fff`) and `#d9d9d9` fills are preserved as-is when present (used by SAP for explicit highlights)
-
-> **⚠️ Note:** `icons/_source/` is a build-artifact folder. Files placed there are NOT served at any public URL — they exist only as input to the build script. The published artifact is the React component generated in `icons/`.
-
-### Step 2: Run the generator
+The icon set is shipped by `@ui5/webcomponents-icons`. To pull in newer SAP icons, bump the package alongside the rest of the UI5 stack:
 
 ```bash
-npm run build-icons
+npm update @ui5/webcomponents @ui5/webcomponents-react @ui5/webcomponents-icons
 ```
 
-This regenerates:
-
-- React components (`icons/<PascalName>.tsx`)
-- Barrel export (`icons/index.ts`)
-- Unified Storybook stories (`icons/Icons.stories.tsx`)
-- Biome formatting across all generated files
-
-### Step 3: Verify in Storybook
+For non-default collections:
 
 ```bash
-npm run dev
+npm install @ui5/webcomponents-icons-tnt
+npm install @ui5/webcomponents-icons-business-suite
 ```
 
-Your icon appears in:
-
-- The Icon Library catalog on the Docs page
-- An individual story rendering the light/dark matrix
+There is no in-repo "source" folder for icons — every SVG comes from the installed package at runtime.
 
 ## Best Practices
 
-1. **Use semantic colors appropriately** — `success` for positive actions, `warning` for caution, `error` for destructive actions
-2. **Always provide `aria-label` for icon-only buttons** — screen reader users need context
-3. **Keep sizes consistent** — use the standard `size` prop rather than custom dimensions
-4. **Prefer named imports** — they enable tree-shaking; avoid the `iconMap` for known icons
-5. **Follow naming conventions** — kebab-case for source files, PascalCase for components
+**✅ Do:** Register icons via side-effect import at the call site
+
+```ts
+import { Icon } from "@ui5/webcomponents-react/Icon";
+import "@ui5/webcomponents-icons/dist/save.js";
+
+<Icon name="save" />;
+```
+
+**❌ Don't:** Import every icon globally at the app root — defeats tree-shaking
+
+```ts
+// Bundles every icon in the package
+import "@ui5/webcomponents-icons/dist/AllIcons.js";
+```
+
+**✅ Do:** Use semantic colors via `--sap*` tokens or `<Icon design="...">`
+
+```tsx
+<Icon name="status-positive" design="Positive" />
+<Icon name="warning" style={{ color: "var(--sapCriticalColor)" }} />
+```
+
+**❌ Don't:** Hardcode hex colors
+
+```tsx
+<Icon name="warning" style={{ color: "#ff8c00" }} />
+```
+
+**✅ Do:** Let icons inherit `currentColor` inside text and buttons
+
+**❌ Don't:** Force a fixed size on icons inside flex/text containers — let `font-size` drive it
+
+## Quick Reference
+
+<table>
+	<thead>
+		<tr>
+			<th>Need</th>
+			<th>How</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Render an icon</td>
+			<td><code>&lt;Icon name="save" /&gt;</code> + <code>import "@ui5/webcomponents-icons/dist/save.js"</code></td>
+		</tr>
+		<tr>
+			<td>Use inside a UI5 button</td>
+			<td><code>&lt;Button icon="save" /&gt;</code></td>
+		</tr>
+		<tr>
+			<td>Resize</td>
+			<td>CSS <code>font-size</code> or <code>width</code> / <code>height</code></td>
+		</tr>
+		<tr>
+			<td>Recolor</td>
+			<td><code>color</code> with a <code>--sap*</code> token, or <code>design="Positive"</code> etc.</td>
+		</tr>
+		<tr>
+			<td>Make announceable</td>
+			<td><code>accessibleName="Save"</code> (and <code>aria-label</code> on the parent button)</td>
+		</tr>
+		<tr>
+			<td>Add a non-default collection</td>
+			<td>Install <code>@ui5/webcomponents-icons-tnt</code> or <code>...-business-suite</code>; prefix the name (<code>tnt/network</code>)</td>
+		</tr>
+		<tr>
+			<td>Browse all icons</td>
+			<td><a href="https://sap.github.io/ui5-webcomponents/nightly/symbols-explorer/">SAP Icon Explorer</a></td>
+		</tr>
+	</tbody>
+</table>
 
 ## Sources and References
 
-- [SAP Theming Base Content](https://github.com/SAP/theming-base-content) — upstream icon source
-- [SAP Fiori Design Web — Icons](https://www.sap.com/design-system/fiori-design-web/v1-90/foundation/icons.html) — semantic guidance
-- [Illustration Library Guide](/?path=/docs/guides-illustration-library--docs) — sibling library that inspired the single-access-path model
-- [WCAG 2.1 — Non-text Content](https://www.w3.org/WAI/WCAG21/quickref/#non-text-content) — accessibility requirements for image-like content
+- [UI5 Icon API (`@ui5/webcomponents-react`)](https://sap.github.io/ui5-webcomponents-react/?path=/docs/data-display-icon--docs) — official component reference
+- [UI5 Icon Explorer](https://sap.github.io/ui5-webcomponents/nightly/symbols-explorer/) — visual catalog with copy-paste names
+- [`@ui5/webcomponents-icons` package](https://www.npmjs.com/package/@ui5/webcomponents-icons) — default SAP icons collection
+- [`@ui5/webcomponents-icons-tnt`](https://www.npmjs.com/package/@ui5/webcomponents-icons-tnt) — Technology & Networking icons
+- [`@ui5/webcomponents-icons-business-suite`](https://www.npmjs.com/package/@ui5/webcomponents-icons-business-suite) — Business Suite icons
+- [SAP Fiori Design — Iconography](https://experience.sap.com/fiori-design-web/iconography/) — semantic guidance and naming conventions

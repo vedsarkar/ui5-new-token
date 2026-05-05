@@ -1,0 +1,325 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Design Tokens" />
+
+<style>{`
+	#storybook-docs table th:first-child { width: 35%; }
+	#storybook-docs table td:first-child { white-space: nowrap; }
+	#storybook-docs table th.swatch,
+	#storybook-docs table td.swatch { width: 48px; text-align: center; }
+`}</style>
+
+# Design Tokens
+
+The Reltio Design Platform mirrors [SAP Horizon](https://github.com/SAP/theming-base-content) design tokens 1:1. Every `--sap*` CSS variable is available on `:root` when `variables.css` is loaded. Colors **must** use these tokens — never hardcode hex values.
+
+The same token surface powers both **Reltio components** (CSS Modules under `components/`) and the underlying **UI5 web components** from `@ui5/webcomponents-react` — UI5 reads `--sap*` variables through Shadow DOM automatically, so there is no separate theme system to manage.
+
+## Usage
+
+Include `variables.css` and `fonts.css` in your page `<head>`, then set `data-theme` on any ancestor element. **No React `ThemeProvider` is needed** — theming is purely a CSS concern.
+
+```html
+<link rel="stylesheet" href="variables.css" />
+<link rel="stylesheet" href="fonts.css" />
+
+<div data-theme="horizon-light">
+  <!-- UI5 components and Reltio components both render in light theme -->
+</div>
+```
+
+Switch the active theme by toggling `data-theme="horizon-light"` or `data-theme="horizon-dark"` on any ancestor. Nested theming is supported — a `[data-theme]` on a child element scopes that theme to its subtree.
+
+**CSS** — reference any variable: `color: var(--sapBrandColor)`, `background: var(--sapErrorBackground)`, etc.
+
+### How UI5 consumes the same tokens
+
+UI5 web components live inside Shadow DOM, but CSS custom properties cross that boundary natively. When you set a `--sap*` token at any DOM level — `:root`, a wrapper class, or under a `[data-theme]` element — every UI5 component beneath it picks up the new value automatically:
+
+```css
+/* Re-tint every UI5 button inside .promo */
+.promo {
+  --sapButton_Background: var(--sapButton_Lite_Background);
+  --sapBrandColor: #e91e63;
+}
+```
+
+```tsx
+import { Button } from "@ui5/webcomponents-react/Button";
+
+<div className="promo">
+  <Button design="Emphasized">Promoted</Button> {/* uses the overridden tokens */}
+</div>;
+```
+
+This is the **preferred** way to restyle UI5. Fall back to UI5's documented [CSS Parts (`::part()`)](https://sap.github.io/ui5-webcomponents/) only when no token covers the change you need. See the [Component Customization guide](?path=/docs/guides-component-customization--docs) for details.
+
+## Quick Reference
+
+The most commonly used tokens across all categories:
+
+<table>
+	<thead>
+		<tr><th>Token</th><th>Purpose</th><th className="swatch">Light</th><th className="swatch">Dark</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapBrandColor</code></td><td>Primary brand, main CTAs</td><td className="swatch" style={{backgroundColor: "var(--sapBrandColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapBrandColor)"}}></td></tr>
+		<tr><td><code>--sapTextColor</code></td><td>Default body text</td><td className="swatch" style={{backgroundColor: "var(--sapTextColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapTextColor)"}}></td></tr>
+		<tr><td><code>--sapTitleColor</code></td><td>Headings</td><td className="swatch" style={{backgroundColor: "var(--sapTitleColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapTitleColor)"}}></td></tr>
+		<tr><td><code>--sapContent_LabelColor</code></td><td>Labels, secondary text</td><td className="swatch" style={{backgroundColor: "var(--sapContent_LabelColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapContent_LabelColor)"}}></td></tr>
+		<tr><td><code>--sapContent_IconColor</code></td><td>Default icon color</td><td className="swatch" style={{backgroundColor: "var(--sapContent_IconColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapContent_IconColor)"}}></td></tr>
+		<tr><td><code>--sapLinkColor</code></td><td>Interactive links</td><td className="swatch" style={{backgroundColor: "var(--sapLinkColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapLinkColor)"}}></td></tr>
+		<tr><td><code>--sapBackgroundColor</code></td><td>Page background</td><td className="swatch" style={{backgroundColor: "var(--sapBackgroundColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapBackgroundColor)"}}></td></tr>
+		<tr><td><code>--sapBaseColor</code></td><td>Card / control surface</td><td className="swatch" style={{backgroundColor: "var(--sapBaseColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapBaseColor)"}}></td></tr>
+		<tr><td><code>--sapShell_Background</code></td><td>App shell / header</td><td className="swatch" style={{backgroundColor: "var(--sapShell_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapShell_Background)"}}></td></tr>
+		<tr><td><code>--sapSuccessColor</code></td><td>Positive outcome (+ <code>*Background</code>, <code>*BorderColor</code>)</td><td className="swatch" style={{backgroundColor: "var(--sapSuccessColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapSuccessColor)"}}></td></tr>
+		<tr><td><code>--sapErrorColor</code></td><td>Error / failure (+ <code>*Background</code>, <code>*BorderColor</code>)</td><td className="swatch" style={{backgroundColor: "var(--sapErrorColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapErrorColor)"}}></td></tr>
+		<tr><td><code>--sapWarningColor</code></td><td>Caution (+ <code>*Background</code>, <code>*BorderColor</code>)</td><td className="swatch" style={{backgroundColor: "var(--sapWarningColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapWarningColor)"}}></td></tr>
+		<tr><td><code>--sapInformationColor</code></td><td>Informational (+ <code>*Background</code>, <code>*BorderColor</code>)</td><td className="swatch" style={{backgroundColor: "var(--sapInformationColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapInformationColor)"}}></td></tr>
+		<tr><td><code>--sapField_Background</code></td><td>Input field surface</td><td className="swatch" style={{backgroundColor: "var(--sapField_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapField_Background)"}}></td></tr>
+		<tr><td><code>--sapField_BorderColor</code></td><td>Input field border</td><td className="swatch" style={{backgroundColor: "var(--sapField_BorderColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapField_BorderColor)"}}></td></tr>
+		<tr><td><code>--sapButton_Background</code></td><td>Default button surface</td><td className="swatch" style={{backgroundColor: "var(--sapButton_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapButton_Background)"}}></td></tr>
+		<tr><td><code>--sapButton_Emphasized_Background</code></td><td>Primary / CTA button</td><td className="swatch" style={{backgroundColor: "var(--sapButton_Emphasized_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapButton_Emphasized_Background)"}}></td></tr>
+		<tr><td><code>--sapElement_Height</code></td><td>Default control height (2.75rem / 44px)</td><td className="swatch"></td><td className="swatch"></td></tr>
+		<tr><td><code>--sapElement_Compact_Height</code></td><td>Compact mode height (2rem / 32px)</td><td className="swatch"></td><td className="swatch"></td></tr>
+		<tr><td><code>--sapElement_BorderCornerRadius</code></td><td>Default border radius (0.75rem / 12px)</td><td className="swatch"></td><td className="swatch"></td></tr>
+		<tr><td><code>--sapFontFamily</code></td><td>Default font stack (SAP 72)</td><td className="swatch"></td><td className="swatch"></td></tr>
+		<tr><td><code>--sapFontSize</code></td><td>Base font size (0.875rem)</td><td className="swatch"></td><td className="swatch"></td></tr>
+		<tr><td><code>--sapContent_Shadow0..3</code></td><td>Four elevation levels (full <code>box-shadow</code> strings)</td><td className="swatch"></td><td className="swatch"></td></tr>
+		<tr><td><code>--sapChart_OrderedColor_1..12</code></td><td>Categorical chart palette</td><td className="swatch" style={{backgroundColor: "var(--sapChart_OrderedColor_1)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapChart_OrderedColor_1)"}}></td></tr>
+	</tbody>
+</table>
+
+## Token Categories
+
+### Brand
+
+Primary brand identity, accent palette, and highlight colors.
+
+<table>
+	<thead>
+		<tr><th>Token</th><th>Purpose</th><th className="swatch">Light</th><th className="swatch">Dark</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapBrandColor</code></td><td>Primary brand, main CTAs and primary actions</td><td className="swatch" style={{backgroundColor: "var(--sapBrandColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapBrandColor)"}}></td></tr>
+		<tr><td><code>--sapHighlightColor</code></td><td>Selection and focus highlight</td><td className="swatch" style={{backgroundColor: "var(--sapHighlightColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapHighlightColor)"}}></td></tr>
+		<tr><td><code>--sapHighlightTextColor</code></td><td>Text on highlighted backgrounds</td><td className="swatch" style={{backgroundColor: "var(--sapHighlightTextColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapHighlightTextColor)"}}></td></tr>
+		<tr><td><code>--sapAccentColor1..10</code></td><td>10 distinct accent hues for categorical data (charts, tags, avatars)</td><td className="swatch" style={{backgroundColor: "var(--sapAccentColor1)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapAccentColor1)"}}></td></tr>
+		<tr><td><code>--sapAccentBackgroundColor1..10</code></td><td>Lighter tinted backgrounds pairing with each AccentColor</td><td className="swatch" style={{backgroundColor: "var(--sapAccentBackgroundColor1)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapAccentBackgroundColor1)"}}></td></tr>
+	</tbody>
+</table>
+
+### Semantic
+
+Status and feedback colors. Each semantic state provides a Color + Background + BorderColor triplet.
+
+<table>
+	<thead>
+		<tr><th>Token</th><th>Purpose</th><th className="swatch">Light</th><th className="swatch">Dark</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapSuccessColor</code></td><td>Positive outcome (+ <code>*Background</code>, <code>*BorderColor</code>)</td><td className="swatch" style={{backgroundColor: "var(--sapSuccessColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapSuccessColor)"}}></td></tr>
+		<tr><td><code>--sapErrorColor</code></td><td>Error / failure (+ <code>*Background</code>, <code>*BorderColor</code>)</td><td className="swatch" style={{backgroundColor: "var(--sapErrorColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapErrorColor)"}}></td></tr>
+		<tr><td><code>--sapWarningColor</code></td><td>Caution (+ <code>*Background</code>, <code>*BorderColor</code>)</td><td className="swatch" style={{backgroundColor: "var(--sapWarningColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapWarningColor)"}}></td></tr>
+		<tr><td><code>--sapInformationColor</code></td><td>Informational (+ <code>*Background</code>, <code>*BorderColor</code>)</td><td className="swatch" style={{backgroundColor: "var(--sapInformationColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapInformationColor)"}}></td></tr>
+		<tr><td><code>--sapPositiveColor</code></td><td>Positive element color (+ <code>*ElementColor</code>, <code>*TextColor</code>)</td><td className="swatch" style={{backgroundColor: "var(--sapPositiveColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapPositiveColor)"}}></td></tr>
+		<tr><td><code>--sapNegativeColor</code></td><td>Negative element color (+ <code>*ElementColor</code>, <code>*TextColor</code>)</td><td className="swatch" style={{backgroundColor: "var(--sapNegativeColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapNegativeColor)"}}></td></tr>
+		<tr><td><code>--sapCriticalColor</code></td><td>Critical element color (+ <code>*ElementColor</code>, <code>*TextColor</code>)</td><td className="swatch" style={{backgroundColor: "var(--sapCriticalColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapCriticalColor)"}}></td></tr>
+		<tr><td><code>--sapInformativeColor</code></td><td>Informative element color (+ <code>*ElementColor</code>, <code>*TextColor</code>)</td><td className="swatch" style={{backgroundColor: "var(--sapInformativeColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapInformativeColor)"}}></td></tr>
+		<tr><td><code>--sapNeutralColor</code></td><td>Neutral, non-semantic state</td><td className="swatch" style={{backgroundColor: "var(--sapNeutralColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapNeutralColor)"}}></td></tr>
+		<tr><td><code>--sapIndicationColor_1..10</code></td><td>Extended 10-step indication palette, each with <code>_Background</code>, <code>_BorderColor</code>, <code>_TextColor</code>, <code>_Hover_Background</code>, <code>_Active_Background</code></td><td className="swatch" style={{backgroundColor: "var(--sapIndicationColor_1)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapIndicationColor_1)"}}></td></tr>
+	</tbody>
+</table>
+
+### Surface
+
+Backgrounds, page surfaces, shells, panels, and structural containers.
+
+<table>
+	<thead>
+		<tr><th>Token</th><th>Purpose</th><th className="swatch">Light</th><th className="swatch">Dark</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapBackgroundColor</code></td><td>Default page background</td><td className="swatch" style={{backgroundColor: "var(--sapBackgroundColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapBackgroundColor)"}}></td></tr>
+		<tr><td><code>--sapBaseColor</code></td><td>Base surface for cards and controls</td><td className="swatch" style={{backgroundColor: "var(--sapBaseColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapBaseColor)"}}></td></tr>
+		<tr><td><code>--sapShell_Background</code></td><td>App shell / header background</td><td className="swatch" style={{backgroundColor: "var(--sapShell_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapShell_Background)"}}></td></tr>
+		<tr><td><code>--sapPageHeader_Background</code></td><td>Page header background</td><td className="swatch" style={{backgroundColor: "var(--sapPageHeader_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapPageHeader_Background)"}}></td></tr>
+		<tr><td><code>--sapPageFooter_Background</code></td><td>Page footer background</td><td className="swatch" style={{backgroundColor: "var(--sapPageFooter_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapPageFooter_Background)"}}></td></tr>
+		<tr><td><code>--sapGroup_ContentBackground</code></td><td>Content group background</td><td className="swatch" style={{backgroundColor: "var(--sapGroup_ContentBackground)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapGroup_ContentBackground)"}}></td></tr>
+		<tr><td><code>--sapTile_Background</code></td><td>Tile / card surface</td><td className="swatch" style={{backgroundColor: "var(--sapTile_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapTile_Background)"}}></td></tr>
+		<tr><td><code>--sapObjectHeader_Background</code></td><td>Object page header</td><td className="swatch" style={{backgroundColor: "var(--sapObjectHeader_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapObjectHeader_Background)"}}></td></tr>
+		<tr><td><code>--sapToolbar_Background</code></td><td>Toolbar surface</td><td className="swatch" style={{backgroundColor: "var(--sapToolbar_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapToolbar_Background)"}}></td></tr>
+		<tr><td><code>--sapInfobar_Background</code></td><td>Info bar background</td><td className="swatch" style={{backgroundColor: "var(--sapInfobar_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapInfobar_Background)"}}></td></tr>
+		<tr><td><code>--sapBlockLayer_Background</code></td><td>Modal overlay layer</td><td className="swatch" style={{backgroundColor: "var(--sapBlockLayer_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapBlockLayer_Background)"}}></td></tr>
+	</tbody>
+</table>
+
+### Interaction
+
+Universal interaction-state colors. Component-specific states (e.g. `--sapButton_Hover_Background`, `--sapList_Hover_Background`) are in their respective categories.
+
+<table>
+	<thead>
+		<tr><th>Token</th><th>Purpose</th><th className="swatch">Light</th><th className="swatch">Dark</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapHoverColor</code></td><td>Hover background</td><td className="swatch" style={{backgroundColor: "var(--sapHoverColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapHoverColor)"}}></td></tr>
+		<tr><td><code>--sapActiveColor</code></td><td>Active / pressed background</td><td className="swatch" style={{backgroundColor: "var(--sapActiveColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapActiveColor)"}}></td></tr>
+		<tr><td><code>--sapSelectedColor</code></td><td>Selected background</td><td className="swatch" style={{backgroundColor: "var(--sapSelectedColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapSelectedColor)"}}></td></tr>
+	</tbody>
+</table>
+
+### Text & Links
+
+<table>
+	<thead>
+		<tr><th>Token</th><th>Purpose</th><th className="swatch">Light</th><th className="swatch">Dark</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapTextColor</code></td><td>Default body text</td><td className="swatch" style={{backgroundColor: "var(--sapTextColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapTextColor)"}}></td></tr>
+		<tr><td><code>--sapTitleColor</code></td><td>Headings</td><td className="swatch" style={{backgroundColor: "var(--sapTitleColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapTitleColor)"}}></td></tr>
+		<tr><td><code>--sapLinkColor</code></td><td>Interactive link text</td><td className="swatch" style={{backgroundColor: "var(--sapLinkColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapLinkColor)"}}></td></tr>
+		<tr><td><code>--sapLink_Hover_Color</code></td><td>Link hover</td><td className="swatch" style={{backgroundColor: "var(--sapLink_Hover_Color)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapLink_Hover_Color)"}}></td></tr>
+		<tr><td><code>--sapLink_Visited_Color</code></td><td>Visited link</td><td className="swatch" style={{backgroundColor: "var(--sapLink_Visited_Color)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapLink_Visited_Color)"}}></td></tr>
+		<tr><td><code>--sapLink_Active_Color</code></td><td>Link pressed state</td><td className="swatch" style={{backgroundColor: "var(--sapLink_Active_Color)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapLink_Active_Color)"}}></td></tr>
+		<tr><td><code>--sapLink_SubtleColor</code></td><td>De-emphasized link</td><td className="swatch" style={{backgroundColor: "var(--sapLink_SubtleColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapLink_SubtleColor)"}}></td></tr>
+		<tr><td><code>--sapLink_InvertedColor</code></td><td>Link on dark backgrounds</td><td className="swatch" style={{backgroundColor: "var(--sapLink_InvertedColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapLink_InvertedColor)"}}></td></tr>
+	</tbody>
+</table>
+
+### Typography
+
+Font families, sizes, weights, and the SAP 72 type-scale.
+
+<table>
+	<thead>
+		<tr><th>Token</th><th>Purpose</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapFontFamily</code></td><td>Default font stack ("72", "72full", Arial, Helvetica, sans-serif)</td></tr>
+		<tr><td><code>--sapFontSize</code></td><td>Base font size (0.875rem)</td></tr>
+		<tr><td><code>--sapFontLargeSize</code></td><td>Large text</td></tr>
+		<tr><td><code>--sapFontSmallSize</code></td><td>Small text</td></tr>
+		<tr><td><code>--sapFontHeader1Size..6Size</code></td><td>Heading scale (H1 through H6)</td></tr>
+		<tr><td><code>--sapFontBoldWeight</code></td><td>Bold weight value</td></tr>
+		<tr><td><code>--sapFontMonoFamily</code></td><td>Monospace font ("72Mono")</td></tr>
+	</tbody>
+</table>
+
+### Layout & Sizing
+
+<table>
+	<thead>
+		<tr><th>Token</th><th>Purpose</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapElement_Height</code></td><td>Default control height (2.75rem / 44px)</td></tr>
+		<tr><td><code>--sapElement_Compact_Height</code></td><td>Compact mode height (2rem / 32px)</td></tr>
+		<tr><td><code>--sapElement_Condensed_Height</code></td><td>Condensed height (1.5rem / 24px)</td></tr>
+		<tr><td><code>--sapElement_BorderCornerRadius</code></td><td>Default border radius (0.75rem / 12px)</td></tr>
+		<tr><td><code>--sapElement_BorderWidth</code></td><td>Default border width (0.0625rem / 1px)</td></tr>
+		<tr><td><code>--sapBreakpoint_S_Min..XL_Min</code></td><td>Responsive breakpoints</td></tr>
+		<tr><td><code>--sapScrollBar_Dimension</code></td><td>Scrollbar size</td></tr>
+	</tbody>
+</table>
+
+### Content & Icons
+
+<table>
+	<thead>
+		<tr><th>Token</th><th>Purpose</th><th className="swatch">Light</th><th className="swatch">Dark</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapContent_LabelColor</code></td><td>Label / secondary text color</td><td className="swatch" style={{backgroundColor: "var(--sapContent_LabelColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapContent_LabelColor)"}}></td></tr>
+		<tr><td><code>--sapContent_IconColor</code></td><td>Default icon color</td><td className="swatch" style={{backgroundColor: "var(--sapContent_IconColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapContent_IconColor)"}}></td></tr>
+		<tr><td><code>--sapContent_FocusColor</code></td><td>Focus ring color</td><td className="swatch" style={{backgroundColor: "var(--sapContent_FocusColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapContent_FocusColor)"}}></td></tr>
+		<tr><td><code>--sapContent_FocusWidth</code></td><td>Focus ring width</td><td className="swatch"></td><td className="swatch"></td></tr>
+		<tr><td><code>--sapContent_FocusStyle</code></td><td>Focus ring style (e.g. dotted, solid)</td><td className="swatch"></td><td className="swatch"></td></tr>
+		<tr><td><code>--sapContent_Shadow0..3</code></td><td>Four elevation levels (full <code>box-shadow</code> strings)</td><td className="swatch"></td><td className="swatch"></td></tr>
+		<tr><td><code>--sapContent_ForegroundColor</code></td><td>Default foreground</td><td className="swatch" style={{backgroundColor: "var(--sapContent_ForegroundColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapContent_ForegroundColor)"}}></td></tr>
+		<tr><td><code>--sapContent_BadgeBackground</code></td><td>Badge / counter background</td><td className="swatch" style={{backgroundColor: "var(--sapContent_BadgeBackground)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapContent_BadgeBackground)"}}></td></tr>
+	</tbody>
+</table>
+
+### Charts & Data Viz
+
+<table>
+	<thead>
+		<tr><th>Token</th><th>Purpose</th><th className="swatch">Light</th><th className="swatch">Dark</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapChart_OrderedColor_1..12</code></td><td>12-step categorical chart palette</td><td className="swatch" style={{backgroundColor: "var(--sapChart_OrderedColor_1)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapChart_OrderedColor_1)"}}></td></tr>
+		<tr><td><code>--sapChart_Background</code></td><td>Chart canvas background</td><td className="swatch" style={{backgroundColor: "var(--sapChart_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapChart_Background)"}}></td></tr>
+		<tr><td><code>--sapChart_ReferenceLineColor</code></td><td>Reference / threshold lines</td><td className="swatch" style={{backgroundColor: "var(--sapChart_ReferenceLineColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapChart_ReferenceLineColor)"}}></td></tr>
+		<tr><td><code>--sapChart_Good</code></td><td>Semantic chart color — good</td><td className="swatch" style={{backgroundColor: "var(--sapChart_Good)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapChart_Good)"}}></td></tr>
+		<tr><td><code>--sapChart_Bad</code></td><td>Semantic chart color — bad</td><td className="swatch" style={{backgroundColor: "var(--sapChart_Bad)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapChart_Bad)"}}></td></tr>
+		<tr><td><code>--sapChart_Critical</code></td><td>Semantic chart color — critical</td><td className="swatch" style={{backgroundColor: "var(--sapChart_Critical)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapChart_Critical)"}}></td></tr>
+		<tr><td><code>--sapChart_Sequence_1..12</code></td><td>Sequential palette variants (+ <code>_BorderColor</code>)</td><td className="swatch" style={{backgroundColor: "var(--sapChart_Sequence_1)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapChart_Sequence_1)"}}></td></tr>
+		<tr><td><code>--sapLegendColor1..20</code></td><td>Legend marker foreground colors</td><td className="swatch" style={{backgroundColor: "var(--sapLegendColor1)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapLegendColor1)"}}></td></tr>
+		<tr><td><code>--sapLegendBackgroundColor1..20</code></td><td>Legend marker backgrounds</td><td className="swatch" style={{backgroundColor: "var(--sapLegendBackgroundColor1)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapLegendBackgroundColor1)"}}></td></tr>
+	</tbody>
+</table>
+
+### Form Controls
+
+<table>
+	<thead>
+		<tr><th>Token</th><th>Purpose</th><th className="swatch">Light</th><th className="swatch">Dark</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapField_Background</code></td><td>Input field surface</td><td className="swatch" style={{backgroundColor: "var(--sapField_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapField_Background)"}}></td></tr>
+		<tr><td><code>--sapField_BorderColor</code></td><td>Input field border</td><td className="swatch" style={{backgroundColor: "var(--sapField_BorderColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapField_BorderColor)"}}></td></tr>
+		<tr><td><code>--sapField_Hover_Background</code></td><td>Field hover state</td><td className="swatch" style={{backgroundColor: "var(--sapField_Hover_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapField_Hover_Background)"}}></td></tr>
+		<tr><td><code>--sapField_Focus_Background</code></td><td>Field focus state</td><td className="swatch" style={{backgroundColor: "var(--sapField_Focus_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapField_Focus_Background)"}}></td></tr>
+		<tr><td><code>--sapField_InvalidColor</code></td><td>Field validation — invalid</td><td className="swatch" style={{backgroundColor: "var(--sapField_InvalidColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapField_InvalidColor)"}}></td></tr>
+		<tr><td><code>--sapField_WarningColor</code></td><td>Field validation — warning</td><td className="swatch" style={{backgroundColor: "var(--sapField_WarningColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapField_WarningColor)"}}></td></tr>
+		<tr><td><code>--sapField_SuccessColor</code></td><td>Field validation — success</td><td className="swatch" style={{backgroundColor: "var(--sapField_SuccessColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapField_SuccessColor)"}}></td></tr>
+		<tr><td><code>--sapButton_Background</code></td><td>Default button surface</td><td className="swatch" style={{backgroundColor: "var(--sapButton_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapButton_Background)"}}></td></tr>
+		<tr><td><code>--sapButton_BorderColor</code></td><td>Default button border</td><td className="swatch" style={{backgroundColor: "var(--sapButton_BorderColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapButton_BorderColor)"}}></td></tr>
+		<tr><td><code>--sapButton_Emphasized_Background</code></td><td>Primary / CTA button</td><td className="swatch" style={{backgroundColor: "var(--sapButton_Emphasized_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapButton_Emphasized_Background)"}}></td></tr>
+		<tr><td><code>--sapButton_Hover_Background</code></td><td>Button hover</td><td className="swatch" style={{backgroundColor: "var(--sapButton_Hover_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapButton_Hover_Background)"}}></td></tr>
+		<tr><td><code>--sapButton_Active_Background</code></td><td>Button pressed</td><td className="swatch" style={{backgroundColor: "var(--sapButton_Active_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapButton_Active_Background)"}}></td></tr>
+		<tr><td><code>--sapList_Background</code></td><td>List surface</td><td className="swatch" style={{backgroundColor: "var(--sapList_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapList_Background)"}}></td></tr>
+		<tr><td><code>--sapList_BorderColor</code></td><td>List border</td><td className="swatch" style={{backgroundColor: "var(--sapList_BorderColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapList_BorderColor)"}}></td></tr>
+		<tr><td><code>--sapList_Hover_Background</code></td><td>List item hover</td><td className="swatch" style={{backgroundColor: "var(--sapList_Hover_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapList_Hover_Background)"}}></td></tr>
+		<tr><td><code>--sapList_Active_Background</code></td><td>List item pressed</td><td className="swatch" style={{backgroundColor: "var(--sapList_Active_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapList_Active_Background)"}}></td></tr>
+		<tr><td><code>--sapTab_Background</code></td><td>Tab bar background</td><td className="swatch" style={{backgroundColor: "var(--sapTab_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapTab_Background)"}}></td></tr>
+		<tr><td><code>--sapTab_Selected_Background</code></td><td>Selected tab background</td><td className="swatch" style={{backgroundColor: "var(--sapTab_Selected_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapTab_Selected_Background)"}}></td></tr>
+	</tbody>
+</table>
+
+### Avatars & Assistant
+
+<table>
+	<thead>
+		<tr><th>Token</th><th>Purpose</th><th className="swatch">Light</th><th className="swatch">Dark</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapAvatar_1..10_Background</code></td><td>10 avatar background color presets</td><td className="swatch" style={{backgroundColor: "var(--sapAvatar_1_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapAvatar_1_Background)"}}></td></tr>
+		<tr><td><code>--sapAvatar_1..10_BorderColor</code></td><td>Avatar border colors</td><td className="swatch" style={{backgroundColor: "var(--sapAvatar_1_BorderColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapAvatar_1_BorderColor)"}}></td></tr>
+		<tr><td><code>--sapAvatar_1..10_TextColor</code></td><td>Avatar text colors</td><td className="swatch" style={{backgroundColor: "var(--sapAvatar_1_TextColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapAvatar_1_TextColor)"}}></td></tr>
+		<tr><td><code>--sapAssistant_Background</code></td><td>AI assistant surface</td><td className="swatch" style={{backgroundColor: "var(--sapAssistant_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapAssistant_Background)"}}></td></tr>
+		<tr><td><code>--sapAssistant_BorderColor</code></td><td>Assistant border</td><td className="swatch" style={{backgroundColor: "var(--sapAssistant_BorderColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapAssistant_BorderColor)"}}></td></tr>
+		<tr><td><code>--sapAssistant_TextColor</code></td><td>Assistant text</td><td className="swatch" style={{backgroundColor: "var(--sapAssistant_TextColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapAssistant_TextColor)"}}></td></tr>
+		<tr><td><code>--sapAssistant_Hover_Background</code></td><td>Assistant hover</td><td className="swatch" style={{backgroundColor: "var(--sapAssistant_Hover_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapAssistant_Hover_Background)"}}></td></tr>
+		<tr><td><code>--sapAssistant_Active_Background</code></td><td>Assistant pressed</td><td className="swatch" style={{backgroundColor: "var(--sapAssistant_Active_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapAssistant_Active_Background)"}}></td></tr>
+		<tr><td><code>--sapAssistant_Answer_Background</code></td><td>Answer bubble surface</td><td className="swatch" style={{backgroundColor: "var(--sapAssistant_Answer_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapAssistant_Answer_Background)"}}></td></tr>
+	</tbody>
+</table>
+
+### Miscellaneous
+
+<table>
+	<thead>
+		<tr><th>Token</th><th>Purpose</th><th className="swatch">Light</th><th className="swatch">Dark</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>--sapCompanyLogo</code></td><td>Company logo reference</td><td className="swatch"></td><td className="swatch"></td></tr>
+		<tr><td><code>--sapSapThemeId</code></td><td>Theme identifier string</td><td className="swatch"></td><td className="swatch"></td></tr>
+		<tr><td><code>--sapProgress_Background</code></td><td>Progress bar base</td><td className="swatch" style={{backgroundColor: "var(--sapProgress_Background)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapProgress_Background)"}}></td></tr>
+		<tr><td><code>--sapProgress_BorderColor</code></td><td>Progress bar border</td><td className="swatch" style={{backgroundColor: "var(--sapProgress_BorderColor)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapProgress_BorderColor)"}}></td></tr>
+		<tr><td><code>--sapProgress_PositiveBackground</code></td><td>Progress — positive</td><td className="swatch" style={{backgroundColor: "var(--sapProgress_PositiveBackground)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapProgress_PositiveBackground)"}}></td></tr>
+		<tr><td><code>--sapProgress_NegativeBackground</code></td><td>Progress — negative</td><td className="swatch" style={{backgroundColor: "var(--sapProgress_NegativeBackground)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapProgress_NegativeBackground)"}}></td></tr>
+		<tr><td><code>--sapProgress_CriticalBackground</code></td><td>Progress — critical</td><td className="swatch" style={{backgroundColor: "var(--sapProgress_CriticalBackground)"}}></td><td className="swatch" data-theme="horizon-dark" style={{backgroundColor: "var(--sapProgress_CriticalBackground)"}}></td></tr>
+	</tbody>
+</table>

@@ -4,11 +4,7 @@
 	"description": "Reltio design system and tools",
 	"type": "module",
 	"exports": {
-		".": "./index.ts",
-		"./icons": "./icons/index.ts",
-		"./icons/*": "./icons/*.tsx",
-		"./illustrations": "./illustrations/index.ts",
-		"./illustrations/*": "./illustrations/*.tsx"
+		".": "./index.ts"
 	},
 	"keywords": [
 		"Reltio",
@@ -39,8 +35,6 @@
 		"build-storybook": "storybook build",
 		"build-css": "node scripts/build-css.mjs",
 		"build-tokens": "node scripts/build-tokens.mjs",
-		"build-icons": "node scripts/build-icons.mjs",
-		"build-illustrations": "node scripts/build-illustrations.mjs",
 		"build-api-docs": "node scripts/build-api-docs.mjs",
 		"deploy": "chromatic --exit-zero-on-changes --exit-once-uploaded",
 		"lint": "biome check .",
@@ -51,6 +45,7 @@
 		"@chromatic-com/storybook": "^5.1.2",
 		"@faker-js/faker": "^10.3.0",
 		"@fission-ai/openspec": "^1.2.0",
+		"@sap-theming/theming-base-content": "^11.35.1",
 		"@storybook/addon-a11y": "^10.3.6",
 		"@storybook/addon-docs": "^10.3.6",
 		"@storybook/addon-mcp": "^0.4.2",
@@ -69,19 +64,21 @@
 		"postcss": "^8.5.6",
 		"postcss-modules": "^6.0.1",
 		"prop-types": "^15.8.1",
-		"react": "^17.0.0",
-		"react-dom": "^17.0.0",
 		"storybook": "^10.3.6",
 		"vitest": "^4.0.14"
 	},
 	"dependencies": {
 		"@dagrejs/dagre": "^3.0.0",
 		"@storybook/mcp": "^0.6.1",
+		"@ui5/webcomponents-icons": "^2.21.1",
+		"@ui5/webcomponents-react": "^2.21.3",
 		"@xyflow/react": "^12.10.2",
 		"d3-scale": "^4.0.2",
 		"echarts": "^6.0.0",
 		"markdown-to-jsx": "^9.7.3",
 		"rc-tree": "^5.13.1",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
 		"style-inject": "^0.3.0"
 	},
 	"msw": {

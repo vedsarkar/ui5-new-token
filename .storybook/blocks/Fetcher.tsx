@@ -149,6 +149,7 @@ export const Fetcher = ({
 		setSendState({ kind: "sending" });
 		const headers: Record<string, string> = {
 			"Content-Type": "application/json",
+			"x-target-url": url,
 		};
 		if (accessToken) {
 			headers.Authorization = `Bearer ${accessToken}`;
@@ -158,7 +159,7 @@ export const Fetcher = ({
 			init.body = JSON.stringify(resolvedBody);
 		}
 		try {
-			const res = await fetch(url, init);
+			const res = await fetch("/api/proxy", init);
 			const text = await res.text();
 			let parsed: unknown = text;
 			let isJson = false;

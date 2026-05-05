@@ -1,0 +1,232 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/UI Architecture" />
+
+# UI Architecture
+
+This guide explains how the UI layer of the Reltio Design Platform is structured, how it composes on top of SAP's UI5 Web Components, and where each kind of code belongs. Read this first when joining the project — every other component and customization guide assumes the model described here.
+
+> **🎯 Key Principle:** UI5 Web Components React is the foundation. Reltio Design adds only what UI5 lacks — MDM business components, custom primitives, charts, and Reltio API utilities.
+
+## The two layers
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  Reltio MDM apps & partners                                  │
+└──────────────────────────────────────────────────────────────┘
+                              ▲
+┌─────────────────────────────┴────────────────────────────────┐
+│  @reltio/design (this repo)                                  │
+│   • Business components (Chat, Markdown, Details, ...)       │
+│   • Reltio primitives (only when UI5 doesn't cover the need) │
+│   • Charts (ECharts)                                         │
+│   • Hooks & Reltio API utilities                             │
+└─────────────────────────────┬────────────────────────────────┘
+                              ▲
+┌─────────────────────────────┴────────────────────────────────┐
+│  @ui5/webcomponents-react   +   @ui5/webcomponents-icons     │
+│   (Button, Input, Dialog, Table, ComboBox, ...)              │
+└─────────────────────────────┬────────────────────────────────┘
+                              ▲
+┌─────────────────────────────┴────────────────────────────────┐
+│  SAP Horizon foundation (shared by both layers)              │
+│   public/variables.css  •  public/fonts.css  •  data-theme   │
+└──────────────────────────────────────────────────────────────┘
+```
+
+Every UI surface a Reltio app renders comes from one of three places:
+
+<table>
+	<thead>
+		<tr>
+			<th>Source</th>
+			<th>What it provides</th>
+			<th>How to consume</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>@ui5/webcomponents-react</code></td>
+			<td>Base UI controls — Button, Input, Dialog, Table, ComboBox, MessageStrip, ObjectPage, ...</td>
+			<td>Direct import — <code>{`import { Button } from "@ui5/webcomponents-react/Button"`}</code></td>
+		</tr>
+		<tr>
+			<td><code>@ui5/webcomponents-icons</code></td>
+			<td>SAP Horizon icon set</td>
+			<td>Side-effect import + <code>{`<Icon name="..." />`}</code> from UI5 React (see <a href="?path=/docs/guides-icon-library--docs">Icons guide</a>)</td>
+		</tr>
+		<tr>
+			<td><code>@reltio/design</code> (this repo)</td>
+			<td>MDM business components, custom primitives, charts, hooks, API utilities</td>
+			<td>Direct import — <code>{`import { Chat } from "@reltio/design"`}</code></td>
+		</tr>
+	</tbody>
+</table>
+
+## What this repo adds on top of UI5
+
+UI5 Web Components React already covers the vast majority of generic UI needs. This repo focuses on the **Reltio-specific** layer:
+
+<table>
+	<thead>
+		<tr>
+			<th>Folder</th>
+			<th>Contents</th>
+			<th>Examples</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>components/</code></td>
+			<td>MDM business components and custom primitives — built on UI5 where possible, or as fresh primitives where UI5 has a gap</td>
+			<td><code>Chat</code>, <code>Markdown</code>, <code>Details</code>, <code>TextArea</code>, <code>Skeleton</code>, <code>ErrorBoundary</code></td>
+		</tr>
+		<tr>
+			<td><code>charts/</code></td>
+			<td>ECharts-based visualizations themed with SAP Horizon chart tokens</td>
+			<td><code>BarChart</code>, <code>LineChart</code>, <code>GeoChart</code></td>
+		</tr>
+		<tr>
+			<td><code>hooks/</code></td>
+			<td>Reusable React hooks for shared interaction patterns and Reltio APIs</td>
+			<td><code>useTextStream</code>, <code>useReltioFetch</code></td>
+		</tr>
+		<tr>
+			<td><code>openApi/</code></td>
+			<td>Reltio API specs, request/response stories, schema-driven docs</td>
+			<td><code>GET /configuration</code></td>
+		</tr>
+		<tr>
+			<td><code>utils/</code></td>
+			<td>Cross-cutting utilities</td>
+			<td><code>classNames</code>, <code>HtmlProps</code></td>
+		</tr>
+		<tr>
+			<td><code>public/</code></td>
+			<td>SAP Horizon design tokens and fonts as static CSS</td>
+			<td><code>variables.css</code>, <code>fonts.css</code>, <code>fonts/*.woff2</code></td>
+		</tr>
+	</tbody>
+</table>
+
+## Decision tree: should you build it here?
+
+Walk through this before adding anything new under `components/`:
+
+```
+Does @ui5/webcomponents-react already ship a component that fits the design?
+├── Yes → Import it directly. Do NOT wrap it.
+│         Example:
+│           import { Button } from "@ui5/webcomponents-react/Button";
+│           <Button design="Emphasized">Save</Button>
+│
+└── No → Do you need to compose several UI5 components with Reltio business
+         logic (entity profile, match group, source priority, MDM workflow ...)?
+         ├── Yes → Build a Reltio business component under components/.
+         │
+         └── No → Is it a product-agnostic primitive that UI5 simply does not
+                  provide (e.g. chat scrollback, markdown renderer)?
+                  ├── Yes → Build a Reltio primitive under components/.
+                  │
+                  └── No → You probably don't need a new component.
+                          Reach for the shared UI5 control instead.
+```
+
+### Restyling is NOT a reason to wrap
+
+If your only goal is to restyle a UI5 component (different brand color, alternate corner radius, custom focus ring), do it through:
+
+1. **`--sap*` design tokens** scoped to a parent class — UI5 reads them through Shadow DOM automatically.
+2. **CSS Parts (`::part()`)** for fine-grained tweaks no token covers.
+
+Do not create a Reltio wrapper just for visual changes. See the [Component Customization guide](?path=/docs/guides-component-customization--docs) for the full mechanics.
+
+## Theming — no `ThemeProvider`
+
+The platform deliberately does not ship a global React `ThemeProvider`. Theming is a pure-CSS concern:
+
+1. The consumer loads `public/variables.css` and `public/fonts.css` in `<head>`.
+2. Any ancestor element carries `data-theme="horizon-light"` or `data-theme="horizon-dark"`.
+3. UI5 web components inherit `--sap*` CSS variables through Shadow DOM automatically — no provider, no JS theme switch.
+4. Reltio CSS Modules consume the same `--sap*` tokens via the normal cascade.
+
+Nested theming works: a `[data-theme]` on a child element scopes that theme to its subtree.
+
+```html
+<link rel="stylesheet" href="/variables.css" />
+<link rel="stylesheet" href="/fonts.css" />
+
+<div data-theme="horizon-light">
+	<Button design="Emphasized">Light theme button</Button>
+
+	<div data-theme="horizon-dark">
+		<Button design="Emphasized">Dark theme button (nested)</Button>
+	</div>
+</div>
+```
+
+## Examples
+
+### 1. UI5 only — no Reltio component needed
+
+A plain emphasized save button. Just use UI5:
+
+```tsx
+import { Button } from "@ui5/webcomponents-react/Button";
+import "@ui5/webcomponents-icons/dist/save.js";
+
+<Button design="Emphasized" icon="save">Save</Button>;
+```
+
+No spec, no wrapper, no CSS module. Anything beyond this is over-engineering.
+
+### 2. Reltio business component — composes UI5 with MDM logic
+
+A button that knows how to save a Reltio entity by ID. The MDM logic justifies the wrapper:
+
+```tsx
+// components/SaveEntityButton/SaveEntityButton.tsx
+import { Button } from "@ui5/webcomponents-react/Button";
+import { classNames } from "@/utils/classNames";
+import styles from "./SaveEntityButton.module.css";
+import type { SaveEntityButtonProps } from "./SaveEntityButton.types";
+
+export const SaveEntityButton = ({
+	entityId,
+	onSaved,
+	className,
+	...rest
+}: SaveEntityButtonProps) => {
+	return (
+		<Button
+			design="Emphasized"
+			className={classNames(styles.root, className)}
+			onClick={() => onSaved?.(entityId)}
+			{...rest}
+		/>
+	);
+};
+```
+
+See the [Component Typing guide — Wrapping a UI5 component](?path=/docs/guides-component-typing--docs) for the typing pattern.
+
+### 3. Reltio primitive — fills a UI5 gap
+
+UI5 has no chat scrollback / message rendering control, so [`Chat`](/?path=/docs/components-chat--docs) is built from scratch in `components/Chat/`. It still consumes UI5 internally where it can (e.g. `BusyIndicator`, `Icon`).
+
+## Where to read next
+
+- [Component Typing](?path=/docs/guides-component-typing--docs) — types for HTML wrappers, polymorphic components, and UI5 wrappers
+- [Component Customization](?path=/docs/guides-component-customization--docs) — restyling UI5 vs. Reltio components
+- [Design Tokens](?path=/docs/design-tokens--docs) — the full SAP Horizon `--sap*` token surface and how UI5 consumes it
+- [Typography](?path=/docs/guides-typography--docs) — SAP 72 fonts loaded once, used everywhere
+- [Icons (UI5)](?path=/docs/guides-icon-library--docs) — how to render and theme icons via `@ui5/webcomponents-icons`
+- [Spec-Driven Development](?path=/docs/guides-spec-driven-development--docs) — the OpenSpec workflow used to plan Reltio components
+
+## Sources and References
+
+- [UI5 Web Components React](https://sap.github.io/ui5-webcomponents-react/) — official component reference
+- [UI5 Web Components](https://sap.github.io/ui5-webcomponents/) — Shadow DOM components, CSS Parts, theming
+- [SAP Horizon Design System](https://www.sap.com/design-system/) — semantic guidance for tokens and patterns
+- [SAP/theming-base-content](https://github.com/SAP/theming-base-content) — source of the `--sap*` tokens
+- [MDN — Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM) — how `--sap*` cascade reaches UI5

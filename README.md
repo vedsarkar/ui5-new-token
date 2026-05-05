@@ -1,10 +1,11 @@
 # Reltio Design Platform
 
-Reltio Design Platform is a library of components and tools for building consistent user interfaces.
+Reltio Design Platform is the UI development, testing, and documentation ecosystem for the Reltio MDM product suite. It builds on the SAP Horizon design system: [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/) provides the base components and icons, and Reltio Design adds MDM-specific business components, charts, hooks, and API utilities on top.
 
 ## 📋 Table of Contents
 
 - [About the Project](#about-the-project)
+- [Architecture](#architecture)
 - [Getting Started](#getting-started)
 - [For Developers](#for-developers)
 - [For Designers](#for-designers)
@@ -15,31 +16,58 @@ Reltio Design Platform is a library of components and tools for building consist
 - [Code Style](#code-style)
 - [Visual Testing](#visual-testing)
 - [Contributing](#contributing)
+- [AI Agent Integration](#ai-agent-integration)
 
 ## About the Project
 
 Reltio Design Platform provides:
 
-- 🎨 **Reusable Components** — ready-to-use React components with TypeScript
-- 📚 **Documentation** — interactive component documentation in Storybook
-- 🎯 **Consistency** — unified style and behavior across all products
-- 🚀 **Rapid Development** — accelerate UI development with ready-made components
+- 🧱 **UI5 foundation** — `@ui5/webcomponents-react` and `@ui5/webcomponents-icons` are used directly for base components (Button, Input, Dialog, Table, ...)
+- 🎯 **MDM business components** — Reltio-specific compositions on top of UI5 (Chat, Markdown, Details, ...)
+- 📊 **Charts** — ECharts-based visualizations under `charts/`
+- 🎨 **SAP Horizon design tokens** — generated into static `public/variables.css`, `public/fonts.css`, `public/fonts/*.woff2`; consumed via the `data-theme` attribute (no React `ThemeProvider`)
+- 📚 **Storybook documentation** — stories double as visual tests, accessibility checks, and live API references
+- 🔌 **MCP-ready** — every component, story, and design token is discoverable by AI agents through the Storybook MCP server
+
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  Reltio MDM apps & partners                                  │
+└──────────────────────────────────────────────────────────────┘
+                              ▲
+┌─────────────────────────────┴────────────────────────────────┐
+│  @reltio/design (this repo)                                  │
+│   • Business components (Chat, Markdown, Details, ...)       │
+│   • Reltio primitives (only when UI5 doesn't cover the need) │
+│   • Charts (ECharts)                                         │
+│   • Hooks & Reltio API utilities                             │
+└─────────────────────────────┬────────────────────────────────┘
+                              ▲
+┌─────────────────────────────┴────────────────────────────────┐
+│  @ui5/webcomponents-react   +   @ui5/webcomponents-icons     │
+└─────────────────────────────┬────────────────────────────────┘
+                              ▲
+┌─────────────────────────────┴────────────────────────────────┐
+│  SAP Horizon foundation                                      │
+│   public/variables.css  •  public/fonts.css  •  data-theme   │
+└──────────────────────────────────────────────────────────────┘
+```
+
+> **Compose, don't reinvent.** If `@ui5/webcomponents-react` already ships a component that fits, use it directly. Build a Reltio component only when there is real MDM business value to add.
 
 ## Getting Started
 
 ### Requirements
 
 - Node.js LTS
-- npm or yarn
+- npm
 
 ### Installation
 
 ```bash
-# Clone the repository
 git clone git@bitbucket.org:reltio-ondemand/reltio-design.git
 cd reltio-design
-
-# Install dependencies
 npm install
 ```
 
@@ -53,78 +81,104 @@ Storybook will be available at: http://localhost:6006
 
 ## For Developers
 
-### Using Components
+### Loading the design tokens
 
-Components are exported from the `@reltio/design` package. Example usage:
+The platform does not ship a `ThemeProvider`. Instead, theming is a pure-CSS concern:
+
+```html
+<link rel="stylesheet" href="/variables.css" />
+<link rel="stylesheet" href="/fonts.css" />
+
+<div data-theme="horizon-light">
+  <!-- UI5 components and Reltio components both read the active theme here -->
+</div>
+```
+
+Switch the theme by toggling `data-theme="horizon-light"` or `data-theme="horizon-dark"` on any ancestor element. Nested theming is supported.
+
+### Using UI5 components directly
+
+UI5 components cover the vast majority of base UI needs. Import them straight from `@ui5/webcomponents-react`:
 
 ```tsx
-import { Button } from "@reltio/design";
+import { Button } from "@ui5/webcomponents-react/Button";
+import { Input } from "@ui5/webcomponents-react/Input";
+import { Icon } from "@ui5/webcomponents-react/Icon";
+import "@ui5/webcomponents-icons/dist/save.js";
 
-function MyComponent() {
-	return <Button>Click me</Button>;
+function SaveBar() {
+  return (
+    <>
+      <Input placeholder="Entity name" />
+      <Button design="Emphasized" icon="save">
+        Save
+      </Button>
+    </>
+  );
 }
 ```
 
-### Component Structure
+### Using Reltio MDM components
 
-Each component follows a standard structure:
+Reltio components are exported from `@reltio/design`:
 
-```
-components/
-  ComponentName/
-    ComponentName.tsx          # Main component
-    ComponentName.module.css   # Styles (CSS Modules)
-    ComponentName.stories.tsx  # Storybook stories
-    index.ts                   # Component export
+```tsx
+import { Chat, Markdown, Details } from "@reltio/design";
+
+function AssistantPanel({ messages }) {
+  return <Chat messages={messages} />;
+}
 ```
 
 ### Types and Interfaces
 
-All components are typed with TypeScript. Types are exported alongside components:
+All Reltio components are typed with TypeScript. Types are exported alongside components:
 
 ```tsx
-import { Button, type ButtonProps } from "@reltio/design";
+import { Chat, type ChatProps } from "@reltio/design";
 ```
 
 ## For Designers
 
-### Viewing Components
+### Viewing components
 
 1. Start Storybook: `npm run dev`
-2. Open http://localhost:6006 in your browser
-3. Explore components in the "Components" section
-4. Use interactive controls to test different states
+2. Open http://localhost:6006
+3. Browse the **Welcome**, **Design Tokens**, **Guides**, and **Components** sections
+4. Use the theme toolbar (top right) to preview every story under `horizon-light` and `horizon-dark`
 
-### Design System Documentation
+### Working with design mockups
 
-Design principles and guidelines are located in the **Documentation/Constitution** section in Storybook.
+When designing for Reltio:
 
-### Working with Design Mockups
-
-When creating new components or modifying existing ones:
-
-1. Ensure the design aligns with principles from Constitution
-2. Verify component accessibility
-3. Test various states (hover, focus, disabled, etc.)
-4. Ensure responsiveness across different screen sizes
+1. Use the official [SAP Horizon Figma kit](https://www.sap.com/design-system/fiori-design-web/resources/libraries/) for base components
+2. Reuse Reltio business components (Storybook → Components) for MDM patterns
+3. Reference colors only through SAP Figma variables — they map 1:1 to `--sap*` CSS tokens at build time
+4. Verify the design under both themes before handoff
 
 ## Project Structure
 
 ```
 reltio-design/
-├── components/           # React components
-│   └── Button/          # Example component
-├── stories/             # Documentation and examples
-│   └── Constitution.mdx # Design system principles
-├── .storybook/          # Storybook configuration
-├── icons/               # Icons
-├── utils/               # Utilities
-└── package.json         # Dependencies and scripts
+├── components/         # Reltio business components & primitives (built on UI5)
+├── charts/             # ECharts-based chart components
+├── hooks/              # Reusable React hooks
+├── openApi/            # Reltio API specs and stories
+├── utils/              # Shared utilities (classNames, types, ...)
+├── public/             # Static assets — variables.css, fonts.css, fonts/, images
+├── scripts/            # Build scripts (tokens, API docs, css)
+├── tokens/             # Source token files (generated by build-tokens)
+├── guides/             # Storybook MDX guides
+├── .storybook/         # Storybook configuration
+├── openspec/           # Spec-driven development workflow config
+└── package.json
 ```
 
 ## Component Development
 
-### Creating a New Component
+### Creating a new Reltio component
+
+> **Step 0 — check UI5 first.** Before creating anything here, verify whether `@ui5/webcomponents-react` already ships a component that fits the design. If yes, use it directly. Wrap only when there is real MDM/business value to add.
 
 1. **Create the component directory:**
 
@@ -132,153 +186,121 @@ reltio-design/
 mkdir -p components/MyComponent
 ```
 
-2. **Create component files:**
+2. **Create component files (mandatory structure):**
 
-- `MyComponent.tsx` — main component
-- `MyComponent.module.css` — styles
+- `MyComponent.tsx` — implementation
+- `MyComponent.types.ts` — types (separate file is required)
+- `MyComponent.module.css` — CSS Modules styles
 - `MyComponent.stories.tsx` — Storybook stories
-- `index.ts` — component export
+- `index.ts` — public API
 
-3. **Example structure:**
+3. **Example — wrapping a UI5 Button with MDM logic:**
 
-**MyComponent.tsx:**
-```tsx
-import type React from "react";
-import styles from "./MyComponent.module.css";
+`MyComponent.types.ts`:
+```ts
+import type { ComponentPropsWithoutRef } from "react";
+import type { Button } from "@ui5/webcomponents-react/Button";
 
-export type MyComponentProps = {
-	children: React.ReactNode;
-	// Add other props
-};
+type Ui5ButtonProps = ComponentPropsWithoutRef<typeof Button>;
 
-export const MyComponent = ({ children, ...props }: MyComponentProps) => {
-	return (
-		<div className={styles.root} {...props}>
-			{children}
-		</div>
-	);
+export type SaveEntityButtonProps = Omit<Ui5ButtonProps, "design" | "onClick"> & {
+  entityId: string;
+  onSaved?: (entityId: string) => void;
 };
 ```
 
-**MyComponent.module.css:**
-```css
-.root {
-	/* Component styles */
-}
+`MyComponent.tsx`:
+```tsx
+import { Button } from "@ui5/webcomponents-react/Button";
+import { classNames } from "@/utils/classNames";
+import styles from "./SaveEntityButton.module.css";
+import type { SaveEntityButtonProps } from "./SaveEntityButton.types";
+
+export const SaveEntityButton = ({
+  entityId,
+  onSaved,
+  className,
+  ...rest
+}: SaveEntityButtonProps) => {
+  return (
+    <Button
+      design="Emphasized"
+      className={classNames(styles.root, className)}
+      onClick={() => onSaved?.(entityId)}
+      {...rest}
+    />
+  );
+};
 ```
 
-**MyComponent.stories.tsx:**
-```tsx
-import { MyComponent } from "./MyComponent";
-
-export default {
-	title: "Components/MyComponent",
-	component: MyComponent,
-	tags: ["autodocs"],
-};
-
-export const Default = {
-	args: {
-		children: "Example",
-	},
-};
-```
-
-**index.ts:**
-```tsx
-export { MyComponent } from "./MyComponent";
-export type { MyComponentProps } from "./MyComponent";
+`index.ts`:
+```ts
+export { SaveEntityButton } from "./SaveEntityButton";
+export type { SaveEntityButtonProps } from "./SaveEntityButton.types";
 ```
 
 ### Styling
 
 - Use **CSS Modules** for style isolation
-- Name classes using BEM methodology (optional)
-- Avoid global styles
-- Use CSS variables for theming (if applicable)
+- Always wrap class names with `classNames()` from `@/utils/classNames`
+- Use SAP Horizon `--sap*` tokens for colors — never hardcode hex values
+- Use plain values for sizing, spacing, and typography
+- Restyle UI5 components by overriding `--sap*` tokens (preferred) or via `::part()` selectors
+
+See the [Component Customization guide](http://localhost:6006/?path=/docs/guides-component-customization--docs) for details.
 
 ## Storybook
 
-### Viewing Components
-
-Storybook provides an interactive environment for developing and testing components:
+Storybook is the single workspace for components, design tokens, guides, and API documentation:
 
 - **Canvas** — interactive component development
-- **Docs** — auto-generated documentation
-- **Controls** — real-time prop modification
-- **Actions** — event tracking
+- **Docs** — auto-generated documentation per component
+- **Controls** — live prop modification
+- **Theme toolbar** — switch between `horizon-light` and `horizon-dark`
 
-### Adding Stories
+### Adding stories
 
-Stories describe different component states:
+Stories describe distinct visual states (one variant per story):
 
 ```tsx
-export const Primary = {
-	args: {
-		children: "Primary Button",
-	},
+export const Default = {
+  args: { messages: sampleMessages },
 };
 
-export const Disabled = {
-	args: {
-		children: "Disabled Button",
-		disabled: true,
-	},
+export const Thinking = {
+  args: { messages: sampleMessages, thinking: true },
 };
 ```
 
 ## Scripts
 
 ```bash
-# Run Storybook in development mode
-npm run dev
-
-# Build Storybook for production
-npm run build-storybook
-
-# Deploy to Chromatic (visual testing)
-npm run deploy
-
-# Check code with linter
-npm run lint
-
-# Format code
-npm run format
+npm run dev               # Run Storybook in development mode
+npm run build-storybook   # Build Storybook for production
+npm run build-tokens      # Regenerate variables.css, fonts.css, fonts/ from @sap-theming/theming-base-content
+npm run lint              # Check code with Biome
+npm run format            # Format code with Biome
+npm run test              # Run Vitest tests
+npm run coverage          # Run tests with coverage
+npm run deploy            # Deploy to Chromatic for visual testing
 ```
 
 ## Code Style
 
 The project uses **Biome** for linting and formatting.
 
-### Formatting
-
-```bash
-# Automatically format all files
-npm run format
-```
-
-### Formatting Rules
-
-- Tabs are used for indentation
+- Tabs for indentation
 - Double quotes for strings
-- Automatic import organization
-
-### Code Checking
+- Auto-organized imports
 
 ```bash
-# Check code without fixes
-npm run lint
+npm run format   # auto-fix formatting
+npm run lint     # check without fixes
 ```
 
 ## Visual Testing
 
-The project uses **Chromatic** for visual regression testing:
-
-- Automatic detection of visual changes
-- Screenshot comparison between commits
-- CI/CD integration
-
-To deploy to Chromatic:
+The project uses **Chromatic** for visual regression testing. Every story is captured under both `horizon-light` and `horizon-dark`.
 
 ```bash
 npm run deploy
@@ -288,25 +310,22 @@ npm run deploy
 
 ### Development Process
 
-1. **Create a branch** for a new feature or fix
-2. **Develop the component** following the project structure
-3. **Add stories** to Storybook for all states
-4. **Check code** with `npm run lint`
-5. **Format code** with `npm run format`
-6. **Create a Pull Request** with a description of changes
+1. **Check UI5 first** — confirm there is no existing component that fits the design
+2. **Create a branch** for the new feature or fix
+3. **Develop the component** following the structure under `components/`
+4. **Add stories** to Storybook for all variants
+5. **Format and lint** — `npm run format`, `npm run lint`
+6. **Open a Pull Request** with a description of changes
 
 ### Pre-PR Checklist
 
-- [ ] Code follows project style
-- [ ] Stories added/updated in Storybook
-- [ ] Component works correctly in all states
-- [ ] Component accessibility verified
-- [ ] Code formatted (`npm run format`)
-- [ ] Linter passes without errors (`npm run lint`)
-
-### Reporting Issues
-
-If you find a bug or want to suggest an improvement, create an issue in [Bitbucket Issues](https://bitbucket.org/reltio-ondemand/reltio-design/issues).
+- [ ] UI5 components used directly when possible; Reltio wrappers only for real MDM/business value
+- [ ] Code follows project structure (`.tsx` + `.types.ts` + `.module.css` + `.stories.tsx` + `index.ts`)
+- [ ] Stories added/updated in Storybook (one variant per story)
+- [ ] Component verified under both `horizon-light` and `horizon-dark`
+- [ ] No hardcoded hex colors — all colors reference `--sap*` tokens
+- [ ] `npm run format` executed
+- [ ] `npm run lint` passes
 
 ## AI Agent Integration
 
@@ -334,6 +353,10 @@ Published Storybook MCP is available at `https://reltio.design/mcp` for use in d
 
 ## Useful Links
 
+- [UI5 Web Components React](https://sap.github.io/ui5-webcomponents-react/)
+- [UI5 Web Components Icons](https://sap.github.io/ui5-webcomponents/) — see the "Icons Explorer"
+- [SAP Horizon Design System](https://www.sap.com/design-system/)
+- [SAP/theming-base-content](https://github.com/SAP/theming-base-content) — source of the `--sap*` tokens
 - [Storybook Documentation](https://storybook.js.org/docs)
 - [React Documentation](https://react.dev)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs)

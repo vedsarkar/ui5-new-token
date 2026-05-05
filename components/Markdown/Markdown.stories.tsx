@@ -239,12 +239,3 @@ export const CustomOverrides = meta.story({
 		children: `# Heading with custom override\n\nParagraph text.`,
 	},
 });
-
-// Button as React component (<Button> in content, not native <button>)
-export const ButtonAsReactComponent = meta.story({
-	args: {
-		children: `Use the design system Button in MDX:
-
-<Button design="emphasized">Emphasized</Button> <Button design="ghost">Ghost</Button>`,
-	},
-});
