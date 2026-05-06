@@ -34,9 +34,6 @@ export default definePreview({
 					<Stories />
 				</>
 			),
-			toc: {
-				headingSelector: "h2, h3",
-			},
 		},
 
 		a11y: {
@@ -53,40 +50,6 @@ export default definePreview({
 			},
 		},
 	},
-
-	globalTypes: {
-		theme: {
-			name: "Theme",
-			description: "Active Reltio theme",
-			defaultValue: "auto",
-			toolbar: {
-				icon: "paintbrush",
-				items: [
-					{ value: "auto", title: "Auto (system)" },
-					{ value: "horizon-light", title: "Horizon Light" },
-					{ value: "horizon-dark", title: "Horizon Dark" },
-				],
-				dynamicTitle: true,
-			},
-		},
-	},
-
-	decorators: [
-		(Story, context) => {
-			const selection = (context.globals.theme as string) ?? "auto";
-			const theme =
-				selection === "auto"
-					? window.matchMedia("(prefers-color-scheme: dark)").matches
-						? "horizon-dark"
-						: "horizon-light"
-					: selection;
-			return (
-				<div data-theme={theme}>
-					<Story />
-				</div>
-			);
-		},
-	],
 
 	addons: [addonDocs(), addonA11y()],
 });

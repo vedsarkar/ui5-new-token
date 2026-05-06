@@ -25,7 +25,7 @@ Reltio Design Platform provides:
 - 🧱 **UI5 foundation** — `@ui5/webcomponents-react` and `@ui5/webcomponents-icons` are used directly for base components (Button, Input, Dialog, Table, ...)
 - 🎯 **MDM business components** — Reltio-specific compositions on top of UI5 (Chat, Markdown, Details, ...)
 - 📊 **Charts** — ECharts-based visualizations under `charts/`
-- 🎨 **SAP Horizon design tokens** — generated into static `public/variables.css`, `public/fonts.css`, `public/fonts/*.woff2`; consumed via the `data-theme` attribute (no React `ThemeProvider`)
+- 🎨 **SAP Horizon design tokens** — generated into static `public/variables.css`, `public/fonts.css`, `public/fonts/*.woff2`; consumed via the `data-theme` attribute
 - 📚 **Storybook documentation** — stories double as visual tests, accessibility checks, and live API references
 - 🔌 **MCP-ready** — every component, story, and design token is discoverable by AI agents through the Storybook MCP server
 
@@ -50,7 +50,9 @@ Reltio Design Platform provides:
                               ▲
 ┌─────────────────────────────┴────────────────────────────────┐
 │  SAP Horizon foundation                                      │
-│   public/variables.css  •  public/fonts.css  •  data-theme   │
+│   https://reltio.design/variables.css                        │
+│   https://reltio.design/fonts.css                            │
+│   data-theme attribute                                       │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -83,11 +85,11 @@ Storybook will be available at: http://localhost:6006
 
 ### Loading the design tokens
 
-The platform does not ship a `ThemeProvider`. Instead, theming is a pure-CSS concern:
+Load the platform's static CSS files in `<head>` and set the `data-theme` attribute on any ancestor element:
 
 ```html
-<link rel="stylesheet" href="/variables.css" />
-<link rel="stylesheet" href="/fonts.css" />
+<link rel="stylesheet" href="https://reltio.design/variables.css" />
+<link rel="stylesheet" href="https://reltio.design/fonts.css" />
 
 <div data-theme="horizon-light">
   <!-- UI5 components and Reltio components both read the active theme here -->

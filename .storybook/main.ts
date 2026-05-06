@@ -34,12 +34,7 @@ export default defineMain({
 		reactDocgen: "react-docgen-typescript",
 		reactDocgenTypescriptOptions: {
 			shouldExtractLiteralValuesFromEnum: true,
-			include: [
-				"components/**/*.tsx",
-				"charts/**/*.tsx",
-				"icons/**/*.tsx",
-				"illustrations/**/*.tsx",
-			],
+			include: ["components/**/*.tsx", "charts/**/*.tsx"],
 		},
 	},
 });

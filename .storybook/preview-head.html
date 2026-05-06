@@ -2,8 +2,9 @@
   Reltio Design Platform — Storybook preview head.
 
   Design tokens (variables.css) and SAP 72 font-face rules (fonts.css) are
-  loaded here. Theme activation is handled by the data-theme attribute set
-  by the decorator in preview.tsx.
+  loaded here. The light Horizon theme applies via the `:root` defaults in
+  variables.css; individual stories can opt into dark mode by setting
+  `data-theme="horizon-dark"` on a wrapper element.
 -->
 <link rel="stylesheet" href="/variables.css" />
 <link rel="stylesheet" href="/fonts.css" />

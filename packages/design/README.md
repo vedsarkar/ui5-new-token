@@ -13,58 +13,44 @@ npm install @reltio/design
 ```
 ## Usage
 
-Example usage of the **Button** component:
+Reltio Design provides MDM-specific business components and primitives built on top of [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/). For base UI controls (Button, Input, Dialog, ...) import directly from UI5; for Reltio MDM components import from `@reltio/design`:
 
 ```jsx
-import React from 'react';
-import { Button } from '@reltio/design';
+import { Button } from "@ui5/webcomponents-react/Button";
+import { Chat } from "@reltio/design";
 
 function App() {
-  return <Button>Touch me</Button>;
+	return (
+		<>
+			<Button design="Emphasized">Save</Button>
+			<Chat messages={[]} />
+		</>
+	);
 }
 
 export default App;
 ```
 
-**Important:** React is listed as peer dependencies. Make sure it's added to your project.
+**Important:** React, `@ui5/webcomponents-react`, and `@ui5/webcomponents-icons` are listed as peer dependencies. Make sure they are added to your project.
 
-### Theme & Fonts (recommended — React)
+### Theme & Fonts
 
-Wrap your application in `<ThemeProvider>`. It activates the active SAP Horizon theme (Morning Horizon by default in light environments, Evening Horizon in dark environments) **and** registers all SAP 72 `@font-face` rules in one step:
-
-```jsx
-import { ThemeProvider } from "@reltio/design";
-
-export default function App() {
-	return (
-		<ThemeProvider>
-			<YourApp />
-		</ThemeProvider>
-	);
-}
-```
-
-All `--sap*` design tokens become available on `:root`, components render in SAP 72, and the active theme tracks the user's `prefers-color-scheme`. Pin the theme with `<ThemeProvider defaultTheme="horizon-light">` (or `"horizon-dark"`); override CDN URLs for self-hosting via the `themeUrls` / `themeBaseUrl` / `fontUrls` / `fontBaseUrl` props (see Storybook for examples).
-
-### Theme & Fonts (alternative — non-React)
-
-Static sites and server-rendered pages without React control over `<head>` can load the same files via raw `<link>`:
+Load the SAP Horizon design tokens and SAP 72 fonts as static CSS, then set the `data-theme` attribute on any ancestor element:
 
 ```html
-<link rel="stylesheet" href="https://reltio.design/themes/horizon-light.theme.css" />
+<link rel="stylesheet" href="https://reltio.design/variables.css" />
 <link rel="stylesheet" href="https://reltio.design/fonts.css" />
+
+<div data-theme="horizon-light">
+	<!-- UI5 components and Reltio components both render in light theme -->
+</div>
 ```
 
-Or via npm subpath import (any bundler that handles CSS-as-asset):
+Switch the active theme by toggling `data-theme="horizon-light"` or `data-theme="horizon-dark"` on any ancestor element. Nested theming is supported — a `[data-theme]` on a child element scopes that theme to its subtree.
 
-```js
-import "@reltio/design/themes/horizon-light.css";
-import "@reltio/design/fonts.css";
-```
+`variables.css` declares all `--sap*` design tokens; `fonts.css` registers the SAP 72 `@font-face` rules and points the document root at the SAP 72 stack. Both UI5 web components (`@ui5/webcomponents-react`) and Reltio components consume the same tokens, so set the attribute once and both layers re-theme together.
 
-The npm versions contain the same `@font-face` rules but with absolute CDN URLs to the font files, so no extra static-asset setup is needed.
-
-See the [Typography](https://reltio.design/?path=/docs/guides-typography--docs) and Design Tokens guides in Storybook for the full list of available weights, the monospace stack, the SAP `--sap*` token surface, and self-hosting instructions.
+See the [UI Architecture](https://reltio.design/?path=/docs/guides-ui-architecture--docs), [Typography](https://reltio.design/?path=/docs/guides-typography--docs), and [Design Tokens](https://reltio.design/?path=/docs/design-tokens--docs) guides in Storybook for the full picture, the monospace stack, the `--sap*` token surface, and self-hosting instructions.
 
 ## Target Audience
 

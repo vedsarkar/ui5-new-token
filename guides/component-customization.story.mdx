@@ -6,7 +6,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 This guide explains how to customize the appearance of every component you can render from a Reltio app — both the **UI5 web components** (Button, Input, Dialog, ...) that come from `@ui5/webcomponents-react` and the **Reltio MDM components** (Chat, Markdown, Details, ...) built on top.
 
-Each layer uses a different mechanism, but they share the same theming foundation: SAP Horizon `--sap*` design tokens delivered through `public/variables.css` and the `data-theme` attribute.
+Each layer uses a different mechanism, but they share the same theming foundation: SAP Horizon `--sap*` design tokens delivered through `https://reltio.design/variables.css` and the `data-theme` attribute.
 
 > **🎯 Key Principle:** Restyle UI5 components by overriding `--sap*` tokens or using their CSS Parts. Restyle Reltio components by targeting their stable `reltio_*` CSS classes.
 
@@ -56,11 +56,11 @@ Token overrides cascade into both layers automatically. Class-based and `::part(
 
 ## Theming foundation (shared)
 
-Reltio Design ships SAP Horizon tokens and SAP 72 fonts as static CSS. There is no React `ThemeProvider` — load the files in `<head>` and toggle `data-theme` on any ancestor:
+Reltio Design ships SAP Horizon tokens and SAP 72 fonts as static CSS. Load the files in `<head>` and toggle `data-theme` on any ancestor:
 
 ```html
-<link rel="stylesheet" href="/variables.css" />
-<link rel="stylesheet" href="/fonts.css" />
+<link rel="stylesheet" href="https://reltio.design/variables.css" />
+<link rel="stylesheet" href="https://reltio.design/fonts.css" />
 
 <div data-theme="horizon-light">
   <!-- All UI5 and Reltio components here render in light theme -->

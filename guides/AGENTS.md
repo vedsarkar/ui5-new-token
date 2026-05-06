@@ -458,27 +458,20 @@ Add the component to your JSX:
 
 ### "Component doesn't render correctly"
 
-Check that you've imported the theme provider at the root level:
+Check that you've loaded the design tokens stylesheet and set the active theme on an ancestor element:
 
-\`\`\`tsx
-import { ThemeProvider } from "@reltio/design-system";
+\`\`\`html
+<link rel="stylesheet" href="https://reltio.design/variables.css" />
+<link rel="stylesheet" href="https://reltio.design/fonts.css" />
 
-function App() {
-  return (
-    <ThemeProvider>
-      {/* Your app */}
-    </ThemeProvider>
-  );
-}
+<div data-theme="horizon-light">
+  <!-- Your app -->
+</div>
 \`\`\`
 
 ### "Styles are missing"
 
-Ensure you've imported the CSS file:
-
-\`\`\`tsx
-import "@reltio/design-system/styles.css";
-\`\`\`
+Ensure both \`variables.css\` and \`fonts.css\` are loaded in \`<head>\` from \`https://reltio.design/\` (or your own self-hosted origin).
 ```
 
 ### Good: Sources and References
