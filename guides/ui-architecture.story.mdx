@@ -1,4 +1,41 @@
 import { Meta } from "@storybook/addon-docs/blocks";
+import { Diagram } from "@/charts/Diagram";
+
+export const stackNodes = [
+	{
+		id: "apps",
+		label: "Reltio MDM apps & partners",
+		icon: "🎯",
+		content: "The consumers — products built on top of this stack",
+	},
+	{
+		id: "reltio",
+		label: "@reltio/design (this repo)",
+		icon: "🧩",
+		content:
+			"- MDM business components (Chat, Markdown, Details, ...)\n- Reltio primitives (only when UI5 has a gap)\n- Charts (ECharts)\n- Hooks & Reltio API utilities",
+	},
+	{
+		id: "ui5",
+		label: "@ui5/webcomponents-react + @ui5/webcomponents-icons",
+		icon: "🧱",
+		content: "Base UI controls — Button, Input, Dialog, Table, ComboBox, ...",
+	},
+	{
+		id: "foundation",
+		label: "SAP Horizon foundation",
+		icon: "🎨",
+		content:
+			"- `variables.css` (`--sap*` tokens)\n- `fonts.css` (SAP 72)\n- `data-theme` attribute",
+	},
+];
+
+export const stackEdges = [
+	{ source: "apps", target: "reltio", label: "imports" },
+	{ source: "reltio", target: "ui5", label: "composes" },
+	{ source: "reltio", target: "foundation", label: "consumes tokens" },
+	{ source: "ui5", target: "foundation", label: "consumes tokens" },
+];
 
 <Meta title="Guides/UI Architecture" />
 
@@ -6,35 +43,13 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 This guide explains how the UI layer of the Reltio Design Platform is structured, how it composes on top of SAP's UI5 Web Components, and where each kind of code belongs. Read this first when joining the project — every other component and customization guide assumes the model described here.
 
-> **🎯 Key Principle:** UI5 Web Components React is the foundation. Reltio Design adds only what UI5 lacks — MDM business components, custom primitives, charts, and Reltio API utilities.
+> **🎯 Key Principle:** UI5 Web Components React is the foundation. Reltio Design adds only what UI5 lacks — MDM (Master Data Management) business components, custom primitives, charts, and Reltio API utilities.
 
-## The two layers
+## The layered stack
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│  Reltio MDM apps & partners                                  │
-└──────────────────────────────────────────────────────────────┘
-                              ▲
-┌─────────────────────────────┴────────────────────────────────┐
-│  @reltio/design (this repo)                                  │
-│   • Business components (Chat, Markdown, Details, ...)       │
-│   • Reltio primitives (only when UI5 doesn't cover the need) │
-│   • Charts (ECharts)                                         │
-│   • Hooks & Reltio API utilities                             │
-└─────────────────────────────┬────────────────────────────────┘
-                              ▲
-┌─────────────────────────────┴────────────────────────────────┐
-│  @ui5/webcomponents-react   +   @ui5/webcomponents-icons     │
-│   (Button, Input, Dialog, Table, ComboBox, ...)              │
-└─────────────────────────────┬────────────────────────────────┘
-                              ▲
-┌─────────────────────────────┴────────────────────────────────┐
-│  SAP Horizon foundation (shared by both layers)              │
-│   https://reltio.design/variables.css                        │
-│   https://reltio.design/fonts.css                            │
-│   data-theme attribute                                       │
-└──────────────────────────────────────────────────────────────┘
-```
+<div style={{ height: 600 }}>
+	<Diagram nodes={stackNodes} edges={stackEdges} layout="top-to-bottom" />
+</div>
 
 Every UI surface a Reltio app renders comes from one of three places:
 
@@ -80,7 +95,7 @@ UI5 Web Components React already covers the vast majority of generic UI needs. T
 	<tbody>
 		<tr>
 			<td><code>components/</code></td>
-			<td>MDM business components and custom primitives — built on UI5 where possible, or as fresh primitives where UI5 has a gap</td>
+			<td>MDM business components (compose UI5 + business logic) and Reltio primitives (only when UI5 has a gap)</td>
 			<td><code>Chat</code>, <code>Markdown</code>, <code>Details</code>, <code>TextArea</code>, <code>Skeleton</code>, <code>ErrorBoundary</code></td>
 		</tr>
 		<tr>
@@ -111,30 +126,34 @@ UI5 Web Components React already covers the vast majority of generic UI needs. T
 	</tbody>
 </table>
 
-## Decision tree: should you build it here?
+## Where does new UI code belong?
 
 Walk through this before adding anything new under `components/`:
 
-```
-Does @ui5/webcomponents-react already ship a component that fits the design?
-├── Yes → Import it directly. Do NOT wrap it.
-│         Example:
-│           import { Button } from "@ui5/webcomponents-react/Button";
-│           <Button design="Emphasized">Save</Button>
-│
-└── No → Do you need to compose several UI5 components with Reltio business
-         logic (entity profile, match group, source priority, MDM workflow ...)?
-         ├── Yes → Build a Reltio business component under components/.
-         │
-         └── No → Is it a product-agnostic primitive that UI5 simply does not
-                  provide (e.g. chat scrollback, markdown renderer)?
-                  ├── Yes → Build a Reltio primitive under components/.
-                  │
-                  └── No → You probably don't need a new component.
-                          Reach for the shared UI5 control instead.
-```
+<table>
+	<thead>
+		<tr>
+			<th>Situation</th>
+			<th>What to do</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>UI5 ships a component that fits the design</td>
+			<td>Import from <code>@ui5/webcomponents-react</code> directly. Do <strong>not</strong> wrap. See <a href="#1-ui5-only--no-reltio-component-needed">Example 1</a>.</td>
+		</tr>
+		<tr>
+			<td>You need to compose several UI5 components with Reltio MDM business logic (entity profile, match group, source priority, MDM workflow, ...)</td>
+			<td>Build a Reltio <strong>business component</strong> under <code>components/</code>. See <a href="#2-reltio-business-component--composes-ui5-with-mdm-logic">Example 2</a>.</td>
+		</tr>
+		<tr>
+			<td>You need a product-agnostic primitive that UI5 simply does not provide (chat scrollback, markdown renderer, ...)</td>
+			<td>Build a Reltio <strong>primitive</strong> under <code>components/</code>. See <a href="#3-reltio-primitive--fills-a-ui5-gap">Example 3</a>.</td>
+		</tr>
+	</tbody>
+</table>
 
-### Restyling is NOT a reason to wrap
+## Restyling is not a reason to wrap
 
 If your only goal is to restyle a UI5 component (different brand color, alternate corner radius, custom focus ring), do it through:
 
@@ -167,7 +186,7 @@ Nested theming works: a `[data-theme]` on a child element scopes that theme to i
 </div>
 ```
 
-## Examples
+## Worked examples
 
 ### 1. UI5 only — no Reltio component needed
 
@@ -216,7 +235,7 @@ See the [Component Typing guide — Wrapping a UI5 component](?path=/docs/guides
 
 UI5 has no chat scrollback / message rendering control, so [`Chat`](/?path=/docs/components-chat--docs) is built from scratch in `components/Chat/`. It still consumes UI5 internally where it can (e.g. `BusyIndicator`, `Icon`).
 
-## Where to read next
+## Related guides
 
 - [Component Typing](?path=/docs/guides-component-typing--docs) — types for HTML wrappers, polymorphic components, and UI5 wrappers
 - [Component Customization](?path=/docs/guides-component-customization--docs) — restyling UI5 vs. Reltio components
