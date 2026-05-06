@@ -16,9 +16,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Data Load Job",
-	description:
-		"Manage data loading — mappings, custom buckets, job definitions, data sources, job lifecycle, and storage accounts.",
 });
+
+export default meta;
 
 // --- Mappings ---
 

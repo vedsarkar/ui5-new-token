@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Graph",
-	description:
-		"Get a single entity's one-hop connections — every entity it relates to via any relation type, in a single graph-traversal call.",
 });
+
+export default meta;
 
 export const PostEntitiesIdConnections = meta.story({
 	name: "POST /entities/{id}/_connections",

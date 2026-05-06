@@ -9,6 +9,8 @@ const meta = preview.meta({
 	},
 });
 
+export default meta;
+
 // Basic Markdown rendering
 export const Headers = meta.story({
 	args: {

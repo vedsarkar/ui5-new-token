@@ -112,6 +112,8 @@ const meta = preview.meta({
 	},
 });
 
+export default meta;
+
 export const MessageStream = meta.story({
 	parameters: {
 		msw: {

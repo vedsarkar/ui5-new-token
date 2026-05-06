@@ -25,9 +25,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Reference Data Management",
-	description:
-		"Manage RDM tenant configuration and canonical code generators for lookup types.",
 });
+
+export default meta;
 
 // --- Configuration ---
 

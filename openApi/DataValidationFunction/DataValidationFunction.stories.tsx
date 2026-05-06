@@ -13,9 +13,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Data Validation Function",
-	description:
-		"Manage data validation functions that enforce data quality rules on entities and relations.",
 });
+
+export default meta;
 
 export const GetTenantFunctions = meta.story({
 	name: "GET /dataValidationFunctions",

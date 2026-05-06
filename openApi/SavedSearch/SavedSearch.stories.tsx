@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Saved Search",
-	description:
-		"Manage per-user saved searches — list shared/own, find by criteria, create, update, and delete.",
 });
+
+export default meta;
 
 export const GetPersonalAllSavedSearches = meta.story({
 	name: "GET /personal/allSavedSearches",

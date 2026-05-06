@@ -11,9 +11,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Customer Management",
-	description:
-		"Manage Reltio customers, including customer details, MFA configuration, password policies, roles, and role permissions.",
 });
+
+export default meta;
 
 export const GetCustomers = meta.story({
 	name: "GET /customers",

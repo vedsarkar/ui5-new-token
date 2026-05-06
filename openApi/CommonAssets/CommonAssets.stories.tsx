@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Common Assets",
-	description:
-		"Manage common assets in a Reltio tenant — assets (typically attachments) shared/linked across multiple entities. Provides query (get/total/check), mutation (status/synchronize), and entity-scoped read operations.",
 });
+
+export default meta;
 
 export const PostAssetsGet = meta.story({
 	name: "POST /assets/_get",

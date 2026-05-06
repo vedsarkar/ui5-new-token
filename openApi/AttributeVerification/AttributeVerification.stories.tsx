@@ -13,9 +13,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Attribute Verification",
-	description:
-		"Validate email and phone attributes through Reltio's pluggable verification providers. Provides one entity-scoped verifier (runs the configured verifiers on a single entity and persists results) and two batch verifiers (one for emails, one for phone numbers, both accepting an array of input records).",
 });
+
+export default meta;
 
 export const VerifyEntity = meta.story({
 	name: "POST /entities/{id}/attributeVerification/_verify",

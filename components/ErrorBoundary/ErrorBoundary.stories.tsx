@@ -10,6 +10,8 @@ const meta = preview.meta({
 	tags: ["autodocs"],
 });
 
+export default meta;
+
 // Normal render (children render without error)
 export const NormalRender = meta.story({
 	args: {

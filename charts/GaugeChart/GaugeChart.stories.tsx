@@ -16,6 +16,8 @@ const meta = preview.meta({
 	},
 });
 
+export default meta;
+
 export const Default = meta.story({});
 
 export const WithLabel = meta.story({

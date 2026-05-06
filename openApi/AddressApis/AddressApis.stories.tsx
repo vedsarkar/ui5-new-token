@@ -19,9 +19,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Address APIs",
-	description:
-		"Look up real-world postal addresses through Reltio's address provider integration. Provides text-based candidate search and single-address fetch by provider id — typically called in tandem (search returns ids, fetch resolves a chosen id to its full details).",
 });
+
+export default meta;
 
 export const SearchAddresses = meta.story({
 	name: "GET /address/search",

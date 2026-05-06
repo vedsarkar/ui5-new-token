@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Data Pipelines",
-	description:
-		"Reltio Data Pipelines Hub (DPH) — adapter operations (actions, status, validation, scripts, auth info), workspace management (Lakehouse, Fabric, shortcuts, share links, connection strings), DLT pipeline observability (start/stop/events), monitoring (event status, failed events, aggregated counts), secrets CRUD, reindex jobs, tenant queue status, and writeback config. Combines, in one place, the 32 endpoints split across 12 separate `DPH *` Swagger tags in the developer portal's Manage module.",
 });
+
+export default meta;
 
 // --- Adapters ---
 

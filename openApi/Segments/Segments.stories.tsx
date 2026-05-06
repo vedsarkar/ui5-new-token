@@ -22,9 +22,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Segments",
-	description:
-		"Manage segments in a Reltio tenant — create segments (collections of entities matching a filter expression), search/list, retrieve a segment by id, delete, enable/disable, and search for segments an entity belongs to. Combines, in one place, the POST creation endpoint exposed under the developer portal's Ingest module and the rest of the Segments tag from the Operate module.",
 });
+
+export default meta;
 
 // --- Create ---
 

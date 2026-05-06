@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/User Management",
-	description:
-		"Manage users in a Reltio customer — list/get/create/update/delete users, manage their group membership, run the multi-factor authentication enrollment lifecycle (TOTP/QRCode and email; with and without state_token; self vs admin-initiated), and revoke tokens. Sibling page to API/Client Management; both live under the /oauth subsystem.",
 });
+
+export default meta;
 
 // --- Users CRUD ---
 

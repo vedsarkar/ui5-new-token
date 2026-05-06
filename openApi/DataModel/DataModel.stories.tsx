@@ -11,9 +11,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Data Model",
-	description:
-		"Manage the data model configuration for a Reltio tenant. Provides CRUD operations on the full configuration, entity types, relation types, sources, cleanse configuration, and matching tools.",
 });
+
+export default meta;
 
 export const GetConfiguration = meta.story({
 	name: "GET /configuration",

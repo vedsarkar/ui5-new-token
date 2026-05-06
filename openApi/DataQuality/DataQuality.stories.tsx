@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Data Quality",
-	description:
-		"ML-driven attribute-level data quality time series. Returns per-attribute quality scores over time, scoped to a tenant + entity type. Lives at a different root than the rest of the Operate APIs (no /reltio/api prefix).",
 });
+
+export default meta;
 
 export const PostDataQualityV1AttributeLevelTimeSeries = meta.story({
 	name: "POST /entityType/{entityTypeID}/ml/dataQuality/v1/attributeLevel/timeSeries/",

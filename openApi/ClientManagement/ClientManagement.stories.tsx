@@ -11,9 +11,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Client Management",
-	description:
-		"Manage OAuth application clients associated with a customer. Provides CRUD operations on clients, multitoken status inspection, and token revocation.",
 });
+
+export default meta;
 
 export const GetClients = meta.story({
 	name: "GET /clients",

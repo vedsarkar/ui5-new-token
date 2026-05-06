@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Crosswalks",
-	description:
-		"Manage crosswalks — the source-system contributions attached to entities and their relations. Provides add (POST array), single update (PUT value), date-attribute update (PUT date), and an end-date-and-reattribute convenience operation for entity crosswalks.",
 });
+
+export default meta;
 
 export const PostObjectTypeObjectIdCrosswalks = meta.story({
 	name: "POST /{objectType}/{objectId}/crosswalks",

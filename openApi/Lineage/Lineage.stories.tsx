@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Lineage",
-	description:
-		"Read and delete the change history of entities. Provides a history endpoint, a history-with-total variant, and a bulk delete-history operation.",
 });
+
+export default meta;
 
 export const PostEntitiesDeleteHistory = meta.story({
 	name: "POST /entities/_deleteHistory",

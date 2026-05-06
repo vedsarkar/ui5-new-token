@@ -40,6 +40,8 @@ const meta = preview.meta({
 	},
 });
 
+export default meta;
+
 export const Default = meta.story({});
 
 export const MultipleSeries = meta.story({

@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Export",
-	description:
-		"Submit and manage async export jobs in the Reltio /services/jobs subsystem. Submitters POST to start an export of activities, entities (with variants), hierarchies, relations, or segments-bound entities. Task-management endpoints list, get, manifest, pause, resume, and stop tasks at both the global and tenant-scoped level.",
 });
+
+export default meta;
 
 // --- Submitters ---
 

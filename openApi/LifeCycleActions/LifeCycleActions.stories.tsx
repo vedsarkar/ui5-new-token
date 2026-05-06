@@ -12,9 +12,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Life Cycle Actions",
-	description:
-		"Register, manage, and execute Life Cycle Actions (LCAs) — custom logic triggered during entity lifecycle events.",
 });
+
+export default meta;
 
 export const GetActions = meta.story({
 	name: "GET /actions",

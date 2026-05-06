@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/File Based Search",
-	description:
-		'Upload a file with a list of values to a private bucket so it can be referenced as input to subsequent searches against entity attributes (e.g. "find entities whose externalId is in this 10,000-item list").',
 });
+
+export default meta;
 
 export const PostValueList = meta.story({
 	name: "POST /valueList",

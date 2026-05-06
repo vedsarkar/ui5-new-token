@@ -21,6 +21,8 @@ const meta = preview.meta({
 	],
 });
 
+export default meta;
+
 const conversation: Message[] = [
 	{ role: "user", content: "What is the rate limit for the REST API?" },
 	{

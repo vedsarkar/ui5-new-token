@@ -29,9 +29,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Entities",
-	description:
-		"Manage entities in a Reltio tenant — create, retrieve, search, update, clone, traverse, cleanse, reverse geocode, and delete entities, plus read entities by segment. Combines, in one place, the two POST creation endpoints exposed under the developer portal's Ingest module and the rest of the Entities tag from the Operate module.",
 });
+
+export default meta;
 
 // --- Create ---
 

@@ -45,16 +45,15 @@ function discoverApis() {
 }
 
 function buildMdx({ name, schema }) {
-	const importNamespace = `${capitalize(name)}Stories`;
 	const schemaUrl = `${SCHEMA_PUBLIC_URL_BASE}/${name.toLowerCase()}.json`;
 	const rawJson = JSON.stringify(schema, null, "\t").replaceAll("*/", "*\\/");
 	return `${headerFor(schemaUrl)}
 
 import { Meta, Stories } from "@storybook/addon-docs/blocks";
 import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
-import * as ${importNamespace} from "./${name}.stories";
+import meta from "./${name}.stories";
 
-<Meta of={${importNamespace}} />
+<Meta of={meta} />
 
 <JsonSchema url="${schemaUrl}" />
 
@@ -67,7 +66,6 @@ ${rawJson}
 }
 
 function buildMdxOpenApi({ name, spec }) {
-	const importNamespace = `${capitalize(name)}Stories`;
 	const specFileName = `${name}.spec.json`;
 	const rawJson = JSON.stringify(spec, null, "\t").replaceAll("*/", "*\\/");
 	return `${headerFor(specFileName)}
@@ -75,9 +73,9 @@ function buildMdxOpenApi({ name, spec }) {
 import { Meta, Stories } from "@storybook/addon-docs/blocks";
 import { OpenApi } from "@/.storybook/blocks/OpenApi";
 import spec from "./${specFileName}";
-import * as ${importNamespace} from "./${name}.stories";
+import meta from "./${name}.stories";
 
-<Meta of={${importNamespace}} />
+<Meta of={meta} />
 
 <OpenApi spec={spec} />
 
@@ -87,10 +85,6 @@ ${rawJson}
 
 <Stories />
 `;
-}
-
-function capitalize(str) {
-	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 const apis = discoverApis();

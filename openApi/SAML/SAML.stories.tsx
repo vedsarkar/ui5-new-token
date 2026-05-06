@@ -11,9 +11,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/SAML Configuration",
-	description:
-		"Manage SAML SSO configuration for a customer and tenant — identity provider settings, role/group mappings, and metadata.",
 });
+
+export default meta;
 
 export const GetSAMLConfig = meta.story({
 	name: "GET /samlconfig/{customerId}/{tenantId}",

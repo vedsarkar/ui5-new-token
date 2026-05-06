@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Databricks Share Management",
-	description:
-		"Provision Databricks Unity Catalog artifacts (catalogs, schemas, recipients, shares, grants) for a Reltio tenant via a configured adapter. Includes a complete-share convenience endpoint that creates the recipient + share + grant in one call.",
 });
+
+export default meta;
 
 export const PostCatalog = meta.story({
 	name: "POST /catalog",

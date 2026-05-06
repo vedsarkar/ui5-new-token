@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Workflow Adapter",
-	description:
-		"BPMN-style workflow engine that powers stewardship/approval automation in Reltio. Provides workflow process deployment, process instance management (start/suspend/activate/terminate/search), tasks (CRUD, history, validation, group tasks, action handlers), JAR deployments, jobs, and process definitions.",
 });
+
+export default meta;
 
 // --- Deployments ---
 

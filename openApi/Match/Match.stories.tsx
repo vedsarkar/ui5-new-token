@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Match",
-	description:
-		"Search and explain matches between entities, mark pairs as match / not-match (single + bulk), inspect match tokens and documents, and call low-level matching tools (comparator classes, token classes, comparison and explanation utilities). Spans entity-scoped operations under /services/reltio/api/{tenantId}/... and global tools under /services/reltio/tools/matching/...",
 });
+
+export default meta;
 
 // --- Search & Explain ---
 

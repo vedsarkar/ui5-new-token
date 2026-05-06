@@ -27,9 +27,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Relationships",
-	description:
-		"Manage relations between entities in a Reltio tenant — create relations (Save Relationships), search/list (by start/end object, attributes, tags, type), retrieve a single relation by URI, and delete a relation. Combines, in one place, the POST creation endpoint exposed under the developer portal's Ingest module and the rest of the Relationships tag from the Operate module.",
 });
+
+export default meta;
 
 // --- Create ---
 

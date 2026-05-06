@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Merge & Unmerge",
-	description:
-		"Manually merge two entities together (_sameAs) and unmerge a part of a previously-merged entity (_unmerge). Core entity-resolution operations.",
 });
+
+export default meta;
 
 export const PostEntitiesIdSameAs = meta.story({
 	name: "POST /entities/{id}/_sameAs",

@@ -8,9 +8,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Data Change Requests",
-	description:
-		"Manage Data Change Requests (DCRs) — proposals to mutate entities/relations that go through an approval workflow before being applied. Provides search, CRUD, apply/reject lifecycle, external info, and change-item access.",
 });
+
+export default meta;
 
 // --- Search ---
 

@@ -9,6 +9,8 @@ const meta = preview.meta({
 	},
 });
 
+export default meta;
+
 // Default story - no summary element provided (fallback)
 export const Default = meta.story({
 	args: {

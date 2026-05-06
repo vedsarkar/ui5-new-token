@@ -9,6 +9,8 @@ const meta = preview.meta({
 	},
 });
 
+export default meta;
+
 export const OneRow = meta.story({
 	args: {
 		rows: 1,

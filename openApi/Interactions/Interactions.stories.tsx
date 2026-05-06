@@ -32,9 +32,9 @@ const api = apiMetaConfig({ spec });
 const meta = preview.meta({
 	...api,
 	title: "API/Interactions",
-	description:
-		"Manage interactions in a Reltio tenant — create (collection of interactions, raw collection), retrieve (by id, raw by id, by entity), search and counts (by tenant, by group key, total), and delete (single by id, batch by URIs). Combines, in one place, the two POST creation endpoints exposed under the developer portal's Ingest module and the rest of the Interactions tag from the Operate module.",
 });
+
+export default meta;
 
 // --- Create ---
 
