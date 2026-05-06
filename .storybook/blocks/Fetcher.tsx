@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+import "@ui5/webcomponents-icons/dist/copy.js";
+import "@ui5/webcomponents-icons/dist/accept.js";
+import { Button } from "@ui5/webcomponents-react/Button";
+import { MessageStrip } from "@ui5/webcomponents-react/MessageStrip";
+import { useEffect, useRef, useState } from "react";
 import { Markdown } from "@/components/Markdown";
 import { Skeleton } from "@/components/Skeleton";
 import { classNames } from "@/utils/classNames";
@@ -19,8 +23,8 @@ export type FetcherStatus =
 
 export type FetcherRequest = {
 	method: FetcherMethod;
-	/** Full URL template override for this endpoint. Resolved by `apiMetaConfig` — not used by `Fetcher` directly. */
-	url?: string;
+	/** Full absolute URL of the API endpoint, with all template variables already resolved. */
+	url: string;
 	body?: unknown | Promise<unknown>;
 };
 
@@ -30,15 +34,13 @@ export type FetcherResponse = {
 };
 
 type FetcherProps = {
-	/** Full absolute URL of the API endpoint. */
-	url?: string;
 	/** Markdown-formatted description of the endpoint. */
 	description?: string;
 	/** Bearer token used for the `Authorization` header. Masked as `***` in the rendered curl. */
 	accessToken?: string;
-	/** Request sent to the API: HTTP method and optional body payload. */
+	/** Request sent to the API: HTTP method, URL and optional body payload. */
 	request?: FetcherRequest;
-	/** Response returned by the API: HTTP status and optional JSON body. */
+	/** Mock response shown until a real request is sent. */
 	response?: FetcherResponse;
 };
 
@@ -74,10 +76,21 @@ export const buildCurl = (
 	return lines.join("\n");
 };
 
+const URL_PLACEHOLDER_RE = /\{[^}]+\}/;
+
 const formatJson = (value: unknown): string => JSON.stringify(value, null, 2);
 
 const codeBlock = (lang: string, body: string): string =>
 	`\`\`\`${lang}\n${body}\n\`\`\``;
+
+const statusVariant = (
+	status: FetcherStatus,
+): "success" | "warning" | "error" | "neutral" => {
+	if (status.startsWith("2")) return "success";
+	if (status.startsWith("4")) return "warning";
+	if (status.startsWith("5")) return "error";
+	return "neutral";
+};
 
 function useResolved(value: unknown): { resolved: unknown; loading: boolean } {
 	const [state, setState] = useState<{ resolved: unknown; loading: boolean }>(
@@ -118,31 +131,44 @@ type SendState =
 	| { kind: "error"; message: string };
 
 export const Fetcher = ({
-	url = "",
 	description,
 	accessToken,
 	request,
 	response,
 }: FetcherProps) => {
+	const { method = "GET", url = "", body } = request ?? {};
 	const [isCurlCopied, setIsCurlCopied] = useState(false);
 	const [sendState, setSendState] = useState<SendState>({ kind: "idle" });
-	const { resolved: resolvedBody, loading: bodyLoading } = useResolved(
-		request?.body,
-	);
+	const { resolved: resolvedBody, loading: bodyLoading } = useResolved(body);
 	const { resolved: resolvedJson, loading: jsonLoading } = useResolved(
 		response?.json,
 	);
-	const method = request?.method ?? "GET";
-	const hasRequestBody = request?.body !== undefined && request?.body !== null;
+	const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+	const hasRequestBody = body !== undefined && body !== null;
+	const hasUrlPlaceholders = URL_PLACEHOLDER_RE.test(url);
 	const curl = buildCurl(method, url, hasRequestBody, accessToken);
-	const hasUrlPlaceholders = url.includes("{") || url.includes("}");
 	const isSending = sendState.kind === "sending";
 	const sendDisabled = isSending || hasUrlPlaceholders || !url || bodyLoading;
+
+	useEffect(
+		() => () => {
+			if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+		},
+		[],
+	);
+
+	// Reset to mock whenever the user picks a different response in Storybook controls.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: effect intentionally re-runs only on `response` reference change.
+	useEffect(() => {
+		setSendState({ kind: "idle" });
+	}, [response]);
 
 	const copyCurl = async () => {
 		await navigator.clipboard.writeText(curl);
 		setIsCurlCopied(true);
-		setTimeout(() => setIsCurlCopied(false), 1500);
+		if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+		copyTimerRef.current = setTimeout(() => setIsCurlCopied(false), 1500);
 	};
 
 	const sendRequest = async () => {
@@ -161,7 +187,7 @@ export const Fetcher = ({
 		try {
 			const res = await fetch("/api/proxy", init);
 			const text = await res.text();
-			let parsed: unknown = text;
+			let parsed: unknown = text || undefined;
 			let isJson = false;
 			if (text) {
 				try {
@@ -170,8 +196,6 @@ export const Fetcher = ({
 				} catch {
 					/* keep raw text */
 				}
-			} else {
-				parsed = undefined;
 			}
 			setSendState({
 				kind: "success",
@@ -188,27 +212,24 @@ export const Fetcher = ({
 		}
 	};
 
-	const liveResponse = sendState.kind === "success";
-	const liveStatus = liveResponse ? String(sendState.status) : null;
-	const liveStatusText = liveResponse
-		? sendState.statusText || STATUS_TEXT[liveStatus as FetcherStatus] || ""
-		: null;
-	const liveBody = liveResponse ? sendState.body : undefined;
-	const liveIsJson = liveResponse ? sendState.isJson : false;
-
-	const status = (liveStatus ?? response?.status ?? "200") as FetcherStatus;
-	const statusText = liveStatusText ?? STATUS_TEXT[status] ?? "";
-	const json = liveResponse ? liveBody : resolvedJson;
-	const isJsonLoading = !liveResponse && jsonLoading;
-	const hasResponseBody = liveResponse
-		? liveBody !== undefined
-		: json !== undefined && json !== null;
-	const isStatusSuccess = status.startsWith("2");
+	const live = sendState.kind === "success" ? sendState : null;
+	const status = (
+		live ? String(live.status) : (response?.status ?? "200")
+	) as FetcherStatus;
+	const statusText = live
+		? live.statusText || STATUS_TEXT[status] || ""
+		: (STATUS_TEXT[status] ?? "");
+	const responseBody = live ? live.body : resolvedJson;
+	const useRawText = !!live && !live.isJson;
+	const hasResponseBody = live
+		? live.body !== undefined
+		: responseBody !== undefined && responseBody !== null;
+	const isResponseLoading = isSending || (!live && jsonLoading);
 
 	return (
 		<div className={classNames(styles.root)}>
 			<header className={classNames(styles.header)}>
-				<span className={classNames(styles.method, styles[`method_${method}`])}>
+				<span className={classNames(styles.badge, styles[`method_${method}`])}>
 					{method}
 				</span>
 				<code className={classNames(styles.path)}>{url}</code>
@@ -224,35 +245,28 @@ export const Fetcher = ({
 				<h3 className={classNames(styles.sectionTitle)}>Request</h3>
 				<Markdown>{codeBlock("bash", curl)}</Markdown>
 				<div className={classNames(styles.actions)}>
-					<button
-						type="button"
+					<Button
+						design={isCurlCopied ? "Positive" : "Default"}
+						icon={isCurlCopied ? "accept" : "copy"}
 						onClick={copyCurl}
-						className={classNames(
-							styles.actionButton,
-							isCurlCopied && styles.actionButtonSuccess,
-						)}
-						aria-live="polite"
+						accessibleName={isCurlCopied ? "Copied" : "Copy curl command"}
 					>
 						{isCurlCopied ? "Copied!" : "Copy"}
-					</button>
+					</Button>
 					{accessToken ? (
-						<button
-							type="button"
+						<Button
+							design="Emphasized"
 							onClick={sendRequest}
 							disabled={sendDisabled}
-							className={classNames(
-								styles.actionButton,
-								styles.actionButtonSend,
-							)}
-							aria-live="polite"
-							title={
+							loading={isSending}
+							tooltip={
 								hasUrlPlaceholders
 									? "Fill in the URL placeholders to send the request"
 									: undefined
 							}
 						>
-							{isSending ? "Sending…" : "Send"}
-						</button>
+							Send
+						</Button>
 					) : (
 						<p className={classNames(styles.actionHint)}>
 							To send a real request, add your access token in the Controls
@@ -264,36 +278,34 @@ export const Fetcher = ({
 
 			<section className={classNames(styles.section)}>
 				<h3 className={classNames(styles.sectionTitle)}>Response</h3>
-				{isSending || isJsonLoading ? (
+				{isResponseLoading ? (
 					<Skeleton rows={5} />
 				) : sendState.kind === "error" ? (
-					<p className={classNames(styles.error)}>
+					<MessageStrip design="Negative" hideCloseButton>
 						Request failed: {sendState.message}
-					</p>
+					</MessageStrip>
 				) : (
 					<>
 						<div className={classNames(styles.statusRow)}>
 							<span
 								className={classNames(
-									styles.status,
-									isStatusSuccess ? styles.statusSuccess : styles.statusError,
+									styles.badge,
+									styles[`status_${statusVariant(status)}`],
 								)}
 							>
 								{status}
+								{statusText ? ` ${statusText}` : ""}
 							</span>
-							<span className={classNames(styles.statusText)}>
-								{statusText}
-							</span>
-							{liveResponse ? (
+							{live ? (
 								<span
-									className={classNames(styles.badge, styles.badgeLive)}
+									className={classNames(styles.badge, styles.kind_live)}
 									title="Real response from the upstream API"
 								>
 									Live
 								</span>
 							) : (
 								<span
-									className={classNames(styles.badge, styles.badgeMock)}
+									className={classNames(styles.badge, styles.kind_mock)}
 									title="Mocked response defined in the story"
 								>
 									Mock
@@ -303,10 +315,10 @@ export const Fetcher = ({
 						{hasResponseBody ? (
 							<Markdown>
 								{codeBlock(
-									liveResponse && !liveIsJson ? "text" : "json",
-									liveResponse && !liveIsJson
-										? String(json ?? "")
-										: formatJson(json),
+									useRawText ? "text" : "json",
+									useRawText
+										? String(responseBody ?? "")
+										: formatJson(responseBody),
 								)}
 							</Markdown>
 						) : (

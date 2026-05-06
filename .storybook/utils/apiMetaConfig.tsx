@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react";
 import {
 	buildCurl,
 	Fetcher,
@@ -7,7 +8,7 @@ import {
 import { fakeFromOpenApi } from "./fakeFromSchema";
 import type { OpenApiSpec } from "./openapi";
 
-type ApiFetcherProps = Omit<ComponentProps<typeof Fetcher>, "url"> & {
+type ApiFetcherProps = ComponentProps<typeof Fetcher> & {
 	[key: string]: unknown;
 };
 
@@ -55,25 +56,24 @@ export const apiMetaConfig = ({ spec, responses }: ApiMetaOptions) => {
 
 	const responseOptions = Object.keys(responseMapping);
 
-	const pickVariables = (args: ApiFetcherProps, effectiveUrl: string) => {
+	const resolveRequestUrl = (args: ApiFetcherProps): string => {
+		const template = args.request?.url ?? "";
 		const vars: Record<string, string | undefined> = {};
-		for (const key of extractUrlVariables(effectiveUrl)) {
+		for (const key of extractUrlVariables(template)) {
 			vars[key] = args[key] as string | undefined;
 		}
-		return vars;
+		return buildEndpointUrl(template, vars);
 	};
 
 	const ApiFetcher = (props: ApiFetcherProps) => {
 		const { request, accessToken, description, response } = props;
-		const effectiveUrl = request?.url || "";
-		const vars = pickVariables(props, effectiveUrl);
+		if (!request) return null;
 		return (
 			<Fetcher
-				request={request}
+				request={{ ...request, url: resolveRequestUrl(props) }}
 				accessToken={accessToken as string}
 				description={description as string}
 				response={response}
-				url={buildEndpointUrl(effectiveUrl, vars)}
 			/>
 		);
 	};
@@ -88,9 +88,7 @@ export const apiMetaConfig = ({ spec, responses }: ApiMetaOptions) => {
 					transform: (_code: string, ctx: { args: ApiFetcherProps }) => {
 						const args = ctx.args;
 						const method = args.request?.method ?? "GET";
-						const effectiveUrl = args.request?.url || "";
-						const vars = pickVariables(args, effectiveUrl);
-						const endpointUrl = buildEndpointUrl(effectiveUrl, vars);
+						const endpointUrl = resolveRequestUrl(args);
 						const hasBody =
 							args.request?.body !== undefined && args.request?.body !== null;
 						return buildCurl(
