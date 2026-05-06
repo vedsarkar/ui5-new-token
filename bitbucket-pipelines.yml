@@ -1,17 +1,20 @@
-image: mcr.microsoft.com/playwright:v1.57.0-noble
+image: node:22
 
 definitions:
   caches:
     node: node_modules
     npm: $HOME/.npm
+    playwright: $HOME/.cache/ms-playwright
   steps:
     - step: &test
         name: Run Tests with Coverage
         caches:
           - npm
           - node
+          - playwright
         script:
           - npm ci
+          - npx playwright install --with-deps chromium
           - npm run coverage
     - step: &chromatic
         name: Deploy to Chromatic
