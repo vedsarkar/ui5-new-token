@@ -8,7 +8,7 @@ This file provides guidance to AI agents (Claude Code, Cursor, Copilot, etc.) wh
 
 ### Mission
 
-Eliminate UI fragmentation across products while accelerating development of new applications and features by composing on top of the SAP Horizon design system.
+Eliminate UI fragmentation across products while accelerating development of new applications and features by composing on top of the SAP Fiori design system, themed with SAP Horizon.
 
 ### Core Principles
 
@@ -36,7 +36,7 @@ Eliminate UI fragmentation across products while accelerating development of new
 
 - **Framework**: React 18+
 - **UI foundation**: [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/) — base UI components (Button, Input, Dialog, Table, ...)
-- **Icons**: [`@ui5/webcomponents-icons`](https://sap.github.io/ui5-webcomponents/) — SAP Horizon icon set, used through UI5 React's `<Icon name="..." />`
+- **Icons**: [`@ui5/webcomponents-icons`](https://sap.github.io/ui5-webcomponents/) — SAP Fiori icon set, used through UI5 React's `<Icon name="..." />`
 - **Design tokens & fonts**: [`@sap-theming/theming-base-content`](https://github.com/SAP/theming-base-content) — generated into static `public/variables.css`, `public/fonts.css`, `public/fonts/*.woff2`
 - **Charts**: [ECharts](https://echarts.apache.org/) — see `charts/`
 - **Language**: TypeScript (strict mode)
@@ -204,11 +204,11 @@ When implementing designs from Figma (via Figma MCP, URLs, or screenshots), thes
 
 **Step 0 — check UI5 first:**
 - Before writing any custom code, verify whether `@ui5/webcomponents-react` already provides the component (`Button`, `Input`, `Dialog`, `Table`, `ComboBox`, `MessageStrip`, ...). If yes, use it directly — do not re-create.
-- If a Reltio business component already covers the design, use it via Storybook MCP (`list-all-documentation`, `get-documentation`).
+- If a Reltio business component already covers the design, use it via the Reltio Design MCP (`list-all-documentation`, `get-documentation`).
 - Only when both layers fall short, build a new Reltio component following the structure rules below.
 
 **Color tokens — ONLY through `--sap*` variables:**
-- Use the SAP Horizon Figma kit (<https://www.sap.com/design-system/fiori-design-web/resources/libraries/>) and reference its variables directly. Each SAP Figma variable has a 1:1 counterpart in `@sap-theming/theming-base-content`'s `content/Base/baseLib/sap_horizon/variables.json` — the variable name (without the `sap` prefix in Figma) maps to `--<sap-prefixed-name>` in CSS.
+- Use the SAP Fiori UI Kit (Horizon theme) (<https://www.sap.com/design-system/fiori-design-web/resources/libraries/>) and reference its variables directly. Each SAP Figma variable has a 1:1 counterpart in `@sap-theming/theming-base-content`'s `content/Base/baseLib/sap_horizon/variables.json` — the variable name (without the `sap` prefix in Figma) maps to `--<sap-prefixed-name>` in CSS.
 - Example: SAP Figma `Brand/Color` → `var(--sapBrandColor)`. SAP Figma `Button / Background` → `var(--sapButton_Background)`.
 - If a Figma color variable does not appear in the npm package's `variables.json`, the installed package is out of date — bump `@sap-theming/theming-base-content` (`npm update @sap-theming/theming-base-content`) and re-run `npm run build-tokens`.
 - Never output raw hex/rgba color values in CSS — always resolve to a `--sap*` token.
@@ -225,7 +225,7 @@ When implementing designs from Figma (via Figma MCP, URLs, or screenshots), thes
 - `get_design_context` returns reference code (React + Tailwind by default) — this is a STARTING POINT, not final code
 - Always rewrite to CSS Modules with `classNames()` utility
 - Always replace Tailwind classes with explicit CSS properties
-- Always check existing components via Storybook MCP (`list-all-documentation`, `get-documentation`) before creating new ones — reuse what UI5 and the Reltio layer already provide
+- Always check existing components via the Reltio Design MCP (`list-all-documentation`, `get-documentation`) before creating new ones — reuse what UI5 and the Reltio layer already provide
 - Match the component structure from this project: `.tsx` + `.types.ts` + `.module.css` + `.stories.tsx` + `index.ts`
 
 ### Storybook
@@ -279,11 +279,11 @@ AI agents in this project have access to MCP servers configured in `.mcp.json` a
 
 | Server | Source | What it provides |
 |--------|--------|-----------------|
-| **reltio-design** (Storybook MCP) | `http://localhost:6006/mcp` | Existing components, documentation, stories, API references |
+| **reltio-design** (Reltio Design MCP, powered by Storybook MCP) | `http://localhost:6006/mcp` | Existing components, documentation, stories, API references |
 | **Atlassian MCP** | `https://mcp.atlassian.com/v1/mcp/authv2` | Jira and Confluence access |
 | **Figma MCP** (plugin) | `https://mcp.figma.com/mcp` | Design context, screenshots, variables, design system search |
 
-**Storybook MCP** requires `npm run dev` to be running BEFORE starting the Claude Code session. MCP servers are connected at session startup — if Storybook is not running, the server will show "Failed to connect" and its tools will be unavailable for the entire session. Tools: `list-all-documentation`, `get-documentation`, `get-documentation-for-story`, `preview-stories`, `run-story-tests`.
+**Reltio Design MCP** is served by the local Storybook dev server, so it requires `npm run dev` to be running BEFORE starting the Claude Code session. MCP servers are connected at session startup — if Storybook is not running, the server will show "Failed to connect" and its tools will be unavailable for the entire session. Tools: `list-all-documentation`, `get-documentation`, `get-documentation-for-story`, `preview-stories`, `run-story-tests`.
 
 **Figma MCP** requires one-time OAuth authorization per developer. Tools: `get_design_context`, `get_screenshot`, `get_variable_defs`, `search_design_system`, `get_metadata`.
 

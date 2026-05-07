@@ -4,7 +4,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Icon Library Guide
 
-Reltio Design uses the SAP Horizon icon set distributed by [`@ui5/webcomponents-icons`](https://sap.github.io/ui5-webcomponents/). Icons are rendered by UI5 React's `<Icon>` component. There is no Reltio-specific icon component — we consume UI5's set directly so that every Reltio surface stays visually aligned with the rest of the SAP ecosystem.
+Reltio Design uses the SAP Fiori icon set distributed by [`@ui5/webcomponents-icons`](https://sap.github.io/ui5-webcomponents/), rendered in the Horizon visual style. Icons are rendered by UI5 React's `<Icon>` component. There is no Reltio-specific icon component — we consume UI5's set directly so that every Reltio surface stays visually aligned with the rest of the SAP ecosystem.
 
 > **🎯 Key Principle:** Use `<Icon name="..." />` from `@ui5/webcomponents-react`, and import the icon's data module from `@ui5/webcomponents-icons` to register it on demand.
 
@@ -19,8 +19,8 @@ Reltio Design uses the SAP Horizon icon set distributed by [`@ui5/webcomponents-
 	</thead>
 	<tbody>
 		<tr>
-			<td>🎨 <strong>SAP Horizon Style</strong></td>
-			<td>Sourced from <code>@ui5/webcomponents-icons</code>; same iconography that UI5 components themselves use</td>
+			<td>🎨 <strong>SAP Fiori Iconography</strong></td>
+			<td>Sourced from <code>@ui5/webcomponents-icons</code> and rendered in the Horizon visual style; same iconography that UI5 components themselves use</td>
 		</tr>
 		<tr>
 			<td>📦 <strong>One renderer</strong></td>
@@ -40,14 +40,14 @@ Reltio Design uses the SAP Horizon icon set distributed by [`@ui5/webcomponents-
 		</tr>
 		<tr>
 			<td>🌓 <strong>Theme-aware</strong></td>
-			<td>Inherits the active <code>data-theme</code> through the SAP Horizon token cascade</td>
+			<td>Inherits the active <code>data-theme</code> through the SAP Horizon `--sap*` token cascade</td>
 		</tr>
 	</tbody>
 </table>
 
 ## Icon Collections
 
-`@ui5/webcomponents-icons` ships three SAP Horizon icon collections. Pick the right one for the use case:
+`@ui5/webcomponents-icons` ships three SAP Fiori icon collections. Pick the right one for the use case:
 
 <table>
 	<thead>
@@ -143,7 +143,7 @@ Inside a button or a row of text, simply leave the size to the surrounding `font
 
 ## Color
 
-By default `<Icon>` paints with `currentColor`, so it inherits the parent's text color. To switch palette, set `color` on the icon (or any ancestor) to a SAP Horizon token:
+By default `<Icon>` paints with `currentColor`, so it inherits the parent's text color. To switch palette, set `color` on the icon (or any ancestor) to a SAP Horizon `--sap*` token:
 
 ```tsx
 <Icon name="save" style={{ color: "var(--sapBrandColor)" }} />

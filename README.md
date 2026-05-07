@@ -1,6 +1,6 @@
 # Reltio Design Platform
 
-Reltio Design Platform is the UI development, testing, and documentation ecosystem for the Reltio MDM product suite. It builds on the SAP Horizon design system: [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/) provides the base components and icons, and Reltio Design adds MDM-specific business components, charts, hooks, and API utilities on top.
+Reltio Design Platform is the UI development, testing, and documentation ecosystem for the Reltio MDM product suite. It builds on the SAP Fiori design system (Horizon visual theme): [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/) provides the base components and icons, and Reltio Design adds MDM-specific business components, charts, hooks, and API utilities on top.
 
 ## 📋 Table of Contents
 
@@ -27,7 +27,7 @@ Reltio Design Platform provides:
 - 📊 **Charts** — ECharts-based visualizations under `charts/`
 - 🎨 **SAP Horizon design tokens** — generated into static `public/variables.css`, `public/fonts.css`, `public/fonts/*.woff2`; consumed via the `data-theme` attribute
 - 📚 **Storybook documentation** — stories double as visual tests, accessibility checks, and live API references
-- 🔌 **MCP-ready** — every component, story, and design token is discoverable by AI agents through the Storybook MCP server
+- 🔌 **MCP-ready** — every component, story, and design token is discoverable by AI agents through the Reltio Design MCP server
 
 ## Architecture
 
@@ -153,7 +153,7 @@ import { Chat, type ChatProps } from "@reltio/design";
 
 When designing for Reltio:
 
-1. Use the official [SAP Horizon Figma kit](https://www.sap.com/design-system/fiori-design-web/resources/libraries/) for base components
+1. Use the official [SAP Fiori UI Kit](https://www.sap.com/design-system/fiori-design-web/resources/libraries/) for base components
 2. Reuse Reltio business components (Storybook → Components) for MDM patterns
 3. Reference colors only through SAP Figma variables — they map 1:1 to `--sap*` CSS tokens at build time
 4. Verify the design under both themes before handoff
@@ -337,13 +337,13 @@ This project is equipped with MCP (Model Context Protocol) servers for AI-assist
 
 | Server | URL | Purpose |
 |--------|-----|---------|
-| **Storybook MCP** | `http://localhost:6006/mcp` | Component docs, stories, API references |
+| **Reltio Design MCP** | `http://localhost:6006/mcp` | Component docs, stories, API references (powered by Storybook MCP) |
 | **Atlassian MCP** | `https://mcp.atlassian.com/v1/mcp/authv2` | Jira and Confluence access |
 | **Figma MCP** | `https://mcp.figma.com/mcp` | Design context from Reltio Design System |
 
 ### Setup for AI Agents
 
-1. **Storybook MCP** — start `npm run dev` BEFORE launching a Claude Code session (MCP servers connect at session startup)
+1. **Reltio Design MCP** — start `npm run dev` BEFORE launching a Claude Code session (the MCP server is served by Storybook; MCP servers connect at session startup)
 2. **Atlassian MCP** — requires OAuth authorization per developer on first use
 3. **Figma MCP** — requires one-time OAuth authorization per developer:
    - The `figma@claude-plugins-official` plugin is pre-configured in `.claude/settings.json`
@@ -351,13 +351,13 @@ This project is equipped with MCP (Model Context Protocol) servers for AI-assist
 
 ### Remote MCP (for external consumers)
 
-Published Storybook MCP is available at `https://reltio.design/mcp` for use in downstream application repositories and third-party AI agents.
+The published Reltio Design MCP is available at `https://reltio.design/mcp` for use in downstream application repositories and third-party AI agents.
 
 ## Useful Links
 
 - [UI5 Web Components React](https://sap.github.io/ui5-webcomponents-react/)
 - [UI5 Web Components Icons](https://sap.github.io/ui5-webcomponents/) — see the "Icons Explorer"
-- [SAP Horizon Design System](https://www.sap.com/design-system/)
+- [SAP Design System](https://www.sap.com/design-system/) — semantic guidance for SAP Fiori (Horizon theme)
 - [SAP/theming-base-content](https://github.com/SAP/theming-base-content) — source of the `--sap*` tokens
 - [Storybook Documentation](https://storybook.js.org/docs)
 - [React Documentation](https://react.dev)

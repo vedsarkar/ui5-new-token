@@ -45,6 +45,8 @@ This guide explains how the UI layer of the Reltio Design Platform is structured
 
 > **🎯 Key Principle:** UI5 Web Components React is the foundation. Reltio Design adds only what UI5 lacks — MDM (Master Data Management) business components, custom primitives, charts, and Reltio API utilities.
 
+> **💡 Terminology — Fiori vs. Horizon:** This platform builds on **SAP Fiori** — SAP's design system for business applications (UX principles, patterns, floorplans, components). Visually, we use **SAP Horizon**, the current Fiori theme that ships the `--sap*` design tokens, the `horizon-light` / `horizon-dark` themes, and the SAP 72 typeface. When this documentation says "Fiori" it means the design system; when it says "Horizon" it means the visual layer (tokens, theme, fonts).
+
 ## The layered stack
 
 <div style={{ height: 600 }}>
@@ -69,7 +71,7 @@ Every UI surface a Reltio app renders comes from one of three places:
 		</tr>
 		<tr>
 			<td><code>@ui5/webcomponents-icons</code></td>
-			<td>SAP Horizon icon set</td>
+			<td>SAP Fiori icon set</td>
 			<td>Side-effect import + <code>{`<Icon name="..." />`}</code> from UI5 React (see <a href="?path=/docs/guides-icon-library--docs">Icons guide</a>)</td>
 		</tr>
 		<tr>
@@ -130,7 +132,7 @@ UI5 Web Components React already covers the vast majority of generic UI needs. T
 
 Walk through this before adding anything new under `components/`:
 
-<table>
+<table style={{ tableLayout: "fixed" }}>
 	<thead>
 		<tr>
 			<th>Situation</th>
@@ -248,6 +250,6 @@ UI5 has no chat scrollback / message rendering control, so [`Chat`](/?path=/docs
 
 - [UI5 Web Components React](https://sap.github.io/ui5-webcomponents-react/) — official component reference
 - [UI5 Web Components](https://sap.github.io/ui5-webcomponents/) — Shadow DOM components, CSS Parts, theming
-- [SAP Horizon Design System](https://www.sap.com/design-system/) — semantic guidance for tokens and patterns
+- [SAP Design System](https://www.sap.com/design-system/) — semantic guidance for SAP Fiori (Horizon theme), tokens, and patterns
 - [SAP/theming-base-content](https://github.com/SAP/theming-base-content) — source of the `--sap*` tokens
 - [MDN — Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM) — how `--sap*` cascade reaches UI5

@@ -284,7 +284,7 @@ const meta = preview.meta({
 
 ## Creating a New Component
 
-1. Confirm UI5 does not already cover the use case (`@ui5/webcomponents-react` docs, Storybook MCP `list-all-documentation`)
+1. Confirm UI5 does not already cover the use case (`@ui5/webcomponents-react` docs, Reltio Design MCP `list-all-documentation`)
 2. Start with `/opsx:new` to create a change and build artifacts step by step
 3. Use `/opsx:continue` to create each artifact (proposal → specs → design → tasks)
 4. Review each artifact before proceeding to the next
