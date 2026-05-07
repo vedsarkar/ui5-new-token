@@ -1,0 +1,220 @@
+import { Meta, Stories, Title } from "@storybook/addon-docs/blocks";
+import * as ProductSwitchStories from "./ProductSwitch.stories";
+
+<Meta of={ProductSwitchStories} />
+
+# ProductSwitch
+
+`ProductSwitch` is a native SAP Fiori component shipped by [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/). Reltio does **not** wrap it — applications consume it directly through the standalone pattern documented below (icon-only `grid` trigger + `Popover` + flat `ProductSwitch`).
+
+> **🎯 Key Principle:** Use the `grid` icon as the trigger, encode app categories in `subtitleText`, wrap custom app icons in `Avatar`. Everything else (focus, hover, selected, keyboard grid navigation, layout) is handled natively by the SAP component.
+
+## Why no Reltio wrapper
+
+`ProductSwitch` already ships every behavior an MDM app navigator needs — selected state, hover/active states, focus ring, grid keyboard navigation (Tab / Up / Down / Left / Right), responsive column count, accessible labelling. Wrapping it would only duplicate maintenance without adding business value. The two MDM-specific concerns (URI templating and category grouping) are solved at the call site instead — see Conventions below.
+
+## Pattern
+
+```tsx
+import { Avatar } from "@ui5/webcomponents-react/Avatar";
+import { Button } from "@ui5/webcomponents-react/Button";
+import { Popover } from "@ui5/webcomponents-react/Popover";
+import { ProductSwitch } from "@ui5/webcomponents-react/ProductSwitch";
+import { ProductSwitchItem } from "@ui5/webcomponents-react/ProductSwitchItem";
+import { useState } from "react";
+import "@ui5/webcomponents-icons/dist/grid.js";
+
+const TRIGGER_ID = "product-switch-trigger";
+
+const AppNavigator = ({ apps }) => {
+	const [open, setOpen] = useState(false);
+	return (
+		<>
+			<Button
+				id={TRIGGER_ID}
+				icon="grid"
+				accessibleName="Applications"
+				onClick={() => setOpen((value) => !value)}
+			/>
+			<Popover
+				opener={TRIGGER_ID}
+				open={open}
+				placement="Bottom"
+				onClose={() => setOpen(false)}
+			>
+				<ProductSwitch>
+					{apps.map((app) => (
+						<ProductSwitchItem
+							key={app.name}
+							titleText={app.name}
+							subtitleText={app.category}
+							targetSrc={app.uri}
+							target="_blank"
+							image={
+								<Avatar size="S" shape="Square" colorScheme="Transparent">
+									<img src={app.icon} alt="" />
+								</Avatar>
+							}
+						/>
+					))}
+				</ProductSwitch>
+			</Popover>
+		</>
+	);
+};
+```
+
+## Conventions
+
+### Trigger
+
+The canonical SAP Product Switch trigger is the 3×3 grid icon — always icon-only, with an `accessibleName` for screen readers.
+
+**✅ Do:** Use the `grid` icon, icon-only
+
+```tsx
+<Button id={TRIGGER_ID} icon="grid" accessibleName="Applications" />
+```
+
+**❌ Don't:** Add a text label or use a different icon
+
+```tsx
+<Button id={TRIGGER_ID} icon="menu">Applications</Button>
+```
+
+### App icons
+
+SAP's official guidance is to wrap custom imagery in `Avatar` with `size="S"`, `shape="Square"`, `colorScheme="Transparent"`. This gives the right alignment and keeps the standard 48×48 visual footprint.
+
+**✅ Do:** Wrap the `<img>` in `Avatar`
+
+```tsx
+<ProductSwitchItem
+	titleText="Hub"
+	image={
+		<Avatar size="S" shape="Square" colorScheme="Transparent">
+			<img src="https://reltio.design/apps/icons/mdm.svg" alt="" />
+		</Avatar>
+	}
+/>
+```
+
+**❌ Don't:** Pass a bare `<img>` or use the `icon` property for custom SVGs
+
+```tsx
+<ProductSwitchItem titleText="Hub" image={<img src="..." />} />
+<ProductSwitchItem titleText="Hub" icon="https://..." />
+```
+
+When an app does not have a custom SVG, fall back to a UI5 icon name via the `icon` prop:
+
+```tsx
+<ProductSwitchItem titleText="Settings" icon="action-settings" />
+```
+
+### Categories
+
+`ProductSwitch` is intentionally a flat grid — the SAP design system does not support category headers inside it. Encode each app's category in `subtitleText` so it appears under the title.
+
+**✅ Do:** Put category in `subtitleText`
+
+```tsx
+<ProductSwitchItem titleText="Hub" subtitleText="Applications" />
+<ProductSwitchItem titleText="Console" subtitleText="Applications" />
+<ProductSwitchItem titleText="Agents" subtitleText="Agentflow" />
+```
+
+**❌ Don't:** Insert a category heading or split into multiple `ProductSwitch` instances
+
+```tsx
+<ProductSwitch>
+	<h3>Applications</h3>
+	<ProductSwitchItem titleText="Hub" />
+</ProductSwitch>
+```
+
+### Navigation
+
+Use `targetSrc` + `target="_blank"` for the link. URI templates such as `${environment}` / `${tenant}` must be resolved by the consumer **before** passing.
+
+**✅ Do:** Resolve placeholders at the call site
+
+```tsx
+const url = template
+	.replaceAll("${environment}", env)
+	.replaceAll("${tenant}", tenant);
+
+<ProductSwitchItem titleText="Hub" targetSrc={url} target="_blank" />
+```
+
+**❌ Don't:** Pass raw template strings
+
+```tsx
+<ProductSwitchItem
+	titleText="Hub"
+	targetSrc="https://hub.reltio.com/?env=${environment}&tenant=${tenant}"
+/>
+```
+
+## Layout behavior
+
+`ProductSwitch` adapts to item count and viewport automatically — no configuration needed.
+
+<table>
+	<thead>
+		<tr>
+			<th>Items</th>
+			<th>Viewport</th>
+			<th>Columns</th>
+			<th>Container width</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>&gt; 6</td>
+			<td>&gt; 900px</td>
+			<td>4</td>
+			<td>752px</td>
+		</tr>
+		<tr>
+			<td>≤ 6</td>
+			<td>&gt; 900px</td>
+			<td>3</td>
+			<td>564px</td>
+		</tr>
+		<tr>
+			<td>any</td>
+			<td>≤ 900px</td>
+			<td>3</td>
+			<td>564px</td>
+		</tr>
+		<tr>
+			<td>any</td>
+			<td>≤ 600px</td>
+			<td>1</td>
+			<td>100%</td>
+		</tr>
+	</tbody>
+</table>
+
+## Selected state
+
+To highlight the currently active product, set `selected` on the corresponding item. `ProductSwitch` enforces single selection — clicking another item clears the previous one automatically.
+
+```tsx
+<ProductSwitchItem titleText="Hub" subtitleText="Applications" selected />
+```
+
+## Trigger placement
+
+SAP's reference design embeds `ProductSwitch` inside `ShellBar` via the `productSwitch` slot and the `showProductSwitch` flag. Reltio applications use a custom application header instead, so the standalone trigger + `Popover` pattern shown above is the recommended integration today. If you migrate to `ShellBar`, move the trigger into its slot and drop the `Popover` wrapper — the rest of the markup stays the same.
+
+## Sources and references
+
+- [`ProductSwitch` — UI5 Web Components](https://ui5.github.io/webcomponents/components/fiori/ProductSwitch/) — official component reference
+- [`ProductSwitch` — `@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/) — React wrapper API
+- [SAP Fiori Design — Shell Bar](https://www.sap.com/design-system/fiori-design-web/v1-145/ui-elements/shell-bar) — design specification
+- [`ProductSwitch.css` source](https://github.com/SAP/ui5-webcomponents/blob/main/packages/fiori/src/themes/ProductSwitch.css) — layout dimensions and breakpoints
+- [`ProductSwitchItem.css` source](https://github.com/SAP/ui5-webcomponents/blob/main/packages/fiori/src/themes/ProductSwitchItem.css) — item structure and states
+
+<Stories />

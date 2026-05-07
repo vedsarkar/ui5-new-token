@@ -69,6 +69,7 @@
 	"dependencies": {
 		"@dagrejs/dagre": "^3.0.0",
 		"@storybook/mcp": "^0.6.1",
+		"@ui5/webcomponents-fiori": "^2.21.1",
 		"@ui5/webcomponents-icons": "^2.21.1",
 		"@ui5/webcomponents-react": "^2.21.3",
 		"@xyflow/react": "^12.10.2",

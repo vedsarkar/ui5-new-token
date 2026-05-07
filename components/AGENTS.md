@@ -45,6 +45,17 @@ components/ComponentName/
 └── index.ts                   # Public API
 ```
 
+### Documentation-only directories (exception)
+
+A directory under `components/` may contain **only** a `*.stories.tsx` file (no `.tsx`, `.types.ts`, `.module.css`, or `index.ts`) when its sole purpose is to document the recommended way to consume a native UI5 component directly — without authoring any Reltio code. The stories file imports the component straight from `@ui5/webcomponents-react`, and the directory name simply provides a stable Storybook navigation path.
+
+```
+components/ProductSwitch/
+└── ProductSwitch.stories.tsx  # Documents native UI5 ProductSwitch
+```
+
+Use this exception only for documentation. As soon as any custom logic, types, or styles are introduced, the directory must follow the full structure above.
+
 ## Component Standards
 
 ### Public API (CRITICAL)
