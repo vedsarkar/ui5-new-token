@@ -1,0 +1,115 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Run: npm run build-component-docs
+*/}
+
+import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import { Details } from "@/components/Details";
+import * as SkeletonStories from "./Skeleton.stories";
+
+<Meta of={SkeletonStories} />
+
+# Skeleton
+
+```tsx
+import { Skeleton } from "@reltio/design/components";
+```
+
+`Skeleton` is a loading placeholder that shows N rectangular bars with a horizontal shimmer animation. Used to reserve space and signal "content is on its way" while data is being fetched. Full-width by default.
+
+### Sizing
+
+- `rows` — number of placeholder bars (default `3`). Values are coerced to a positive integer (minimum 1, fractional values floored).
+- `size` — height of each bar as a CSS length (`"16px"`, `"1rem"`, `"2em"`). Defaults to `16px`. Pass any unit your design calls for.
+
+### Composition
+
+`Skeleton` is intended to **replace** the eventual content while loading, not stack alongside it. Toggle conditionally on your loading flag:
+
+```tsx
+{isLoading ? <Skeleton rows={5} /> : <ActualList />}
+```
+
+For more complex layouts, render multiple `Skeleton` instances side by side with explicit container styling at the call site, rather than trying to express the layout via props.
+
+### Accessibility
+
+The root element has `role="status"` and `aria-busy="true"`, so screen readers announce that content is loading. Each bar is `aria-hidden="true"` (no semantic content). A default `aria-label="Loading content"` is set; override via `aria-label` on the props if a more specific label is appropriate (e.g. `"Loading messages"`).
+
+<SectionHeading>Prop types</SectionHeading>
+
+<ArgTypes />
+
+{/* __RAW_TYPES_SOURCE__
+import type { HtmlProps } from "@/utils/types";
+
+/**
+ * Props for the Skeleton component
+ *\/
+export type SkeletonProps = Omit<
+	HtmlProps<
+		"div",
+		{
+			/**
+			 * Number of rectangular placeholder bars to display
+			 * @default 3
+			 *\/
+			rows?: number;
+			/** Height of each row bar (e.g. "16px", "1rem", "2em"). Defaults to 16px. *\/
+			size?: string;
+		}
+	>,
+	"children"
+>;
+*/}
+
+<Details>
+	<summary>CSS classes</summary>
+
+Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
+
+- `.reltio_Skeleton_skeletonRoot`
+- `.reltio_Skeleton_row`
+- `.reltio_Skeleton_indeterminate1`
+- `.reltio_Skeleton_indeterminate2`
+
+</Details>
+
+{/* __RAW_STORIES_SOURCE__
+import preview from "@/.storybook/preview";
+import { Skeleton } from "./Skeleton";
+import cssClasses from "./Skeleton.module.css";
+
+const meta = preview.meta({
+	component: Skeleton,
+	parameters: {
+		cssClasses,
+	},
+});
+
+export default meta;
+
+export const OneRow = meta.story({
+	args: {
+		rows: 1,
+	},
+});
+
+export const CustomRowCount = meta.story({
+	args: {
+		rows: 10,
+	},
+});
+
+export const CustomSize = meta.story({
+	args: {
+		size: "32px",
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

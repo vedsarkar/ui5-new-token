@@ -9,11 +9,7 @@ import "@ui5/webcomponents-icons/dist/navigation-up-arrow.js";
 import "@ui5/webcomponents-icons/dist/navigation-down-arrow.js";
 import "@ui5/webcomponents-icons/dist/source-code.js";
 
-/**
- * Enhanced details component for rendering collapsible content blocks
- * with improved visual design, accessibility, and consistent styling
- * aligned with the design system.
- */
+/** Styled wrapper around the native HTML `<details>` element with a chevron toggle and SAP Horizon typography. */
 export const Details = ({
 	open: initialOpen = false,
 	children,

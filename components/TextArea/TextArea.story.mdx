@@ -1,0 +1,205 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Run: npm run build-component-docs
+*/}
+
+import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import { Details } from "@/components/Details";
+import * as TextAreaStories from "./TextArea.stories";
+
+<Meta of={TextAreaStories} />
+
+# TextArea
+
+```tsx
+import { TextArea } from "@reltio/design/components";
+```
+
+`TextArea` is a SAP Fiori-styled multi-line text input. It is a Reltio component (not a UI5 web component) so it integrates naturally with the platform — works inside `<form>`, supports `name` / `defaultValue` / refs out of the box, and accepts every native `<textarea>` attribute via spread.
+
+### Validation states (`valueState`)
+
+Standard SAP Fiori states control both the visual treatment and the ARIA wiring:
+
+- `"None"` (default) — neutral, no message
+- `"Information"` — informational note
+- `"Success"` — successful validation
+- `"Warning"` — non-blocking concern
+- `"Error"` — blocking validation error
+
+Provide `valueStateMessage` to render a description below the control whenever the state is not `"None"`. The message element is referenced via `aria-describedby` automatically.
+
+### Toolbar slot
+
+The optional `toolbar` slot renders below the textarea (e.g. for `Attach`, `Send`, `Format` buttons). Pass any React node — typically a row of UI5 `Button`s. The toolbar is part of the focus border so it visually belongs to the input.
+
+### Auto-grow
+
+The textarea uses native `field-sizing: content` to auto-grow as the user types — no JavaScript, no resize observers — up to the max-height defined in the component CSS. Past that, a scrollbar appears.
+
+### Why a Reltio component (not UI5)
+
+UI5 ships a `TextArea` web component, but it lives in Shadow DOM and does not participate in native form submission, ref forwarding, or auto-grow without bridging glue. This component matches SAP Horizon visuals while staying a regular React `<textarea>` — closer to the platform, easier to compose into forms.
+
+### See also
+
+- [SAP Fiori — TextArea](https://experience.sap.com/fiori-design-web/text-area/) — design specification (states, sizing, label placement)
+
+<SectionHeading>Prop types</SectionHeading>
+
+<ArgTypes />
+
+{/* __RAW_TYPES_SOURCE__
+import type React from "react";
+import type { FormControlBase } from "@/utils/formTypes";
+import type { HtmlProps } from "@/utils/types";
+
+export type TextAreaProps = HtmlProps<
+	"textarea",
+	FormControlBase & {
+		/**
+		 * Floating label text displayed above the textarea
+		 *\/
+		label?: string;
+
+		/**
+		 * Toolbar content rendered below the textarea input
+		 *\/
+		toolbar?: React.ReactNode;
+	}
+>;
+*/}
+
+<Details>
+	<summary>CSS classes</summary>
+
+Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
+
+- `.reltio_TextArea_root`
+- `.reltio_TextArea_label`
+- `.reltio_TextArea_required`
+- `.reltio_TextArea_error`
+- `.reltio_TextArea_inputContainer`
+- `.reltio_TextArea_warning`
+- `.reltio_TextArea_success`
+- `.reltio_TextArea_information`
+- `.reltio_TextArea_readOnly`
+- `.reltio_TextArea_disabled`
+- `.reltio_TextArea_textarea`
+- `.reltio_TextArea_valueStateMessage`
+- `.reltio_TextArea_toolbar`
+
+</Details>
+
+{/* __RAW_STORIES_SOURCE__
+import { Button } from "@ui5/webcomponents-react/Button";
+import { fn } from "storybook/test";
+import preview from "../../.storybook/preview";
+import { TextArea } from "./TextArea";
+import cssClasses from "./TextArea.module.css";
+import "@ui5/webcomponents-icons/dist/attachment.js";
+import "@ui5/webcomponents-icons/dist/copy.js";
+import "@ui5/webcomponents-icons/dist/share-2.js";
+
+const meta = preview.meta({
+	component: TextArea,
+	parameters: {
+		layout: "centered",
+		cssClasses,
+	},
+	args: {
+		onChange: fn(),
+	},
+	decorators: [
+		(Story) => (
+			<div style={{ width: "400px" }}>
+				<Story />
+			</div>
+		),
+	],
+});
+
+export default meta;
+
+export const Default = meta.story({
+	args: {
+		placeholder: "Enter text...",
+	},
+});
+
+export const WithLabel = meta.story({
+	args: {
+		label: "Description",
+	},
+});
+
+export const WithPlaceholder = meta.story({
+	args: {
+		placeholder: "Type your message here...",
+	},
+});
+
+export const WithToolbar = meta.story({
+	args: {
+		label: "Comment",
+		toolbar: (
+			<>
+				<Button icon="attachment">Attach</Button>
+				<Button icon="copy">Copy</Button>
+				<Button icon="share-2">Share</Button>
+			</>
+		),
+	},
+});
+
+export const ValueStateError = meta.story({
+	name: "Error",
+	args: {
+		label: "Email",
+		valueState: "Error",
+		valueStateMessage: "Please enter a valid email address",
+		defaultValue: "invalid-email",
+	},
+});
+
+export const ValueStateWarning = meta.story({
+	name: "Warning",
+	args: {
+		label: "Description",
+		valueState: "Warning",
+		valueStateMessage: "Content exceeds recommended length",
+		defaultValue:
+			"This is a very long text that exceeds the recommended length for this field.",
+	},
+});
+
+export const Disabled = meta.story({
+	args: {
+		label: "Disabled field",
+		placeholder: "This field is disabled",
+		disabled: true,
+	},
+});
+
+export const ReadOnly = meta.story({
+	args: {
+		label: "Read-only field",
+		defaultValue: "This content cannot be edited",
+		readOnly: true,
+	},
+});
+
+export const AutoResize = meta.story({
+	args: {
+		label: "Notes",
+		defaultValue:
+			"This textarea will automatically grow as you type more content.\n\nTry adding more lines to see the auto-resize behavior in action.\n\nThe textarea will expand up to the maximum height, then show a scrollbar.",
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

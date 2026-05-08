@@ -4,10 +4,7 @@ import type {
 	ErrorBoundaryState,
 } from "./ErrorBoundary.types";
 
-/**
- * Reusable React Error Boundary (class component).
- * Catches render-time errors from descendants, renders fallback UI, and optionally calls onError.
- */
+/** Catches render-time errors from descendants and renders a caller-provided `fallback` instead. */
 export class ErrorBoundary extends React.Component<
 	ErrorBoundaryProps,
 	ErrorBoundaryState

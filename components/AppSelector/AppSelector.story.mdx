@@ -1,0 +1,261 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Run: npm run build-component-docs
+*/}
+
+import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import { Details } from "@/components/Details";
+import * as AppSelectorStories from "./AppSelector.stories";
+
+<Meta of={AppSelectorStories} />
+
+# AppSelector
+
+```tsx
+import { AppSelector } from "@reltio/design/components";
+```
+
+`AppSelector` is a thin Reltio business wrapper around the SAP Fiori [`ProductSwitch`](https://ui5.github.io/webcomponents/components/fiori/ProductSwitch/) from `@ui5/webcomponents-react`. It accepts the raw apps list (typically returned by Reltio Config Service) and renders the canonical 3×3 grid trigger button + popover with apps grouped by category. Grid layout, keyboard navigation, focus, hover, and selected state are all inherited from the underlying SAP component — `AppSelector` only adds the three Reltio-specific concerns described below.
+
+### URI templates
+
+Each `app.uri` may contain `${environment}` and `${tenant}` placeholders. The component substitutes them with the values of the `env` / `tenant` props before passing the URL to the underlying link. If a prop is omitted, the placeholder becomes the literal string `"undefined"`.
+
+### Categories
+
+`ProductSwitch` is intentionally a flat grid — SAP does not support category headers inside it. `AppSelector` encodes each app's `category` in the item's `subtitleText` and reorders apps so that entries sharing the same category stay adjacent. Categories appear in the order they first occur in the input array; apps without a `category` fall back to `"Applications"`.
+
+### Optional fields
+
+Apps without `name` or `uri` are silently filtered out — your tenant config may include incomplete entries during rollout, and you should not have to pre-filter the list. `icon` is also optional; when omitted, the item shows UI5's `internet-browser` fallback so the grid stays uniform.
+
+### See also
+
+- [`ProductSwitch` reference](https://ui5.github.io/webcomponents/components/fiori/ProductSwitch/) — layout breakpoints, keyboard navigation, selected state
+- [SAP Fiori — Shell Bar](https://www.sap.com/design-system/fiori-design-web/v1-145/ui-elements/shell-bar) — Product Switch slot in the canonical SAP header
+
+<SectionHeading>Prop types</SectionHeading>
+
+<ArgTypes />
+
+{/* __RAW_TYPES_SOURCE__
+import type { HtmlProps } from "@/utils/types";
+
+export type AppEntry = {
+	/** Application display name. Apps without a name are ignored. *\/
+	name?: string;
+	/** URL opened in a new tab on click. Apps without a URI are ignored. *\/
+	uri?: string;
+	/** Absolute URL to the application icon (SVG). Falls back to a generic link icon. *\/
+	icon?: string;
+	/** Application category for grouping in navigation.
+	 * @default "Applications"
+	 *\/
+	category?: string;
+};
+
+export type AppSelectorProps = HtmlProps<
+	"div",
+	{
+		/** List of apps to display, grouped by category.
+		 * Apps missing `name` or `uri` are silently ignored.
+		 * The list of available apps for a given tenant
+		 * can be retrieved from Reltio Config Service.
+		 *\/
+		apps: AppEntry[];
+		/** Environment identifier substituted into URI templates (`${environment}`). *\/
+		env?: string;
+		/** Tenant identifier substituted into URI templates (`${tenant}`). *\/
+		tenant?: string;
+		/** Text label displayed next to the trigger icon.
+		 * When omitted, the trigger renders as an icon-only button.
+		 *\/
+		label?: string;
+		/** CSS `position-area`-style value controlling popover placement relative to the trigger.
+		 * Mapped internally to the underlying UI5 `Popover` placement
+		 * (`top` → `Top`, `bottom` → `Bottom`, `left` → `Start`, `right` → `End`).
+		 * @default "right span-top"
+		 *\/
+		positionArea?: string;
+	}
+>;
+*/}
+
+<Details>
+	<summary>CSS classes</summary>
+
+Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
+
+- `.reltio_AppSelector_root`
+
+</Details>
+
+{/* __RAW_STORIES_SOURCE__
+import preview from "@/.storybook/preview";
+import { AppSelector } from "./AppSelector";
+import cssClasses from "./AppSelector.module.css";
+
+const meta = preview.meta({
+	component: AppSelector,
+	parameters: {
+		layout: "centered",
+		cssClasses,
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({
+	args: {
+		apps: [
+			{
+				name: "Agents",
+				uri: "https://example.com/agent-flow",
+				icon: "https://reltio.design/apps/icons/agentflow.svg",
+				category: "Agentflow",
+			},
+			{
+				name: "Quality",
+				uri: "https://example.com/af-quality",
+				icon: "https://reltio.design/apps/icons/af-quality.svg",
+				category: "Agentflow",
+			},
+			{
+				name: "Hub",
+				uri: "https://example.com/hub",
+				icon: "https://reltio.design/apps/icons/mdm.svg",
+				category: "Applications",
+			},
+			{
+				name: "Console",
+				uri: "https://example.com/console",
+				icon: "https://reltio.design/apps/icons/console.svg",
+				category: "Applications",
+			},
+			{
+				name: "RDM",
+				uri: "https://example.com/rdm",
+				icon: "https://reltio.design/apps/icons/rdm.svg",
+				category: "Applications",
+			},
+			{
+				name: "Inbox",
+				uri: "https://example.com/inbox",
+				icon: "https://reltio.design/apps/icons/inbox.svg",
+				category: "Applications",
+			},
+			{
+				name: "External Match",
+				uri: "https://example.com/external-match",
+				icon: "https://reltio.design/apps/icons/external-match.svg",
+				category: "Tenant Management",
+			},
+			{
+				name: "Export",
+				uri: "https://example.com/export",
+				icon: "https://reltio.design/apps/icons/export.svg",
+				category: "Tenant Management",
+			},
+			{
+				name: "Data Loader",
+				uri: "https://example.com/data-loader",
+				icon: "https://reltio.design/apps/icons/data-loader.svg",
+				category: "Tenant Management",
+			},
+			{
+				name: "Performance Monitoring",
+				uri: "https://example.com/performance-monitoring",
+				icon: "https://reltio.design/apps/icons/performance-monitoring.svg",
+				category: "Tenant Management",
+			},
+		],
+	},
+});
+
+export const WithLabel = meta.story({
+	args: {
+		label: "Applications",
+		apps: [
+			{
+				name: "Agents",
+				uri: "https://example.com/agent-flow",
+				icon: "https://reltio.design/apps/icons/agentflow.svg",
+				category: "Agentflow",
+			},
+			{
+				name: "Hub",
+				uri: "https://example.com/hub",
+				icon: "https://reltio.design/apps/icons/mdm.svg",
+				category: "Applications",
+			},
+			{
+				name: "Console",
+				uri: "https://example.com/console",
+				icon: "https://reltio.design/apps/icons/console.svg",
+				category: "Applications",
+			},
+		],
+	},
+});
+
+export const UriTemplates = meta.story({
+	args: {
+		env: "us-prod",
+		tenant: "acme-corp",
+		apps: [
+			{
+				name: "Console",
+				// biome-ignore lint/suspicious/noTemplateCurlyInString: URI template placeholders
+				uri: "https://console.reltio.com/?env=${environment}&tenant=${tenant}",
+				icon: "https://reltio.design/apps/icons/console.svg",
+				category: "Applications",
+			},
+			{
+				name: "Hub",
+				// biome-ignore lint/suspicious/noTemplateCurlyInString: URI template placeholders
+				uri: "https://hub.reltio.com/?env=${environment}&tenant=${tenant}",
+				icon: "https://reltio.design/apps/icons/mdm.svg",
+				category: "Applications",
+			},
+			{
+				name: "RDM",
+				// biome-ignore lint/suspicious/noTemplateCurlyInString: URI template placeholders
+				uri: "https://rdm.reltio.com/?env=${environment}&tenant=${tenant}",
+				icon: "https://reltio.design/apps/icons/rdm.svg",
+				category: "Applications",
+			},
+		],
+	},
+});
+
+export const OptionalFields = meta.story({
+	args: {
+		apps: [
+			{
+				name: "Hub",
+				uri: "https://example.com/hub",
+				icon: "https://reltio.design/apps/icons/mdm.svg",
+				category: "Applications",
+			},
+			{
+				name: "Custom App",
+				uri: "https://example.com/custom",
+			},
+			{
+				name: "Another App",
+				uri: "https://example.com/another",
+				category: "Applications",
+			},
+			{ uri: "https://example.com/no-name" },
+			{ name: "No URI" },
+			{},
+		],
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

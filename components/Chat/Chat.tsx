@@ -32,18 +32,7 @@ const ChatMessage = memo(({ message }: { message: Message }) => {
 const isScrolledToBottom = (el: HTMLElement) =>
 	el.scrollHeight - el.scrollTop - el.clientHeight < SCROLL_THRESHOLD;
 
-/**
- * Scrollable chat window that renders a conversation between a user and an AI assistant.
- *
- * **Loading behavior (`initialLoading → false`):**
- * The last user message is pinned to the top edge of the visible chat area;
- * all subsequent assistant messages are displayed below it.
- *
- * **Thinking behavior (`thinking → true`):**
- * The chat automatically scrolls to the last user message and shows
- * a loader (AssistantLoader) directly beneath it, indicating the assistant
- * is generating a response.
- */
+/** Scrollable conversation surface that renders an ordered list of user / assistant messages with auto-scroll and thinking-state UI. */
 export const Chat = ({
 	messages,
 	thinking = false,

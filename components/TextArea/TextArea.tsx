@@ -7,14 +7,7 @@ import { getValueStateConfig } from "@/utils/valueState";
 import styles from "./TextArea.module.css";
 import type { TextAreaProps } from "./TextArea.types";
 
-/**
- * SAP Fiori TextArea
- *
- * Multi-line text input with label, value state, and toolbar support.
- * Uses native field-sizing for auto-grow behavior.
- *
- * @see https://experience.sap.com/fiori-design-web/text-area/
- */
+/** SAP Fiori multi-line text input with label, value state, optional toolbar slot, and native field-sizing auto-grow. */
 export const TextArea: React.ForwardRefExoticComponent<
 	TextAreaProps & React.RefAttributes<HTMLTextAreaElement>
 > = forwardRef<HTMLTextAreaElement, TextAreaProps>(

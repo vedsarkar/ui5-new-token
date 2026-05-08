@@ -1,0 +1,138 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Run: npm run build-component-docs
+*/}
+
+import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import { Details } from "@/components/Details";
+import * as ErrorBoundaryStories from "./ErrorBoundary.stories";
+
+<Meta of={ErrorBoundaryStories} />
+
+# ErrorBoundary
+
+```tsx
+import { ErrorBoundary } from "@reltio/design/components";
+```
+
+`ErrorBoundary` is a thin React class component that catches render-time errors thrown by its descendants and renders a `fallback` instead of crashing the surrounding tree. It is intentionally minimal — no built-in fallback UI, no telemetry, no recovery logic. The caller decides what to render and what to log.
+
+### When to use
+
+Wrap a section of your tree that may fail independently — a chart, a third-party widget, a Markdown renderer rendering untrusted content, a streaming AI response. Place the boundary as **close to the failing surface as possible** so the rest of the app stays interactive.
+
+### Limitations inherited from React
+
+- Catches **render-time** errors only — not events, async work, or effect callbacks. Handle those yourself with `try/catch` or promise rejection handlers.
+- A boundary cannot recover from an error thrown during **its own render** — wrap it in another boundary if you need that.
+- Implemented as a class component on purpose: the `componentDidCatch` lifecycle has no hook equivalent.
+
+### Wiring telemetry
+
+The `onError` callback fires once per caught error with `(error, errorInfo)`. This is the place to send the error to your monitoring system; do not put telemetry inside the `fallback` render — it would fire on every re-render of the boundary.
+
+### See also
+
+- [React docs — Error Boundary](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary) — official reference for the lifecycle and limitations
+
+<SectionHeading>Prop types</SectionHeading>
+
+<ArgTypes />
+
+{/* __RAW_TYPES_SOURCE__
+import type React from "react";
+
+/**
+ * Props for the ErrorBoundary component.
+ *\/
+export type ErrorBoundaryProps = {
+	/**
+	 * Content to render when no error occurs.
+	 *\/
+	children: React.ReactNode;
+
+	/**
+	 * Content to render when an error is caught from a descendant.
+	 *\/
+	fallback: React.ReactNode;
+
+	/**
+	 * Optional callback invoked in componentDidCatch with the caught error and React.ErrorInfo.
+	 *\/
+	onError?: (error: Error, info: React.ErrorInfo) => void;
+};
+
+/**
+ * Internal state for the ErrorBoundary class component.
+ *\/
+export type ErrorBoundaryState = {
+	hasError: boolean;
+	error: Error | null;
+};
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import type React from "react";
+import preview from "@/.storybook/preview";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+
+const meta = preview.meta({
+	component: ErrorBoundary,
+	parameters: {
+		layout: "padded",
+	},
+	tags: ["autodocs"],
+});
+
+export default meta;
+
+// Normal render (children render without error)
+export const NormalRender = meta.story({
+	args: {
+		children: <p>This content renders normally when no error occurs.</p>,
+		fallback: <p>Fallback would show here if an error occurred.</p>,
+	},
+});
+
+// Fallback on error (child that throws during render, fallback is shown)
+function ThrowOnRender(): React.ReactElement {
+	throw new Error("Intentional render error for Storybook demo");
+}
+
+export const FallbackOnError = meta.story({
+	render: () => (
+		<ErrorBoundary
+			fallback={
+				<p role="alert">Something went wrong. This is the fallback UI.</p>
+			}
+		>
+			<ThrowOnRender />
+		</ErrorBoundary>
+	),
+});
+
+// onError callback (demonstrate callback invoked with error and info)
+export const OnErrorCallback = meta.story({
+	render: () => (
+		<ErrorBoundary
+			fallback={
+				<p role="alert">
+					Error was caught. onError was invoked with the error and
+					componentStack.
+				</p>
+			}
+			onError={(_error, _info) => {
+				// Callback is invoked from componentDidCatch when a descendant throws
+			}}
+		>
+			<ThrowOnRender />
+		</ErrorBoundary>
+	),
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

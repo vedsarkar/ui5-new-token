@@ -28,14 +28,16 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "vitest run",
-		"pretest": "npm run build-api-docs",
 		"coverage": "vitest run --coverage",
-		"precoverage": "npm run build-api-docs",
 		"dev": "storybook dev -p 6006",
+		"predev": "npm run build-component-docs",
 		"build-storybook": "storybook build",
+		"prebuild-storybook": "npm run build-component-docs",
 		"build-css": "node scripts/build-css.mjs",
 		"build-tokens": "node scripts/build-tokens.mjs",
 		"build-api-docs": "node scripts/build-api-docs.mjs",
+		"prebuild-component-docs": "npm run build-css",
+		"build-component-docs": "node scripts/build-component-docs.mjs",
 		"deploy": "chromatic --exit-zero-on-changes --exit-once-uploaded",
 		"lint": "biome check .",
 		"format": "biome format . --write"

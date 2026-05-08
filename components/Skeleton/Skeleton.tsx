@@ -5,11 +5,7 @@ import type { SkeletonProps } from "./Skeleton.types";
 const DEFAULT_LABEL = "Loading content";
 const DEFAULT_ROWS = 3;
 
-/**
- * Displays a configurable number of rectangular placeholder bars with a shimmer
- * (moving gradient) animation. Used as a loading placeholder to reserve space
- * and indicate that content is loading. Full width by default.
- */
+/** Loading placeholder that shows N rectangular bars with a shimmer animation while content is being fetched. */
 export const Skeleton = ({
 	rows = DEFAULT_ROWS,
 	size,

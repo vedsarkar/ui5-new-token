@@ -1,0 +1,312 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Run: npm run build-component-docs
+*/}
+
+import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import { Details } from "@/components/Details";
+import * as ChatStories from "./Chat.stories";
+
+<Meta of={ChatStories} />
+
+# Chat
+
+```tsx
+import { Chat } from "@reltio/design/components";
+```
+
+`Chat` is a scrollable conversation surface that renders an ordered list of user / assistant messages. It handles auto-scroll, sticky-message anchoring, thinking-state UI, initial-loading skeleton, and a floating "scroll to bottom" button. The component is fully controlled — `messages`, `thinking`, `initialLoading` are driven by parent state; nothing is mutated internally.
+
+### Message rendering
+
+Each entry in `messages` is dispatched by `role`:
+
+- `user` → `UserMessage` (right-aligned bubble)
+- `assistant` → `AssistantMessage` (Markdown-rendered, left-aligned)
+- `system` → plain text fallback (override at the call site for richer rendering)
+
+### Sticky-message anchoring
+
+When `messages` updates, the **last user message** is pinned to the top of the visible chat area; subsequent assistant messages flow below it. This keeps the user's prompt in view while the assistant streams its reply, instead of letting it scroll out of sight.
+
+### Thinking state
+
+Set `thinking={true}` while waiting for the assistant. The chat smooth-scrolls to the latest user message and shows a `BusyIndicator` directly beneath it. `thinking` is fully controlled — toggle it from your data layer; the component does not derive it from `messages`.
+
+### Initial loading
+
+Set `initialLoading={true}` while the first batch of messages is being fetched. The message list is replaced by a `Skeleton` placeholder until the prop flips back to `false`.
+
+### Scroll-to-bottom button
+
+A floating "scroll to bottom" button appears automatically when the user scrolls up by more than ~100px from the bottom. Clicking it scrolls back to the latest message smoothly.
+
+### Accessibility
+
+The container has `role="log"`, `aria-live="polite"`, and `aria-label="Chat messages"` so screen readers announce new messages without interrupting. The scroll region is keyboard-focusable (`tabIndex={0}`) per WCAG 2.1.1.
+
+<SectionHeading>Prop types</SectionHeading>
+
+<ArgTypes />
+
+{/* __RAW_TYPES_SOURCE__
+import type { HtmlProps } from "@/utils/types";
+
+/**
+ * User message payload for Chat. Renders via UserMessage component.
+ *\/
+export type UserChatMessage = {
+	type: "user";
+	content?: string | null;
+};
+
+/**
+ * Assistant message payload for Chat. Renders via AssistantMessage component.
+ *\/
+export type AssistantChatMessage = {
+	type: "assistant";
+	content?: string | null;
+};
+
+/**
+ * Union of known chat message types. Extensible: add new variants (e.g. system, tool)
+ * by extending this type and the message renderer in Chat.tsx.
+ *\/
+export type ChatMessage = UserChatMessage | AssistantChatMessage;
+
+/**
+ * Message received from the API.
+ *\/
+export type Message = {
+	messageId?: string;
+	role: "user" | "assistant" | "system";
+	content: string;
+	timestamp?: Date;
+	createdAt?: string;
+};
+
+/**
+ * Props for the Chat component
+ *\/
+export type ChatProps = HtmlProps<
+	"div",
+	{
+		/**
+		 * List of messages to display in order. Each message is rendered by type (user → UserMessage, assistant → AssistantMessage).
+		 *\/
+		messages: Message[];
+
+		/**
+		 * When true, shows the AssistantLoader below the message list to indicate the assistant is generating a response.
+		 * Fully controlled from outside — no internal logic derives this state.
+		 * @default false
+		 *\/
+		thinking?: boolean;
+
+		/**
+		 * When true, chat data is initially loading. The Skeleton component is shown in place of the message list until data is available.
+		 * @default false
+		 *\/
+		initialLoading?: boolean;
+	}
+>;
+*/}
+
+<Details>
+	<summary>CSS classes</summary>
+
+Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
+
+- `.reltio_Chat_root`
+- `.reltio_Chat_userMessage`
+- `.reltio_Chat_userMessageSkeletonWrapper`
+- `.reltio_Chat_scrollToBottom`
+- `.reltio_Chat_lastMessageWrapper`
+
+</Details>
+
+{/* __RAW_STORIES_SOURCE__
+import { faker } from "@faker-js/faker";
+import preview from "@/.storybook/preview";
+import type { Message } from "@/components/Chat";
+import { Chat } from "@/components/Chat";
+import cssClasses from "./Chat.module.css";
+
+faker.seed(42);
+
+const meta = preview.meta({
+	component: Chat,
+	parameters: {
+		layout: "fullscreen",
+		cssClasses,
+	},
+	decorators: [
+		(Story) => (
+			<div style={{ height: "100vh" }}>
+				<Story />
+			</div>
+		),
+	],
+});
+
+export default meta;
+
+const conversation: Message[] = [
+	{ role: "user", content: "What is the rate limit for the REST API?" },
+	{
+		role: "assistant",
+		content: `The default rate limit is 100 requests per minute per API key.
+
+You can request a higher limit by contacting support. Enterprise plans often include increased limits based on your use case.`,
+	},
+	{ role: "user", content: "How do I pass the API key in the request?" },
+	{
+		role: "assistant",
+		content: `Include the API key in the \`Authorization\` header as a Bearer token: \`Authorization: Bearer YOUR_API_KEY\`.
+
+Alternatively, some endpoints support passing the key as a query parameter, but the header method is recommended for security.`,
+	},
+];
+
+export const Conversation = meta.story({
+	args: {
+		messages: conversation,
+	},
+});
+
+const waitingForAssistant: Message[] = [
+	{ role: "user", content: "What is the rate limit for the REST API?" },
+	{
+		role: "assistant",
+		content: `The default rate limit is 100 requests per minute per API key.
+
+You can request a higher limit by contacting support. Enterprise plans often include increased limits based on your use case.`,
+	},
+	{ role: "user", content: "How do I pass the API key in the request?" },
+];
+
+export const WaitingForAssistant = meta.story({
+	args: {
+		messages: waitingForAssistant,
+		thinking: true,
+	},
+});
+
+export const InitialLoading = meta.story({
+	args: {
+		messages: [],
+		initialLoading: true,
+	},
+});
+
+const manyMessages: Message[] = Array.from({ length: 100 }, (_, i) =>
+	i % 2 === 0
+		? { role: "user" as const, content: faker.lorem.sentence() }
+		: {
+				role: "assistant" as const,
+				content: faker.lorem.paragraphs({ min: 1, max: 3 }, "\n\n"),
+			},
+);
+
+const singleMessage: Message[] = [
+	{ role: "user" as const, content: faker.lorem.sentence() },
+];
+
+export const ManyMessages = meta.story({
+	args: {
+		messages: manyMessages,
+	},
+});
+
+export const EmptyMessages = meta.story({
+	args: {
+		messages: [],
+	},
+});
+
+export const SingleMessage = meta.story({
+	args: {
+		messages: singleMessage,
+		thinking: true,
+	},
+});
+
+const withMarkdown: Message[] = [
+	{
+		role: "user",
+		content: "Can you show me a list with **bold** and *italic*?",
+	},
+	{
+		role: "assistant",
+		content: `Here is Markdown:
+
+- **Bold** and *italic* text
+- [Link](https://example.com)
+- \`inline code\`
+
+And a code block:
+
+\`\`\`js
+const x = 1;
+\`\`\``,
+	},
+	{
+		role: "user",
+		content: "Show me a table and something I can expand.",
+	},
+	{
+		role: "assistant",
+		content: `Here is a **table**:
+
+| Feature   | Status   | Notes        |
+| --------- | -------- | ------------ |
+| Markdown  | Supported | Lists, code  |
+| Tables    | Supported | GFM style    |
+| Details   | Supported | Expandable   |
+
+And a collapsible **details** block:
+
+<details>
+<summary>Click to expand: API rate limits</summary>
+
+- Default: 100 requests/minute
+- Enterprise: custom limits
+- Contact support for increases
+
+</details>`,
+	},
+];
+
+export const MarkdownContent = meta.story({
+	args: {
+		messages: withMarkdown,
+	},
+});
+
+const withMdx: Message[] = [
+	{
+		role: "user",
+		content: "Show me something with a button.",
+	},
+	{
+		role: "assistant",
+		content: `Here is MDX with a button:
+
+<Button>Click me</Button>
+
+And **bold** text. You can mix interactive components with Markdown in longer responses like this one.`,
+	},
+];
+
+export const MDXContent = meta.story({
+	args: {
+		messages: withMdx,
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

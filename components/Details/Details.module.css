@@ -80,7 +80,7 @@
 	border: 1px solid var(--sapField_BorderColor);
 }
 
-.content code {
+.content code:not(pre code) {
 	color: var(--sapTextColor);
 	background-color: var(--sapBackgroundColor);
 	padding: 0.2em 0.4em;
@@ -94,7 +94,7 @@
 }
 
 :global([data-theme="dark"]) .content pre,
-:global([data-theme="dark"]) .content code {
+:global([data-theme="dark"]) .content code:not(pre code) {
 	background-color: color-mix(
 		in srgb,
 		var(--sapField_BorderColor) 40%,

@@ -4,13 +4,10 @@ import {
 	ArgTypes,
 	Description,
 	Stories,
-	Subtitle,
 	Title,
 } from "@storybook/addon-docs/blocks";
 import { definePreview } from "@storybook/react-vite";
 import { initialize, mswLoader } from "msw-storybook-addon";
-import { CssClasses } from "./blocks/CssClasses";
-import { ImportExample } from "./blocks/ImportExample";
 import reltioTheme from "./reltio-theme";
 
 initialize({ onUnhandledRequest: "bypass" });
@@ -26,11 +23,8 @@ export default definePreview({
 			page: () => (
 				<>
 					<Title />
-					<Subtitle />
-					<ImportExample />
 					<Description />
 					<ArgTypes />
-					<CssClasses />
 					<Stories />
 				</>
 			),

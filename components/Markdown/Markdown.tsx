@@ -6,13 +6,7 @@ import styles from "./Markdown.module.css";
 import type { MarkdownProps } from "./Markdown.types";
 import { allowedOverrides, baseOverrides } from "./markdownOverrides";
 
-/**
- * Safely renders Markdown-formatted text content with robust error handling
- * for invalid or malformed Markdown input. Supports GitHub Flavored Markdown
- * (GFM), raw HTML rendering with proper sanitization, and optional
- * tag-to-component overrides via the components prop.
- */
-
+/** Safely renders Markdown-formatted text with sanitization, GFM support, and an internal error boundary. */
 export const Markdown = ({
 	children,
 	className,

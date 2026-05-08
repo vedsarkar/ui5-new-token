@@ -1,0 +1,35 @@
+# TextArea
+
+```tsx
+import { TextArea } from "@reltio/design/components";
+```
+
+`TextArea` is a SAP Fiori-styled multi-line text input. It is a Reltio component (not a UI5 web component) so it integrates naturally with the platform — works inside `<form>`, supports `name` / `defaultValue` / refs out of the box, and accepts every native `<textarea>` attribute via spread.
+
+### Validation states (`valueState`)
+
+Standard SAP Fiori states control both the visual treatment and the ARIA wiring:
+
+- `"None"` (default) — neutral, no message
+- `"Information"` — informational note
+- `"Success"` — successful validation
+- `"Warning"` — non-blocking concern
+- `"Error"` — blocking validation error
+
+Provide `valueStateMessage` to render a description below the control whenever the state is not `"None"`. The message element is referenced via `aria-describedby` automatically.
+
+### Toolbar slot
+
+The optional `toolbar` slot renders below the textarea (e.g. for `Attach`, `Send`, `Format` buttons). Pass any React node — typically a row of UI5 `Button`s. The toolbar is part of the focus border so it visually belongs to the input.
+
+### Auto-grow
+
+The textarea uses native `field-sizing: content` to auto-grow as the user types — no JavaScript, no resize observers — up to the max-height defined in the component CSS. Past that, a scrollbar appears.
+
+### Why a Reltio component (not UI5)
+
+UI5 ships a `TextArea` web component, but it lives in Shadow DOM and does not participate in native form submission, ref forwarding, or auto-grow without bridging glue. This component matches SAP Horizon visuals while staying a regular React `<textarea>` — closer to the platform, easier to compose into forms.
+
+### See also
+
+- [SAP Fiori — TextArea](https://experience.sap.com/fiori-design-web/text-area/) — design specification (states, sizing, label placement)
