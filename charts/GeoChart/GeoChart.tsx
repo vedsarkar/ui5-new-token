@@ -128,6 +128,7 @@ function buildGeoOption(
 	};
 }
 
+/** Choropleth map — colored regions over an arbitrary GeoJSON geography, bucketed by value. */
 export const GeoChart = ({
 	map,
 	data,

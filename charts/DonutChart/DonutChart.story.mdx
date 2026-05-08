@@ -1,0 +1,137 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Run: npm run build-component-docs
+*/}
+
+import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import { Details } from "@/components/Details";
+import * as DonutChartStories from "./DonutChart.stories";
+
+<Meta of={DonutChartStories} />
+
+# DonutChart
+
+```tsx
+import { DonutChart } from "@reltio/design/components";
+```
+
+`DonutChart` renders a segmented ring showing each item's share of the total. Use it for **proportional comparison** with a small number of segments (typically up to ~7) — for many segments use a `BarChart` instead, where small slices are easier to read.
+
+### Data shape
+
+`data` is a flat list of `{ name, value }` items. The wrapper computes percentages from the raw values (no need to pre-normalize) and renders one slice per item. Slice colors are taken from the chart theme palette in order.
+
+### Units
+
+`units` is a free-form suffix appended to tooltip values (`"records"`, `"%"`, `"users"`). Tooltips show both the absolute value (with units) and the auto-computed percentage.
+
+### Empty state
+
+Empty `data` renders the donut frame with a "No data" overlay — no need to gate the component on data availability.
+
+### See also
+
+- [Apache ECharts — Pie series](https://echarts.apache.org/en/option.html#series-pie) — the underlying option schema (donut is rendered as a pie with a center hole)
+
+<SectionHeading>Prop types</SectionHeading>
+
+<ArgTypes />
+
+{/* __RAW_TYPES_SOURCE__
+import type { HtmlProps } from "@/utils/types";
+
+export type DonutChartItem = {
+	/** Segment label. *\/
+	name: string;
+
+	/** Segment value determining its proportion of the ring. *\/
+	value: number;
+};
+
+export type DonutChartProps = HtmlProps<
+	"div",
+	{
+		/** Array of segments. Each entry renders one donut slice. *\/
+		data?: DonutChartItem[];
+
+		/**
+		 * Unit suffix appended to tooltip values.
+		 * Examples: "records", "%", "users"
+		 *\/
+		units?: string;
+	}
+>;
+*/}
+
+<Details>
+	<summary>CSS classes</summary>
+
+Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
+
+- `.reltio_DonutChart_root`
+- `.reltio_DonutChart_overlay`
+
+</Details>
+
+{/* __RAW_STORIES_SOURCE__
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
+import preview from "@/.storybook/preview";
+import { DonutChart } from "./DonutChart";
+import cssClasses from "./DonutChart.module.css";
+
+const sampleData = [
+	{ name: "Matched", value: 680 },
+	{ name: "Unmatched", value: 210 },
+	{ name: "Pending", value: 110 },
+];
+
+const meta = preview.meta({
+	title: "Charts/DonutChart",
+	component: DonutChart,
+	parameters: {
+		layout: "fullscreen",
+		cssClasses,
+	},
+	decorators: [FullscreenDecorator],
+	args: {
+		data: sampleData,
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({});
+
+export const ManySegments = meta.story({
+	args: {
+		data: [
+			{ name: "CRM", value: 450 },
+			{ name: "ERP", value: 320 },
+			{ name: "MDM", value: 280 },
+			{ name: "Web", value: 150 },
+			{ name: "Mobile", value: 90 },
+			{ name: "Partner API", value: 60 },
+			{ name: "Manual Entry", value: 35 },
+			{ name: "Other", value: 15 },
+		],
+	},
+});
+
+export const WithUnits = meta.story({
+	args: {
+		units: "records",
+	},
+});
+
+export const Empty = meta.story({
+	args: {
+		data: [],
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

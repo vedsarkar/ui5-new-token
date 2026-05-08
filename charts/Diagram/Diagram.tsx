@@ -93,6 +93,7 @@ const DiagramFlow = ({
 	);
 };
 
+/** Hierarchical / pipeline-shaped node-edge diagram with auto-layout (xyflow + dagre) and Markdown-rendered node bodies. */
 export const Diagram = (props: DiagramProps) => {
 	const { nodes, edges, layout } = props;
 

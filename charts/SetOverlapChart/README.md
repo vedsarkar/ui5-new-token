@@ -1,0 +1,36 @@
+# SetOverlapChart
+
+```tsx
+import { SetOverlapChart } from "@reltio/design/components";
+```
+
+`SetOverlapChart` is an **UpSet-style** diagram for visualizing how records overlap across multiple sets — typically source systems contributing to the same entity. It composes three coordinated sub-charts: a **horizontal set bar** on the left (size of each set), a **dot matrix** in the middle (which sets each intersection covers), and a **vertical intersection bar** at the top (size of each intersection).
+
+Built with custom SVG and `d3-scale`, **not ECharts** — UpSet does not map cleanly to a standard chart series, and the coordinated-axis interaction across the three sub-charts requires shared scales.
+
+### Two combination modes
+
+The `mode` prop selects how the input data is interpreted:
+
+- `"intersection"` — counts in `intersections[].size` are **overlapping**. Each `[A, B]` intersection counts records present in **both** A and B (regardless of whether they are also in C). Hover highlights at the **element level** — hovering an element propagates the highlight across every chart that contains that element.
+- `"distinctIntersection"` — counts are **mutually exclusive**. Each `[A, B]` intersection counts records present in **exactly** A and B and nowhere else. Hover highlights at the **structural level** — hovering an intersection highlights the corresponding row in the matrix only.
+
+The two modes share the same TypeScript types but require **differently-shaped data**. A dataset built for `"intersection"` will look wrong if rendered with `"distinctIntersection"` and vice versa — pick the mode that matches how your aggregation produced the counts upstream.
+
+### Data shape
+
+- `sets` — `{ name, size, elements? }`. `elements` is required for element-level hover in `"intersection"` mode.
+- `intersections` — `{ sets: string[], size, elements? }`. `sets` lists the names participating in the intersection (order is treated as a set, not a sequence).
+
+### Sizing
+
+The chart fills its container width and height. SAP Fiori-style sizing — wrap in a parent with explicit dimensions:
+
+```tsx
+<SetOverlapChart sets={sets} intersections={intersections} mode="intersection" style={{ width: 900, height: 500 }} />
+```
+
+### See also
+
+- [UpSet plot — original paper](https://upset.app/) — the visualization technique this chart implements
+- [`d3-scale`](https://github.com/d3/d3-scale) — the scale primitives used to coordinate the three sub-charts

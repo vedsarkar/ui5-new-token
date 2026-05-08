@@ -311,7 +311,7 @@ The build script (`scripts/build-component-docs.mjs`) reads these and produces `
 
 The static MDX pipeline is **not required for local iteration**. While you are still designing a component (writing types, styles, stories), the component renders via the simpler default autodocs page from [.storybook/preview.tsx](../.storybook/preview.tsx) — `<Title>` (from name), `<Description>` (from JSDoc summary), `<ArgTypes>` (from types), `<Stories>` (from `.stories.tsx`). That is enough to verify the component visually, click through the variants, and check accessibility, and it requires zero extra files beyond the mandatory component structure.
 
-Opt the component into the static MDX pipeline (add its name to `PILOT_COMPONENTS` in the build script and write `README.md`) when:
+Opt the component into the static MDX pipeline (write a `README.md` in its folder — the build script auto-discovers it) when:
 
 - The API is stable enough to be consumed externally
 - You want remote MCP consumers (AI agents querying the deployed Storybook) to receive the rich payload — full README, raw types with nested-field JSDoc, raw stories source
@@ -415,7 +415,7 @@ export type AppEntry = {
 npm run build-component-docs   # regenerate all opted-in components
 ```
 
-The opt-in list is `PILOT_COMPONENTS` in [scripts/build-component-docs.mjs](../scripts/build-component-docs.mjs). Add a component name there after creating its `README.md`. The script is also chained into `predev` and `prebuild-storybook`, so a fresh `.story.mdx` is built automatically before the dev server starts and before a production build. It is **not** chained into `pretest` — tests run against `.stories.tsx` directly and do not depend on the generated MDX.
+Opt-in is **automatic by README.md presence**. The script ([scripts/build-component-docs.mjs](../scripts/build-component-docs.mjs)) globs `components/*` and `charts/*` and picks up every directory that has all three: `README.md` + `<Name>.types.ts` + `<Name>.stories.tsx`. Internal helpers without stories (e.g. `charts/Chart` — the shared ECharts wrapper) are skipped automatically. The script is chained into `predev` and `prebuild-storybook`, so a fresh `.story.mdx` is built automatically before the dev server starts and before a production build. It is **not** chained into `pretest` — tests run against `.stories.tsx` directly and do not depend on the generated MDX.
 
 The CSS classes section in the docs page is filled from `<Component>.module.css.json` — produced by [scripts/build-css.mjs](../scripts/build-css.mjs) (postcss-modules with the project's stable hash convention). `prebuild-component-docs` runs `build-css` automatically, so the JSON map is always fresh before the docs are regenerated. If the JSON file is missing or empty, the CSS classes block is skipped silently.
 
@@ -458,7 +458,7 @@ At this stage no `README.md` and no `.story.mdx` exist on disk. The component is
 When the API is stable enough to publish and you want AI agents to receive the rich payload:
 
 1. **Write `README.md`** — H1 with component name, canonical import code-fence, one-paragraph intro, H3 subsections only, compact and non-duplicative (see [README conventions](#readmemd-conventions) above).
-2. **Opt the component into the docs build** — add its name to `PILOT_COMPONENTS` in [scripts/build-component-docs.mjs](../scripts/build-component-docs.mjs).
+2. The component is now opted in automatically — the docs script globs `components/*` and `charts/*` and picks up any folder with `README.md` + `<Name>.types.ts` + `<Name>.stories.tsx`.
 3. **Generate the docs page** — `npm run build-component-docs`. It produces `ComponentName.story.mdx`. Never edit this file by hand — it is overwritten on every build.
 4. **Format & lint** — `npm run format` && `npm run lint`. Both must pass with no errors.
 5. **Visual check** in Storybook (`npm run dev`): open the component's Docs tab, confirm README content / PROP TYPES / CSS classes / Stories render as expected.

@@ -2,21 +2,47 @@ import fs from "node:fs";
 import path from "node:path";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
-const COMPONENTS_DIR = path.join(ROOT, "components");
 
-/** Components opted into the static-MDX pipeline. A component appears here
- * once its API is stable and we want remote MCP consumers to receive the
- * rich payload (full README, raw types, raw stories source). Components in
- * iteration stay out of this list and render via the default autodocs page. */
-const PILOT_COMPONENTS = [
-	"AppSelector",
-	"Chat",
-	"Details",
-	"ErrorBoundary",
-	"Markdown",
-	"Skeleton",
-	"TextArea",
-];
+/** Glob patterns for top-level component folders that may opt into the
+ * static-MDX pipeline. Mirrors the `stories` pattern in `.storybook/main.ts`
+ * so the same conventions cover both UI components and chart components.
+ *
+ * A component opts in by adding a `README.md` to its folder; the script
+ * automatically picks it up. Components without a `README.md` are skipped
+ * (they render via the default Storybook autodocs page until ready to ship). */
+const COMPONENT_GLOBS = ["components/*", "charts/*"];
+
+/** Discover all opt-in component directories: any folder matching one of
+ * COMPONENT_GLOBS that contains a `README.md` plus the three sources we
+ * inline into the docs page (`<Name>.types.ts`, `<Name>.stories.tsx`).
+ *
+ * Internal helpers without stories (e.g. `charts/Chart` — the shared
+ * ECharts wrapper used by other chart components) are intentionally skipped
+ * because they have no public docs surface. Sub-folders one level deeper
+ * (e.g. `components/Chat/components/AssistantMessage/`) are also skipped —
+ * only first-level dirs under each root are considered. */
+const discoverComponentDirs = () => {
+	const dirs = [];
+	for (const pattern of COMPONENT_GLOBS) {
+		const [parent] = pattern.split("/");
+		const parentPath = path.join(ROOT, parent);
+		if (!fs.existsSync(parentPath)) continue;
+		for (const entry of fs.readdirSync(parentPath, { withFileTypes: true })) {
+			if (!entry.isDirectory()) continue;
+			const dir = path.join(parentPath, entry.name);
+			const componentName = entry.name;
+			const requiredSources = [
+				path.join(dir, "README.md"),
+				path.join(dir, `${componentName}.types.ts`),
+				path.join(dir, `${componentName}.stories.tsx`),
+			];
+			if (requiredSources.every((p) => fs.existsSync(p))) {
+				dirs.push({ dir, componentName });
+			}
+		}
+	}
+	return dirs;
+};
 
 const HEADER = `{/*
   AUTO-GENERATED — do not edit by hand.
@@ -96,8 +122,7 @@ ${escapeForMdxComment(storiesSource.trim())}
 </div>
 `;
 
-const buildOne = (componentName) => {
-	const dir = path.join(COMPONENTS_DIR, componentName);
+const buildOne = ({ dir, componentName }) => {
 	const readmePath = path.join(dir, "README.md");
 	const typesPath = path.join(dir, `${componentName}.types.ts`);
 	const storiesPath = path.join(dir, `${componentName}.stories.tsx`);
@@ -132,12 +157,19 @@ const buildOne = (componentName) => {
 };
 
 const main = () => {
-	for (const componentName of PILOT_COMPONENTS) {
+	const dirs = discoverComponentDirs();
+	if (dirs.length === 0) {
+		console.log(
+			"No components with README.md found under components/* or charts/*.",
+		);
+		return;
+	}
+	for (const entry of dirs) {
 		try {
-			const outPath = buildOne(componentName);
+			const outPath = buildOne(entry);
 			console.log(`✓ ${path.relative(ROOT, outPath)}`);
 		} catch (err) {
-			console.error(`✗ ${componentName}: ${err.message}`);
+			console.error(`✗ ${entry.componentName}: ${err.message}`);
 			process.exitCode = 1;
 		}
 	}

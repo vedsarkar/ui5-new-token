@@ -1,0 +1,147 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Run: npm run build-component-docs
+*/}
+
+import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import { Details } from "@/components/Details";
+import * as RadarChartStories from "./RadarChart.stories";
+
+<Meta of={RadarChartStories} />
+
+# RadarChart
+
+```tsx
+import { RadarChart } from "@reltio/design/components";
+```
+
+`RadarChart` renders a multi-axis polygon plot for **comparing several entities across the same set of metrics**. Each radial spoke is a metric (`indicators`), each filled polygon is one entity (`series`). Useful for at-a-glance comparison of source-system quality, profile completeness, etc. — situations where the absolute values matter less than the **shape** of each polygon.
+
+### Data shape
+
+- `indicators` defines the spokes — `{ name, max }` per metric. `max` is **per-axis** (different metrics can have different scales).
+- Each entry in `series` is `{ name, values }` where `values` is positional — index `i` aligns with `indicators[i]`. Mismatched lengths produce a malformed polygon.
+
+### Number of series
+
+Visually the chart works for ~2–5 polygons. Beyond that, overlapping fill becomes hard to read — switch to `BarChart` with grouped bars instead.
+
+### Units
+
+`units` is a free-form suffix for tooltip values (`"%"`, `" pts"`, `"ms"`). Tooltip shows the original value, not the per-axis-normalized one.
+
+### See also
+
+- [Apache ECharts — Radar series](https://echarts.apache.org/en/option.html#series-radar) — the underlying option schema
+
+<SectionHeading>Prop types</SectionHeading>
+
+<ArgTypes />
+
+{/* __RAW_TYPES_SOURCE__
+import type { HtmlProps } from "@/utils/types";
+
+export type RadarChartIndicator = {
+	/** Axis label. *\/
+	name: string;
+
+	/** Maximum value for this axis. *\/
+	max: number;
+};
+
+export type RadarChartSeries = {
+	/** Legend label for this data polygon. *\/
+	name: string;
+
+	/** Values for each indicator axis, in the same order as `indicators`. *\/
+	values: number[];
+};
+
+export type RadarChartProps = HtmlProps<
+	"div",
+	{
+		/** Radar axes definition. Each entry adds one spoke to the chart. *\/
+		indicators?: RadarChartIndicator[];
+
+		/** Data polygons to plot. Each entry renders one filled area. *\/
+		series?: RadarChartSeries[];
+
+		/**
+		 * Unit suffix appended to tooltip values.
+		 * Examples: "ms", "%", " pts"
+		 *\/
+		units?: string;
+	}
+>;
+*/}
+
+<Details>
+	<summary>CSS classes</summary>
+
+Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
+
+- `.reltio_RadarChart_root`
+- `.reltio_RadarChart_overlay`
+
+</Details>
+
+{/* __RAW_STORIES_SOURCE__
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
+import preview from "@/.storybook/preview";
+import { RadarChart } from "./RadarChart";
+import cssClasses from "./RadarChart.module.css";
+
+const indicators = [
+	{ name: "Completeness", max: 100 },
+	{ name: "Accuracy", max: 100 },
+	{ name: "Timeliness", max: 100 },
+	{ name: "Uniqueness", max: 100 },
+	{ name: "Consistency", max: 100 },
+];
+
+const meta = preview.meta({
+	title: "Charts/RadarChart",
+	component: RadarChart,
+	parameters: {
+		layout: "fullscreen",
+		cssClasses,
+	},
+	decorators: [FullscreenDecorator],
+	args: {
+		indicators,
+		series: [{ name: "Source A", values: [90, 75, 85, 60, 70] }],
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({});
+
+export const MultipleSeries = meta.story({
+	args: {
+		series: [
+			{ name: "Source A", values: [90, 75, 85, 60, 70] },
+			{ name: "Source B", values: [65, 90, 55, 85, 80] },
+			{ name: "Source C", values: [70, 60, 90, 75, 95] },
+		],
+	},
+});
+
+export const WithUnits = meta.story({
+	args: {
+		units: "%",
+	},
+});
+
+export const Empty = meta.story({
+	args: {
+		series: [],
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

@@ -1,0 +1,855 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Run: npm run build-component-docs
+*/}
+
+import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import { Details } from "@/components/Details";
+import * as SetOverlapChartStories from "./SetOverlapChart.stories";
+
+<Meta of={SetOverlapChartStories} />
+
+# SetOverlapChart
+
+```tsx
+import { SetOverlapChart } from "@reltio/design/components";
+```
+
+`SetOverlapChart` is an **UpSet-style** diagram for visualizing how records overlap across multiple sets — typically source systems contributing to the same entity. It composes three coordinated sub-charts: a **horizontal set bar** on the left (size of each set), a **dot matrix** in the middle (which sets each intersection covers), and a **vertical intersection bar** at the top (size of each intersection).
+
+Built with custom SVG and `d3-scale`, **not ECharts** — UpSet does not map cleanly to a standard chart series, and the coordinated-axis interaction across the three sub-charts requires shared scales.
+
+### Two combination modes
+
+The `mode` prop selects how the input data is interpreted:
+
+- `"intersection"` — counts in `intersections[].size` are **overlapping**. Each `[A, B]` intersection counts records present in **both** A and B (regardless of whether they are also in C). Hover highlights at the **element level** — hovering an element propagates the highlight across every chart that contains that element.
+- `"distinctIntersection"` — counts are **mutually exclusive**. Each `[A, B]` intersection counts records present in **exactly** A and B and nowhere else. Hover highlights at the **structural level** — hovering an intersection highlights the corresponding row in the matrix only.
+
+The two modes share the same TypeScript types but require **differently-shaped data**. A dataset built for `"intersection"` will look wrong if rendered with `"distinctIntersection"` and vice versa — pick the mode that matches how your aggregation produced the counts upstream.
+
+### Data shape
+
+- `sets` — `{ name, size, elements? }`. `elements` is required for element-level hover in `"intersection"` mode.
+- `intersections` — `{ sets: string[], size, elements? }`. `sets` lists the names participating in the intersection (order is treated as a set, not a sequence).
+
+### Sizing
+
+The chart fills its container width and height. SAP Fiori-style sizing — wrap in a parent with explicit dimensions:
+
+```tsx
+<SetOverlapChart sets={sets} intersections={intersections} mode="intersection" style={{ width: 900, height: 500 }} />
+```
+
+### See also
+
+- [UpSet plot — original paper](https://upset.app/) — the visualization technique this chart implements
+- [`d3-scale`](https://github.com/d3/d3-scale) — the scale primitives used to coordinate the three sub-charts
+
+<SectionHeading>Prop types</SectionHeading>
+
+<ArgTypes />
+
+{/* __RAW_TYPES_SOURCE__
+import type { HtmlProps } from "@/utils/types";
+
+/**
+ * Props for the SetOverlapChart component.
+ *
+ * Renders an UpSet-style set overlap visualization as a custom SVG
+ * (no ECharts). The chart is composed of three coordinated sub-charts:
+ * vertical intersection bars, a dot matrix, and horizontal set bars.
+ *
+ * The two supported modes (`"intersection"` and `"distinctIntersection"`)
+ * require **different data shapes** despite sharing the same TypeScript
+ * types — see `SetOverlapChartMode` and individual prop docs for details.
+ *\/
+export type SetOverlapChartProps = HtmlProps<
+	"div",
+	{
+		/**
+		 * Intersection columns to visualize. Each entry becomes a vertical bar
+		 * in the intersection chart and a column of dots in the matrix.
+		 *
+		 * **Data requirements vary by mode:**
+		 * - `"intersection"` — `elements` must be populated with record identifiers
+		 * - `"distinctIntersection"` — `elements` should be empty (`[]`)
+		 *\/
+		intersections: Intersection[];
+
+		/**
+		 * Sets to be visualized. Each entry becomes a horizontal
+		 * bar in the set chart and a row of dots in the matrix.
+		 *
+		 * **Data requirements vary by mode:**
+		 * - `"intersection"` — `elements` must be populated with record identifiers
+		 * - `"distinctIntersection"` — `elements` should be empty (`[]`)
+		 *\/
+		sets: DataSet[];
+
+		/**
+		 * Combination semantics for intersection columns.
+		 * Controls how hover highlighting is computed and what data fields are used.
+		 *
+		 * - `"intersection"` — overlapping counts; hover uses element-level filtering
+		 * - `"distinctIntersection"` — mutually exclusive counts; hover uses structural matching
+		 *
+		 * The two modes are **not interchangeable** with the same data.
+		 * @default "intersection"
+		 *\/
+		mode?: SetOverlapChartMode;
+
+		/**
+		 * Label text rendered alongside the intersection chart Y-axis.
+		 * Examples: `"Profile count"`, `"Record count"`
+		 *\/
+		intersectionChartAxisLabel?: string;
+
+		/**
+		 * Label text rendered alongside the set chart X-axis.
+		 * Examples: `"Set Size"`, `"Source system"`
+		 *\/
+		setsChartAxisLabel?: string;
+	}
+>;
+
+/**
+ * A single intersection column in the chart plot.
+ *
+ * Represents a combination of one or more sets. In `INTERSECTION` mode
+ * the `elements` array drives hover highlighting; in `DISTINCT_INTERSECTION`
+ * mode only `sets` property is used. Identity is derived from array position.
+ *\/
+export type Intersection = {
+	/** Names of the sets that participate in this intersection (e.g. `["SAP", "Oracle"]`). *\/
+	sets: string[];
+
+	/** Number of records in this intersection. Determines bar height. *\/
+	size: number;
+
+	/**
+	 * Record identifiers belonging to this intersection.
+	 * - **`"intersection"` mode** — must be populated; used for element-level hover filtering
+	 * - **`"distinctIntersection"` mode** — should be `[]`; hover uses structural matching instead
+	 *\/
+	elements: string[];
+};
+
+/**
+ * A single set in the chart plot.
+ *
+ * Each set appears as a row in the matrix and a horizontal bar in the
+ * set chart. The `name` must match the strings used in `Intersection.sets`.
+ *\/
+export type DataSet = {
+	/** Display name and join key — must match values in `Intersection.sets`. *\/
+	name: string;
+
+	/** Total number of records in this set. Determines bar width. *\/
+	size: number;
+
+	/**
+	 * Record identifiers belonging to this set.
+	 * - **`"intersection"` mode** — must be populated; used for element-level hover filtering
+	 * - **`"distinctIntersection"` mode** — should be `[]`; hover uses structural matching instead
+	 *\/
+	elements: string[];
+};
+
+/**
+ * Combination semantics for the UpSet plot.
+ *
+ * Given a combination mask over sets [A, B, C] that selects A and B:
+ *
+ * - **`"intersection"`** — Inclusive intersection semantics.
+ *   `⋂ selectedSets` — counts elements in A ∩ B, regardless of C.
+ *   An element in A ∩ B ∩ C is counted in the A+B column AND the A+B+C
+ *   column (overlapping). Hover computation is O(E_i × E_h) per bar —
+ *   may cause lag with large data.
+ *
+ * - **`"distinctIntersection"`** — Exact-region semantics.
+ *   `(⋂ selectedSets) \ (⋃ nonSelectedSets)` — counts elements in
+ *   A ∩ B ∩ ¬C. An element is counted only in the column that matches
+ *   its precise set membership. Hover computation is O(S) per bar,
+ *   independent of dataset size.
+ *\/
+export type SetOverlapChartMode = "distinctIntersection" | "intersection";
+*/}
+
+<Details>
+	<summary>CSS classes</summary>
+
+Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
+
+- `.reltio_SetOverlapChart_root`
+- `.reltio_SetOverlapChart_svg`
+- `.reltio_SetOverlapChart_overlay`
+
+</Details>
+
+{/* __RAW_STORIES_SOURCE__
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
+import preview from "@/.storybook/preview";
+import { SetOverlapChart } from "./SetOverlapChart";
+import cssClasses from "./SetOverlapChart.module.css";
+import type { DataSet, Intersection } from "./SetOverlapChart.types";
+
+const defaultSets: DataSet[] = [
+	{
+		name: "SAP",
+		size: 6,
+		elements: [
+			"record_1",
+			"record_2",
+			"record_3",
+			"record_4",
+			"record_5",
+			"record_6",
+		],
+	},
+	{
+		name: "Oracle",
+		size: 4,
+		elements: ["record_1", "record_5", "record_7", "record_8"],
+	},
+	{
+		name: "LegacyMDM",
+		size: 5,
+		elements: ["record_2", "record_3", "record_7", "record_9", "record_10"],
+	},
+	{
+		name: "ServiceNow",
+		size: 4,
+		elements: ["record_4", "record_9", "record_11", "record_12"],
+	},
+];
+
+const defaultIntersections: Intersection[] = [
+	{
+		sets: ["SAP"],
+		size: 6,
+		elements: [
+			"record_1",
+			"record_2",
+			"record_3",
+			"record_4",
+			"record_5",
+			"record_6",
+		],
+	},
+	{
+		sets: ["LegacyMDM"],
+		size: 5,
+		elements: ["record_2", "record_3", "record_7", "record_9", "record_10"],
+	},
+	{
+		sets: ["Oracle"],
+		size: 4,
+		elements: ["record_1", "record_5", "record_7", "record_8"],
+	},
+	{
+		sets: ["ServiceNow"],
+		size: 4,
+		elements: ["record_4", "record_9", "record_11", "record_12"],
+	},
+	{
+		sets: ["SAP", "Oracle"],
+		size: 2,
+		elements: ["record_1", "record_5"],
+	},
+	{
+		sets: ["SAP", "LegacyMDM"],
+		size: 2,
+		elements: ["record_2", "record_3"],
+	},
+	{
+		sets: ["SAP", "LegacyMDM", "ServiceNow"],
+		size: 1,
+		elements: ["record_9"],
+	},
+];
+
+const meta = preview.meta({
+	title: "Charts/SetOverlapChart",
+	component: SetOverlapChart,
+	parameters: {
+		layout: "fullscreen",
+		cssClasses,
+	},
+	decorators: [FullscreenDecorator],
+	args: {
+		sets: defaultSets,
+		intersections: defaultIntersections,
+		mode: "intersection",
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({
+	args: {
+		sets: defaultSets,
+		intersections: defaultIntersections,
+	},
+});
+
+const setsMinimal: DataSet[] = [
+	{
+		name: "SAP",
+		size: 7,
+		elements: [
+			"record_1",
+			"record_2",
+			"record_3",
+			"record_4",
+			"record_5",
+			"record_6",
+			"record_7",
+		],
+	},
+	{
+		name: "Oracle",
+		size: 5,
+		elements: ["record_1", "record_5", "record_8", "record_9", "record_10"],
+	},
+	{
+		name: "LegacyMDM",
+		size: 6,
+		elements: [
+			"record_2",
+			"record_3",
+			"record_8",
+			"record_11",
+			"record_12",
+			"record_13",
+		],
+	},
+	{
+		name: "ServiceNow",
+		size: 5,
+		elements: ["record_4", "record_6", "record_11", "record_14", "record_15"],
+	},
+	{
+		name: "SFDC",
+		size: 4,
+		elements: ["record_7", "record_10", "record_13", "record_16"],
+	},
+];
+
+const intersectionsMininal: Intersection[] = [
+	{
+		sets: ["SAP"],
+		size: 7,
+		elements: [
+			"record_1",
+			"record_2",
+			"record_3",
+			"record_4",
+			"record_5",
+			"record_6",
+			"record_7",
+		],
+	},
+	{
+		sets: ["LegacyMDM"],
+		size: 6,
+		elements: [
+			"record_2",
+			"record_3",
+			"record_8",
+			"record_11",
+			"record_12",
+			"record_13",
+		],
+	},
+	{
+		sets: ["Oracle"],
+		size: 5,
+		elements: ["record_1", "record_5", "record_8", "record_9", "record_10"],
+	},
+	{
+		sets: ["ServiceNow"],
+		size: 5,
+		elements: ["record_4", "record_6", "record_11", "record_14", "record_15"],
+	},
+	{
+		sets: ["SFDC"],
+		size: 4,
+		elements: ["record_7", "record_10", "record_13", "record_16"],
+	},
+	{
+		sets: ["SAP", "Oracle"],
+		size: 2,
+		elements: ["record_1", "record_5"],
+	},
+	{
+		sets: ["SAP", "LegacyMDM"],
+		size: 2,
+		elements: ["record_2", "record_3"],
+	},
+	{
+		sets: ["SAP", "ServiceNow"],
+		size: 2,
+		elements: ["record_4", "record_6"],
+	},
+	{
+		sets: ["Oracle", "LegacyMDM"],
+		size: 1,
+		elements: ["record_8"],
+	},
+	{
+		sets: ["Oracle", "SFDC"],
+		size: 1,
+		elements: ["record_10"],
+	},
+];
+
+export const IntersectionMode = meta.story({
+	args: {
+		sets: setsMinimal,
+		intersections: intersectionsMininal,
+		mode: "intersection",
+	},
+});
+
+const setsDistinct: DataSet[] = [
+	{ name: "SAP", size: 355300, elements: [] },
+	{ name: "Oracle", size: 255200, elements: [] },
+	{ name: "LegacyMDM", size: 209100, elements: [] },
+	{ name: "ServiceNow", size: 205500, elements: [] },
+	{ name: "SFDC", size: 205500, elements: [] },
+];
+
+const intersectionsDistinct: Intersection[] = [
+	{ sets: ["SAP"], size: 86300, elements: [] },
+	{ sets: ["Oracle"], size: 52900, elements: [] },
+	{ sets: ["SAP", "Oracle"], size: 34200, elements: [] },
+	{ sets: ["SAP", "LegacyMDM"], size: 57400, elements: [] },
+	{ sets: ["Oracle", "LegacyMDM"], size: 34100, elements: [] },
+	{ sets: ["ServiceNow", "SFDC", "SAP"], size: 57900, elements: [] },
+	{ sets: ["ServiceNow", "SFDC", "Oracle"], size: 33800, elements: [] },
+	{ sets: ["ServiceNow", "SFDC", "SAP", "Oracle"], size: 25600, elements: [] },
+	{
+		sets: ["ServiceNow", "SFDC", "SAP", "LegacyMDM"],
+		size: 43000,
+		elements: [],
+	},
+	{
+		sets: ["ServiceNow", "SFDC", "SAP", "Oracle", "LegacyMDM"],
+		size: 21500,
+		elements: [],
+	},
+];
+
+export const DistinctIntersectionMode = meta.story({
+	args: {
+		sets: setsDistinct,
+		intersections: intersectionsDistinct,
+		mode: "distinctIntersection",
+	},
+});
+
+const setsComplex: DataSet[] = [
+	{
+		name: "SAP",
+		size: 17,
+		elements: [
+			"record_1",
+			"record_2",
+			"record_3",
+			"record_5",
+			"record_6",
+			"record_7",
+			"record_8",
+			"record_9",
+			"record_10",
+			"record_11",
+			"record_12",
+			"record_13",
+			"record_14",
+			"record_15",
+			"record_16",
+			"record_18",
+			"record_19",
+		],
+	},
+	{
+		name: "Oracle",
+		size: 9,
+		elements: [
+			"record_1",
+			"record_6",
+			"record_8",
+			"record_10",
+			"record_11",
+			"record_13",
+			"record_17",
+			"record_18",
+			"record_19",
+		],
+	},
+	{
+		name: "LegacyMDM",
+		size: 15,
+		elements: [
+			"record_1",
+			"record_2",
+			"record_4",
+			"record_7",
+			"record_8",
+			"record_9",
+			"record_10",
+			"record_11",
+			"record_13",
+			"record_14",
+			"record_15",
+			"record_16",
+			"record_17",
+			"record_18",
+			"record_19",
+		],
+	},
+	{
+		name: "ServiceNow",
+		size: 12,
+		elements: [
+			"record_2",
+			"record_3",
+			"record_4",
+			"record_5",
+			"record_7",
+			"record_9",
+			"record_12",
+			"record_14",
+			"record_15",
+			"record_16",
+			"record_20",
+			"record_21",
+		],
+	},
+	{
+		name: "SFDC",
+		size: 5,
+		elements: ["record_5", "record_6", "record_12", "record_20", "record_21"],
+	},
+	{
+		name: "CRM",
+		size: 5,
+		elements: ["record_4", "record_6", "record_9", "record_16", "record_21"],
+	},
+];
+
+const intersectionsComplex: Intersection[] = [
+	{
+		sets: ["SAP"],
+		size: 17,
+		elements: [
+			"record_1",
+			"record_2",
+			"record_3",
+			"record_5",
+			"record_6",
+			"record_7",
+			"record_8",
+			"record_9",
+			"record_10",
+			"record_11",
+			"record_12",
+			"record_13",
+			"record_14",
+			"record_15",
+			"record_16",
+			"record_18",
+			"record_19",
+		],
+	},
+	{
+		sets: ["LegacyMDM"],
+		size: 15,
+		elements: [
+			"record_1",
+			"record_2",
+			"record_4",
+			"record_7",
+			"record_8",
+			"record_9",
+			"record_10",
+			"record_11",
+			"record_13",
+			"record_14",
+			"record_15",
+			"record_16",
+			"record_17",
+			"record_18",
+			"record_19",
+		],
+	},
+	{
+		sets: ["LegacyMDM", "SAP"],
+		size: 13,
+		elements: [
+			"record_1",
+			"record_2",
+			"record_7",
+			"record_8",
+			"record_9",
+			"record_10",
+			"record_11",
+			"record_13",
+			"record_14",
+			"record_15",
+			"record_16",
+			"record_18",
+			"record_19",
+		],
+	},
+	{
+		sets: ["ServiceNow"],
+		size: 12,
+		elements: [
+			"record_2",
+			"record_3",
+			"record_4",
+			"record_5",
+			"record_7",
+			"record_9",
+			"record_12",
+			"record_14",
+			"record_15",
+			"record_16",
+			"record_20",
+			"record_21",
+		],
+	},
+	{
+		sets: ["Oracle"],
+		size: 9,
+		elements: [
+			"record_1",
+			"record_6",
+			"record_8",
+			"record_10",
+			"record_11",
+			"record_13",
+			"record_17",
+			"record_18",
+			"record_19",
+		],
+	},
+	{
+		sets: ["ServiceNow", "SAP"],
+		size: 9,
+		elements: [
+			"record_2",
+			"record_3",
+			"record_5",
+			"record_7",
+			"record_9",
+			"record_12",
+			"record_14",
+			"record_15",
+			"record_16",
+		],
+	},
+	{
+		sets: ["Oracle", "LegacyMDM"],
+		size: 8,
+		elements: [
+			"record_1",
+			"record_8",
+			"record_10",
+			"record_11",
+			"record_13",
+			"record_17",
+			"record_18",
+			"record_19",
+		],
+	},
+	{
+		sets: ["Oracle", "SAP"],
+		size: 8,
+		elements: [
+			"record_1",
+			"record_6",
+			"record_8",
+			"record_10",
+			"record_11",
+			"record_13",
+			"record_18",
+			"record_19",
+		],
+	},
+	{
+		sets: ["Oracle", "LegacyMDM", "SAP"],
+		size: 7,
+		elements: [
+			"record_1",
+			"record_8",
+			"record_10",
+			"record_11",
+			"record_13",
+			"record_18",
+			"record_19",
+		],
+	},
+	{
+		sets: ["ServiceNow", "LegacyMDM"],
+		size: 7,
+		elements: [
+			"record_2",
+			"record_4",
+			"record_7",
+			"record_9",
+			"record_14",
+			"record_15",
+			"record_16",
+		],
+	},
+	{
+		sets: ["ServiceNow", "LegacyMDM", "SAP"],
+		size: 6,
+		elements: [
+			"record_2",
+			"record_7",
+			"record_9",
+			"record_14",
+			"record_15",
+			"record_16",
+		],
+	},
+	{
+		sets: ["SFDC"],
+		size: 5,
+		elements: ["record_5", "record_6", "record_12", "record_20", "record_21"],
+	},
+	{
+		sets: ["CRM"],
+		size: 5,
+		elements: ["record_4", "record_6", "record_9", "record_16", "record_21"],
+	},
+	{
+		sets: ["ServiceNow", "SFDC"],
+		size: 4,
+		elements: ["record_5", "record_12", "record_20", "record_21"],
+	},
+	{
+		sets: ["ServiceNow", "CRM"],
+		size: 4,
+		elements: ["record_4", "record_9", "record_16", "record_21"],
+	},
+	{
+		sets: ["LegacyMDM", "CRM"],
+		size: 3,
+		elements: ["record_4", "record_9", "record_16"],
+	},
+	{
+		sets: ["ServiceNow", "LegacyMDM", "CRM"],
+		size: 3,
+		elements: ["record_4", "record_9", "record_16"],
+	},
+	{
+		sets: ["SFDC", "SAP"],
+		size: 3,
+		elements: ["record_5", "record_6", "record_12"],
+	},
+	{
+		sets: ["CRM", "SAP"],
+		size: 3,
+		elements: ["record_6", "record_9", "record_16"],
+	},
+	{
+		sets: ["ServiceNow", "SFDC", "SAP"],
+		size: 2,
+		elements: ["record_5", "record_12"],
+	},
+	{
+		sets: ["SFDC", "CRM"],
+		size: 2,
+		elements: ["record_6", "record_21"],
+	},
+	{
+		sets: ["LegacyMDM", "CRM", "SAP"],
+		size: 2,
+		elements: ["record_9", "record_16"],
+	},
+	{
+		sets: ["ServiceNow", "CRM", "SAP"],
+		size: 2,
+		elements: ["record_9", "record_16"],
+	},
+	{
+		sets: ["ServiceNow", "LegacyMDM", "CRM", "SAP"],
+		size: 2,
+		elements: ["record_9", "record_16"],
+	},
+	{
+		sets: ["Oracle", "SFDC"],
+		size: 1,
+		elements: ["record_6"],
+	},
+	{
+		sets: ["Oracle", "SFDC", "SAP"],
+		size: 1,
+		elements: ["record_6"],
+	},
+	{
+		sets: ["Oracle", "CRM"],
+		size: 1,
+		elements: ["record_6"],
+	},
+	{
+		sets: ["Oracle", "SFDC", "CRM"],
+		size: 1,
+		elements: ["record_6"],
+	},
+	{
+		sets: ["SFDC", "CRM", "SAP"],
+		size: 1,
+		elements: ["record_6"],
+	},
+	{
+		sets: ["Oracle", "CRM", "SAP"],
+		size: 1,
+		elements: ["record_6"],
+	},
+	{
+		sets: ["Oracle", "SFDC", "CRM", "SAP"],
+		size: 1,
+		elements: ["record_6"],
+	},
+	{
+		sets: ["ServiceNow", "SFDC", "CRM"],
+		size: 1,
+		elements: ["record_21"],
+	},
+];
+
+export const HorizontalScrolling = meta.story({
+	args: {
+		sets: setsComplex,
+		intersections: intersectionsComplex,
+	},
+});
+
+export const WithAxisLabels = meta.story({
+	args: {
+		sets: defaultSets,
+		intersections: defaultIntersections,
+		intersectionChartAxisLabel: "Profile count",
+		setsChartAxisLabel: "Set Size",
+	},
+});
+
+export const Empty = meta.story({
+	args: {
+		sets: [],
+		intersections: [],
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

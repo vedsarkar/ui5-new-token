@@ -1,0 +1,134 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Run: npm run build-component-docs
+*/}
+
+import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import { Details } from "@/components/Details";
+import * as GaugeChartStories from "./GaugeChart.stories";
+
+<Meta of={GaugeChartStories} />
+
+# GaugeChart
+
+```tsx
+import { GaugeChart } from "@reltio/design/components";
+```
+
+`GaugeChart` is a single-value progress dial — a half-circle showing how far `value` is along the `0…max` range. Use it for headline metrics where the position relative to a target matters more than the exact number (e.g. data-quality score, SLA compliance, resource utilization).
+
+### Scale & defaults
+
+`max` defaults to `100` so passing only `value` produces a percentage gauge. Override `max` for any other domain. The fill is `value / max` clamped to `[0, 1]`; the wrapper does not throw on out-of-range values, just visually clamps them.
+
+### Center label
+
+`label` is the small caption shown beneath the numeric value in the dial center (e.g. `"Data quality"`). The numeric value itself uses the same `formatWithUnits` helper as the rest of the chart family — pass `units` to add a suffix (`"%"`, `"ms"`, `" pts"`).
+
+### Empty / loading state
+
+Pass `value={undefined}` to render an empty dial (no fill, neutral color). For "still loading", switch the parent layout to a `Skeleton` instead of mounting the gauge with placeholder zeros — the gauge has no internal loading state.
+
+### See also
+
+- [Apache ECharts — Gauge series](https://echarts.apache.org/en/option.html#series-gauge) — the underlying option schema
+
+<SectionHeading>Prop types</SectionHeading>
+
+<ArgTypes />
+
+{/* __RAW_TYPES_SOURCE__
+import type { HtmlProps } from "@/utils/types";
+
+export type GaugeChartProps = HtmlProps<
+	"div",
+	{
+		/** Current metric value. *\/
+		value?: number;
+
+		/** Label displayed below the value in the center of the gauge. *\/
+		label?: string;
+
+		/**
+		 * Upper bound of the gauge scale. Fill percentage is `value / max`.
+		 * @default 100
+		 *\/
+		max?: number;
+
+		/**
+		 * Unit suffix appended to the center value display.
+		 * Examples: "%", "ms", " pts"
+		 *\/
+		units?: string;
+	}
+>;
+*/}
+
+<Details>
+	<summary>CSS classes</summary>
+
+Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
+
+- `.reltio_GaugeChart_root`
+- `.reltio_GaugeChart_overlay`
+
+</Details>
+
+{/* __RAW_STORIES_SOURCE__
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
+import preview from "@/.storybook/preview";
+import { GaugeChart } from "./GaugeChart";
+import cssClasses from "./GaugeChart.module.css";
+
+const meta = preview.meta({
+	title: "Charts/GaugeChart",
+	component: GaugeChart,
+	parameters: {
+		layout: "fullscreen",
+		cssClasses,
+	},
+	decorators: [FullscreenDecorator],
+	args: {
+		value: 72,
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({});
+
+export const WithLabel = meta.story({
+	args: {
+		value: 85,
+		label: "Quality Score",
+	},
+});
+
+export const CustomMax = meta.story({
+	args: {
+		value: 750,
+		max: 1000,
+		label: "Records",
+	},
+});
+
+export const WithUnits = meta.story({
+	args: {
+		value: 85,
+		label: "Quality",
+		units: "%",
+	},
+});
+
+export const Empty = meta.story({
+	args: {
+		value: undefined,
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

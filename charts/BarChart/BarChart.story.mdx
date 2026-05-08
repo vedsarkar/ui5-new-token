@@ -1,0 +1,205 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Run: npm run build-component-docs
+*/}
+
+import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import { Details } from "@/components/Details";
+import * as BarChartStories from "./BarChart.stories";
+
+<Meta of={BarChartStories} />
+
+# BarChart
+
+```tsx
+import { BarChart } from "@reltio/design/components";
+```
+
+`BarChart` renders a vertical-bar comparison of one or more series across a categorical X axis. It is a thin Reltio wrapper around the shared internal `Chart` (Apache ECharts) — you pass an array of row-objects + a category key + a list of series; the wrapper builds the `EChartsOption` and delegates rendering to `Chart`.
+
+### Data shape
+
+Each entry in `data` is a free-form object (e.g. one row per month). `xKey` selects (or extracts) the category label for that row, and `series` lists the keys to plot — every series produces one bar group at each X value.
+
+`xKey` accepts either a property name (string) or a function. The function form is useful when you need to format a date column, derive a label from multiple fields, or normalize values from different source systems before display.
+
+### Units
+
+`units` is a free-form suffix appended to Y-axis labels and tooltip values (`"ms"`, `"%"`, `" records"`, ...). Charts share the same `formatWithUnits` helper from `Chart`, so tooltips across the dashboard format consistently regardless of which chart type renders them.
+
+### Empty state
+
+If `data` is missing or empty, the chart renders an empty grid with a "No data" overlay instead of a broken zero-height canvas. Callers do not need to gate the component on data availability.
+
+### See also
+
+- [Apache ECharts — Bar series](https://echarts.apache.org/en/option.html#series-bar) — the underlying option schema (escape-hatched series options are intentionally not exposed by this wrapper)
+
+<SectionHeading>Prop types</SectionHeading>
+
+<ArgTypes />
+
+{/* __RAW_TYPES_SOURCE__
+import type { HtmlProps } from "@/utils/types";
+
+export type BarChartSeries = {
+	/** Data object key to plot as Y values *\/
+	key: string;
+
+	/** Legend label. Defaults to `key` if not provided. *\/
+	name?: string;
+};
+
+export type BarChartProps = HtmlProps<
+	"div",
+	{
+		/** Array of data objects. Each object represents one data point. *\/
+		data?: Record<string, unknown>[];
+
+		/**
+		 * Determines X-axis labels.
+		 * - **string**: property name for direct value lookup
+		 * - **function**: custom extraction and formatting in one step
+		 *\/
+		xKey: string | ((item: Record<string, unknown>) => string);
+
+		/** Data series to plot. Each entry renders one bar group. *\/
+		series: BarChartSeries[];
+
+		/**
+		 * Unit suffix appended to Y-axis labels and tooltip values.
+		 * Examples: "ms", "%", " records"
+		 *\/
+		units?: string;
+	}
+>;
+*/}
+
+<Details>
+	<summary>CSS classes</summary>
+
+Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
+
+- `.reltio_BarChart_root`
+- `.reltio_BarChart_overlay`
+
+</Details>
+
+{/* __RAW_STORIES_SOURCE__
+import { faker } from "@faker-js/faker";
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
+import preview from "@/.storybook/preview";
+import { BarChart } from "./BarChart";
+import cssClasses from "./BarChart.module.css";
+
+faker.seed(42);
+
+const sampleData = [
+	{ month: "Jan", sales: 820, returns: 120, profit: 700 },
+	{ month: "Feb", sales: 932, returns: 154, profit: 778 },
+	{ month: "Mar", sales: 901, returns: 131, profit: 770 },
+	{ month: "Apr", sales: 1034, returns: 190, profit: 844 },
+	{ month: "May", sales: 1290, returns: 230, profit: 1060 },
+	{ month: "Jun", sales: 1330, returns: 220, profit: 1110 },
+];
+
+const timestampData = [
+	{ ts: 1706745600000, queueSize: 42 },
+	{ ts: 1706832000000, queueSize: 58 },
+	{ ts: 1706918400000, queueSize: 35 },
+	{ ts: 1707004800000, queueSize: 71 },
+	{ ts: 1707091200000, queueSize: 63 },
+	{ ts: 1707177600000, queueSize: 49 },
+	{ ts: 1707264000000, queueSize: 55 },
+];
+
+const meta = preview.meta({
+	title: "Charts/BarChart",
+	component: BarChart,
+	parameters: {
+		layout: "fullscreen",
+		cssClasses,
+	},
+	decorators: [FullscreenDecorator],
+	args: {
+		data: sampleData,
+		xKey: "month",
+		series: [{ key: "sales", name: "Sales" }],
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({});
+
+export const MultipleSeries = meta.story({
+	args: {
+		series: [
+			{ key: "sales", name: "Sales" },
+			{ key: "returns", name: "Returns" },
+			{ key: "profit", name: "Profit" },
+		],
+	},
+});
+
+export const WithUnits = meta.story({
+	args: {
+		data: [
+			{ month: "Jan", latency: 145 },
+			{ month: "Feb", latency: 132 },
+			{ month: "Mar", latency: 178 },
+			{ month: "Apr", latency: 156 },
+			{ month: "May", latency: 121 },
+			{ month: "Jun", latency: 139 },
+		],
+		series: [{ key: "latency", name: "Avg Latency" }],
+		units: "ms",
+	},
+});
+
+export const FormattedXAxis = meta.story({
+	args: {
+		data: timestampData,
+		xKey: (item: Record<string, unknown>) =>
+			new Date(item.ts as number).toLocaleDateString("en-US", {
+				weekday: "short",
+				day: "numeric",
+				month: "short",
+			}),
+		series: [{ key: "queueSize", name: "Queue Size" }],
+	},
+});
+
+export const Empty = meta.story({
+	args: {
+		data: [],
+	},
+});
+
+const DAY_MS = 86_400_000;
+const denseData = Array.from({ length: 120 }, (_, i) => ({
+	date: new Date(Date.UTC(2025, 0, 1) + i * DAY_MS).toLocaleDateString(
+		"en-US",
+		{ month: "short", day: "numeric" },
+	),
+	requests: faker.number.int({ min: 800, max: 5000 }),
+	errors: faker.number.int({ min: 10, max: 300 }),
+}));
+
+export const DenseData = meta.story({
+	args: {
+		data: denseData,
+		xKey: "date",
+		series: [
+			{ key: "requests", name: "Requests" },
+			{ key: "errors", name: "Errors" },
+		],
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

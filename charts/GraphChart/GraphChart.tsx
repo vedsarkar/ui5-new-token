@@ -175,6 +175,7 @@ function buildGraphOption(
 	};
 }
 
+/** Node-link graph with force-directed or circular layout for entity-relationship and identity-graph views. */
 export const GraphChart = ({
 	nodes,
 	links,

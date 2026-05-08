@@ -1,0 +1,29 @@
+# LineChart
+
+```tsx
+import { LineChart } from "@reltio/design/components";
+```
+
+`LineChart` renders one or more time-series / cartesian lines from row-of-objects data. Like `BarChart`, it's a thin Reltio wrapper around the shared internal `Chart` (Apache ECharts) — you pass `data` + `xKey` + `series` and the wrapper builds the option object.
+
+### Data shape
+
+Each entry in `data` is a free-form object (e.g. one row per day). `xKey` selects (or extracts) the X-axis label per row; `series` lists the keys to plot as lines.
+
+`xKey` is `string | (item) => string` — pass a function when you need to format dates, combine fields, or normalize before display.
+
+### Smoothing & sampling
+
+The wrapper does not expose smoothing or sampling props; lines are rendered straight with default ECharts behavior. If you need stepped or smoothed lines, request the option via a small custom chart instead of forking this one — keeps the public surface minimal.
+
+### Units
+
+`units` is a free-form suffix for Y-axis labels and tooltip values, formatted via the shared `formatWithUnits` helper from `Chart`. Examples: `"ms"`, `"%"`, `" req/s"`.
+
+### Empty state
+
+Empty `data` renders the grid + a "No data" overlay automatically — no need to gate the component at the call site.
+
+### See also
+
+- [Apache ECharts — Line series](https://echarts.apache.org/en/option.html#series-line) — the underlying option schema

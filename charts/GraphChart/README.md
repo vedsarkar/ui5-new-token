@@ -1,0 +1,33 @@
+# GraphChart
+
+```tsx
+import { GraphChart } from "@reltio/design/components";
+```
+
+`GraphChart` renders a **node-link graph** — circles for entities, lines for relationships between them. Use it for entity-relationship explorers, identity graphs, lineage views with arbitrary topology. For strictly hierarchical or pipeline-shaped graphs prefer `Diagram` (auto-layout via dagre); use `GraphChart` when the topology is general / cyclic and you want the nodes to settle into a force-directed shape.
+
+### Data shape
+
+- `nodes` — `{ id, name, value?, category? }`. `id` is the link reference key. `value` is auto-normalized to a 20–60 px node radius. `category` groups nodes by color and produces a legend automatically.
+- `links` — `{ source, target, label?, value? }`. `source` / `target` reference node `id`. `value` drives line thickness (also auto-normalized).
+
+### Layout
+
+`layout` toggles between two algorithms:
+
+- `"force"` (default) — physics simulation. Nodes settle naturally based on link tension. Best for general topologies; the result is non-deterministic per mount but stable across re-renders of the same data.
+- `"circular"` — nodes arranged on a circle. Good for small graphs (≤30 nodes) where you want every node and link visible without panning.
+
+The wrapper does not expose force-simulation parameters; use `"force"` defaults or switch to a custom chart if you need more control.
+
+### Categories
+
+`category` is the natural grouping axis (e.g. entity type: `"person"`, `"organization"`, `"address"`). Nodes sharing a `category` get the same color from the theme palette and appear together in the auto-generated legend. Click the legend to filter by category.
+
+### Units
+
+`units` suffixes tooltip values where applicable (`"connections"`, `"score"`).
+
+### See also
+
+- [Apache ECharts — Graph series](https://echarts.apache.org/en/option.html#series-graph) — the underlying option schema (force / circular layout, label rich text, edge labels)

@@ -20,37 +20,7 @@ import type {
 } from "./SetOverlapChart.types";
 import { useSetOverlapChartSizes } from "./useSetOverlapChartSizes";
 
-/**
- * UpSet-style set overlap chart built with custom SVG and d3-scale.
- *
- * Visualizes how records overlap across multiple sets (source systems)
- * using three coordinated sub-charts: vertical intersection bars at the
- * top, a dot matrix in the middle, and horizontal set bars on the left.
- *
- * Supports two combination modes — `"intersection"` (overlapping counts,
- * element-level hover) and `"distinctIntersection"` (mutually exclusive
- * counts, structural hover). Each mode requires differently shaped data
- * despite sharing the same TypeScript types.
- *
- * @example
- * ```tsx
- * const sets = [
- *   { name: "SAP", size: 6, elements: ["r1", "r2"] },
- *   { name: "Oracle", size: 4, elements: ["r1", "r3"] },
- * ];
- * const intersections = [
- *   { sets: ["SAP"], size: 6, elements: ["r1", "r2"] },
- *   { sets: ["SAP", "Oracle"], size: 2, elements: ["r1"] },
- * ];
- *
- * <SetOverlapChart
- *   sets={sets}
- *   intersections={intersections}
- *   mode="intersection"
- *   style={{ width: 900, height: 500 }}
- * />
- * ```
- */
+/** UpSet-style set overlap chart for visualizing how records overlap across multiple sets (source systems, contributors). */
 export const SetOverlapChart = ({
 	intersections = [],
 	sets = [],

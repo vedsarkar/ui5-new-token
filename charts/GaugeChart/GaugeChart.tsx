@@ -56,6 +56,7 @@ function buildGaugeOption(
 	};
 }
 
+/** Single-value progress dial — half-circle showing how far `value` is along the `0…max` range. */
 export const GaugeChart = ({
 	value,
 	label,

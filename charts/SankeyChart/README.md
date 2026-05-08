@@ -1,0 +1,26 @@
+# SankeyChart
+
+```tsx
+import { SankeyChart } from "@reltio/design/components";
+```
+
+`SankeyChart` renders a flow diagram where each labeled **node** is connected to other nodes by **ribbons** whose width is proportional to the flow value. Use it to show how records / users / volume flow between stages or systems — match-merge pipelines, source-system contributions across attributes, attribution by channel.
+
+### Data shape
+
+- `nodes` — flat list of `{ name }`. The `name` is the visual label **and** the identifier used in links. Names must be unique within the diagram.
+- `links` — `{ source, target, value }`. `source` and `target` reference node `name`s. `value` drives the ribbon width.
+
+If a link references a node name that is not in `nodes`, ECharts silently drops it — keep the two arrays in sync.
+
+### Layout
+
+ECharts auto-layouts the nodes into columns based on the link graph topology. The wrapper does not expose layout direction or node ordering — let the algorithm decide. If you need a fixed ordering, request a more specialized chart instead of escape-hatching this one.
+
+### Units
+
+`units` suffixes tooltip values for both nodes (total flow through the node) and links (flow on that ribbon). Examples: `"records"`, `"users"`, `"MB"`.
+
+### See also
+
+- [Apache ECharts — Sankey series](https://echarts.apache.org/en/option.html#series-sankey) — the underlying option schema

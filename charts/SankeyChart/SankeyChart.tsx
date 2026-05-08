@@ -44,6 +44,7 @@ function buildSankeyOption(
 	};
 }
 
+/** Flow diagram with labeled nodes connected by ribbons whose width is proportional to the flow value. */
 export const SankeyChart = ({
 	nodes,
 	links,

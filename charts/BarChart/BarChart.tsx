@@ -72,6 +72,7 @@ function buildBarOption(
 	};
 }
 
+/** Vertical-bar comparison of one or more series across a categorical X axis. */
 export const BarChart = ({
 	data,
 	xKey,

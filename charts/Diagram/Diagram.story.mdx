@@ -1,0 +1,270 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Run: npm run build-component-docs
+*/}
+
+import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import { Details } from "@/components/Details";
+import * as DiagramStories from "./Diagram.stories";
+
+<Meta of={DiagramStories} />
+
+# Diagram
+
+```tsx
+import { Diagram } from "@reltio/design/components";
+```
+
+`Diagram` renders a **node-edge diagram with auto-layout** — best suited for hierarchical or pipeline-shaped graphs (DAG, workflow, lineage, decision tree). Built on top of [`@xyflow/react`](https://reactflow.dev/) for the canvas + [`dagre`](https://github.com/dagrejs/dagre) for the layout algorithm. For general / cyclic topologies prefer `GraphChart` (force-directed).
+
+### Data shape
+
+- `nodes` — `{ id, type?, label?, icon?, content?, data? }`. `id` is the edge reference key. `content` is **Markdown** rendered inside the node body via Reltio's `Markdown` component, so you can embed code blocks, tables, links, etc. directly. `icon` is a leading emoji or text glyph in the header.
+- `edges` — `{ source, target, label? }`. `source` / `target` reference node `id`.
+
+### Built-in node type: `markdown`
+
+By default every node is rendered with the bundled `markdown` node type — a styled card with header (`icon` + `label`) and Markdown body (`content`). If you need a different visual for some nodes, set `type: "yourType"` on the node and pass `nodeTypes={{ yourType: YourNodeComponent }}`. Built-in `markdown` is preserved unless you explicitly override it.
+
+### Layout direction
+
+`layout`:
+
+- `"top-to-bottom"` (default) — parents above children. Natural for workflows, decision trees, mostly-linear pipelines.
+- `"left-to-right"` — parents to the left. Better for wide hierarchies that would otherwise overflow vertically.
+
+The dagre algorithm computes node positions deterministically based on the edge graph; the wrapper does not expose dagre-specific tuning props. If you need different spacing or ranking, fork the layout hook (`useAutoLayout`) rather than escape-hatching from the call site.
+
+### Empty state
+
+If `nodes` is empty or undefined, the diagram renders a "No data" overlay over the empty canvas — same convention as the chart family.
+
+### See also
+
+- [`@xyflow/react`](https://reactflow.dev/) — the underlying React Flow canvas (interactivity, controls, mini-map are inherited)
+- [`dagre`](https://github.com/dagrejs/dagre) — the layout algorithm used by `useAutoLayout`
+
+<SectionHeading>Prop types</SectionHeading>
+
+<ArgTypes />
+
+{/* __RAW_TYPES_SOURCE__
+import type { NodeProps } from "@xyflow/react";
+import type { ComponentType } from "react";
+import type { HtmlProps } from "@/utils/types";
+
+export type DiagramLayout = "top-to-bottom" | "left-to-right";
+
+export type DiagramNode = {
+	/** Unique node identifier. *\/
+	id: string;
+
+	/** Node type — determines which component renders this node. Defaults to `"markdown"`. *\/
+	type?: string;
+
+	/** Display label shown in the node header. *\/
+	label?: string;
+
+	/** Emoji or text icon shown before the label. *\/
+	icon?: string;
+
+	/** Markdown content rendered in the node body via the Markdown component. *\/
+	content?: string;
+
+	/** Arbitrary data passed to custom node types. *\/
+	data?: Record<string, unknown>;
+};
+
+export type DiagramEdge = {
+	/** Source node id. Must match a node's `id`. *\/
+	source: string;
+
+	/** Target node id. Must match a node's `id`. *\/
+	target: string;
+
+	/** Text label displayed on the edge. *\/
+	label?: string;
+};
+
+export type DiagramProps = HtmlProps<
+	"div",
+	{
+		/** Array of diagram nodes. *\/
+		nodes?: DiagramNode[];
+
+		/** Array of edges connecting nodes by id. *\/
+		edges?: DiagramEdge[];
+
+		/**
+		 * Layout direction for the dagre algorithm.
+		 * - `"top-to-bottom"` — parent nodes above children (default)
+		 * - `"left-to-right"` — parent nodes to the left of children
+		 * @default "top-to-bottom"
+		 *\/
+		layout?: DiagramLayout;
+
+		/**
+		 * Custom node type components merged with the built-in `markdown` type.
+		 * Keys are type names, values are React components receiving `NodeProps`.
+		 *\/
+		nodeTypes?: Record<string, ComponentType<NodeProps>>;
+	}
+>;
+*/}
+
+<Details>
+	<summary>CSS classes</summary>
+
+Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
+
+- `.reltio_Diagram_root`
+- `.reltio_Diagram_flow`
+- `.reltio_Diagram_overlay`
+
+</Details>
+
+{/* __RAW_STORIES_SOURCE__
+import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
+import preview from "@/.storybook/preview";
+import { Diagram } from "./Diagram";
+import cssClasses from "./Diagram.module.css";
+import type { DiagramEdge, DiagramNode } from "./Diagram.types";
+
+const workflowNodes: DiagramNode[] = [
+	{ id: "start", label: "Start", icon: "▶️" },
+	{
+		id: "validate",
+		label: "Validate Input",
+		icon: "🔍",
+		content: "- Check required fields\n- Sanitize strings\n- Validate types",
+	},
+	{
+		id: "process",
+		label: "Process Data",
+		icon: "⚙️",
+		content: "Transform and enrich\nthe incoming payload",
+	},
+	{
+		id: "store",
+		label: "Store",
+		icon: "💾",
+		content: "Persist to **PostgreSQL**\ndatabase",
+	},
+	{
+		id: "notify",
+		label: "Send Notification",
+		icon: "📧",
+		content: "Email + push notification",
+	},
+	{ id: "end", label: "Done", icon: "✅" },
+];
+
+const workflowEdges: DiagramEdge[] = [
+	{ source: "start", target: "validate" },
+	{ source: "validate", target: "process", label: "valid" },
+	{ source: "process", target: "store" },
+	{ source: "store", target: "notify" },
+	{ source: "notify", target: "end" },
+];
+
+const erNodes: DiagramNode[] = [
+	{
+		id: "customer",
+		label: "Customer",
+		icon: "📋",
+		content:
+			"- id: `number`\n- name: `string`\n- email: `string`\n- phone: `string`",
+	},
+	{
+		id: "order",
+		label: "Order",
+		icon: "🛒",
+		content:
+			"- id: `number`\n- total: `number`\n- status: `string`\n- createdAt: `Date`",
+	},
+	{
+		id: "product",
+		label: "Product",
+		icon: "📦",
+		content:
+			"- id: `number`\n- name: `string`\n- price: `number`\n- sku: `string`",
+	},
+	{
+		id: "payment",
+		label: "Payment",
+		icon: "💳",
+		content: "- id: `number`\n- amount: `number`\n- method: `string`",
+	},
+];
+
+const erEdges: DiagramEdge[] = [
+	{ source: "customer", target: "order", label: "places" },
+	{ source: "order", target: "product", label: "contains" },
+	{ source: "order", target: "payment", label: "paid via" },
+];
+
+const simpleNodes: DiagramNode[] = [
+	{ id: "a", label: "Decision" },
+	{ id: "b", label: "Option A" },
+	{ id: "c", label: "Option B" },
+	{ id: "d", label: "Result" },
+];
+
+const simpleEdges: DiagramEdge[] = [
+	{ source: "a", target: "b", label: "yes" },
+	{ source: "a", target: "c", label: "no" },
+	{ source: "b", target: "d" },
+	{ source: "c", target: "d" },
+];
+
+const meta = preview.meta({
+	title: "Charts/Diagram",
+	component: Diagram,
+	parameters: {
+		layout: "fullscreen",
+		cssClasses,
+	},
+	decorators: [FullscreenDecorator],
+	args: {
+		nodes: workflowNodes,
+		edges: workflowEdges,
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({
+	args: {
+		nodes: erNodes,
+		edges: erEdges,
+	},
+});
+
+export const WithMarkdownContent = meta.story({});
+
+export const LeftToRight = meta.story({
+	args: {
+		layout: "left-to-right",
+	},
+});
+
+export const LabelOnly = meta.story({
+	args: {
+		nodes: simpleNodes,
+		edges: simpleEdges,
+	},
+});
+
+export const Empty = meta.story({
+	args: {
+		nodes: [],
+		edges: [],
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

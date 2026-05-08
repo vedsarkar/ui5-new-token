@@ -49,6 +49,7 @@ function buildDonutOption(
 	};
 }
 
+/** Segmented ring chart showing each item's proportional share of the total. */
 export const DonutChart = ({
 	data,
 	units,

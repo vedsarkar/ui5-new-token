@@ -48,6 +48,7 @@ function buildRadarOption(
 	};
 }
 
+/** Multi-axis polygon plot for comparing several entities across the same set of metrics. */
 export const RadarChart = ({
 	indicators,
 	series,

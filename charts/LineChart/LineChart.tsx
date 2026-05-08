@@ -72,6 +72,7 @@ function buildLineOption(
 	};
 }
 
+/** Cartesian line chart for one or more time-series / continuous metrics from row-of-objects data. */
 export const LineChart = ({
 	data,
 	xKey,
