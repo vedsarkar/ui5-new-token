@@ -1,0 +1,105 @@
+.root {
+	position: relative;
+	font-family: "72 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+	font-size: 0.9em;
+	line-height: 1.5;
+	color: var(--sapTextColor);
+	background-color: var(--sapNeutralBackground);
+	border: 1px solid var(--sapGroup_ContentBorderColor);
+	border-radius: 8px;
+	padding: 16px;
+	white-space: pre;
+	overflow-x: auto;
+	margin: 0;
+}
+
+.key {
+	color: var(--sapInformativeColor);
+}
+
+.keyHoverable {
+	cursor: help;
+	text-decoration: underline dotted var(--sapContent_LabelColor);
+	text-underline-offset: 3px;
+	border-radius: 2px;
+}
+
+.keyHoverable:hover {
+	background-color: var(--sapList_Hover_Background);
+	color: var(--sapBrandColor);
+}
+
+.string {
+	color: var(--sapPositiveColor);
+}
+
+.number {
+	color: var(--sapInformativeColor);
+}
+
+.boolean {
+	color: var(--sapNegativeColor);
+}
+
+.null {
+	color: var(--sapContent_LabelColor);
+	font-style: italic;
+}
+
+.punctuation {
+	color: var(--sapContent_LabelColor);
+}
+
+.popover {
+	position: fixed;
+	z-index: 1000;
+	max-width: 360px;
+	min-width: 200px;
+	background: var(--sapList_Background);
+	border: 1px solid var(--sapGroup_ContentBorderColor);
+	border-radius: 8px;
+	box-shadow: var(--sapContent_Shadow2);
+	padding: 12px;
+	font-family: "72", system-ui, sans-serif;
+	font-size: 13px;
+	line-height: 1.45;
+	pointer-events: none;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.popoverType {
+	align-self: flex-start;
+	font-family: "72 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+	font-size: 11px;
+	font-weight: 600;
+	padding: 2px 8px;
+	background: var(--sapNeutralBackground);
+	border: 1px solid var(--sapGroup_ContentBorderColor);
+	border-radius: 4px;
+	color: var(--sapContent_LabelColor);
+}
+
+.popoverEnum {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: 12px;
+	color: var(--sapContent_LabelColor);
+}
+
+.popoverEnumLabel {
+	font-weight: 600;
+	color: var(--sapTextColor);
+}
+
+.popoverEnumValue {
+	font-family: "72 Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+.popoverDescription {
+	margin: 0;
+	color: var(--sapTextColor);
+	white-space: normal;
+}

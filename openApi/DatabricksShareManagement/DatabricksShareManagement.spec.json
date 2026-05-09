@@ -7,7 +7,7 @@
 	},
 	"servers": [
 		{
-			"url": "https://{environment}.reltio.com/services/api/tenants/{tenantId}/adapters/{adapterName}/databricks-share",
+			"url": "https://{environment}.reltio.com/api/tenants/{tenantId}/adapters/{adapterName}/databricks-share",
 			"variables": {
 				"environment": {
 					"default": "{environment}",

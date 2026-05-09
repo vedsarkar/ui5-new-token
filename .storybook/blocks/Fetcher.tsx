@@ -6,7 +6,9 @@ import { useEffect, useRef, useState } from "react";
 import { Markdown } from "@/components/Markdown";
 import { Skeleton } from "@/components/Skeleton";
 import { classNames } from "@/utils/classNames";
+import type { SchemaNode } from "../utils/openapi";
 import styles from "./Fetcher.module.css";
+import { JsonTree } from "./JsonTree";
 
 export type FetcherMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -31,6 +33,8 @@ export type FetcherRequest = {
 export type FetcherResponse = {
 	status: FetcherStatus;
 	json?: unknown | Promise<unknown>;
+	/** Resolved JSON schema describing the shape of `json`. When present, response keys show description/type on hover. */
+	schema?: SchemaNode;
 };
 
 type FetcherProps = {
@@ -313,14 +317,17 @@ export const Fetcher = ({
 							)}
 						</div>
 						{hasResponseBody ? (
-							<Markdown>
-								{codeBlock(
-									useRawText ? "text" : "json",
-									useRawText
-										? String(responseBody ?? "")
-										: formatJson(responseBody),
-								)}
-							</Markdown>
+							useRawText ? (
+								<Markdown>
+									{codeBlock("text", String(responseBody ?? ""))}
+								</Markdown>
+							) : response?.schema ? (
+								<JsonTree value={responseBody} schema={response.schema} />
+							) : (
+								<Markdown>
+									{codeBlock("json", formatJson(responseBody))}
+								</Markdown>
+							)
 						) : (
 							<p className={classNames(styles.empty)}>No response body.</p>
 						)}

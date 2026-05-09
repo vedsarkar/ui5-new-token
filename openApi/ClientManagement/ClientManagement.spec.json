@@ -17,7 +17,7 @@
 		}
 	],
 	"paths": {
-		"/services/oauth/customers/{customerId}/clients": {
+		"/customers/{customerId}/clients": {
 			"get": {
 				"operationId": "getCustomerClients",
 				"summary": "GET /clients",
@@ -28,12 +28,17 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					},
 					{
 						"name": "transform",
 						"in": "query",
-						"schema": { "type": "boolean", "default": true }
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
 					}
 				],
 				"responses": {
@@ -71,7 +76,9 @@
 						"in": "path",
 						"description": "Valid Customer ID.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"requestBody": {
@@ -114,7 +121,7 @@
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/clients/{clientId}": {
+		"/customers/{customerId}/clients/{clientId}": {
 			"get": {
 				"operationId": "getCustomerClient",
 				"summary": "GET /clients/{clientId}",
@@ -125,14 +132,18 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					},
 					{
 						"name": "clientId",
 						"in": "path",
 						"description": "ID of the client.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
@@ -167,19 +178,25 @@
 						"in": "path",
 						"description": "Valid Customer ID.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					},
 					{
 						"name": "clientId",
 						"in": "path",
 						"description": "Unique ID of the client.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					},
 					{
 						"name": "skipTokenRevocation",
 						"in": "query",
-						"schema": { "type": "boolean" }
+						"schema": {
+							"type": "boolean"
+						}
 					}
 				],
 				"requestBody": {
@@ -224,14 +241,18 @@
 						"in": "path",
 						"description": "Valid Customer ID.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					},
 					{
 						"name": "clientId",
 						"in": "path",
 						"description": "Unique ID of the client to be deleted.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
@@ -257,7 +278,7 @@
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/clients/{clientId}/multitokens": {
+		"/customers/{customerId}/clients/{clientId}/multitokens": {
 			"get": {
 				"operationId": "getMultitokenStatsForCustomerClient",
 				"summary": "GET /clients/{clientId}/multitokens",
@@ -268,14 +289,18 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					},
 					{
 						"name": "clientId",
 						"in": "path",
 						"description": "ID of the client.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
@@ -301,7 +326,7 @@
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/clients/{clientId}/revoketokens": {
+		"/customers/{customerId}/clients/{clientId}/revoketokens": {
 			"put": {
 				"operationId": "revokeTokensForCustomerClient",
 				"summary": "PUT /clients/{clientId}/revoketokens",
@@ -312,14 +337,18 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					},
 					{
 						"name": "clientId",
 						"in": "path",
 						"description": "ID of the client.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
@@ -378,17 +407,23 @@
 					},
 					"authorizedGrantTypes": {
 						"type": "array",
-						"items": { "type": "string" },
+						"items": {
+							"type": "string"
+						},
 						"description": "OAuth grant types the client is authorized to use (e.g. client_credentials)."
 					},
 					"redirectUri": {
 						"type": "array",
-						"items": { "type": "string" },
+						"items": {
+							"type": "string"
+						},
 						"description": "Registered redirect URIs for the client."
 					},
 					"clientAuthenticationMethods": {
 						"type": "array",
-						"items": { "type": "string" },
+						"items": {
+							"type": "string"
+						},
 						"description": "Authentication methods the client supports (e.g. client_secret_post, client_secret_basic)."
 					},
 					"accessTokenValidity": {
@@ -413,7 +448,9 @@
 						"description": "Map of role names to arrays of tenant IDs the role is granted for.",
 						"additionalProperties": {
 							"type": "array",
-							"items": { "type": "string" }
+							"items": {
+								"type": "string"
+							}
 						}
 					},
 					"permissions": {
@@ -423,7 +460,9 @@
 							"type": "object",
 							"additionalProperties": {
 								"type": "array",
-								"items": { "type": "string" }
+								"items": {
+									"type": "string"
+								}
 							}
 						}
 					},
@@ -434,7 +473,9 @@
 							"type": "object",
 							"additionalProperties": {
 								"type": "array",
-								"items": { "type": "string" }
+								"items": {
+									"type": "string"
+								}
 							}
 						}
 					}

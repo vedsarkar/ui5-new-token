@@ -33,7 +33,7 @@ import meta from "./ClientManagement.stories";
 		}
 	],
 	"paths": {
-		"/services/oauth/customers/{customerId}/clients": {
+		"/customers/{customerId}/clients": {
 			"get": {
 				"operationId": "getCustomerClients",
 				"summary": "GET /clients",
@@ -137,7 +137,7 @@ import meta from "./ClientManagement.stories";
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/clients/{clientId}": {
+		"/customers/{customerId}/clients/{clientId}": {
 			"get": {
 				"operationId": "getCustomerClient",
 				"summary": "GET /clients/{clientId}",
@@ -294,7 +294,7 @@ import meta from "./ClientManagement.stories";
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/clients/{clientId}/multitokens": {
+		"/customers/{customerId}/clients/{clientId}/multitokens": {
 			"get": {
 				"operationId": "getMultitokenStatsForCustomerClient",
 				"summary": "GET /clients/{clientId}/multitokens",
@@ -342,7 +342,7 @@ import meta from "./ClientManagement.stories";
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/clients/{clientId}/revoketokens": {
+		"/customers/{customerId}/clients/{clientId}/revoketokens": {
 			"put": {
 				"operationId": "revokeTokensForCustomerClient",
 				"summary": "PUT /clients/{clientId}/revoketokens",

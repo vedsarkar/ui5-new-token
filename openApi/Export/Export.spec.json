@@ -3,11 +3,11 @@
 	"info": {
 		"title": "Export API",
 		"version": "1.0.0",
-		"description": "Submit and manage async export jobs in the Reltio /services/jobs subsystem. Submitters POST to start an export of activities, entities (with variants), hierarchies, relations, or segments-bound entities. Task-management endpoints list, get, manifest, pause, resume, and stop tasks at both the global and tenant-scoped level."
+		"description": "Submit and manage async export jobs in the Reltio /jobs subsystem. Submitters POST to start an export of activities, entities (with variants), hierarchies, relations, or segments-bound entities. Task-management endpoints list, get, manifest, pause, resume, and stop tasks at both the global and tenant-scoped level."
 	},
 	"servers": [
 		{
-			"url": "https://{environment}.reltio.com/services/jobs",
+			"url": "https://{environment}.reltio.com/jobs",
 			"variables": {
 				"environment": {
 					"default": "{environment}",
@@ -20,7 +20,7 @@
 		"/{tenantId}/tasks": {
 			"get": {
 				"operationId": "getAllPeriodicJobsByTenant",
-				"summary": "GET /tasks",
+				"summary": "GET /{tenantId}/tasks",
 				"description": "This API is available to Administrator and Tenant's Administrator and returns export tasks for the specified tenant with the statuses: SCHEDULED - Indicates that the task is ready to be executed.SCHEDULED_POLL - Indicates that the task is rescheduled due to a node failure or waiting for other tasks to complete their work.PROCESSING - Indicates that the task is being executed now.PAUSING - Indicates that the task is preparing to turn into the PAUSED status.PAUSED - Indicates that the task was paused.CANCELING - Indicates that the task is preparing to turn into the CANCELED status.WAITING - Indicates that the task is waiting for other tasks that belong to the same export job.",
 				"parameters": [
 					{
@@ -73,7 +73,7 @@
 		"/{tenantId}/tasks/_total": {
 			"get": {
 				"operationId": "getAllPeriodicJobsCountByTenant",
-				"summary": "GET /tasks/_total",
+				"summary": "GET /{tenantId}/tasks/_total",
 				"description": "This API is available to the Administrator or the Tenant's Administrator and returns the total count of export tasks for the specified tenant with the following statuses: SCHEDULED - Indicates that the task is ready to be executed.SCHEDULED_POLL - Indicates that the task is rescheduled due to a node failure or waiting for other tasks to complete their work.PROCESSING - Indicates that the task is being executed now.PAUSING - Indicates that the task is preparing to turn into the PAUSED status.PAUSED - Indicates that the task was paused.CANCELING - Indicates that the task is preparing to turn into the CANCELED status.WAITING - Indicates that the task is waiting for other tasks that belong to the same export job.",
 				"parameters": [
 					{
@@ -107,7 +107,7 @@
 		"/{tenantId}/tasks/{taskId}": {
 			"get": {
 				"operationId": "getByTenant",
-				"summary": "GET /tasks/{taskId}",
+				"summary": "GET /{tenantId}/tasks/{taskId}",
 				"description": "This API returns the task with the given ID or an error if there is no task with this ID. This task is available to Administrator and the Tenant's Administrator.",
 				"parameters": [
 					{
@@ -152,7 +152,7 @@
 		"/{tenantId}/tasks/{taskId}/_pause": {
 			"put": {
 				"operationId": "pauseByTenant",
-				"summary": "PUT /tasks/{taskId}/_pause",
+				"summary": "PUT /{tenantId}/tasks/{taskId}/_pause",
 				"description": "This API initiates the process of pausing a task with a particular ID for the specified tenant. This API is available to the Administrator and the Tenant's Administrator.",
 				"parameters": [
 					{
@@ -208,7 +208,7 @@
 		"/{tenantId}/tasks/{taskId}/_resume": {
 			"put": {
 				"operationId": "resumeByTenant",
-				"summary": "PUT /tasks/{taskId}/_resume",
+				"summary": "PUT /{tenantId}/tasks/{taskId}/_resume",
 				"description": "This API resumes paused task with given ID for specified tenant. The task returns to the SCHEDULED tasks queue and then a free node of Export Service starts executing this task.Available to Administrator and the Tenant's Administrator.",
 				"parameters": [
 					{
@@ -264,7 +264,7 @@
 		"/{tenantId}/tasks/{taskId}/_stop": {
 			"put": {
 				"operationId": "stopByTenant",
-				"summary": "PUT /tasks/{taskId}/_stop",
+				"summary": "PUT /{tenantId}/tasks/{taskId}/_stop",
 				"description": "This API initiates the process of stopping a task with a particular ID for the specified tenant. This API is available to the Administrator and the Tenant's Administrator.",
 				"parameters": [
 					{
@@ -320,7 +320,7 @@
 		"/{tenantId}/tasks/history": {
 			"get": {
 				"operationId": "getAllPeriodicJobsHistoryByTenant",
-				"summary": "GET /tasks/history",
+				"summary": "GET /{tenantId}/tasks/history",
 				"description": "This API is available to Administrator and Tenant's Administrator and returns export tasks for the specified tenant with the following statuses: CANCELED - Indicates that the task was canceled.COMPLETED - Indicates that the task was completed.FAILED - Indicates that an error occurred during execution of a task.",
 				"parameters": [
 					{
@@ -373,7 +373,7 @@
 		"/{tenantId}/tasks/history/_total": {
 			"get": {
 				"operationId": "getAllPeriodicJobsHistoryCountByTenant",
-				"summary": "GET /tasks/history/_total",
+				"summary": "GET /{tenantId}/tasks/history/_total",
 				"description": "This API is available to Administrator and Tenant's Administrator and returns the total count of export tasks for the specified tenant with the following statuses: CANCELED - Indicates that the task was canceled.COMPLETED - Indicates that the task was completed.FAILED - Indicates that an error occurred during execution of a task.",
 				"parameters": [
 					{

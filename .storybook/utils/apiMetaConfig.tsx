@@ -1,12 +1,13 @@
-import type { ComponentProps } from "react";
+import { type ComponentProps, useMemo } from "react";
 import {
 	buildCurl,
 	Fetcher,
+	type FetcherResponse,
 	type FetcherStatus,
 	STATUS_TEXT,
 } from "../blocks/Fetcher";
 import { fakeFromOpenApi } from "./fakeFromSchema";
-import type { OpenApiSpec } from "./openapi";
+import { getResponseSchema, type OpenApiSpec, resolveSchema } from "./openapi";
 
 type ApiFetcherProps = ComponentProps<typeof Fetcher> & {
 	[key: string]: unknown;
@@ -35,11 +36,39 @@ const buildEndpointUrl = (
 	return result;
 };
 
+/**
+ * Maps a story's full URL template (e.g. `https://{environment}.reltio.com/reltio/api/{tenantId}/configuration`)
+ * to an OpenAPI path key from `spec.paths` (e.g. `/api/{tenantId}/configuration`)
+ * by longest-suffix match. The URL's query string and fragment are stripped
+ * before matching so endpoints with `?queryParam={Value}` placeholders still
+ * resolve to their bare spec path. Returns `null` when no path matches.
+ */
+const findSpecPath = (
+	spec: OpenApiSpec,
+	urlTemplate: string,
+): string | null => {
+	const pathOnly = urlTemplate.split(/[?#]/, 1)[0];
+	const keys = Object.keys(spec.paths ?? {});
+	let best: string | null = null;
+	for (const key of keys) {
+		if (pathOnly.endsWith(key) && (!best || key.length > best.length)) {
+			best = key;
+		}
+	}
+	return best;
+};
+
 export const apiMetaConfig = ({ spec, responses }: ApiMetaOptions) => {
-	const sampleData = fakeFromOpenApi(spec);
+	// Default sample is generated from the first schema in `components.schemas`
+	// and only used as a fallback for stories whose URL template does not match
+	// any spec path. Stories whose path resolves to a real schema get a fresh
+	// fake body generated per-render in `ApiFetcher`, matching the actual schema.
+	const fallbackSample = fakeFromOpenApi(spec);
+
+	const userOverriddenStatuses = new Set(Object.keys(responses ?? {}));
 
 	const defaultResponses: Record<string, unknown> = {
-		"200": sampleData,
+		"200": fallbackSample,
 		"400": { error: "Bad Request", message: "The request is invalid." },
 		"401": { error: "Unauthorized", message: "The request is unauthorized." },
 		"403": { error: "Forbidden", message: "The request is forbidden." },
@@ -67,13 +96,47 @@ export const apiMetaConfig = ({ spec, responses }: ApiMetaOptions) => {
 
 	const ApiFetcher = (props: ApiFetcherProps) => {
 		const { request, accessToken, description, response } = props;
+		const responseStatus = response?.status;
+		const requestMethod = request?.method;
+		const requestUrlTemplate = request?.url;
+
+		const enrichedResponse = useMemo<FetcherResponse | undefined>(() => {
+			if (!response || !requestUrlTemplate || !requestMethod) return response;
+			const specPath = findSpecPath(spec, requestUrlTemplate);
+			if (!specPath) return response;
+			const raw = getResponseSchema(
+				spec,
+				specPath,
+				requestMethod,
+				responseStatus,
+			);
+			if (!raw) return response;
+
+			// Schema for hover descriptions (skip if the caller already supplied one)
+			const schema = response.schema ?? resolveSchema(spec, raw);
+
+			// Per-story fake body matching this endpoint's actual schema.
+			// Skip when the caller explicitly overrode the response body for
+			// this status via the `responses` option.
+			const json =
+				responseStatus && !userOverriddenStatuses.has(responseStatus)
+					? fakeFromOpenApi(spec, {
+							path: specPath,
+							method: requestMethod,
+							statusCode: responseStatus,
+						})
+					: response.json;
+
+			return { ...response, schema, json };
+		}, [response, requestUrlTemplate, requestMethod, responseStatus, spec]);
+
 		if (!request) return null;
 		return (
 			<Fetcher
 				request={{ ...request, url: resolveRequestUrl(props) }}
 				accessToken={accessToken as string}
 				description={description as string}
-				response={response}
+				response={enrichedResponse}
 			/>
 		);
 	};
@@ -116,5 +179,5 @@ export const apiMetaConfig = ({ spec, responses }: ApiMetaOptions) => {
 		args: { response: responseOptions[0] } as any,
 	} as const;
 
-	return { sampleData, ...config };
+	return config;
 };

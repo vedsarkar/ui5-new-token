@@ -59,10 +59,9 @@ import { Details } from "@/components/Details";`;
  * so we break it up the same way build-api-docs.mjs does for raw JSON. */
 const escapeForMdxComment = (text) => text.replaceAll("*/", "*\\/");
 
-/** Render a static markdown table of CSS classes for a component, wrapped in
- * a collapsed `<Details>`. Mirrors what `<CssClasses />` block produces at
- * runtime, but inlined as plain markdown so both humans and AI agents (via
- * MCP) see the same content.
+/** Render a static markdown list of stable CSS class selectors for a
+ * component, wrapped in a collapsed `<Details>`. Inlined as plain markdown so
+ * both humans and AI agents (via MCP) see the same content.
  *
  * The class map is read from `<Component>.module.css.json` produced by
  * `scripts/build-css.mjs`. If the file is missing or empty, the section is

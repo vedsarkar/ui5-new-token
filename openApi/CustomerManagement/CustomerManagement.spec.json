@@ -56,7 +56,9 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
@@ -91,7 +93,9 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"requestBody": {
@@ -128,7 +132,7 @@
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/mfa": {
+		"/customers/{customerId}/mfa": {
 			"get": {
 				"operationId": "getMFADetails",
 				"summary": "GET /{customerId}/mfa",
@@ -139,7 +143,9 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
@@ -174,7 +180,9 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"requestBody": {
@@ -211,7 +219,7 @@
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/passwordPolicy": {
+		"/customers/{customerId}/passwordPolicy": {
 			"get": {
 				"operationId": "getCustomerPasswordPolicy",
 				"summary": "GET /{customerId}/passwordPolicy",
@@ -222,7 +230,9 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
@@ -257,7 +267,9 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"requestBody": {
@@ -294,7 +306,7 @@
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/roles": {
+		"/customers/{customerId}/roles": {
 			"get": {
 				"operationId": "getRolesByCustomer",
 				"summary": "GET /{customerId}/roles",
@@ -305,7 +317,9 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					},
 					{
 						"name": "for",
@@ -324,7 +338,9 @@
 							"application/json": {
 								"schema": {
 									"type": "array",
-									"items": { "type": "string" }
+									"items": {
+										"type": "string"
+									}
 								}
 							}
 						}
@@ -350,7 +366,9 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"requestBody": {
@@ -360,7 +378,9 @@
 						"application/json": {
 							"schema": {
 								"type": "array",
-								"items": { "type": "string" }
+								"items": {
+									"type": "string"
+								}
 							}
 						}
 					}
@@ -397,7 +417,9 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"requestBody": {
@@ -407,7 +429,9 @@
 						"application/json": {
 							"schema": {
 								"type": "array",
-								"items": { "type": "string" }
+								"items": {
+									"type": "string"
+								}
 							}
 						}
 					}
@@ -435,7 +459,7 @@
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/roles/permissions": {
+		"/customers/{customerId}/roles/permissions": {
 			"post": {
 				"operationId": "createCustomRolePermissions",
 				"summary": "POST /{customerId}/roles/permissions",
@@ -446,7 +470,9 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"requestBody": {
@@ -489,7 +515,7 @@
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/roles/permissions/{roleName}": {
+		"/customers/{customerId}/roles/permissions/{roleName}": {
 			"get": {
 				"operationId": "getCustomRolePermissionsByRole",
 				"summary": "GET /{customerId}/roles/permissions/{roleName}",
@@ -500,14 +526,18 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					},
 					{
 						"name": "roleName",
 						"in": "path",
 						"description": "Customer role name.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
@@ -542,14 +572,18 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					},
 					{
 						"name": "roleName",
 						"in": "path",
 						"description": "Customer role name.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"requestBody": {
@@ -595,14 +629,18 @@
 						"in": "path",
 						"description": "ID of the customer.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					},
 					{
 						"name": "roleName",
 						"in": "path",
 						"description": "Customer role name.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
@@ -625,7 +663,7 @@
 				}
 			}
 		},
-		"/services/oauth/roles/permissions/{roleName}": {
+		"/roles/permissions/{roleName}": {
 			"get": {
 				"operationId": "getSystemRolePermissionsByRole",
 				"summary": "GET /roles/permissions/{roleName}",
@@ -636,7 +674,9 @@
 						"in": "path",
 						"description": "System role name.",
 						"required": true,
-						"schema": { "type": "string" }
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
@@ -676,7 +716,9 @@
 					},
 					"tenants": {
 						"type": "array",
-						"items": { "type": "string" },
+						"items": {
+							"type": "string"
+						},
 						"description": "List of tenant IDs belonging to this customer."
 					},
 					"description": {
@@ -692,12 +734,16 @@
 					},
 					"applicationClients": {
 						"type": "array",
-						"items": { "type": "string" },
+						"items": {
+							"type": "string"
+						},
 						"description": "List of application client IDs for this customer."
 					},
 					"customerSpecificRoles": {
 						"type": "array",
-						"items": { "type": "string" },
+						"items": {
+							"type": "string"
+						},
 						"description": "Customer-specific role names."
 					},
 					"mfa": {
@@ -705,7 +751,9 @@
 					},
 					"externalProviderConfig": {
 						"type": "array",
-						"items": { "type": "object" },
+						"items": {
+							"type": "object"
+						},
 						"description": "External identity provider configurations (e.g. Okta, Azure AD)."
 					}
 				}
@@ -716,7 +764,9 @@
 				"properties": {
 					"passwordRules": {
 						"type": "array",
-						"items": { "type": "object" },
+						"items": {
+							"type": "object"
+						},
 						"description": "Password validation rules (e.g. length, character requirements, history)."
 					},
 					"expirePeriodInDays": {
@@ -795,7 +845,9 @@
 					},
 					"allowedPrivileges": {
 						"type": "array",
-						"items": { "type": "string" },
+						"items": {
+							"type": "string"
+						},
 						"description": "Privileges granted (e.g. READ, CREATE, UPDATE, DELETE, EXECUTE)."
 					},
 					"resourcePermissions": {

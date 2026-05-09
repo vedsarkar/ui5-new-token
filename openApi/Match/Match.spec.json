@@ -3,7 +3,7 @@
 	"info": {
 		"title": "Match API",
 		"version": "1.0.0",
-		"description": "Search and explain matches between entities, mark pairs as match / not-match (single + bulk), inspect match tokens and documents, and call low-level matching tools (comparator classes, token classes, comparison and explanation utilities). Spans entity-scoped operations under /services/reltio/api/{tenantId}/... and global tools under /services/reltio/tools/matching/..."
+		"description": "Search and explain matches between entities, mark pairs as match / not-match (single + bulk), inspect match tokens and documents, and call low-level matching tools (comparator classes, token classes, comparison and explanation utilities). Spans entity-scoped operations under /reltio/api/{tenantId}/... and global tools under /reltio/tools/matching/..."
 	},
 	"servers": [
 		{
@@ -17,10 +17,10 @@
 		}
 	],
 	"paths": {
-		"/services/reltio/api/{tenantId}/entities/_matches": {
+		"/reltio/api/{tenantId}/entities/_matches": {
 			"post": {
 				"operationId": "getPotentialMatchesByTenant",
-				"summary": "POST /services/reltio/api/{tenantId}/entities/_matches",
+				"summary": "POST /reltio/api/{tenantId}/entities/_matches",
 				"description": "This API returns the matches for the records provided in the body of the request. The matches returned in the response are the ones that are identified by all match rules. The information returned in the response can be controlled using the parameters supported by this API",
 				"parameters": [
 					{
@@ -108,10 +108,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/entities/_scoredmatches": {
+		"/reltio/api/{tenantId}/entities/_scoredmatches": {
 			"post": {
 				"operationId": "getScoredMatchesByTenant",
-				"summary": "POST /services/reltio/api/{tenantId}/entities/_scoredmatches",
+				"summary": "POST /reltio/api/{tenantId}/entities/_scoredmatches",
 				"description": "The matches returned in the response are the ones that are identified by all match rules. In addition to match pairs, this API also returns their corresponding match scores. matchScore is an aggregate integer from configured scoreStandalone/scoreIncremental on all matching rules. For relevance-based rules, relevance and actionLabel may be returned when applicable, alongside the other match rule details in each match's matchGroups list.",
 				"parameters": [
 					{
@@ -198,10 +198,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/entities/_verifyMatches": {
+		"/reltio/api/{tenantId}/entities/_verifyMatches": {
 			"post": {
 				"operationId": "getMatchExplanationByTenant",
-				"summary": "POST /services/reltio/api/{tenantId}/entities/_verifyMatches",
+				"summary": "POST /reltio/api/{tenantId}/entities/_verifyMatches",
 				"description": "his can be used for the tuning of match rules and/or for troubleshooting why any pair matched or did not match. The API accepts either the URIs of existing objects or any two records with attribute values. The explanation can be invoked using the existing match groups by default or with the custom match rules",
 				"parameters": [
 					{
@@ -304,10 +304,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/entities/_verifyUnmerge": {
+		"/reltio/api/{tenantId}/entities/_verifyUnmerge": {
 			"post": {
 				"operationId": "getUnmergeExplanation",
-				"summary": "POST /services/reltio/api/{tenantId}/entities/_verifyUnmerge",
+				"summary": "POST /reltio/api/{tenantId}/entities/_verifyUnmerge",
 				"description": "This can be used for the tuning of match rules and/or for troubleshooting why an entity unmerged or did not unmerge. The API accepts either the URIs of existing object or an record with attribute values. The explanation can be invoked using the existing match groups by default or with the custom match rules",
 				"parameters": [
 					{
@@ -357,10 +357,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/entities/{id}/_matches": {
+		"/reltio/api/{tenantId}/entities/{id}/_matches": {
 			"get": {
 				"operationId": "getPotentialMatchesByTenantPerEntity",
-				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/_matches",
+				"summary": "GET /reltio/api/{tenantId}/entities/{id}/_matches",
 				"description": "The potential matches returned in the response are the ones that are identified by Suspect match rules. The information returned in the response can be controlled using the parameters supported by this API",
 				"parameters": [
 					{
@@ -509,10 +509,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/entities/{id}/_notMatch": {
+		"/reltio/api/{tenantId}/entities/{id}/_notMatch": {
 			"get": {
 				"operationId": "getNotMatchesByTenant",
-				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/_notMatch",
+				"summary": "GET /reltio/api/{tenantId}/entities/{id}/_notMatch",
 				"description": "In addition to entity URIs, it also returns the date and time when the entities were updated. The information returned in the response can be controlled using the parameters supported by this API",
 				"parameters": [
 					{
@@ -604,7 +604,7 @@
 			},
 			"post": {
 				"operationId": "postNotMatchesByTenant",
-				"summary": "POST /services/reltio/api/{tenantId}/entities/{id}/_notMatch",
+				"summary": "POST /reltio/api/{tenantId}/entities/{id}/_notMatch",
 				"description": "This API allows users to manually mark an entity pair as not a match of each other. In addition to entity URIs, it also returns the date and time when the entities were updated and names of users who updated the entities. The information returned in the response can be controlled using the parameters supported by this API",
 				"parameters": [
 					{
@@ -665,7 +665,7 @@
 			},
 			"delete": {
 				"operationId": "unmarkNotMatches",
-				"summary": "DELETE /services/reltio/api/{tenantId}/entities/{id}/_notMatch",
+				"summary": "DELETE /reltio/api/{tenantId}/entities/{id}/_notMatch",
 				"description": "This API removes not a match mark between two entities which was created earlier",
 				"parameters": [
 					{
@@ -715,10 +715,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/entities/{id}/_setAMatch": {
+		"/reltio/api/{tenantId}/entities/{id}/_setAMatch": {
 			"get": {
 				"operationId": "asMatchesByTenant",
-				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/_setAMatch",
+				"summary": "GET /reltio/api/{tenantId}/entities/{id}/_setAMatch",
 				"description": "The list of entities returned in the responses are the ones that are marked by the user either using UI or API. The information returned in the response can be controlled using the parameters supported by this API",
 				"parameters": [
 					{
@@ -781,7 +781,7 @@
 			},
 			"post": {
 				"operationId": "markAsMatches",
-				"summary": "POST /services/reltio/api/{tenantId}/entities/{id}/_setAMatch",
+				"summary": "POST /reltio/api/{tenantId}/entities/{id}/_setAMatch",
 				"description": "This API allows users to manually mark an entity pair as a match of each other. In addition to entity URIs, it also returns the date and time when the entities were updated and names of users who updated the entities. The information returned in the response can be controlled using the parameters supported by this API",
 				"parameters": [
 					{
@@ -842,7 +842,7 @@
 			},
 			"delete": {
 				"operationId": "unmarkAsMatches",
-				"summary": "DELETE /services/reltio/api/{tenantId}/entities/{id}/_setAMatch",
+				"summary": "DELETE /reltio/api/{tenantId}/entities/{id}/_setAMatch",
 				"description": "This API removes potential match between two entities which was created earlier",
 				"parameters": [
 					{
@@ -892,10 +892,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/entities/{id}/_transitiveMatches": {
+		"/reltio/api/{tenantId}/entities/{id}/_transitiveMatches": {
 			"get": {
 				"operationId": "getTransitivePotentialMatchesByTenant",
-				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/_transitiveMatches",
+				"summary": "GET /reltio/api/{tenantId}/entities/{id}/_transitiveMatches",
 				"description": "Transitive matches are records that matched with the potential matches of an entityThe information returned in the response can be controlled using the parameters supported by this API",
 				"parameters": [
 					{
@@ -1062,10 +1062,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/entities/{id}/matchDocument": {
+		"/reltio/api/{tenantId}/entities/{id}/matchDocument": {
 			"get": {
 				"operationId": "getMatchDocumentExplanation",
-				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/matchDocument",
+				"summary": "GET /reltio/api/{tenantId}/entities/{id}/matchDocument",
 				"description": "This API builds matching documents for a particular entity and compares them. Generated document builds based on current business configuration, the stored document reads from the database",
 				"parameters": [
 					{
@@ -1126,10 +1126,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/entities/{id}/matchedEntities": {
+		"/reltio/api/{tenantId}/entities/{id}/matchedEntities": {
 			"get": {
 				"operationId": "getMatchedEntities",
-				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/matchedEntities",
+				"summary": "GET /reltio/api/{tenantId}/entities/{id}/matchedEntities",
 				"description": "The potential matches returned in the response are the ones that are identified by Suspect match rules. The information returned in the response can be controlled using the parameters supported by this API",
 				"parameters": [
 					{
@@ -1279,10 +1279,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/entities/{id}/matchTokens": {
+		"/reltio/api/{tenantId}/entities/{id}/matchTokens": {
 			"get": {
 				"operationId": "getMatchTokensExplanation",
-				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/matchTokens",
+				"summary": "GET /reltio/api/{tenantId}/entities/{id}/matchTokens",
 				"description": "This API builds matching tokens for a particular entity and compares them. Generated set of tokens built based on current business configuration, the stored set of tokens is read from the database",
 				"parameters": [
 					{
@@ -1360,10 +1360,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/entities/{id}/matchTokensDetailed": {
+		"/reltio/api/{tenantId}/entities/{id}/matchTokensDetailed": {
 			"get": {
 				"operationId": "getMatchTokensDetailedExplanation",
-				"summary": "GET /services/reltio/api/{tenantId}/entities/{id}/matchTokensDetailed",
+				"summary": "GET /reltio/api/{tenantId}/entities/{id}/matchTokensDetailed",
 				"description": "This API explain how each token builds for a particular entity",
 				"parameters": [
 					{
@@ -1415,10 +1415,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/entities/findMatchCandidates": {
+		"/reltio/api/{tenantId}/entities/findMatchCandidates": {
 			"post": {
 				"operationId": "findMatchCandidates",
-				"summary": "POST /services/reltio/api/{tenantId}/entities/findMatchCandidates",
+				"summary": "POST /reltio/api/{tenantId}/entities/findMatchCandidates",
 				"description": "This API retrieves match candidates for a given entity ID",
 				"parameters": [
 					{
@@ -1479,10 +1479,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/entities/matchedEntities": {
+		"/reltio/api/{tenantId}/entities/matchedEntities": {
 			"post": {
 				"operationId": "matchEntities",
-				"summary": "POST /services/reltio/api/{tenantId}/entities/matchedEntities",
+				"summary": "POST /reltio/api/{tenantId}/entities/matchedEntities",
 				"description": "This API returns the matches for the records provided in the body of the request. The matches returned in the response are the ones that are identified by all match rules. The information returned in the response can be controlled using the parameters supported by this API",
 				"parameters": [
 					{
@@ -1590,10 +1590,10 @@
 				}
 			}
 		},
-		"/services/reltio/api/{tenantId}/matches/_bulkNotMatch": {
+		"/reltio/api/{tenantId}/matches/_bulkNotMatch": {
 			"post": {
 				"operationId": "bulkNotMatch",
-				"summary": "POST /services/reltio/api/{tenantId}/matches/_bulkNotMatch",
+				"summary": "POST /reltio/api/{tenantId}/matches/_bulkNotMatch",
 				"description": "This API returns results for the records provided in the body of the request.",
 				"parameters": [
 					{
@@ -1633,7 +1633,7 @@
 				}
 			}
 		},
-		"/services/reltio/tools/matching/comparatorClasses": {
+		"/reltio/tools/matching/comparatorClasses": {
 			"get": {
 				"operationId": "getMatchComparatorClasses",
 				"summary": "GET /tools/matching/comparatorClasses",
@@ -1659,7 +1659,7 @@
 				}
 			}
 		},
-		"/services/reltio/tools/matching/compare": {
+		"/reltio/tools/matching/compare": {
 			"post": {
 				"operationId": "matchTokenComparison",
 				"summary": "POST /tools/matching/compare",
@@ -1692,7 +1692,7 @@
 				}
 			}
 		},
-		"/services/reltio/tools/matching/compare/multi": {
+		"/reltio/tools/matching/compare/multi": {
 			"post": {
 				"operationId": "multiComparison",
 				"summary": "POST /tools/matching/compare/multi",
@@ -1725,7 +1725,7 @@
 				}
 			}
 		},
-		"/services/reltio/tools/matching/fixGroupingMatchesState": {
+		"/reltio/tools/matching/fixGroupingMatchesState": {
 			"post": {
 				"operationId": "fixGroupingMatchesState",
 				"summary": "POST /tools/matching/fixGroupingMatchesState",
@@ -1758,7 +1758,7 @@
 				}
 			}
 		},
-		"/services/reltio/tools/matching/matchTokenClasses": {
+		"/reltio/tools/matching/matchTokenClasses": {
 			"get": {
 				"operationId": "getMatchTokenClasses",
 				"summary": "GET /tools/matching/matchTokenClasses",
@@ -1784,7 +1784,7 @@
 				}
 			}
 		},
-		"/services/reltio/tools/matching/matchTokenIntersections": {
+		"/reltio/tools/matching/matchTokenIntersections": {
 			"post": {
 				"operationId": "findMatchTokenIntersections",
 				"summary": "POST /tools/matching/matchTokenIntersections",
@@ -1817,7 +1817,7 @@
 				}
 			}
 		},
-		"/services/reltio/tools/matching/matchTokens": {
+		"/reltio/tools/matching/matchTokens": {
 			"post": {
 				"operationId": "generateMatchTokens",
 				"summary": "POST /tools/matching/matchTokens",
@@ -1850,7 +1850,7 @@
 				}
 			}
 		},
-		"/services/reltio/tools/matching/matchTokens/multi": {
+		"/reltio/tools/matching/matchTokens/multi": {
 			"post": {
 				"operationId": "multiGenerateMatchTokens",
 				"summary": "POST /tools/matching/matchTokens/multi",
@@ -1883,7 +1883,7 @@
 				}
 			}
 		},
-		"/services/reltio/tools/matching/tokensExplanation": {
+		"/reltio/tools/matching/tokensExplanation": {
 			"post": {
 				"operationId": "tokensExplanation",
 				"summary": "POST /tools/matching/tokensExplanation",

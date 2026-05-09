@@ -148,7 +148,7 @@ import meta from "./CustomerManagement.stories";
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/mfa": {
+		"/customers/{customerId}/mfa": {
 			"get": {
 				"operationId": "getMFADetails",
 				"summary": "GET /{customerId}/mfa",
@@ -235,7 +235,7 @@ import meta from "./CustomerManagement.stories";
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/passwordPolicy": {
+		"/customers/{customerId}/passwordPolicy": {
 			"get": {
 				"operationId": "getCustomerPasswordPolicy",
 				"summary": "GET /{customerId}/passwordPolicy",
@@ -322,7 +322,7 @@ import meta from "./CustomerManagement.stories";
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/roles": {
+		"/customers/{customerId}/roles": {
 			"get": {
 				"operationId": "getRolesByCustomer",
 				"summary": "GET /{customerId}/roles",
@@ -477,7 +477,7 @@ import meta from "./CustomerManagement.stories";
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/roles/permissions": {
+		"/customers/{customerId}/roles/permissions": {
 			"post": {
 				"operationId": "createCustomRolePermissions",
 				"summary": "POST /{customerId}/roles/permissions",
@@ -533,7 +533,7 @@ import meta from "./CustomerManagement.stories";
 				}
 			}
 		},
-		"/services/oauth/customers/{customerId}/roles/permissions/{roleName}": {
+		"/customers/{customerId}/roles/permissions/{roleName}": {
 			"get": {
 				"operationId": "getCustomRolePermissionsByRole",
 				"summary": "GET /{customerId}/roles/permissions/{roleName}",
@@ -681,7 +681,7 @@ import meta from "./CustomerManagement.stories";
 				}
 			}
 		},
-		"/services/oauth/roles/permissions/{roleName}": {
+		"/roles/permissions/{roleName}": {
 			"get": {
 				"operationId": "getSystemRolePermissionsByRole",
 				"summary": "GET /roles/permissions/{roleName}",
