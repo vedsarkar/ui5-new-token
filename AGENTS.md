@@ -148,12 +148,11 @@ Use this exception only for documentation. As soon as any custom logic, types, o
 #### Reltio components
 
 - ALL `className` attributes MUST use the `classNames()` utility from `@/utils/classNames`
-- `classNames()` automatically adds stable prefixed classes (e.g. `reltio_Tabs_tab`) for external customization
 - Colors MUST reference SAP Horizon `--sap*` tokens from `https://reltio.design/variables.css` — never hardcode hex values
 - Typography, spacing, sizing — use plain values directly (e.g. `font-size: 14px`, `padding: 8px 16px`)
 - Component-level CSS custom properties — almost never needed. Do NOT create variables as a customization API. If a value is set and consumed on the same element, override the property directly — even for variant/size switches. Use compound selectors (`.small .icon`) instead of cascading variables
 - **CSS variable encapsulation** — when a component does use an internal CSS variable, it MUST always be set explicitly on the component root element (including the default value via inline style). This prevents ancestor/global variables with the same name from leaking in. The only CSS variables a component may consume from outside are SAP Horizon `--sap*` tokens from `https://reltio.design/variables.css`
-- External customization is done through React props, stable CSS classes, and `--sap*` tokens — never through component-level CSS variables
+- External customization is done through **React props** and `--sap*` token overrides only — components do NOT expose internal CSS classes as a styling API, and consumers MUST NOT target hashed CSS Module classes
 
 Example pattern:
 ```css
@@ -253,9 +252,10 @@ When implementing designs from Figma (via Figma MCP, URLs, or screenshots), thes
 
 ## classNames Utility
 
-The `classNames()` utility at `utils/classNames.ts` processes CSS Module hashed classes and adds stable prefixed classes for external customization:
+The `classNames()` utility at `utils/classNames.ts` joins CSS Module class names into a single string, filtering out falsy values and de-duplicating entries:
 ```ts
-classNames('Tabs_tab__x1y2z') // returns 'reltio_Tabs_tab Tabs_tab__x1y2z'
+classNames('Tabs_tab__x1y2z', isActive && 'Tabs_active__a3b4c')
+// returns 'Tabs_tab__x1y2z Tabs_active__a3b4c'
 ```
 
 ## OpenSpec Workflow

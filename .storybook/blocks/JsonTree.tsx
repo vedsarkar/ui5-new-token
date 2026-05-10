@@ -5,6 +5,7 @@ import {
 	type ReactNode,
 	useState,
 } from "react";
+import { createPortal } from "react-dom";
 import { classNames } from "@/utils/classNames";
 import type { SchemaNode } from "../utils/openapi";
 import styles from "./JsonTree.module.css";
@@ -189,39 +190,42 @@ export const JsonTree = ({ value, schema }: JsonTreeProps) => {
 	return (
 		<div className={classNames(styles.root)}>
 			{renderValue(value, schema, 0, hover, "$")}
-			{tooltip && (
-				<div
-					className={classNames(styles.popover)}
-					style={{ left: tooltip.x, top: tooltip.y }}
-					role="tooltip"
-				>
-					{tooltip.type && (
-						<span className={classNames(styles.popoverType)}>
-							{tooltip.type}
-						</span>
-					)}
-					{tooltip.description && (
-						<p className={classNames(styles.popoverDescription)}>
-							{tooltip.description}
-						</p>
-					)}
-					{tooltip.enumValues && tooltip.enumValues.length > 0 && (
-						<div className={classNames(styles.popoverEnum)}>
-							<span className={classNames(styles.popoverEnumLabel)}>
-								Allowed values:
+			{tooltip &&
+				typeof document !== "undefined" &&
+				createPortal(
+					<div
+						className={classNames(styles.popover)}
+						style={{ left: tooltip.x, top: tooltip.y }}
+						role="tooltip"
+					>
+						{tooltip.type && (
+							<span className={classNames(styles.popoverType)}>
+								{tooltip.type}
 							</span>
-							{tooltip.enumValues.map((enumValue) => (
-								<span
-									key={String(enumValue)}
-									className={classNames(styles.popoverEnumValue)}
-								>
-									{formatEnumValue(enumValue)}
+						)}
+						{tooltip.description && (
+							<p className={classNames(styles.popoverDescription)}>
+								{tooltip.description}
+							</p>
+						)}
+						{tooltip.enumValues && tooltip.enumValues.length > 0 && (
+							<div className={classNames(styles.popoverEnum)}>
+								<span className={classNames(styles.popoverEnumLabel)}>
+									Allowed values:
 								</span>
-							))}
-						</div>
-					)}
-				</div>
-			)}
+								{tooltip.enumValues.map((enumValue) => (
+									<span
+										key={String(enumValue)}
+										className={classNames(styles.popoverEnumValue)}
+									>
+										{formatEnumValue(enumValue)}
+									</span>
+								))}
+							</div>
+						)}
+					</div>,
+					document.body,
+				)}
 		</div>
 	);
 };

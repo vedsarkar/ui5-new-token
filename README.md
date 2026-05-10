@@ -249,8 +249,6 @@ export type { SaveEntityButtonProps } from "./SaveEntityButton.types";
 - Use plain values for sizing, spacing, and typography
 - Restyle UI5 components by overriding `--sap*` tokens (preferred) or via `::part()` selectors
 
-See the [Component Customization guide](http://localhost:6006/?path=/docs/guides-component-customization--docs) for details.
-
 ## Storybook
 
 Storybook is the single workspace for components, design tokens, guides, and API documentation:

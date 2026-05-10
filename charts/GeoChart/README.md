@@ -1,7 +1,7 @@
 # GeoChart
 
 ```tsx
-import { GeoChart } from "@reltio/design/components";
+import { GeoChart } from "@reltio/design/charts";
 ```
 
 `GeoChart` is a **choropleth map** — colored regions over an arbitrary geography. You provide the geometry as a GeoJSON FeatureCollection and the per-region values as a flat list; the wrapper buckets values into ranges and renders one color per bucket.

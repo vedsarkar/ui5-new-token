@@ -81,13 +81,11 @@ We use [CSF Next (CSF Factories)](https://storybook.js.org/docs/api/csf/csf-next
 import { fn } from "storybook/test";
 import preview from "@/.storybook/preview";
 import { Button } from "./Button";
-import cssClasses from "./Button.module.css";
 
 const meta = preview.meta({
   component: Button,
   parameters: {
     layout: "centered",
-    cssClasses,
   },
   args: {
     onClick: fn(),
@@ -872,13 +870,11 @@ export const MenuContent = meta.story({
 import { fn } from "storybook/test";
 import preview from "@/.storybook/preview";
 import { MyComponent } from "./MyComponent";
-import cssClasses from "./MyComponent.module.css";
 
 const meta = preview.meta({
   component: MyComponent,
   parameters: {
     layout: "centered", // or "padded", "fullscreen"
-    cssClasses,
   },
   args: {
     onChange: fn(),
@@ -905,23 +901,6 @@ export const Disabled = meta.story({
 });
 ```
 
-### CSS Classes Parameter
-
-Every component with a CSS Module must expose its class map via `parameters.cssClasses`. This powers the **CSS Classes** table on each component's docs page, making stable selectors discoverable.
-
-```tsx
-import cssClasses from "./MyComponent.module.css";
-
-const meta = preview.meta({
-  component: MyComponent,
-  parameters: {
-    cssClasses,
-  },
-});
-```
-
-The CSS module import returns the class name mapping (e.g. `{ root: "MyComponent_root__x1y2z", ... }`). The docs page uses this to display the stable selectors (e.g. `.reltio_MyComponent_root`) that consumers can target for [external customization](/?path=/docs/guides-component-customization--docs).
-
 ### Checklist
 
 - [ ] Uses CSF Next format (`preview.meta()` and `meta.story()`)
@@ -933,7 +912,6 @@ The CSS module import returns the class name mapping (e.g. `{ root: "MyComponent
 - [ ] All visual variants (enum-like props) have corresponding stories
 - [ ] All interactive states (disabled, loading, etc.) have stories
 - [ ] Free-form props have one demonstrative story each, not multiple value permutations
-- [ ] CSS module imported and passed via `parameters.cssClasses`
 - [ ] Faker.js used with a fixed seed for large/generated datasets; curated data for variant labels and semantic content
 - [ ] Complex story styles extracted to `Stories.module.css` instead of inline `style={{}}`
 

@@ -1,7 +1,7 @@
 # GaugeChart
 
 ```tsx
-import { GaugeChart } from "@reltio/design/components";
+import { GaugeChart } from "@reltio/design/charts";
 ```
 
 `GaugeChart` is a single-value progress dial — a half-circle showing how far `value` is along the `0…max` range. Use it for headline metrics where the position relative to a target matters more than the exact number (e.g. data-quality score, SLA compliance, resource utilization).

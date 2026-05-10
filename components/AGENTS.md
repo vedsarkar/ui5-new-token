@@ -79,7 +79,7 @@ import type { ChatProps } from "@/components/Chat/Chat.types";
 
 #### Reltio components
 
-**External customization** is done through stable CSS classes (e.g. `.reltio_Chat_root`), NOT through component-level CSS custom properties. The `classNames()` utility automatically generates these stable, prefixed selectors on every rendered element. See the [Component Customization guide](/?path=/docs/guides-component-customization--docs) for details.
+**External customization** — Reltio components do NOT expose internal CSS classes as a styling API. Hashed CSS Module class names are an implementation detail and may change at any build. Consumers customize a component through its **React props** (the public API) and the SAP Horizon `--sap*` tokens its CSS reads from the cascade. Internal CSS custom properties are not a customization API either (see encapsulation rules below).
 
 **Colors** — always reference SAP Horizon `--sap*` tokens declared on `:root` by `https://reltio.design/variables.css` (and overridden under each `[data-theme]`). Never hardcode hex color values in component CSS. The full token surface is browseable in Storybook → Design Tokens; canonical semantic guidance lives at <https://www.sap.com/design-system/>.
 
@@ -135,7 +135,7 @@ Even then, consider whether compound selectors (`.small .leadingIcon`) are simpl
 
 When a component uses an internal CSS variable (e.g. for a dynamic prop that cascades to pseudo-elements), the component MUST always set that variable explicitly on its root element — including the default value. This creates a hard boundary that prevents any ancestor or global variable with the same name from leaking in.
 
-The only CSS variables a component may consume from outside are the SAP Horizon `--sap*` tokens declared on `:root` by `https://reltio.design/variables.css`. All other customization goes through **React props** and **stable CSS classes**.
+The only CSS variables a component may consume from outside are the SAP Horizon `--sap*` tokens declared on `:root` by `https://reltio.design/variables.css`. All other customization goes through **React props** — the component's public API.
 
 ```tsx
 /* ✅ GOOD — variable always set on root, no external leak possible */
@@ -252,7 +252,7 @@ export type SaveEntityButtonProps = Omit<Ui5ButtonProps, "design" | "onClick"> &
 };
 ```
 
-Spread the rest onto the UI5 root and forward `className` so external customization still works:
+Spread the rest onto the UI5 root and forward `className` so the consumer's `className` reaches the wrapped element:
 
 ```tsx
 import { Button } from "@ui5/webcomponents-react/Button";
@@ -279,20 +279,7 @@ export const SaveEntityButton = ({
 
 ### Storybook Stories
 
-Every component's stories file MUST import the CSS module and pass it via `parameters.cssClasses`. This enables the CSS Classes documentation table on the component's docs page.
-
 **Free-form props** (arbitrary strings, numbers, CSS values) need only ONE story demonstrating usage — do NOT create multiple stories for different values of the same prop. Multiple stories are for **enum-like variants** where each value is a distinct visual state worth snapshot-testing.
-
-```tsx
-import cssClasses from "./MyComponent.module.css";
-
-const meta = preview.meta({
-  component: MyComponent,
-  parameters: {
-    cssClasses,
-  },
-});
-```
 
 ## Documentation
 
@@ -305,7 +292,7 @@ Each component ships with **four hand-authored sources** that together feed the 
 | `README.md` | Anyone reading the docs page or browsing the repo | Narrative context — why the component exists, what concerns it owns, conventions agents need to know |
 | `ComponentName.stories.tsx` | Chromatic, Storybook UI, AI agents | Concrete usage examples (one per visual variant), plus the canonical demo data |
 
-The build script (`scripts/build-component-docs.mjs`) reads these and produces `ComponentName.story.mdx` — a fully static MDX page. Visible content for human readers is just the README narrative + `<ArgTypes>` table + collapsible CSS classes list + native `<Stories>` block. Two payloads that AI agents need but humans do not are inlined as **MDX comments**: the full raw `.types.ts` (so vendors of the API see every nested type with JSDoc) and the full raw `.stories.tsx` (so agents see imports / helpers / args that the auto-generated Storybook code listing strips). Both are invisible in the rendered page but appear verbatim in the MCP response.
+The build script (`scripts/build-component-docs.mjs`) reads these and produces `ComponentName.story.mdx` — a fully static MDX page. Visible content for human readers is the README narrative + `<JsonSchema>` prop-types table + native `<Stories>` block. Two payloads that AI agents need but humans do not are inlined as **MDX comments**: the JSON Schema for the props (under `__JSON_SCHEMA__`) and the full raw `.stories.tsx` (under `__RAW_STORIES_SOURCE__`). Both are invisible in the rendered page but appear verbatim in the MCP response.
 
 ### Pipeline is opt-in (for production / MCP-targeted components)
 
@@ -334,10 +321,8 @@ import { ... } from "@reltio/design/components";   ← README import code-fence
 ### Subsection / ### Subsection            ← README ### sections (no H2)
 
 PROP TYPES                                 ← <SectionHeading>
-[ArgTypes table]                           ← visible to humans
-{/* __RAW_TYPES_SOURCE__ ... */}           ← invisible, only for MCP
-
-[CSS classes ▾]                            ← collapsed <Details> with stable selector list
+[JsonSchema table]                         ← visible to humans
+{/* __JSON_SCHEMA__ ... */}                ← invisible, only for MCP
 
 {/* __RAW_STORIES_SOURCE__ ... */}         ← invisible, only for MCP
 [Stories block]                            ← native Storybook <Stories /> with auto STORIES heading
@@ -417,9 +402,7 @@ npm run build-component-docs   # regenerate all opted-in components
 
 Opt-in is **automatic by README.md presence**. The script ([scripts/build-component-docs.mjs](../scripts/build-component-docs.mjs)) globs `components/*` and `charts/*` and picks up every directory that has all three: `README.md` + `<Name>.types.ts` + `<Name>.stories.tsx`. Internal helpers without stories (e.g. `charts/Chart` — the shared ECharts wrapper) are skipped automatically. The script is chained into `predev` and `prebuild-storybook`, so a fresh `.story.mdx` is built automatically before the dev server starts and before a production build. It is **not** chained into `pretest` — tests run against `.stories.tsx` directly and do not depend on the generated MDX.
 
-The CSS classes section in the docs page is filled from `<Component>.module.css.json` — produced by [scripts/build-css.mjs](../scripts/build-css.mjs) (postcss-modules with the project's stable hash convention). `prebuild-component-docs` runs `build-css` automatically, so the JSON map is always fresh before the docs are regenerated. If the JSON file is missing or empty, the CSS classes block is skipped silently.
-
-If the dev server is already running and you edit `README.md` / `.types.ts` / `.stories.tsx` / `.module.css`, run `npm run build-component-docs` manually so HMR picks up the regenerated `.story.mdx`.
+If the dev server is already running and you edit `README.md` / `.types.ts` / `.stories.tsx`, run `npm run build-component-docs` manually so HMR picks up the regenerated `.story.mdx`.
 
 ### Verifying the result
 
@@ -431,7 +414,7 @@ curl -s 'http://localhost:6006/mcp' \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get-documentation","arguments":{"id":"components-componentname"}}}'
 ```
 
-The response should include: the JSDoc one-liner, the listing of all stories with args, the README content (with H1, import, intro, sections), the full raw `.types.ts` body inside an MDX comment marked `__RAW_TYPES_SOURCE__`, the CSS classes list, and the full raw `.stories.tsx` body inside an MDX comment marked `__RAW_STORIES_SOURCE__`.
+The response should include: the JSDoc one-liner, the listing of all stories with args, the README content (with H1, import, intro, sections), the JSON Schema for the props inside an MDX comment marked `__JSON_SCHEMA__`, and the full raw `.stories.tsx` body inside an MDX comment marked `__RAW_STORIES_SOURCE__`.
 
 ## Creating a New Component
 
@@ -446,7 +429,7 @@ This is where most of the work happens. You can stay here for as long as the API
    - `ComponentName.tsx` — implementation with a one-line JSDoc summary above the export
    - `ComponentName.types.ts` — every prop and nested type, with JSDoc on every field
    - `ComponentName.module.css` — scoped styles (no hardcoded colors, only `--sap*` tokens; no `@media` queries)
-   - `ComponentName.stories.tsx` — one story per visual variant, `cssClasses` parameter, callbacks via `fn()` from `storybook/test`
+   - `ComponentName.stories.tsx` — one story per visual variant, callbacks via `fn()` from `storybook/test`
    - `index.ts` — re-exports the public API only
 3. **Run the dev server** (`npm run dev`) and iterate. The component renders via the default autodocs page (`<Title>` + `<Description>` from JSDoc + `<ArgTypes>` + `<Stories>`) — no extra files needed. Visually verify all stories, click through variants, fix accessibility.
 4. **Lint & format** as you go: `npm run format` && `npm run lint`.
@@ -461,8 +444,8 @@ When the API is stable enough to publish and you want AI agents to receive the r
 2. The component is now opted in automatically — the docs script globs `components/*` and `charts/*` and picks up any folder with `README.md` + `<Name>.types.ts` + `<Name>.stories.tsx`.
 3. **Generate the docs page** — `npm run build-component-docs`. It produces `ComponentName.story.mdx`. Never edit this file by hand — it is overwritten on every build.
 4. **Format & lint** — `npm run format` && `npm run lint`. Both must pass with no errors.
-5. **Visual check** in Storybook (`npm run dev`): open the component's Docs tab, confirm README content / PROP TYPES / CSS classes / Stories render as expected.
-6. **MCP check** (recommended for components with non-trivial nested types): query Reltio Design MCP `get-documentation` for the component and confirm AI agents will receive the JSDoc summary, full README, full types source, and full stories source in one payload (see "Verifying the result" above).
+5. **Visual check** in Storybook (`npm run dev`): open the component's Docs tab, confirm README content / PROP TYPES / Stories render as expected.
+6. **MCP check** (recommended for components with non-trivial nested types): query Reltio Design MCP `get-documentation` for the component and confirm AI agents will receive the JSDoc summary, full README, full JSON Schema, and full stories source in one payload (see "Verifying the result" above).
 7. **Commit `README.md` and the generated `.story.mdx`** together. The MDX is auto-generated but committed so production Storybook builds (and remote MCP consumers) always see the right content without running the build script themselves.
 
 ### OpenSpec workflow (for spec-driven changes)

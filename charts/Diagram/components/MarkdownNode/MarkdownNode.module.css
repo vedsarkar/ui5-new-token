@@ -34,50 +34,53 @@
 
 .body {
 	padding: 6px 12px 8px;
-}
-
-/* Compact Markdown overrides for node context */
-.body :global(.reltio_Markdown_root) {
 	font-size: 12px;
 	line-height: 1.35;
 }
 
-.body :global(.reltio_Markdown_root) p {
+/*
+ * Compact Markdown overrides for the node context.
+ * `.body` contains exactly one <Markdown> child, so descendant selectors
+ * scoped under `.node .body` reliably target every rendered tag without
+ * relying on Markdown's internal class names. Specificity (0,2,1) wins
+ * over Markdown's own (0,1,1) rules.
+ */
+.node .body p {
 	margin: 2px 0;
 }
 
-.body :global(.reltio_Markdown_root) h1,
-.body :global(.reltio_Markdown_root) h2,
-.body :global(.reltio_Markdown_root) h3,
-.body :global(.reltio_Markdown_root) h4,
-.body :global(.reltio_Markdown_root) h5,
-.body :global(.reltio_Markdown_root) h6 {
+.node .body h1,
+.node .body h2,
+.node .body h3,
+.node .body h4,
+.node .body h5,
+.node .body h6 {
 	font-size: 12px;
 	margin: 4px 0 2px;
 }
 
-.body :global(.reltio_Markdown_root) ul,
-.body :global(.reltio_Markdown_root) ol {
+.node .body ul,
+.node .body ol {
 	margin: 2px 0;
 	padding-left: 16px;
 }
 
-.body :global(.reltio_Markdown_root) li {
+.node .body li {
 	margin: 1px 0;
 }
 
-.body :global(.reltio_Markdown_root) pre {
+.node .body pre {
 	padding: 6px 8px;
 	font-size: 11px;
 	border-radius: 4px;
 }
 
-.body :global(.reltio_Markdown_root) code {
+.node .body code {
 	font-size: 11px;
 	padding: 1px 3px;
 }
 
-.body :global(.reltio_Markdown_root) blockquote {
+.node .body blockquote {
 	margin: 4px 0;
 	padding-left: 8px;
 }

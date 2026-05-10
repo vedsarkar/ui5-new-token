@@ -206,7 +206,7 @@ export type XxxChartProps = HtmlProps<
 
 ### 9. Storybook Stories
 
-Stories go under `"Charts/XxxChart"` title. One variant per story. MUST include `cssClasses` parameter.
+Stories go under `"Charts/XxxChart"` title. One variant per story.
 
 **Required stories for every chart:**
 - `Default` — simplest use case
@@ -220,7 +220,6 @@ const meta = preview.meta({
   component: BarChart,
   parameters: {
     layout: "padded",
-    cssClasses,
   },
   args: { /* default args */ },
 });

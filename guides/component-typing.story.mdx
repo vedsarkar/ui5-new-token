@@ -235,7 +235,7 @@ export const SaveEntityButton = ({
 **Rules for UI5 wrappers:**
 1. Always derive the base type from the UI5 component (`ComponentPropsWithoutRef<typeof Button>`), never re-list its props by hand.
 2. `Omit` UI5 props you fully control internally (e.g. fixed `design`, an overridden `onClick`) so consumers cannot accidentally override them.
-3. Spread `...rest` onto the UI5 root and forward `className` through `classNames()` so external customization keeps working.
+3. Spread `...rest` onto the UI5 root and forward `className` through `classNames()` so the consumer's `className` reaches the wrapped element.
 4. Storybook's auto-docs picks up the wrapper's custom props from `.types.ts` automatically; UI5's own props remain documented on the upstream component page.
 
 ## What Not to Declare in Custom Props
