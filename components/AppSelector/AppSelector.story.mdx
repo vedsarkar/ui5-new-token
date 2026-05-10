@@ -1,13 +1,15 @@
 {/*
   AUTO-GENERATED — do not edit by hand.
   Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
   Run: npm run build-component-docs
 */}
 
-import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
 import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
-import { Details } from "@/components/Details";
 import * as AppSelectorStories from "./AppSelector.stories";
+import schema from "./AppSelector.schema.json";
 
 <Meta of={AppSelectorStories} />
 
@@ -38,70 +40,56 @@ Apps without `name` or `uri` are silently filtered out — your tenant config ma
 
 <SectionHeading>Prop types</SectionHeading>
 
-<ArgTypes />
+<JsonSchema schema={schema} />
 
-{/* __RAW_TYPES_SOURCE__
-import type { HtmlProps } from "@/utils/types";
-
-export type AppEntry = {
-	/** Application display name. Apps without a name are ignored. *\/
-	name?: string;
-	/** URL opened in a new tab on click. Apps without a URI are ignored. *\/
-	uri?: string;
-	/** Absolute URL to the application icon (SVG). Falls back to a generic link icon. *\/
-	icon?: string;
-	/** Application category for grouping in navigation.
-	 * @default "Applications"
-	 *\/
-	category?: string;
-};
-
-export type AppSelectorProps = HtmlProps<
-	"div",
-	{
-		/** List of apps to display, grouped by category.
-		 * Apps missing `name` or `uri` are silently ignored.
-		 * The list of available apps for a given tenant
-		 * can be retrieved from Reltio Config Service.
-		 *\/
-		apps: AppEntry[];
-		/** Environment identifier substituted into URI templates (`${environment}`). *\/
-		env?: string;
-		/** Tenant identifier substituted into URI templates (`${tenant}`). *\/
-		tenant?: string;
-		/** Text label displayed next to the trigger icon.
-		 * When omitted, the trigger renders as an icon-only button.
-		 *\/
-		label?: string;
-		/** CSS `position-area`-style value controlling popover placement relative to the trigger.
-		 * Mapped internally to the underlying UI5 `Popover` placement
-		 * (`top` → `Top`, `bottom` → `Bottom`, `left` → `Start`, `right` → `End`).
-		 * @default "right span-top"
-		 *\/
-		positionArea?: string;
-	}
->;
+{/* __JSON_SCHEMA__
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AppSelectorProps",
+  "x-component": "AppSelector",
+  "type": "object",
+  "properties": {
+    "apps": {
+      "description": "List of apps to display, grouped by category.\nApps missing `name` or `uri` are silently ignored.\nThe list of available apps for a given tenant\ncan be retrieved from Reltio Config Service.",
+      "x-typescriptType": "Array<AppEntry>",
+      "type": "array"
+    },
+    "env": {
+      "description": "Environment identifier substituted into URI templates (`${environment}`).",
+      "x-typescriptType": "string",
+      "type": "string"
+    },
+    "label": {
+      "description": "Text label displayed next to the trigger icon.\nWhen omitted, the trigger renders as an icon-only button.",
+      "x-typescriptType": "string",
+      "type": "string"
+    },
+    "positionArea": {
+      "description": "CSS `position-area`-style value controlling popover placement relative to the trigger.\nMapped internally to the underlying UI5 `Popover` placement\n(`top` → `Top`, `bottom` → `Bottom`, `left` → `Start`, `right` → `End`).",
+      "default": "right span-top",
+      "x-typescriptType": "string",
+      "type": "string"
+    },
+    "tenant": {
+      "description": "Tenant identifier substituted into URI templates (`${tenant}`).",
+      "x-typescriptType": "string",
+      "type": "string"
+    }
+  },
+  "required": [
+    "apps"
+  ]
+}
 */}
-
-<Details>
-	<summary>CSS classes</summary>
-
-Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
-
-- `.reltio_AppSelector_root`
-
-</Details>
 
 {/* __RAW_STORIES_SOURCE__
 import preview from "@/.storybook/preview";
 import { AppSelector } from "./AppSelector";
-import cssClasses from "./AppSelector.module.css";
 
 const meta = preview.meta({
 	component: AppSelector,
 	parameters: {
 		layout: "centered",
-		cssClasses,
 	},
 });
 

@@ -1,7 +1,6 @@
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { SankeyChart } from "./SankeyChart";
-import cssClasses from "./SankeyChart.module.css";
 
 const sampleNodes = [
 	{ name: "CRM" },
@@ -25,7 +24,6 @@ const meta = preview.meta({
 	component: SankeyChart,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

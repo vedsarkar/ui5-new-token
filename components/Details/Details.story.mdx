@@ -1,13 +1,15 @@
 {/*
   AUTO-GENERATED — do not edit by hand.
   Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
   Run: npm run build-component-docs
 */}
 
-import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
 import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
-import { Details } from "@/components/Details";
 import * as DetailsStories from "./Details.stories";
+import schema from "./Details.schema.json";
 
 <Meta of={DetailsStories} />
 
@@ -33,48 +35,30 @@ The `open` prop is treated as the **initial** state on mount and re-applied when
 
 <SectionHeading>Prop types</SectionHeading>
 
-<ArgTypes />
+<JsonSchema schema={schema} />
 
-{/* __RAW_TYPES_SOURCE__
-import type { HtmlProps } from "@/utils/types";
-
-/**
- * Props for the Details component
- *\/
-export type DetailsProps = HtmlProps<
-	"details",
-	{
-		/** @default false *\/
-		open?: boolean;
-	}
->;
+{/* __JSON_SCHEMA__
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DetailsProps",
+  "x-component": "Details",
+  "type": "object",
+  "properties": {
+    "open": {
+      "default": false,
+      "x-typescriptType": "boolean",
+      "type": "boolean"
+    }
+  }
+}
 */}
-
-<Details>
-	<summary>CSS classes</summary>
-
-Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
-
-- `.reltio_Details_root`
-- `.reltio_Details_summary`
-- `.reltio_Details_icon`
-- `.reltio_Details_summaryText`
-- `.reltio_Details_chevron`
-- `.reltio_Details_chevronOpen`
-- `.reltio_Details_content`
-
-</Details>
 
 {/* __RAW_STORIES_SOURCE__
 import preview from "@/.storybook/preview";
 import { Details } from "./Details";
-import cssClasses from "./Details.module.css";
 
 const meta = preview.meta({
 	component: Details,
-	parameters: {
-		cssClasses,
-	},
 });
 
 export default meta;

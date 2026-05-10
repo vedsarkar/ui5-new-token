@@ -1,7 +1,6 @@
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { DonutChart } from "./DonutChart";
-import cssClasses from "./DonutChart.module.css";
 
 const sampleData = [
 	{ name: "Matched", value: 680 },
@@ -14,7 +13,6 @@ const meta = preview.meta({
 	component: DonutChart,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

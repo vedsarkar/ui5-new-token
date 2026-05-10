@@ -1,13 +1,15 @@
 {/*
   AUTO-GENERATED — do not edit by hand.
   Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
   Run: npm run build-component-docs
 */}
 
-import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
 import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
-import { Details } from "@/components/Details";
 import * as LineChartStories from "./LineChart.stories";
+import schema from "./LineChart.schema.json";
 
 <Meta of={LineChartStories} />
 
@@ -43,60 +45,48 @@ Empty `data` renders the grid + a "No data" overlay automatically — no need to
 
 <SectionHeading>Prop types</SectionHeading>
 
-<ArgTypes />
+<JsonSchema schema={schema} />
 
-{/* __RAW_TYPES_SOURCE__
-import type { HtmlProps } from "@/utils/types";
-
-export type LineChartSeries = {
-	/** Data object key to plot as Y values *\/
-	key: string;
-
-	/** Legend label. Defaults to `key` if not provided. *\/
-	name?: string;
-};
-
-export type LineChartProps = HtmlProps<
-	"div",
-	{
-		/** Array of data objects. Each object represents one data point. *\/
-		data?: Record<string, unknown>[];
-
-		/**
-		 * Determines X-axis labels.
-		 * - **string**: property name for direct value lookup
-		 * - **function**: custom extraction and formatting in one step
-		 *\/
-		xKey: string | ((item: Record<string, unknown>) => string);
-
-		/** Data series to plot. Each entry renders one line. *\/
-		series: LineChartSeries[];
-
-		/**
-		 * Unit suffix appended to Y-axis labels and tooltip values.
-		 * Examples: "ms", "%", " records"
-		 *\/
-		units?: string;
-	}
->;
+{/* __JSON_SCHEMA__
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LineChartProps",
+  "x-component": "LineChart",
+  "type": "object",
+  "properties": {
+    "series": {
+      "description": "Data series to plot. Each entry renders one line.",
+      "x-typescriptType": "Array<LineChartSeries>",
+      "type": "array"
+    },
+    "xKey": {
+      "description": "Determines X-axis labels.\n- **string**: property name for direct value lookup\n- **function**: custom extraction and formatting in one step",
+      "x-typescriptType": "string | ((item: Record<string, unknown>) => string)",
+      "x-functionSignature": "string | ((item: Record<string, unknown>) => string)"
+    },
+    "data": {
+      "description": "Array of data objects. Each object represents one data point.",
+      "x-typescriptType": "Array<Record<string, unknown>>",
+      "type": "array"
+    },
+    "units": {
+      "description": "Unit suffix appended to Y-axis labels and tooltip values.\nExamples: \"ms\", \"%\", \" records\"",
+      "x-typescriptType": "string",
+      "type": "string"
+    }
+  },
+  "required": [
+    "series",
+    "xKey"
+  ]
+}
 */}
-
-<Details>
-	<summary>CSS classes</summary>
-
-Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
-
-- `.reltio_LineChart_root`
-- `.reltio_LineChart_overlay`
-
-</Details>
 
 {/* __RAW_STORIES_SOURCE__
 import { faker } from "@faker-js/faker";
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { LineChart } from "./LineChart";
-import cssClasses from "./LineChart.module.css";
 
 faker.seed(42);
 
@@ -124,7 +114,6 @@ const meta = preview.meta({
 	component: LineChart,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

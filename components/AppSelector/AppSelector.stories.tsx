@@ -1,12 +1,10 @@
 import preview from "@/.storybook/preview";
 import { AppSelector } from "./AppSelector";
-import cssClasses from "./AppSelector.module.css";
 
 const meta = preview.meta({
 	component: AppSelector,
 	parameters: {
 		layout: "centered",
-		cssClasses,
 	},
 });
 

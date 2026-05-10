@@ -2,7 +2,6 @@ import { Button } from "@ui5/webcomponents-react/Button";
 import { fn } from "storybook/test";
 import preview from "../../.storybook/preview";
 import { TextArea } from "./TextArea";
-import cssClasses from "./TextArea.module.css";
 import "@ui5/webcomponents-icons/dist/attachment.js";
 import "@ui5/webcomponents-icons/dist/copy.js";
 import "@ui5/webcomponents-icons/dist/share-2.js";
@@ -11,7 +10,6 @@ const meta = preview.meta({
 	component: TextArea,
 	parameters: {
 		layout: "centered",
-		cssClasses,
 	},
 	args: {
 		onChange: fn(),

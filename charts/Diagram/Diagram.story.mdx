@@ -1,13 +1,15 @@
 {/*
   AUTO-GENERATED — do not edit by hand.
   Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
   Run: npm run build-component-docs
 */}
 
-import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
 import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
-import { Details } from "@/components/Details";
 import * as DiagramStories from "./Diagram.stories";
+import schema from "./Diagram.schema.json";
 
 <Meta of={DiagramStories} />
 
@@ -48,88 +50,42 @@ If `nodes` is empty or undefined, the diagram renders a "No data" overlay over t
 
 <SectionHeading>Prop types</SectionHeading>
 
-<ArgTypes />
+<JsonSchema schema={schema} />
 
-{/* __RAW_TYPES_SOURCE__
-import type { NodeProps } from "@xyflow/react";
-import type { ComponentType } from "react";
-import type { HtmlProps } from "@/utils/types";
-
-export type DiagramLayout = "top-to-bottom" | "left-to-right";
-
-export type DiagramNode = {
-	/** Unique node identifier. *\/
-	id: string;
-
-	/** Node type — determines which component renders this node. Defaults to `"markdown"`. *\/
-	type?: string;
-
-	/** Display label shown in the node header. *\/
-	label?: string;
-
-	/** Emoji or text icon shown before the label. *\/
-	icon?: string;
-
-	/** Markdown content rendered in the node body via the Markdown component. *\/
-	content?: string;
-
-	/** Arbitrary data passed to custom node types. *\/
-	data?: Record<string, unknown>;
-};
-
-export type DiagramEdge = {
-	/** Source node id. Must match a node's `id`. *\/
-	source: string;
-
-	/** Target node id. Must match a node's `id`. *\/
-	target: string;
-
-	/** Text label displayed on the edge. *\/
-	label?: string;
-};
-
-export type DiagramProps = HtmlProps<
-	"div",
-	{
-		/** Array of diagram nodes. *\/
-		nodes?: DiagramNode[];
-
-		/** Array of edges connecting nodes by id. *\/
-		edges?: DiagramEdge[];
-
-		/**
-		 * Layout direction for the dagre algorithm.
-		 * - `"top-to-bottom"` — parent nodes above children (default)
-		 * - `"left-to-right"` — parent nodes to the left of children
-		 * @default "top-to-bottom"
-		 *\/
-		layout?: DiagramLayout;
-
-		/**
-		 * Custom node type components merged with the built-in `markdown` type.
-		 * Keys are type names, values are React components receiving `NodeProps`.
-		 *\/
-		nodeTypes?: Record<string, ComponentType<NodeProps>>;
-	}
->;
+{/* __JSON_SCHEMA__
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DiagramProps",
+  "x-component": "Diagram",
+  "type": "object",
+  "properties": {
+    "edges": {
+      "description": "Array of edges connecting nodes by id.",
+      "x-typescriptType": "Array<DiagramEdge>",
+      "type": "array"
+    },
+    "layout": {
+      "description": "Layout direction for the dagre algorithm.\n- `\"top-to-bottom\"` — parent nodes above children (default)\n- `\"left-to-right\"` — parent nodes to the left of children",
+      "default": "top-to-bottom",
+      "x-typescriptType": "DiagramLayout"
+    },
+    "nodes": {
+      "description": "Array of diagram nodes.",
+      "x-typescriptType": "Array<DiagramNode>",
+      "type": "array"
+    },
+    "nodeTypes": {
+      "description": "Custom node type components merged with the built-in `markdown` type.\nKeys are type names, values are React components receiving `NodeProps`.",
+      "x-typescriptType": "Record<string, ComponentType<NodeProps>>"
+    }
+  }
+}
 */}
-
-<Details>
-	<summary>CSS classes</summary>
-
-Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
-
-- `.reltio_Diagram_root`
-- `.reltio_Diagram_flow`
-- `.reltio_Diagram_overlay`
-
-</Details>
 
 {/* __RAW_STORIES_SOURCE__
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { Diagram } from "./Diagram";
-import cssClasses from "./Diagram.module.css";
 import type { DiagramEdge, DiagramNode } from "./Diagram.types";
 
 const workflowNodes: DiagramNode[] = [
@@ -224,7 +180,6 @@ const meta = preview.meta({
 	component: Diagram,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

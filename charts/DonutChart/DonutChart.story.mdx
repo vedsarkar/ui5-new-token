@@ -1,13 +1,15 @@
 {/*
   AUTO-GENERATED — do not edit by hand.
   Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
   Run: npm run build-component-docs
 */}
 
-import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
 import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
-import { Details } from "@/components/Details";
 import * as DonutChartStories from "./DonutChart.stories";
+import schema from "./DonutChart.schema.json";
 
 <Meta of={DonutChartStories} />
 
@@ -37,49 +39,33 @@ Empty `data` renders the donut frame with a "No data" overlay — no need to gat
 
 <SectionHeading>Prop types</SectionHeading>
 
-<ArgTypes />
+<JsonSchema schema={schema} />
 
-{/* __RAW_TYPES_SOURCE__
-import type { HtmlProps } from "@/utils/types";
-
-export type DonutChartItem = {
-	/** Segment label. *\/
-	name: string;
-
-	/** Segment value determining its proportion of the ring. *\/
-	value: number;
-};
-
-export type DonutChartProps = HtmlProps<
-	"div",
-	{
-		/** Array of segments. Each entry renders one donut slice. *\/
-		data?: DonutChartItem[];
-
-		/**
-		 * Unit suffix appended to tooltip values.
-		 * Examples: "records", "%", "users"
-		 *\/
-		units?: string;
-	}
->;
+{/* __JSON_SCHEMA__
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DonutChartProps",
+  "x-component": "DonutChart",
+  "type": "object",
+  "properties": {
+    "data": {
+      "description": "Array of segments. Each entry renders one donut slice.",
+      "x-typescriptType": "Array<DonutChartItem>",
+      "type": "array"
+    },
+    "units": {
+      "description": "Unit suffix appended to tooltip values.\nExamples: \"records\", \"%\", \"users\"",
+      "x-typescriptType": "string",
+      "type": "string"
+    }
+  }
+}
 */}
-
-<Details>
-	<summary>CSS classes</summary>
-
-Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
-
-- `.reltio_DonutChart_root`
-- `.reltio_DonutChart_overlay`
-
-</Details>
 
 {/* __RAW_STORIES_SOURCE__
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { DonutChart } from "./DonutChart";
-import cssClasses from "./DonutChart.module.css";
 
 const sampleData = [
 	{ name: "Matched", value: 680 },
@@ -92,7 +78,6 @@ const meta = preview.meta({
 	component: DonutChart,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

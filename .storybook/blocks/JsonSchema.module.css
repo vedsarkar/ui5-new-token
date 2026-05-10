@@ -1,0 +1,36 @@
+/* Storybook's docs theme styles `<h3>`, `<table>`, `<th>`, `<td>`, `<p>`,
+ * `<ul>`, `<li>`, and `<p>/<li> code` globally inside `.sbdocs-content`
+ * (see `DocsContent` in `node_modules/@storybook/addon-docs/dist/blocks.js`).
+ * We deliberately keep this stylesheet near-empty and let those defaults
+ * paint everything. */
+
+.propertyList {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.propertySection {
+	scroll-margin-top: 16px;
+}
+
+/* Fixed-width label column keeps the value column visually aligned across
+ * properties, so descriptions / types start at the same x-coordinate
+ * regardless of the label length. */
+.labelCell {
+	width: 140px;
+	white-space: nowrap;
+	vertical-align: top;
+}
+
+/* Long TypeScript types like `'A' | 'B' | 'C' | 'D'` would otherwise stay
+ * on a single line because Storybook's default `code` style sets
+ * `white-space: nowrap`. The selector covers both the `<code class="typeCell">`
+ * shape (class set directly on the code element) and the legacy
+ * `<wrapper class="typeCell"><code>` shape so future tweaks of the JSX
+ * structure don't silently break the override. */
+.typeCell,
+.typeCell code {
+	white-space: pre-wrap;
+	word-break: break-word;
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DonutChartProps",
+  "x-component": "DonutChart",
+  "type": "object",
+  "properties": {
+    "data": {
+      "description": "Array of segments. Each entry renders one donut slice.",
+      "x-typescriptType": "Array<DonutChartItem>",
+      "type": "array"
+    },
+    "units": {
+      "description": "Unit suffix appended to tooltip values.\nExamples: \"records\", \"%\", \"users\"",
+      "x-typescriptType": "string",
+      "type": "string"
+    }
+  }
+}

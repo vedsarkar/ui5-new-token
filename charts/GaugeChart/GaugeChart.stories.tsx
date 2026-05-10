@@ -1,14 +1,12 @@
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { GaugeChart } from "./GaugeChart";
-import cssClasses from "./GaugeChart.module.css";
 
 const meta = preview.meta({
 	title: "Charts/GaugeChart",
 	component: GaugeChart,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

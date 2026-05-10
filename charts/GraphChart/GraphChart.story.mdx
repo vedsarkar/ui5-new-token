@@ -1,13 +1,15 @@
 {/*
   AUTO-GENERATED — do not edit by hand.
   Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
   Run: npm run build-component-docs
 */}
 
-import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
 import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
-import { Details } from "@/components/Details";
 import * as GraphChartStories from "./GraphChart.stories";
+import schema from "./GraphChart.schema.json";
 
 <Meta of={GraphChartStories} />
 
@@ -47,83 +49,44 @@ The wrapper does not expose force-simulation parameters; use `"force"` defaults 
 
 <SectionHeading>Prop types</SectionHeading>
 
-<ArgTypes />
+<JsonSchema schema={schema} />
 
-{/* __RAW_TYPES_SOURCE__
-import type { HtmlProps } from "@/utils/types";
-
-export type GraphChartLayout = "force" | "circular";
-
-export type GraphChartNode = {
-	/** Unique node identifier. Used by links to reference this node. *\/
-	id: string;
-
-	/** Display name shown in labels and tooltips. *\/
-	name: string;
-
-	/** Optional numeric value. Affects node size (auto-normalized to 20–60px range). *\/
-	value?: number;
-
-	/** Optional category for color grouping. Nodes with the same category share a color and appear in the legend. *\/
-	category?: string;
-};
-
-export type GraphChartLink = {
-	/** Source node id. Must match a node's `id`. *\/
-	source: string;
-
-	/** Target node id. Must match a node's `id`. *\/
-	target: string;
-
-	/** Relationship label shown in tooltip (e.g., "lives at", "works for"). *\/
-	label?: string;
-
-	/** Optional numeric value. Affects line thickness. *\/
-	value?: number;
-};
-
-export type GraphChartProps = HtmlProps<
-	"div",
-	{
-		/** Array of graph nodes. *\/
-		nodes?: GraphChartNode[];
-
-		/** Array of links connecting nodes by id. *\/
-		links?: GraphChartLink[];
-
-		/**
-		 * Graph layout algorithm.
-		 * - `"force"` — physics simulation (default)
-		 * - `"circular"` — nodes arranged on a circle
-		 * @default "force"
-		 *\/
-		layout?: GraphChartLayout;
-
-		/**
-		 * Unit suffix appended to tooltip values.
-		 * Examples: "connections", "score", "records"
-		 *\/
-		units?: string;
-	}
->;
+{/* __JSON_SCHEMA__
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GraphChartProps",
+  "x-component": "GraphChart",
+  "type": "object",
+  "properties": {
+    "layout": {
+      "description": "Graph layout algorithm.\n- `\"force\"` — physics simulation (default)\n- `\"circular\"` — nodes arranged on a circle",
+      "default": "force",
+      "x-typescriptType": "GraphChartLayout"
+    },
+    "links": {
+      "description": "Array of links connecting nodes by id.",
+      "x-typescriptType": "Array<GraphChartLink>",
+      "type": "array"
+    },
+    "nodes": {
+      "description": "Array of graph nodes.",
+      "x-typescriptType": "Array<GraphChartNode>",
+      "type": "array"
+    },
+    "units": {
+      "description": "Unit suffix appended to tooltip values.\nExamples: \"connections\", \"score\", \"records\"",
+      "x-typescriptType": "string",
+      "type": "string"
+    }
+  }
+}
 */}
-
-<Details>
-	<summary>CSS classes</summary>
-
-Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
-
-- `.reltio_GraphChart_root`
-- `.reltio_GraphChart_overlay`
-
-</Details>
 
 {/* __RAW_STORIES_SOURCE__
 import { faker } from "@faker-js/faker";
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { GraphChart } from "./GraphChart";
-import cssClasses from "./GraphChart.module.css";
 import type { GraphChartLink, GraphChartNode } from "./GraphChart.types";
 
 faker.seed(42);
@@ -190,7 +153,6 @@ const meta = preview.meta({
 	component: GraphChart,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

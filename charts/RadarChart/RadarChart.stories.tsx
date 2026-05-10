@@ -1,7 +1,6 @@
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { RadarChart } from "./RadarChart";
-import cssClasses from "./RadarChart.module.css";
 
 const indicators = [
 	{ name: "Completeness", max: 100 },
@@ -16,7 +15,6 @@ const meta = preview.meta({
 	component: RadarChart,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

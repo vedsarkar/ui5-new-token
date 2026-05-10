@@ -1,7 +1,6 @@
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { Diagram } from "./Diagram";
-import cssClasses from "./Diagram.module.css";
 import type { DiagramEdge, DiagramNode } from "./Diagram.types";
 
 const workflowNodes: DiagramNode[] = [
@@ -96,7 +95,6 @@ const meta = preview.meta({
 	component: Diagram,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

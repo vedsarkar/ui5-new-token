@@ -1,13 +1,15 @@
 {/*
   AUTO-GENERATED — do not edit by hand.
   Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
   Run: npm run build-component-docs
 */}
 
-import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
 import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
-import { Details } from "@/components/Details";
 import * as RadarChartStories from "./RadarChart.stories";
+import schema from "./RadarChart.schema.json";
 
 <Meta of={RadarChartStories} />
 
@@ -38,60 +40,38 @@ Visually the chart works for ~2–5 polygons. Beyond that, overlapping fill beco
 
 <SectionHeading>Prop types</SectionHeading>
 
-<ArgTypes />
+<JsonSchema schema={schema} />
 
-{/* __RAW_TYPES_SOURCE__
-import type { HtmlProps } from "@/utils/types";
-
-export type RadarChartIndicator = {
-	/** Axis label. *\/
-	name: string;
-
-	/** Maximum value for this axis. *\/
-	max: number;
-};
-
-export type RadarChartSeries = {
-	/** Legend label for this data polygon. *\/
-	name: string;
-
-	/** Values for each indicator axis, in the same order as `indicators`. *\/
-	values: number[];
-};
-
-export type RadarChartProps = HtmlProps<
-	"div",
-	{
-		/** Radar axes definition. Each entry adds one spoke to the chart. *\/
-		indicators?: RadarChartIndicator[];
-
-		/** Data polygons to plot. Each entry renders one filled area. *\/
-		series?: RadarChartSeries[];
-
-		/**
-		 * Unit suffix appended to tooltip values.
-		 * Examples: "ms", "%", " pts"
-		 *\/
-		units?: string;
-	}
->;
+{/* __JSON_SCHEMA__
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RadarChartProps",
+  "x-component": "RadarChart",
+  "type": "object",
+  "properties": {
+    "indicators": {
+      "description": "Radar axes definition. Each entry adds one spoke to the chart.",
+      "x-typescriptType": "Array<RadarChartIndicator>",
+      "type": "array"
+    },
+    "series": {
+      "description": "Data polygons to plot. Each entry renders one filled area.",
+      "x-typescriptType": "Array<RadarChartSeries>",
+      "type": "array"
+    },
+    "units": {
+      "description": "Unit suffix appended to tooltip values.\nExamples: \"ms\", \"%\", \" pts\"",
+      "x-typescriptType": "string",
+      "type": "string"
+    }
+  }
+}
 */}
-
-<Details>
-	<summary>CSS classes</summary>
-
-Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
-
-- `.reltio_RadarChart_root`
-- `.reltio_RadarChart_overlay`
-
-</Details>
 
 {/* __RAW_STORIES_SOURCE__
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { RadarChart } from "./RadarChart";
-import cssClasses from "./RadarChart.module.css";
 
 const indicators = [
 	{ name: "Completeness", max: 100 },
@@ -106,7 +86,6 @@ const meta = preview.meta({
 	component: RadarChart,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

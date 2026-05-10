@@ -2,7 +2,6 @@ import { faker } from "@faker-js/faker";
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { GraphChart } from "./GraphChart";
-import cssClasses from "./GraphChart.module.css";
 import type { GraphChartLink, GraphChartNode } from "./GraphChart.types";
 
 faker.seed(42);
@@ -69,7 +68,6 @@ const meta = preview.meta({
 	component: GraphChart,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

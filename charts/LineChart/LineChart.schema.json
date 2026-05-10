@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LineChartProps",
+  "x-component": "LineChart",
+  "type": "object",
+  "properties": {
+    "series": {
+      "description": "Data series to plot. Each entry renders one line.",
+      "x-typescriptType": "Array<LineChartSeries>",
+      "type": "array"
+    },
+    "xKey": {
+      "description": "Determines X-axis labels.\n- **string**: property name for direct value lookup\n- **function**: custom extraction and formatting in one step",
+      "x-typescriptType": "string | ((item: Record<string, unknown>) => string)",
+      "x-functionSignature": "string | ((item: Record<string, unknown>) => string)"
+    },
+    "data": {
+      "description": "Array of data objects. Each object represents one data point.",
+      "x-typescriptType": "Array<Record<string, unknown>>",
+      "type": "array"
+    },
+    "units": {
+      "description": "Unit suffix appended to Y-axis labels and tooltip values.\nExamples: \"ms\", \"%\", \" records\"",
+      "x-typescriptType": "string",
+      "type": "string"
+    }
+  },
+  "required": [
+    "series",
+    "xKey"
+  ]
+}

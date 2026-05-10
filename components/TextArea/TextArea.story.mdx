@@ -1,13 +1,15 @@
 {/*
   AUTO-GENERATED — do not edit by hand.
   Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
   Run: npm run build-component-docs
 */}
 
-import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
 import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
-import { Details } from "@/components/Details";
 import * as TextAreaStories from "./TextArea.stories";
+import schema from "./TextArea.schema.json";
 
 <Meta of={TextAreaStories} />
 
@@ -49,56 +51,61 @@ UI5 ships a `TextArea` web component, but it lives in Shadow DOM and does not pa
 
 <SectionHeading>Prop types</SectionHeading>
 
-<ArgTypes />
+<JsonSchema schema={schema} />
 
-{/* __RAW_TYPES_SOURCE__
-import type React from "react";
-import type { FormControlBase } from "@/utils/formTypes";
-import type { HtmlProps } from "@/utils/types";
-
-export type TextAreaProps = HtmlProps<
-	"textarea",
-	FormControlBase & {
-		/**
-		 * Floating label text displayed above the textarea
-		 *\/
-		label?: string;
-
-		/**
-		 * Toolbar content rendered below the textarea input
-		 *\/
-		toolbar?: React.ReactNode;
-	}
->;
+{/* __JSON_SCHEMA__
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TextAreaProps",
+  "x-component": "TextArea",
+  "type": "object",
+  "properties": {
+    "disabled": {
+      "description": "Whether the control is disabled",
+      "x-typescriptType": "boolean",
+      "type": "boolean"
+    },
+    "label": {
+      "description": "Floating label text displayed above the textarea",
+      "x-typescriptType": "string",
+      "type": "string"
+    },
+    "name": {
+      "description": "Form field name for native form submission",
+      "x-typescriptType": "string",
+      "type": "string"
+    },
+    "readOnly": {
+      "description": "Whether the control is read-only",
+      "x-typescriptType": "boolean",
+      "type": "boolean"
+    },
+    "required": {
+      "description": "Whether the control is required",
+      "x-typescriptType": "boolean",
+      "type": "boolean"
+    },
+    "toolbar": {
+      "description": "Toolbar content rendered below the textarea input",
+      "x-typescriptType": "string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<AwaitedReactNode>"
+    },
+    "valueState": {
+      "description": "Validation state affecting visual appearance and ARIA attributes",
+      "x-typescriptType": "ValueState"
+    },
+    "valueStateMessage": {
+      "description": "Message displayed below the control when valueState is not \"None\"",
+      "x-typescriptType": "string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<AwaitedReactNode>"
+    }
+  }
+}
 */}
-
-<Details>
-	<summary>CSS classes</summary>
-
-Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
-
-- `.reltio_TextArea_root`
-- `.reltio_TextArea_label`
-- `.reltio_TextArea_required`
-- `.reltio_TextArea_error`
-- `.reltio_TextArea_inputContainer`
-- `.reltio_TextArea_warning`
-- `.reltio_TextArea_success`
-- `.reltio_TextArea_information`
-- `.reltio_TextArea_readOnly`
-- `.reltio_TextArea_disabled`
-- `.reltio_TextArea_textarea`
-- `.reltio_TextArea_valueStateMessage`
-- `.reltio_TextArea_toolbar`
-
-</Details>
 
 {/* __RAW_STORIES_SOURCE__
 import { Button } from "@ui5/webcomponents-react/Button";
 import { fn } from "storybook/test";
 import preview from "../../.storybook/preview";
 import { TextArea } from "./TextArea";
-import cssClasses from "./TextArea.module.css";
 import "@ui5/webcomponents-icons/dist/attachment.js";
 import "@ui5/webcomponents-icons/dist/copy.js";
 import "@ui5/webcomponents-icons/dist/share-2.js";
@@ -107,7 +114,6 @@ const meta = preview.meta({
 	component: TextArea,
 	parameters: {
 		layout: "centered",
-		cssClasses,
 	},
 	args: {
 		onChange: fn(),

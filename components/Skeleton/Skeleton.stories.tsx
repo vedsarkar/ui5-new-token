@@ -1,12 +1,8 @@
 import preview from "@/.storybook/preview";
 import { Skeleton } from "./Skeleton";
-import cssClasses from "./Skeleton.module.css";
 
 const meta = preview.meta({
 	component: Skeleton,
-	parameters: {
-		cssClasses,
-	},
 });
 
 export default meta;

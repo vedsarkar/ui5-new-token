@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SankeyChartProps",
+  "x-component": "SankeyChart",
+  "type": "object",
+  "properties": {
+    "links": {
+      "description": "Array of links. Each link renders a colored ribbon between two nodes.",
+      "x-typescriptType": "Array<SankeyChartLink>",
+      "type": "array"
+    },
+    "nodes": {
+      "description": "Array of nodes. Each node appears as a labeled block in the diagram.",
+      "x-typescriptType": "Array<SankeyChartNode>",
+      "type": "array"
+    },
+    "units": {
+      "description": "Unit suffix appended to tooltip values.\nExamples: \"records\", \"users\", \"MB\"",
+      "x-typescriptType": "string",
+      "type": "string"
+    }
+  }
+}

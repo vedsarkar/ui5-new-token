@@ -1,13 +1,15 @@
 {/*
   AUTO-GENERATED — do not edit by hand.
   Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
   Run: npm run build-component-docs
 */}
 
-import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
 import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
-import { Details } from "@/components/Details";
 import * as MarkdownStories from "./Markdown.stories";
+import schema from "./Markdown.schema.json";
 
 <Meta of={MarkdownStories} />
 
@@ -42,36 +44,24 @@ If `markdown-to-jsx` throws (malformed input, unrenderable AST), the inner `Erro
 
 <SectionHeading>Prop types</SectionHeading>
 
-<ArgTypes />
+<JsonSchema schema={schema} />
 
-{/* __RAW_TYPES_SOURCE__
-/**
- * Props for the Markdown component
- *\/
-export type MarkdownProps = React.ComponentPropsWithoutRef<"div">;
+{/* __JSON_SCHEMA__
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MarkdownProps",
+  "x-component": "Markdown",
+  "type": "object",
+  "properties": {}
+}
 */}
-
-<Details>
-	<summary>CSS classes</summary>
-
-Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
-
-- `.reltio_Markdown_error`
-- `.reltio_Markdown_root`
-- `.reltio_Markdown_tableWrapper`
-
-</Details>
 
 {/* __RAW_STORIES_SOURCE__
 import preview from "@/.storybook/preview";
 import { Markdown } from "./Markdown";
-import cssClasses from "./Markdown.module.css";
 
 const meta = preview.meta({
 	component: Markdown,
-	parameters: {
-		cssClasses,
-	},
 });
 
 export default meta;

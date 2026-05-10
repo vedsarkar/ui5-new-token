@@ -3,9 +3,6 @@ import path from "node:path";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const API_DIR = path.join(ROOT, "openApi");
-const SCHEMAS_DIR = path.join(ROOT, "public", "schemas");
-
-const SCHEMA_PUBLIC_URL_BASE = "/schemas";
 
 const headerFor = (source) => `{/*
   AUTO-GENERATED — do not edit by hand.
@@ -26,43 +23,14 @@ function discoverApis() {
 
 			const specPath = path.join(dir, `${name}.spec.json`);
 			if (fs.existsSync(specPath)) {
-				return [{ name, dir, specPath, storiesPath, mode: "openapi" }];
-			}
-
-			const schemaPath = path.join(SCHEMAS_DIR, `${name.toLowerCase()}.json`);
-			if (fs.existsSync(schemaPath)) {
-				console.warn(
-					`WARNING: "${name}" uses legacy JSON Schema. Consider migrating to OpenAPI at "${specPath}".`,
-				);
-				return [{ name, dir, schemaPath, storiesPath, mode: "schema" }];
+				return [{ name, dir, specPath, storiesPath }];
 			}
 
 			console.warn(
-				`WARNING: stories "${storiesPath}" has no matching spec — skipping`,
+				`WARNING: stories "${storiesPath}" has no matching OpenAPI spec at "${specPath}" — skipping`,
 			);
 			return [];
 		});
-}
-
-function buildMdx({ name, schema }) {
-	const schemaUrl = `${SCHEMA_PUBLIC_URL_BASE}/${name.toLowerCase()}.json`;
-	const rawJson = JSON.stringify(schema, null, "\t").replaceAll("*/", "*\\/");
-	return `${headerFor(schemaUrl)}
-
-import { Meta, Stories } from "@storybook/addon-docs/blocks";
-import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
-import meta from "./${name}.stories";
-
-<Meta of={meta} />
-
-<JsonSchema url="${schemaUrl}" />
-
-{/* __RAW_JSON_SCHEMA__
-${rawJson}
-*/}
-
-<Stories />
-`;
 }
 
 function buildMdxOpenApi({ name, spec }) {
@@ -90,20 +58,14 @@ ${rawJson}
 const apis = discoverApis();
 if (apis.length === 0) {
 	console.log(
-		"No API specs found in api/<Name>/<name>.spec.json paired with api/<Name>/<Name>.stories.tsx — nothing to do.",
+		"No OpenAPI specs found in openApi/<Name>/<Name>.spec.json paired with openApi/<Name>/<Name>.stories.tsx — nothing to do.",
 	);
 	process.exit(0);
 }
 
 for (const api of apis) {
-	let mdx;
-	if (api.mode === "openapi") {
-		const spec = JSON.parse(fs.readFileSync(api.specPath, "utf-8"));
-		mdx = buildMdxOpenApi({ name: api.name, spec });
-	} else {
-		const schema = JSON.parse(fs.readFileSync(api.schemaPath, "utf-8"));
-		mdx = buildMdx({ name: api.name, schema });
-	}
+	const spec = JSON.parse(fs.readFileSync(api.specPath, "utf-8"));
+	const mdx = buildMdxOpenApi({ name: api.name, spec });
 	const outputPath = path.join(api.dir, `${api.name}.story.mdx`);
 	fs.writeFileSync(outputPath, mdx, "utf-8");
 	console.log(`Generated ${path.relative(ROOT, outputPath)}`);

@@ -2,7 +2,6 @@ import { faker } from "@faker-js/faker";
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { BarChart } from "./BarChart";
-import cssClasses from "./BarChart.module.css";
 
 faker.seed(42);
 
@@ -30,7 +29,6 @@ const meta = preview.meta({
 	component: BarChart,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

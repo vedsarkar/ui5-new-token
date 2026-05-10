@@ -1,162 +1,184 @@
-import { useEffect, useState } from "react";
-import { Markdown } from "@/components/Markdown";
-import { Skeleton } from "@/components/Skeleton";
+import { HeaderMdx, Markdown } from "@storybook/addon-docs/blocks";
+import type { ReactNode } from "react";
+import styles from "./JsonSchema.module.css";
+import type {
+	JsonSchemaPropertyNode,
+	JsonSchemaProps,
+} from "./JsonSchema.types";
 
-type JsonSchemaProps = {
-	url: string;
-};
-
-type SchemaNode = {
-	type?: string | string[];
-	description?: string;
-	properties?: Record<string, SchemaNode>;
-	items?: SchemaNode;
-	required?: string[];
-	default?: unknown;
-	enum?: unknown[];
-	format?: string;
-	pattern?: string;
-	minimum?: number;
-	maximum?: number;
-	minLength?: number;
-	maxLength?: number;
-	readOnly?: boolean;
-	title?: string;
-	$id?: string;
-	$schema?: string;
-};
-
-const MAX_DEPTH = 12;
-
-function formatType(node: SchemaNode): string {
-	const baseType = Array.isArray(node.type)
-		? node.type.join(" | ")
-		: (node.type ?? inferType(node));
-	if (baseType === "array") {
-		const itemType = node.items ? formatType(node.items) : "unknown";
-		return `array<${itemType}>`;
-	}
-	return baseType;
-}
-
-function inferType(node: SchemaNode): string {
-	if (node.properties) return "object";
-	if (node.items) return "array";
-	if (node.enum && node.enum.length > 0) return typeof node.enum[0];
-	if (node.format || node.pattern) return "string";
-	return "unknown";
-}
-
-function formatValue(value: unknown): string {
-	if (typeof value === "string") return value;
+/** Render a single value as a compact, code-styled string. */
+const renderValue = (value: unknown): string => {
+	if (typeof value === "string") return JSON.stringify(value);
 	if (value === null) return "null";
 	try {
 		return JSON.stringify(value);
 	} catch {
 		return String(value);
 	}
-}
+};
 
-function hasStructure(node: SchemaNode): boolean {
-	return Boolean(node.properties || node.items || node.enum);
-}
+/** Pick the most informative type string available on a property node:
+ * the original TypeScript type when present (richest, includes generics
+ * and named aliases), then function signatures, then the JSON Schema
+ * `type` keyword. */
+const renderType = (node: JsonSchemaPropertyNode): string => {
+	if (node["x-typescriptType"]) return node["x-typescriptType"];
+	if (node["x-functionSignature"]) return node["x-functionSignature"];
+	if (Array.isArray(node.type)) return node.type.join(" | ");
+	if (node.type) return node.type;
+	return "unknown";
+};
 
-function renderSection(
-	fieldPath: string,
-	node: SchemaNode,
+/** Build the ordered list of metadata rows shown for a property. Each
+ * entry becomes one row in the per-property 2-column table. We always
+ * emit Description and Type (when available); other rows are conditional
+ * so cells stay information-dense. The order is fixed so identical
+ * facts always appear at the same vertical position across properties. */
+const buildRows = (
+	node: JsonSchemaPropertyNode,
 	required: boolean,
-): string {
-	const lines = [`### \`${fieldPath}\``];
-	const meta: string[] = [];
-	meta.push(`- **Type:** \`${formatType(node)}\``);
-	if (required) meta.push("- **Required**");
-	if (node.default !== undefined)
-		meta.push(`- **Default:** \`${formatValue(node.default)}\``);
-	if (node.enum && node.enum.length > 0)
-		meta.push(
-			`- **Enum:** ${node.enum.map((v) => `\`${formatValue(v)}\``).join(", ")}`,
-		);
-	if (node.format) meta.push(`- **Format:** \`${node.format}\``);
-	if (node.pattern) meta.push(`- **Pattern:** \`${node.pattern}\``);
-	const range: string[] = [];
-	if (node.minimum !== undefined) range.push(`min ${node.minimum}`);
-	if (node.maximum !== undefined) range.push(`max ${node.maximum}`);
-	if (node.minLength !== undefined) range.push(`minLength ${node.minLength}`);
-	if (node.maxLength !== undefined) range.push(`maxLength ${node.maxLength}`);
-	if (range.length > 0) meta.push(`- **Range:** ${range.join(", ")}`);
-	if (node.readOnly) meta.push("- **Read-only**");
+): Array<{ key: string; label: string; value: ReactNode }> => {
+	const rows: Array<{ key: string; label: string; value: ReactNode }> = [];
 
-	if (meta.length > 0) {
-		lines.push("");
-		lines.push(...meta);
-	}
 	if (node.description) {
-		lines.push("");
-		lines.push(node.description);
+		rows.push({
+			key: "description",
+			label: "Description",
+			value: <Markdown>{node.description}</Markdown>,
+		});
 	}
-	return lines.join("\n");
-}
 
-function walk(
-	node: SchemaNode,
-	pathPrefix: string,
-	sections: string[],
-	depth: number,
-): void {
-	if (depth > MAX_DEPTH) return;
-	if (node.properties) {
-		const required = new Set(node.required ?? []);
-		for (const [key, child] of Object.entries(node.properties)) {
-			const childPath = pathPrefix ? `${pathPrefix}.${key}` : key;
-			sections.push(renderSection(childPath, child, required.has(key)));
-			if (child.properties) {
-				walk(child, childPath, sections, depth + 1);
-			} else if (child.items && hasStructure(child.items)) {
-				walk(child.items, `${childPath}[]`, sections, depth + 1);
-			}
-		}
-	} else if (node.items && hasStructure(node.items)) {
-		walk(node.items, `${pathPrefix}[]`, sections, depth + 1);
+	rows.push({
+		key: "type",
+		label: "Type",
+		value: <code className={styles.typeCell}>{renderType(node)}</code>,
+	});
+
+	if (node.enum && node.enum.length > 0) {
+		rows.push({
+			key: "enum",
+			label: "Allowed values",
+			value: (
+				<ul>
+					{node.enum.map((value, index) => (
+						<li
+							/* biome-ignore lint/suspicious/noArrayIndexKey: enum
+							 * values may legitimately repeat literals across
+							 * schemas; index is stable here because the array
+							 * source is read-only */
+							key={index}
+						>
+							<code>{renderValue(value)}</code>
+						</li>
+					))}
+				</ul>
+			),
+		});
 	}
-}
 
-function schemaToMarkdown(schema: SchemaNode, schemaUrl: string): string {
-	const sections: string[] = [];
-	if (schema.title) sections.push(`# ${schema.title}`);
-	if (schema.description) sections.push(schema.description);
-	if (schemaUrl) sections.push(`## JSON Schema`);
-	walk(schema, "", sections, 0);
-	return sections.join("\n\n");
-}
+	if (node.default !== undefined) {
+		rows.push({
+			key: "default",
+			label: "Default",
+			value: (
+				<p>
+					<code>{renderValue(node.default)}</code>
+				</p>
+			),
+		});
+	}
 
-export const JsonSchema = ({ url }: JsonSchemaProps) => {
-	const [markdown, setMarkdown] = useState<string | null>(null);
-	const [error, setError] = useState<string | null>(null);
+	if (required) {
+		rows.push({
+			key: "required",
+			label: "Required",
+			value: <p>Yes</p>,
+		});
+	}
 
-	useEffect(() => {
-		let cancelled = false;
-		setMarkdown(null);
-		setError(null);
-		fetch(url)
-			.then((res) => {
-				if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-				return res.json();
-			})
-			.then((schema) => {
-				if (!cancelled) {
-					const schemaUrl = schema.$id || url;
-					setMarkdown(schemaToMarkdown(schema, schemaUrl));
-				}
-			})
-			.catch((e) => {
-				if (!cancelled) setError(e instanceof Error ? e.message : String(e));
-			});
-		return () => {
-			cancelled = true;
-		};
-	}, [url]);
+	if (node.deprecated) {
+		const reason = node["x-deprecationReason"];
+		rows.push({
+			key: "deprecated",
+			label: "Deprecated",
+			value: <p>{reason ?? "Yes"}</p>,
+		});
+	}
 
-	if (error) return <p>Failed to load schema: {error}</p>;
-	if (markdown === null) return <Skeleton rows={12} />;
-	return <Markdown>{markdown}</Markdown>;
+	const since = node["x-since"];
+	if (typeof since === "string" && since.length > 0) {
+		rows.push({
+			key: "since",
+			label: "Since",
+			value: (
+				<p>
+					<code>{since}</code>
+				</p>
+			),
+		});
+	}
+
+	return rows;
+};
+
+/** Renders a JSON Schema's `properties` map as a flat list of per-prop
+ * sections, each containing a 2-column metadata table (label / value).
+ * Mirrors the per-property layout used in the official UI5 Web Components
+ * docs — easier to scan than a single wide table when individual props
+ * have long type unions or multi-paragraph descriptions.
+ *
+ * Almost all visual styling comes from Storybook's docs theme. Each
+ * property heading uses Storybook's own `<HeaderMdx as="h3">` so it
+ * picks up the same Octicon-style hover anchor link Storybook attaches
+ * to MDX headings — clickable for permalinks (`#prop-${name}`). All
+ * other elements (`<table>`, `<th>`, `<td>`, `<p>`, `<ul>`, `<li>`, and
+ * `<p>/<li> code`) are styled globally inside `.sbdocs-content`. The
+ * local stylesheet only adds the minimum overrides — most importantly,
+ * wrapping long TypeScript types in the type cell, since Storybook's
+ * default `code` uses `white-space: nowrap`. */
+export const JsonSchema = ({ schema }: JsonSchemaProps) => {
+	const properties = schema.properties ?? {};
+	const requiredSet = new Set(schema.required ?? []);
+	const propEntries = Object.entries(properties).sort(([a], [b]) => {
+		const aRequired = requiredSet.has(a);
+		const bRequired = requiredSet.has(b);
+		if (aRequired !== bRequired) return aRequired ? -1 : 1;
+		return a.localeCompare(b);
+	});
+
+	if (propEntries.length === 0) {
+		return (
+			<p>
+				<em>No public props.</em>
+			</p>
+		);
+	}
+
+	return (
+		<div className={styles.propertyList}>
+			{propEntries.map(([name, node]) => {
+				const required = requiredSet.has(name);
+				const rows = buildRows(node, required);
+				return (
+					<section key={name} className={styles.propertySection}>
+						<HeaderMdx as="h3" id={`prop-${name}`}>
+							{name}
+						</HeaderMdx>
+						<table>
+							<tbody>
+								{rows.map((row) => (
+									<tr key={row.key}>
+										<th scope="row" className={styles.labelCell}>
+											{row.label}
+										</th>
+										<td>{row.value}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</section>
+				);
+			})}
+		</div>
+	);
 };

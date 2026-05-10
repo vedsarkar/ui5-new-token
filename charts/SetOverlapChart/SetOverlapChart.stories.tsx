@@ -1,7 +1,6 @@
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { SetOverlapChart } from "./SetOverlapChart";
-import cssClasses from "./SetOverlapChart.module.css";
 import type { DataSet, Intersection } from "./SetOverlapChart.types";
 
 const defaultSets: DataSet[] = [
@@ -84,7 +83,6 @@ const meta = preview.meta({
 	component: SetOverlapChart,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

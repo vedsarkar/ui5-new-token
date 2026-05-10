@@ -1,13 +1,15 @@
 {/*
   AUTO-GENERATED — do not edit by hand.
   Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
   Run: npm run build-component-docs
 */}
 
-import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
 import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
-import { Details } from "@/components/Details";
 import * as ErrorBoundaryStories from "./ErrorBoundary.stories";
+import schema from "./ErrorBoundary.schema.json";
 
 <Meta of={ErrorBoundaryStories} />
 
@@ -39,38 +41,34 @@ The `onError` callback fires once per caught error with `(error, errorInfo)`. Th
 
 <SectionHeading>Prop types</SectionHeading>
 
-<ArgTypes />
+<JsonSchema schema={schema} />
 
-{/* __RAW_TYPES_SOURCE__
-import type React from "react";
-
-/**
- * Props for the ErrorBoundary component.
- *\/
-export type ErrorBoundaryProps = {
-	/**
-	 * Content to render when no error occurs.
-	 *\/
-	children: React.ReactNode;
-
-	/**
-	 * Content to render when an error is caught from a descendant.
-	 *\/
-	fallback: React.ReactNode;
-
-	/**
-	 * Optional callback invoked in componentDidCatch with the caught error and React.ErrorInfo.
-	 *\/
-	onError?: (error: Error, info: React.ErrorInfo) => void;
-};
-
-/**
- * Internal state for the ErrorBoundary class component.
- *\/
-export type ErrorBoundaryState = {
-	hasError: boolean;
-	error: Error | null;
-};
+{/* __JSON_SCHEMA__
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ErrorBoundaryProps",
+  "x-component": "ErrorBoundary",
+  "type": "object",
+  "properties": {
+    "children": {
+      "description": "Content to render when no error occurs.",
+      "x-typescriptType": "React.ReactNode"
+    },
+    "fallback": {
+      "description": "Content to render when an error is caught from a descendant.",
+      "x-typescriptType": "React.ReactNode"
+    },
+    "onError": {
+      "description": "Optional callback invoked in componentDidCatch with the caught error and React.ErrorInfo.",
+      "x-typescriptType": "(error: Error, info: React.ErrorInfo) => void",
+      "x-functionSignature": "(error: Error, info: React.ErrorInfo) => void"
+    }
+  },
+  "required": [
+    "children",
+    "fallback"
+  ]
+}
 */}
 
 {/* __RAW_STORIES_SOURCE__

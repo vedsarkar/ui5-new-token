@@ -1,7 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
+import { buildComponentJsonSchema } from "./buildJsonSchema.mjs";
+import { createTypeExtractor } from "./extractTypeApi.mjs";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
+
+/** Conventional name of the exported props type alias for a component
+ * directory: `<ComponentName>Props`. The build pipeline currently only
+ * resolves this single export per component; callers can change the type
+ * name freely as long as it follows this convention. */
+const propsTypeNameFor = (componentName) => `${componentName}Props`;
 
 /** Glob patterns for top-level component folders that may opt into the
  * static-MDX pipeline. Mirrors the `stories` pattern in `.storybook/main.ts`
@@ -47,58 +55,25 @@ const discoverComponentDirs = () => {
 const HEADER = `{/*
   AUTO-GENERATED — do not edit by hand.
   Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
   Run: npm run build-component-docs
 */}`;
 
-const FIXED_IMPORTS = `import { ArgTypes, Meta, Stories } from "@storybook/addon-docs/blocks";
-import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
-import { Details } from "@/components/Details";`;
+const FIXED_IMPORTS = `import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";`;
 
 /** Escape a string for safe embedding inside an MDX comment block.
  * The only sequence that closes a `/* ... *\/` comment is the literal `*\/`,
  * so we break it up the same way build-api-docs.mjs does for raw JSON. */
 const escapeForMdxComment = (text) => text.replaceAll("*/", "*\\/");
 
-/** Render a static markdown list of stable CSS class selectors for a
- * component, wrapped in a collapsed `<Details>`. Inlined as plain markdown so
- * both humans and AI agents (via MCP) see the same content.
- *
- * The class map is read from `<Component>.module.css.json` produced by
- * `scripts/build-css.mjs`. If the file is missing or empty, the section is
- * skipped (component might be pure UI5 wrapper with no CSS Module). */
-const buildCssClassesSection = (cssJsonPath) => {
-	if (!fs.existsSync(cssJsonPath)) return "";
-	const map = JSON.parse(fs.readFileSync(cssJsonPath, "utf8"));
-	const rows = Object.entries(map);
-	if (rows.length === 0) return "";
-
-	const items = rows
-		.map(([, hashed]) => `- \`.reltio_${hashed.split("__")[0]}\``)
-		.join("\n");
-
-	return `
-<Details>
-	<summary>CSS classes</summary>
-
-Stable class names for external customization. These classes are always present on the rendered elements regardless of build hash.
-
-${items}
-
-</Details>
-`;
-};
-
-const buildMdx = ({
-	componentName,
-	readme,
-	typesSource,
-	storiesSource,
-	cssClassesSection,
-}) =>
+const buildMdx = ({ componentName, readme, jsonSchemaSource, storiesSource }) =>
 	`${HEADER}
 
 ${FIXED_IMPORTS}
 import * as ${componentName}Stories from "./${componentName}.stories";
+import schema from "./${componentName}.schema.json";
 
 <Meta of={${componentName}Stories} />
 
@@ -106,12 +81,12 @@ ${readme.trim()}
 
 <SectionHeading>Prop types</SectionHeading>
 
-<ArgTypes />
+<JsonSchema schema={schema} />
 
-{/* __RAW_TYPES_SOURCE__
-${escapeForMdxComment(typesSource.trim())}
+{/* __JSON_SCHEMA__
+${escapeForMdxComment(jsonSchemaSource)}
 */}
-${cssClassesSection}
+
 {/* __RAW_STORIES_SOURCE__
 ${escapeForMdxComment(storiesSource.trim())}
 */}
@@ -121,11 +96,41 @@ ${escapeForMdxComment(storiesSource.trim())}
 </div>
 `;
 
-const buildOne = ({ dir, componentName }) => {
+/** Run the TS Compiler API extractor against a component's `.types.ts`,
+ * convert the result to a JSON Schema document, and write it to disk as
+ * `<Component>.schema.json`. Returns the schema (also as serialized text
+ * for inlining into MDX) so the caller can wire it through the template.
+ *
+ * Failures are surfaced as warnings but do NOT abort the build — the rest
+ * of the docs page is still useful even without a schema. */
+const buildComponentSchema = (typeExtractor, dir, componentName) => {
+	const exportedName = propsTypeNameFor(componentName);
+	const typesPath = path.join(dir, `${componentName}.types.ts`);
+	const schemaPath = path.join(dir, `${componentName}.schema.json`);
+	try {
+		const props = typeExtractor.extractProps(typesPath, exportedName);
+		const schema = buildComponentJsonSchema({
+			componentName,
+			exportedTypeName: exportedName,
+			props,
+		});
+		const serialized = `${JSON.stringify(schema, null, 2)}\n`;
+		fs.writeFileSync(schemaPath, serialized, "utf8");
+		return { schema, serialized: serialized.trimEnd() };
+	} catch (err) {
+		console.warn(
+			`  ! Schema generation skipped for ${componentName}: ${err.message}`,
+		);
+		// Remove a stale schema so consumers don't read outdated content.
+		if (fs.existsSync(schemaPath)) fs.unlinkSync(schemaPath);
+		return null;
+	}
+};
+
+const buildOne = (typeExtractor, { dir, componentName }) => {
 	const readmePath = path.join(dir, "README.md");
 	const typesPath = path.join(dir, `${componentName}.types.ts`);
 	const storiesPath = path.join(dir, `${componentName}.stories.tsx`);
-	const cssJsonPath = path.join(dir, `${componentName}.module.css.json`);
 	const outPath = path.join(dir, `${componentName}.story.mdx`);
 
 	for (const [label, p] of [
@@ -139,16 +144,20 @@ const buildOne = ({ dir, componentName }) => {
 	}
 
 	const readme = fs.readFileSync(readmePath, "utf8");
-	const typesSource = fs.readFileSync(typesPath, "utf8");
 	const storiesSource = fs.readFileSync(storiesPath, "utf8");
-	const cssClassesSection = buildCssClassesSection(cssJsonPath);
+	const schemaResult = buildComponentSchema(typeExtractor, dir, componentName);
+	if (!schemaResult) {
+		throw new Error(
+			`Cannot build MDX for ${componentName} without a JSON Schema. ` +
+				`Fix the .types.ts (export ${propsTypeNameFor(componentName)}) and rerun.`,
+		);
+	}
 
 	const mdx = buildMdx({
 		componentName,
 		readme,
-		typesSource,
+		jsonSchemaSource: schemaResult.serialized,
 		storiesSource,
-		cssClassesSection,
 	});
 
 	fs.writeFileSync(outPath, mdx, "utf8");
@@ -163,15 +172,24 @@ const main = () => {
 		);
 		return;
 	}
+
+	const startTs = Date.now();
+	console.log(
+		`Initializing TypeScript program for ${dirs.length} component(s)…`,
+	);
+	const typeExtractor = createTypeExtractor(ROOT);
+	console.log(`  TS program ready in ${Date.now() - startTs}ms`);
+
 	for (const entry of dirs) {
 		try {
-			const outPath = buildOne(entry);
+			const outPath = buildOne(typeExtractor, entry);
 			console.log(`✓ ${path.relative(ROOT, outPath)}`);
 		} catch (err) {
 			console.error(`✗ ${entry.componentName}: ${err.message}`);
 			process.exitCode = 1;
 		}
 	}
+	typeExtractor.dispose();
 };
 
 main();

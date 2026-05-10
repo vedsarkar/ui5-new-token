@@ -3,7 +3,6 @@ import preview from "@/.storybook/preview";
 import europeGeoJSON from "./data/europe.geo.json";
 import usaGeoJSON from "./data/usa-states.geo.json";
 import { GeoChart } from "./GeoChart";
-import cssClasses from "./GeoChart.module.css";
 
 const usaData = [
 	{ name: "California", value: 39 },
@@ -101,7 +100,6 @@ const meta = preview.meta({
 	component: GeoChart,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {

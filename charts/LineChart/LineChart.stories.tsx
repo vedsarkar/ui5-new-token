@@ -2,7 +2,6 @@ import { faker } from "@faker-js/faker";
 import { FullscreenDecorator } from "@/.storybook/blocks/FullscreenDecorator";
 import preview from "@/.storybook/preview";
 import { LineChart } from "./LineChart";
-import cssClasses from "./LineChart.module.css";
 
 faker.seed(42);
 
@@ -30,7 +29,6 @@ const meta = preview.meta({
 	component: LineChart,
 	parameters: {
 		layout: "fullscreen",
-		cssClasses,
 	},
 	decorators: [FullscreenDecorator],
 	args: {
