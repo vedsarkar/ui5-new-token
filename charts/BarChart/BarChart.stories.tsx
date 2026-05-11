@@ -29,6 +29,7 @@ const meta = preview.meta({
 	component: BarChart,
 	parameters: {
 		layout: "fullscreen",
+		dualTheme: { split: "vertical" },
 	},
 	decorators: [FullscreenDecorator],
 	args: {

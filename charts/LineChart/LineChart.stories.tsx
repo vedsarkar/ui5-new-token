@@ -29,6 +29,7 @@ const meta = preview.meta({
 	component: LineChart,
 	parameters: {
 		layout: "fullscreen",
+		dualTheme: { split: "vertical" },
 	},
 	decorators: [FullscreenDecorator],
 	args: {

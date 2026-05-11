@@ -8,12 +8,15 @@ import {
 } from "@storybook/addon-docs/blocks";
 import { definePreview } from "@storybook/react-vite";
 import { initialize, mswLoader } from "msw-storybook-addon";
+import { DualThemeDecorator } from "./blocks/DualThemeDecorator";
 import reltioTheme from "./reltio-theme";
 
 initialize({ onUnhandledRequest: "bypass" });
 
 export default definePreview({
 	tags: ["autodocs"],
+
+	decorators: [DualThemeDecorator],
 
 	loaders: [mswLoader],
 

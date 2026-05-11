@@ -35,6 +35,7 @@ const meta: Meta<typeof TokenTable> = {
 	tags: ["!autodocs"],
 	parameters: {
 		layout: "padded",
+		dualTheme: false,
 	},
 };
 

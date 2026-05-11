@@ -15,6 +15,7 @@ const meta = preview.meta({
 	component: RadarChart,
 	parameters: {
 		layout: "fullscreen",
+		dualTheme: { split: "vertical" },
 	},
 	decorators: [FullscreenDecorator],
 	args: {

@@ -1,6 +1,6 @@
 import { Button } from "@ui5/webcomponents-react/Button";
 import { Popover } from "@ui5/webcomponents-react/Popover";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { fn } from "storybook/test";
 import preview from "../../.storybook/preview";
 
@@ -10,7 +10,6 @@ const meta = preview.meta({
 		layout: "centered",
 	},
 	args: {
-		opener: "popover-opener",
 		onClose: fn(),
 	},
 });
@@ -21,16 +20,24 @@ const TriggerWrapper = ({
 	children,
 	openerLabel = "Open popover",
 }: {
-	children: (open: boolean, setOpen: (v: boolean) => void) => React.ReactNode;
+	children: (
+		openerId: string,
+		open: boolean,
+		setOpen: (v: boolean) => void,
+	) => React.ReactNode;
 	openerLabel?: string;
 }) => {
 	const [open, setOpen] = useState(false);
+	// Each render gets its own opener id, so when the dual-theme decorator
+	// renders this story twice the two popovers anchor to the correct triggers
+	// instead of both pointing at the first one.
+	const openerId = `popover-opener-${useId().replace(/:/g, "")}`;
 	return (
 		<div style={{ padding: "120px 60px" }}>
-			<Button id="popover-opener" onClick={() => setOpen(true)}>
+			<Button id={openerId} onClick={() => setOpen(true)}>
 				{openerLabel}
 			</Button>
-			{children(open, setOpen)}
+			{children(openerId, open, setOpen)}
 		</div>
 	);
 };
@@ -38,8 +45,13 @@ const TriggerWrapper = ({
 export const Default = meta.story({
 	render: (args) => (
 		<TriggerWrapper>
-			{(open, setOpen) => (
-				<Popover {...args} open={open} onClose={() => setOpen(false)}>
+			{(openerId, open, setOpen) => (
+				<Popover
+					{...args}
+					opener={openerId}
+					open={open}
+					onClose={() => setOpen(false)}
+				>
 					<div style={{ padding: "16px", maxWidth: "260px" }}>
 						<p style={{ margin: 0 }}>
 							A simple popover anchored to the trigger button. Click outside to
@@ -55,9 +67,10 @@ export const Default = meta.story({
 export const WithHeader = meta.story({
 	render: (args) => (
 		<TriggerWrapper openerLabel="Open with header">
-			{(open, setOpen) => (
+			{(openerId, open, setOpen) => (
 				<Popover
 					{...args}
+					opener={openerId}
 					open={open}
 					onClose={() => setOpen(false)}
 					headerText="Entity details"
@@ -74,9 +87,10 @@ export const WithHeader = meta.story({
 export const WithFooter = meta.story({
 	render: (args) => (
 		<TriggerWrapper openerLabel="Filters">
-			{(open, setOpen) => (
+			{(openerId, open, setOpen) => (
 				<Popover
 					{...args}
+					opener={openerId}
 					open={open}
 					onClose={() => setOpen(false)}
 					headerText="Filter by source"
@@ -112,8 +126,13 @@ export const PlacementTop = meta.story({
 	},
 	render: (args) => (
 		<TriggerWrapper openerLabel="Popover above">
-			{(open, setOpen) => (
-				<Popover {...args} open={open} onClose={() => setOpen(false)}>
+			{(openerId, open, setOpen) => (
+				<Popover
+					{...args}
+					opener={openerId}
+					open={open}
+					onClose={() => setOpen(false)}
+				>
 					<div style={{ padding: "16px", maxWidth: "260px" }}>
 						<p style={{ margin: 0 }}>
 							Anchored above the trigger. Useful for footer-pinned actions.
@@ -131,8 +150,13 @@ export const PlacementEnd = meta.story({
 	},
 	render: (args) => (
 		<TriggerWrapper openerLabel="Popover to the side">
-			{(open, setOpen) => (
-				<Popover {...args} open={open} onClose={() => setOpen(false)}>
+			{(openerId, open, setOpen) => (
+				<Popover
+					{...args}
+					opener={openerId}
+					open={open}
+					onClose={() => setOpen(false)}
+				>
 					<div style={{ padding: "16px", maxWidth: "240px" }}>
 						<p style={{ margin: 0 }}>
 							Anchored to the end (right in LTR, left in RTL).
@@ -150,9 +174,10 @@ export const ModalBackdrop = meta.story({
 	},
 	render: (args) => (
 		<TriggerWrapper openerLabel="Open modal popover">
-			{(open, setOpen) => (
+			{(openerId, open, setOpen) => (
 				<Popover
 					{...args}
+					opener={openerId}
 					open={open}
 					onClose={() => setOpen(false)}
 					headerText="Confirm action"
@@ -185,9 +210,10 @@ export const ModalBackdrop = meta.story({
 export const LongScrollableContent = meta.story({
 	render: (args) => (
 		<TriggerWrapper openerLabel="Long content">
-			{(open, setOpen) => (
+			{(openerId, open, setOpen) => (
 				<Popover
 					{...args}
+					opener={openerId}
 					open={open}
 					onClose={() => setOpen(false)}
 					headerText="Activity feed"

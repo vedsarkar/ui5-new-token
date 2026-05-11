@@ -9,10 +9,11 @@ const meta = preview.meta({
 	component: Chat,
 	parameters: {
 		layout: "fullscreen",
+		dualTheme: { split: "vertical" },
 	},
 	decorators: [
 		(Story) => (
-			<div style={{ height: "100vh" }}>
+			<div style={{ height: "100%" }}>
 				<Story />
 			</div>
 		),

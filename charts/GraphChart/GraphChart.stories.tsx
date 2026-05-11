@@ -68,6 +68,7 @@ const meta = preview.meta({
 	component: GraphChart,
 	parameters: {
 		layout: "fullscreen",
+		dualTheme: { split: "vertical" },
 	},
 	decorators: [FullscreenDecorator],
 	args: {

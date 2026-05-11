@@ -83,6 +83,7 @@ const meta = preview.meta({
 	component: SetOverlapChart,
 	parameters: {
 		layout: "fullscreen",
+		dualTheme: { split: "vertical" },
 	},
 	decorators: [FullscreenDecorator],
 	args: {

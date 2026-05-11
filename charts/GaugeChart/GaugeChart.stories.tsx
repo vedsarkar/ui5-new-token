@@ -7,6 +7,7 @@ const meta = preview.meta({
 	component: GaugeChart,
 	parameters: {
 		layout: "fullscreen",
+		dualTheme: { split: "vertical" },
 	},
 	decorators: [FullscreenDecorator],
 	args: {

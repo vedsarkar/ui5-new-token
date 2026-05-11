@@ -9,3 +9,65 @@
 <link rel="stylesheet" href="/variables.css" />
 <link rel="stylesheet" href="/fonts.css" />
 <link rel="stylesheet" href="/global.css" />
+
+<style>
+  /*
+    Story view: strip Storybook's built-in canvas-wrapper padding/margin/
+    centering so the DualThemeDecorator (.storybook/blocks/DualThemeDecorator.tsx)
+    can fill the entire canvas frame. Storybook's defaults are:
+
+      .sb-show-main.sb-main-centered { display: flex; align-items: center; min-height: 100vh; }
+      .sb-show-main.sb-main-centered #storybook-root { margin: auto; padding: 1rem; }
+      .sb-show-main.sb-main-padded   { padding: 1rem; }
+
+    The padding around #storybook-root is what produces the visible white
+    border around the LIGHT/DARK halves. The decorator handles its own
+    layout intent (centering / padding / fullscreen) per half via the
+    `parameters.layout` value, so we want zero outer padding from Storybook.
+    Stories continue to declare `parameters.layout: "centered" | "padded"`
+    as before — the decorator picks it up and applies it inside each half.
+  */
+  .sb-show-main.sb-main-centered,
+  .sb-show-main.sb-main-padded,
+  .sb-show-main.sb-main-fullscreen {
+    margin: 0;
+    padding: 0;
+    display: block;
+    min-height: 0;
+  }
+  .sb-show-main.sb-main-centered #storybook-root,
+  .sb-show-main.sb-main-padded #storybook-root,
+  .sb-show-main.sb-main-fullscreen #storybook-root {
+    margin: 0;
+    padding: 0;
+    max-height: none;
+  }
+
+  /*
+    Docs view: each <Stories> preview is wrapped in a stack of containers —
+    `.docs-story` (display: flex; align-items: center for centering),
+    `div[scale]` (zoom transform wrapper), `.innerZoomElementWrapper` (zoom
+    inner), `.sb-story` (story root), plus intermediate divs. The flex
+    centering shrinks every child to its content width, which collapses the
+    DualThemeDecorator's grid down to almost zero even when the decorator
+    sets `width: 100%`.
+
+    Stretch the chain only when a `[data-dual-theme]` element is present
+    inside the preview, so stories that opt out (parameters.dualTheme: false)
+    and unrelated docs blocks keep their default centering.
+  */
+  .docs-story:has([data-dual-theme]) {
+    align-items: stretch;
+    padding: 0;
+  }
+  .docs-story:has([data-dual-theme]) [scale],
+  .docs-story:has([data-dual-theme]) .innerZoomElementWrapper,
+  .docs-story:has([data-dual-theme]) .innerZoomElementWrapper > div,
+  .docs-story:has([data-dual-theme]) .sb-story,
+  .docs-story:has([data-dual-theme]) .sb-story > div {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0 !important;
+  }
+</style>

@@ -24,6 +24,7 @@ const meta = preview.meta({
 	component: SankeyChart,
 	parameters: {
 		layout: "fullscreen",
+		dualTheme: { split: "vertical" },
 	},
 	decorators: [FullscreenDecorator],
 	args: {
