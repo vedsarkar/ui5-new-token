@@ -34,6 +34,10 @@ This guide explains how to write effective Storybook stories that serve as autom
       <td>Cross-Browser Coverage</td>
       <td>Tests run across Chrome, Firefox, Safari, and Edge automatically</td>
     </tr>
+    <tr>
+      <td>Dual-Theme Coverage</td>
+      <td>Every visual + a11y test runs against both light and dark themes in a single pass — no extra stories required</td>
+    </tr>
   </tbody>
 </table>
 
@@ -203,6 +207,139 @@ export const AllStates = meta.story({
   ),
 });
 ```
+
+## Dual-Theme Rendering
+
+Every component and chart story is automatically rendered **twice** — once inside a `data-theme="horizon-light"` container and once inside a `data-theme="horizon-dark"` container — so each Chromatic snapshot and each addon-vitest accessibility test covers both themes in a single pass.
+
+> **🎯 Key Principle:** One story = one test = both themes covered. You write the story once; Chromatic and axe verify it in light AND dark with no extra effort.
+
+The decorator lives in `.storybook/blocks/DualThemeDecorator.tsx` and is wired globally in `.storybook/preview.tsx`. The two halves split the canvas frame and inherit the story's existing `parameters.layout` (`centered` / `padded` / `fullscreen`) — each half centers / pads its `<Story />` independently, so existing stories work without any change.
+
+### Layout
+
+By default the frame splits **horizontally** — light on the left, dark on the right:
+
+<table>
+  <thead>
+    <tr>
+      <th>Split</th>
+      <th>When to use</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>"horizontal"</code> (default)</td>
+      <td>Most components — Buttons, Inputs, Popovers, anything that fits in half-width</td>
+    </tr>
+    <tr>
+      <td><code>"vertical"</code></td>
+      <td>Fullscreen-layout stories — charts, Chat, diagrams that need full width to render legends, axes, and long content</td>
+    </tr>
+  </tbody>
+</table>
+
+### Parameter Reference
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Behaviour</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>(none)</td>
+      <td>Default — horizontal split, both themes rendered</td>
+    </tr>
+    <tr>
+      <td><code>parameters.dualTheme: &#123; split: "vertical" &#125;</code></td>
+      <td>Stack themes vertically — light on top, dark below; preserves full width</td>
+    </tr>
+    <tr>
+      <td><code>parameters.dualTheme: false</code></td>
+      <td>Opt the story out entirely — render once in the active theme</td>
+    </tr>
+  </tbody>
+</table>
+
+### When to Use Vertical Split
+
+Any story with `layout: "fullscreen"` should set vertical split — otherwise the story is squeezed into 50vw and axes / legends / messages overflow or wrap awkwardly.
+
+**✅ Do:** Vertical split for fullscreen stories
+
+```tsx
+const meta = preview.meta({
+  component: BarChart,
+  parameters: {
+    layout: "fullscreen",
+    dualTheme: { split: "vertical" }, // chart needs full width
+  },
+});
+```
+
+This already applies to every chart under `charts/**` and the `Chat` component. New fullscreen stories should follow the same pattern.
+
+### When to Opt Out
+
+Stories that are not visual UI — API endpoint examples, hook demos, JSON schemas, token tables — gain nothing from dual-theme rendering and just double the docs page height.
+
+**Already opted out (you don't need to do anything):**
+
+- All `openApi/**` stories — `apiMetaConfig` (`.storybook/utils/apiMetaConfig.tsx`) sets `dualTheme: false` for the whole API section
+- `guides/Tokens.stories.tsx` and `guides/TokensDark.stories.tsx` — token tables already render the opposite theme explicitly per page
+
+**Opt out in new non-visual stories:**
+
+```tsx
+const meta = preview.meta({
+  component: UseFooHookDemo,
+  parameters: {
+    dualTheme: false, // hook demo — runtime behaviour, not visual UI
+  },
+});
+```
+
+### Common Pitfalls
+
+**Hard-coded element IDs duplicate across the two renders.** The decorator mounts the same story twice in the same DOM, so any literal `id="..."` becomes a duplicate-ID a11y violation. Use `useId()` per render instead:
+
+**❌ Don't:** Static `id` attributes inside stories
+
+```tsx
+const TriggerWrapper = ({ children }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button id="popover-opener" onClick={() => setOpen(true)}>Open</Button>
+      <Popover opener="popover-opener" open={open} ...>{children}</Popover>
+    </>
+  );
+};
+```
+
+**✅ Do:** `useId()` for unique per-render IDs
+
+```tsx
+import { useId, useState } from "react";
+
+const TriggerWrapper = ({ children }) => {
+  const [open, setOpen] = useState(false);
+  const openerId = `popover-opener-${useId().replace(/:/g, "")}`;
+  return (
+    <>
+      <Button id={openerId} onClick={() => setOpen(true)}>Open</Button>
+      <Popover opener={openerId} open={open} ...>{children}</Popover>
+    </>
+  );
+};
+```
+
+**Portal-mounted overlays auto-opening.** When a story sets `open: true` and the component portals into `document.body` (Popover, Dialog, ComboBox dropdown), both copies open at once and stack on the same anchor. Either keep the overlay closed by default and require a click, anchor each overlay through `useId()`, or set vertical split so the overlays cannot collide horizontally.
+
+**`parameters.layout` still applies — to each half.** A story declared with `layout: "centered"` renders two centered halves, not one centered story. The decorator reproduces the canvas wrapper's centering / padding / fullscreen behaviour inside each themed container automatically — existing stories keep working unchanged.
 
 ## Stories vs. Documentation
 
@@ -914,6 +1051,8 @@ export const Disabled = meta.story({
 - [ ] Free-form props have one demonstrative story each, not multiple value permutations
 - [ ] Faker.js used with a fixed seed for large/generated datasets; curated data for variant labels and semantic content
 - [ ] Complex story styles extracted to `Stories.module.css` instead of inline `style={{}}`
+- [ ] Dual-theme rendering: `parameters.dualTheme: { split: "vertical" }` for fullscreen layouts (charts, Chat); `parameters.dualTheme: false` for non-visual stories (hooks, API, token tables)
+- [ ] Static element IDs replaced with `useId()` so the second (dark-theme) render does not produce duplicate-ID a11y violations
 
 ## Sources and References
 

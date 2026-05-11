@@ -145,6 +145,11 @@ export const apiMetaConfig = ({ spec, responses }: ApiMetaOptions) => {
 		component: ApiFetcher,
 		parameters: {
 			layout: "padded",
+			// API stories render request/response panels (Fetcher), not visual UI
+			// components, so the dual-theme side-by-side rendering adds no value
+			// and just doubles the height of every preview. Opt every story
+			// produced by `apiMetaConfig` out of the dual-theme decorator.
+			dualTheme: false,
 			docs: {
 				source: {
 					language: "bash",
