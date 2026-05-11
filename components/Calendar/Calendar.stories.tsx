@@ -1,3 +1,4 @@
+import "@ui5/webcomponents-localization/dist/features/calendar/Islamic.js";
 import { Calendar } from "@ui5/webcomponents-react/Calendar";
 import { CalendarDate } from "@ui5/webcomponents-react/CalendarDate";
 import { CalendarDateRange } from "@ui5/webcomponents-react/CalendarDateRange";

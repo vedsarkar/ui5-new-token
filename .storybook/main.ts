@@ -35,12 +35,4 @@ export default defineMain({
 		config.plugins.push(reltioProxyDevPlugin());
 		return config;
 	},
-
-	typescript: {
-		reactDocgen: "react-docgen-typescript",
-		reactDocgenTypescriptOptions: {
-			shouldExtractLiteralValuesFromEnum: true,
-			include: ["components/**/*.tsx", "charts/**/*.tsx"],
-		},
-	},
 });
