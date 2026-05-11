@@ -1,23 +1,23 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "RadarChartProps",
-  "x-component": "RadarChart",
-  "type": "object",
-  "properties": {
-    "indicators": {
-      "description": "Radar axes definition. Each entry adds one spoke to the chart.",
-      "x-typescriptType": "Array<RadarChartIndicator>",
-      "type": "array"
-    },
-    "series": {
-      "description": "Data polygons to plot. Each entry renders one filled area.",
-      "x-typescriptType": "Array<RadarChartSeries>",
-      "type": "array"
-    },
-    "units": {
-      "description": "Unit suffix appended to tooltip values.\nExamples: \"ms\", \"%\", \" pts\"",
-      "x-typescriptType": "string",
-      "type": "string"
-    }
-  }
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "RadarChartProps",
+	"x-component": "RadarChart",
+	"type": "object",
+	"properties": {
+		"indicators": {
+			"description": "Radar axes definition. Each entry adds one spoke to the chart.",
+			"x-typescriptType": "Array<RadarChartIndicator>",
+			"type": "array"
+		},
+		"series": {
+			"description": "Data polygons to plot. Each entry renders one filled area.",
+			"x-typescriptType": "Array<RadarChartSeries>",
+			"type": "array"
+		},
+		"units": {
+			"description": "Unit suffix appended to tooltip values.\nExamples: \"ms\", \"%\", \" pts\"",
+			"x-typescriptType": "string",
+			"type": "string"
+		}
+	}
 }

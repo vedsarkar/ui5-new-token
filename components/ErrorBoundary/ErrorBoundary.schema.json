@@ -1,25 +1,22 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "ErrorBoundaryProps",
-  "x-component": "ErrorBoundary",
-  "type": "object",
-  "properties": {
-    "children": {
-      "description": "Content to render when no error occurs.",
-      "x-typescriptType": "React.ReactNode"
-    },
-    "fallback": {
-      "description": "Content to render when an error is caught from a descendant.",
-      "x-typescriptType": "React.ReactNode"
-    },
-    "onError": {
-      "description": "Optional callback invoked in componentDidCatch with the caught error and React.ErrorInfo.",
-      "x-typescriptType": "(error: Error, info: React.ErrorInfo) => void",
-      "x-functionSignature": "(error: Error, info: React.ErrorInfo) => void"
-    }
-  },
-  "required": [
-    "children",
-    "fallback"
-  ]
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "ErrorBoundaryProps",
+	"x-component": "ErrorBoundary",
+	"type": "object",
+	"properties": {
+		"children": {
+			"description": "Content to render when no error occurs.",
+			"x-typescriptType": "React.ReactNode"
+		},
+		"fallback": {
+			"description": "Content to render when an error is caught from a descendant.",
+			"x-typescriptType": "React.ReactNode"
+		},
+		"onError": {
+			"description": "Optional callback invoked in componentDidCatch with the caught error and React.ErrorInfo.",
+			"x-typescriptType": "(error: Error, info: React.ErrorInfo) => void",
+			"x-functionSignature": "(error: Error, info: React.ErrorInfo) => void"
+		}
+	},
+	"required": ["children", "fallback"]
 }

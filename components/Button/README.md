@@ -1,9 +1,5 @@
 # Button
 
-```tsx
-import { Button } from "@reltio/design/components";
-```
-
 `Button` is the SAP Fiori push-button, re-exported from `@ui5/webcomponents-react/Button` as the canonical Reltio entry point. Use it for every clickable action in Reltio applications — primary form submission, confirmations, destructive actions, secondary controls, and icon-only utilities.
 
 There is no Reltio wrapping or default override around the underlying UI5 component: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Button`. The Reltio layer adds curation (this is the endorsed surface for product apps), pinned versioning (a single Reltio release pins the matching UI5 version), and richer documentation (the stories on this page cover edge cases the SAP-side library leaves uncovered).

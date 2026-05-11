@@ -1,9 +1,5 @@
 # ErrorBoundary
 
-```tsx
-import { ErrorBoundary } from "@reltio/design/components";
-```
-
 `ErrorBoundary` is a thin React class component that catches render-time errors thrown by its descendants and renders a `fallback` instead of crashing the surrounding tree. It is intentionally minimal — no built-in fallback UI, no telemetry, no recovery logic. The caller decides what to render and what to log.
 
 ### When to use

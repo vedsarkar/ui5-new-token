@@ -1,3 +1,4 @@
+import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { buildComponentJsonSchema } from "./buildJsonSchema.mjs";
@@ -68,7 +69,49 @@ import { SectionHeading } from "@/.storybook/blocks/SectionHeading";`;
  * so we break it up the same way build-api-docs.mjs does for raw JSON. */
 const escapeForMdxComment = (text) => text.replaceAll("*/", "*\\/");
 
-const buildMdx = ({ componentName, readme, jsonSchemaSource, storiesSource }) =>
+/** Map a component directory to its published `@reltio/design` subpath.
+ * Mirrors the runtime mapping in `.storybook/reltioManifestPreset.ts` so
+ * the import shown in the docs page matches the import the MCP rewrites
+ * generated story snippets to. */
+const subpathFor = (dir) => {
+	const relative = path.relative(ROOT, dir).split(path.sep)[0];
+	if (relative === "charts") return "charts";
+	return "components";
+};
+
+/** Inject the canonical `@reltio/design/<subpath>` import block into the
+ * README markdown right after the H1 title. Any pre-existing `tsx` code
+ * fence whose body imports from `@reltio/design...` is removed first —
+ * the import line is fully owned by the build pipeline so README authors
+ * cannot stale-import a path that the published package no longer
+ * exposes (a recurring class of mistakes the manual convention had).
+ *
+ * The README on disk should contain only narrative prose (intro
+ * paragraph + `###` subsections); the H1, the import code-fence, and
+ * the prop-types/stories sections are all assembled here. */
+const injectAutoImport = (readme, componentName, subpath) => {
+	const stripped = readme.replace(
+		/```tsx\s*\n\s*import\s+\{[^}]+\}\s+from\s+"@reltio\/design[^"]*";?\s*\n```\s*\n?/g,
+		"",
+	);
+	const importBlock = [
+		"```tsx",
+		`import { ${componentName} } from "@reltio/design/${subpath}";`,
+		"```",
+	].join("\n");
+	if (/^# .+/m.test(stripped)) {
+		return stripped.replace(/^(# .+)\s*\n+/m, `$1\n\n${importBlock}\n\n`);
+	}
+	// Defensive fallback: README without an H1 — synthesise both pieces.
+	return `# ${componentName}\n\n${importBlock}\n\n${stripped.trim()}\n`;
+};
+
+const buildMdx = ({
+	componentName,
+	readmeWithImport,
+	jsonSchemaSource,
+	storiesSource,
+}) =>
 	`${HEADER}
 
 ${FIXED_IMPORTS}
@@ -77,7 +120,7 @@ import schema from "./${componentName}.schema.json";
 
 <Meta of={${componentName}Stories} />
 
-${readme.trim()}
+${readmeWithImport.trim()}
 
 <SectionHeading>Prop types</SectionHeading>
 
@@ -114,7 +157,9 @@ const buildComponentSchema = (typeExtractor, dir, componentName) => {
 			exportedTypeName: exportedName,
 			props,
 		});
-		const serialized = `${JSON.stringify(schema, null, 2)}\n`;
+		// Tab-indented to match the project's Biome formatter — otherwise the
+		// generated `.schema.json` would re-trigger a format error on every build.
+		const serialized = `${JSON.stringify(schema, null, "\t")}\n`;
 		fs.writeFileSync(schemaPath, serialized, "utf8");
 		return { schema, serialized: serialized.trimEnd() };
 	} catch (err) {
@@ -145,6 +190,11 @@ const buildOne = (typeExtractor, { dir, componentName }) => {
 
 	const readme = fs.readFileSync(readmePath, "utf8");
 	const storiesSource = fs.readFileSync(storiesPath, "utf8");
+	const readmeWithImport = injectAutoImport(
+		readme,
+		componentName,
+		subpathFor(dir),
+	);
 	const schemaResult = buildComponentSchema(typeExtractor, dir, componentName);
 	if (!schemaResult) {
 		throw new Error(
@@ -155,13 +205,16 @@ const buildOne = (typeExtractor, { dir, componentName }) => {
 
 	const mdx = buildMdx({
 		componentName,
-		readme,
+		readmeWithImport,
 		jsonSchemaSource: schemaResult.serialized,
 		storiesSource,
 	});
 
 	fs.writeFileSync(outPath, mdx, "utf8");
-	return outPath;
+	return {
+		mdxPath: outPath,
+		schemaPath: path.join(dir, `${componentName}.schema.json`),
+	};
 };
 
 const main = () => {
@@ -180,16 +233,38 @@ const main = () => {
 	const typeExtractor = createTypeExtractor(ROOT);
 	console.log(`  TS program ready in ${Date.now() - startTs}ms`);
 
+	const writtenSchemas = [];
 	for (const entry of dirs) {
 		try {
-			const outPath = buildOne(typeExtractor, entry);
-			console.log(`✓ ${path.relative(ROOT, outPath)}`);
+			const { mdxPath, schemaPath } = buildOne(typeExtractor, entry);
+			console.log(`✓ ${path.relative(ROOT, mdxPath)}`);
+			if (schemaPath) writtenSchemas.push(schemaPath);
 		} catch (err) {
 			console.error(`✗ ${entry.componentName}: ${err.message}`);
 			process.exitCode = 1;
 		}
 	}
 	typeExtractor.dispose();
+
+	// `JSON.stringify` always wraps arrays/objects across multiple lines; Biome
+	// prefers short arrays inline. Rather than re-implement Biome's JSON
+	// formatter, run the project's formatter on the freshly written schemas so
+	// the build output is `npm run lint`-clean out of the box.
+	if (writtenSchemas.length > 0) {
+		try {
+			const relPaths = writtenSchemas
+				.map((p) => `"${path.relative(ROOT, p)}"`)
+				.join(" ");
+			execSync(`npx --no-install biome format --write ${relPaths}`, {
+				cwd: ROOT,
+				stdio: "pipe",
+			});
+		} catch (err) {
+			console.warn(
+				`  ! Could not format generated schemas with Biome: ${err.message}`,
+			);
+		}
+	}
 };
 
 main();

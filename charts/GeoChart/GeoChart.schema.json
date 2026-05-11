@@ -1,25 +1,23 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "GeoChartProps",
-  "x-component": "GeoChart",
-  "type": "object",
-  "properties": {
-    "map": {
-      "description": "GeoJSON FeatureCollection defining the map geography.",
-      "x-typescriptType": "GeoJSON"
-    },
-    "data": {
-      "description": "Region data. Each entry colors one region based on its value range.",
-      "x-typescriptType": "Array<GeoChartItem>",
-      "type": "array"
-    },
-    "units": {
-      "description": "Unit suffix for tooltip values and auto-generated range labels.\nExamples: \"%\", \"customers\", \"M$\"",
-      "x-typescriptType": "string",
-      "type": "string"
-    }
-  },
-  "required": [
-    "map"
-  ]
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "GeoChartProps",
+	"x-component": "GeoChart",
+	"type": "object",
+	"properties": {
+		"map": {
+			"description": "GeoJSON FeatureCollection defining the map geography.",
+			"x-typescriptType": "GeoJSON"
+		},
+		"data": {
+			"description": "Region data. Each entry colors one region based on its value range.",
+			"x-typescriptType": "Array<GeoChartItem>",
+			"type": "array"
+		},
+		"units": {
+			"description": "Unit suffix for tooltip values and auto-generated range labels.\nExamples: \"%\", \"customers\", \"M$\"",
+			"x-typescriptType": "string",
+			"type": "string"
+		}
+	},
+	"required": ["map"]
 }

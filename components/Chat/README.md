@@ -1,9 +1,5 @@
 # Chat
 
-```tsx
-import { Chat } from "@reltio/design/components";
-```
-
 `Chat` is a scrollable conversation surface that renders an ordered list of user / assistant messages. It handles auto-scroll, sticky-message anchoring, thinking-state UI, initial-loading skeleton, and a floating "scroll to bottom" button. The component is fully controlled — `messages`, `thinking`, `initialLoading` are driven by parent state; nothing is mutated internally.
 
 ### Message rendering

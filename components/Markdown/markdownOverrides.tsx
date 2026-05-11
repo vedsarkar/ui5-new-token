@@ -41,7 +41,7 @@ export const baseOverrides = {
 	// Button — replaced with design system Button component
 	button: ({ node: _node, ...props }: OverrideProps<"button">) => (
 		<Button
-			{...(props as React.ComponentProps<typeof Button>)}
+			{...(props as unknown as React.ComponentProps<typeof Button>)}
 			className={classNames(props.className)}
 		/>
 	),

@@ -1,9 +1,5 @@
 # Details
 
-```tsx
-import { Details } from "@reltio/design/components";
-```
-
 `Details` is a styled wrapper around the native HTML `<details>` element with a chevron toggle, hover state, and consistent typography aligned with the SAP Horizon design system. Drop-in replacement for `<details>` — accepts the same `open` prop and a `<summary>` child for the header.
 
 ### Summary slot

@@ -1,9 +1,5 @@
 # GraphChart
 
-```tsx
-import { GraphChart } from "@reltio/design/charts";
-```
-
 `GraphChart` renders a **node-link graph** — circles for entities, lines for relationships between them. Use it for entity-relationship explorers, identity graphs, lineage views with arbitrary topology. For strictly hierarchical or pipeline-shaped graphs prefer `Diagram` (auto-layout via dagre); use `GraphChart` when the topology is general / cyclic and you want the nodes to settle into a force-directed shape.
 
 ### Data shape

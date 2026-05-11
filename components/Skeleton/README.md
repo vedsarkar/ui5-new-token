@@ -1,9 +1,5 @@
 # Skeleton
 
-```tsx
-import { Skeleton } from "@reltio/design/components";
-```
-
 `Skeleton` is a loading placeholder that shows N rectangular bars with a horizontal shimmer animation. Used to reserve space and signal "content is on its way" while data is being fetched. Full-width by default.
 
 ### Sizing

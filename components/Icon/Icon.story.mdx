@@ -1,0 +1,251 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as IconStories from "./Icon.stories";
+import schema from "./Icon.schema.json";
+
+<Meta of={IconStories} />
+
+# Icon
+
+```tsx
+import { Icon } from "@reltio/design/components";
+```
+
+```tsx
+import { Icon } from "@reltio/design/components";
+import "@ui5/webcomponents-icons/dist/save.js";
+
+<Icon name="save" />;
+```
+
+`Icon` is the SAP Fiori icon element, re-exported from `@ui5/webcomponents-react/Icon` as the canonical Reltio entry point. Use it for inline glyphs, status indicators, navigation cues, and decorative accents — anywhere a single visual symbol communicates intent.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Icon`. The Reltio layer adds curation (this is the endorsed icon-rendering surface), pinned versioning, and Reltio-specific guidance.
+
+### Loading icons — side-effect imports
+
+Each icon is loaded individually as a side-effect import — only the icons you actually `import` end up in your bundle:
+
+```tsx
+import "@ui5/webcomponents-icons/dist/save.js";
+import "@ui5/webcomponents-icons/dist/edit.js";
+import "@ui5/webcomponents-icons/dist/delete.js";
+
+<Icon name="save" />;
+<Icon name="edit" />;
+<Icon name="delete" />;
+```
+
+Browse the full set in the [SAP Fiori Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html). Use kebab-case names (`navigation-right-arrow`, not `navigationRightArrow`).
+
+> **No need to install `@ui5/webcomponents-icons` separately** — it arrives transitively via `@reltio/design`. Just write the side-effect import.
+
+See the [Icon Library guide](?path=/docs/guides-icon-library--docs) for icon discovery and Reltio-specific picking guidance.
+
+### `mode` — pick the interaction model
+
+| `mode` | Behavior | Use case |
+|---|---|---|
+| `Decorative` (default) | Visible, not focusable, not announced by screen readers. | Inline accent next to a label, button decoration. |
+| `Image` | Visible, not focusable, announced via `accessibleName`. | Standalone status indicator (e.g. row state). |
+| `Interactive` | Focusable, clickable, announced as a button. Pair with `onClick` and `accessibleName`. | Icon-only action (replace with a `Button icon=…` if there's any chance of confusion). |
+
+For most action triggers, prefer a `Button` with `icon` over an `Interactive` `Icon` — the button gives you better focus-ring, hover, disabled, and tooltip semantics for free.
+
+### `design` — semantic color
+
+Icons can carry semantic color through `design`:
+
+| `design` | Color | Use for |
+|---|---|---|
+| `Default` | Neutral | Generic decoration. |
+| `Negative` | Error red | Failure, validation error, destructive intent. |
+| `Critical` | Warning amber | Attention, pending review, suboptimal state. |
+| `Positive` | Success green | Success, completion, validated. |
+| `Information` | Info blue | Informational, neutral status. |
+| `Contrast` | Inverted | Use on dark surfaces only. |
+| `NonInteractive` | Muted | De-emphasized, disabled-like. |
+
+Semantic color is **stronger** than icon shape — pair both for clarity (`design="Negative" name="error"`).
+
+### Accessibility
+
+- **Decorative icons** (`mode="Decorative"`) — omit `accessibleName`. Screen readers will skip them. Always pair with adjacent visible text that conveys the meaning.
+- **Image icons** (`mode="Image"`) — set `accessibleName` to the meaning the icon conveys (`"Approved"`, `"Pending review"`).
+- **Interactive icons** (`mode="Interactive"`) — set `accessibleName` to the action verb (`"Edit entity"`, `"Delete row"`). Without it, screen-reader users cannot operate the control.
+
+### See also
+
+- [Icon Library guide](?path=/docs/guides-icon-library--docs) — Reltio icon-picking guidelines and full set browsing
+- [SAP Fiori Icon design guideline](https://experience.sap.com/fiori-design-web/icon/) — semantic guidance and visual patterns
+- [UI5 Icon web component reference](https://ui5.github.io/webcomponents/components/Icon/) — full underlying API
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+{/* __JSON_SCHEMA__
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "IconProps",
+	"x-component": "Icon",
+	"type": "object",
+	"properties": {
+		"accessibleName": {
+			"description": "Defines the text alternative of the component.\nIf not provided a default text alternative will be set, if present.\n\n**Note:** Every icon should have a text alternative in order to\ncalculate its accessible name.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"design": {
+			"description": "Defines the component semantic design.\n\n**Note:** Available since [v1.9.2](https://github.com/UI5/webcomponents/releases/tag/v1.9.2) of **@ui5/webcomponents**.",
+			"default": "Default",
+			"x-typescriptType": "'Default' | 'Positive' | 'Negative' | IconDesign | 'Contrast' | 'Critical' | 'Information' | 'Neutral' | 'NonInteractive'"
+		},
+		"mode": {
+			"description": "Defines the mode of the component.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.",
+			"default": "Decorative",
+			"x-typescriptType": "'Image' | 'Decorative' | 'Interactive' | IconMode"
+		},
+		"name": {
+			"description": "Defines the unique identifier (icon name) of the component.\n\nTo browse all available icons, see the\n[SAP Icons](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html),\n[SAP Fiori Tools](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons-TNT) and\n[SAP Business Suite](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html)\n\nExample:\n`name='add'`, `name='delete'`, `name='employee'`.\n\n**Note:** To use the SAP Fiori Tools icons,\nyou need to set the `tnt` prefix in front of the icon's name.\n\nExample:\n`name='tnt/antenna'`, `name='tnt/actor'`, `name='tnt/api'`.\n\n**Note:** To use the SAP Business Suite icons,\nyou need to set the `business-suite` prefix in front of the icon's name.\n\nExample:\n`name='business-suite/3d'`, `name='business-suite/1x2-grid-layout'`, `name='business-suite/4x4-grid-layout'`.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onClick": {
+			"description": "Fired when the component is activated by mouse/touch, keyboard (Enter or Space),\nor screen reader virtual cursor activation.\n\n**Note:** The event will not be fired if the `mode` property is set to `Decorative` or `Image`.\n\n**Note:** Available since [v2.11.0](https://github.com/UI5/webcomponents/releases/tag/v2.11.0) of **@ui5/webcomponents**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<IconDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<IconDomRef>) => void"
+		},
+		"showTooltip": {
+			"description": "Defines whether the component should have a tooltip.\n\n**Note:** The tooltip text should be provided via the `accessible-name` property.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import { Icon } from "@ui5/webcomponents-react/Icon";
+import { fn } from "storybook/test";
+import preview from "../../.storybook/preview";
+import "@ui5/webcomponents-icons/dist/accept.js";
+import "@ui5/webcomponents-icons/dist/alert.js";
+import "@ui5/webcomponents-icons/dist/decline.js";
+import "@ui5/webcomponents-icons/dist/edit.js";
+import "@ui5/webcomponents-icons/dist/information.js";
+import "@ui5/webcomponents-icons/dist/save.js";
+
+const meta = preview.meta({
+	component: Icon,
+	parameters: {
+		layout: "centered",
+	},
+	args: {
+		name: "save",
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({});
+
+export const ImageMode = meta.story({
+	args: {
+		name: "accept",
+		mode: "Image",
+		accessibleName: "Approved",
+	},
+});
+
+export const Interactive = meta.story({
+	args: {
+		name: "edit",
+		mode: "Interactive",
+		accessibleName: "Edit entity",
+		onClick: fn(),
+	},
+});
+
+export const DesignNegative = meta.story({
+	args: {
+		name: "decline",
+		design: "Negative",
+		mode: "Image",
+		accessibleName: "Rejected",
+	},
+});
+
+export const DesignCritical = meta.story({
+	args: {
+		name: "alert",
+		design: "Critical",
+		mode: "Image",
+		accessibleName: "Needs review",
+	},
+});
+
+export const DesignPositive = meta.story({
+	args: {
+		name: "accept",
+		design: "Positive",
+		mode: "Image",
+		accessibleName: "Approved",
+	},
+});
+
+export const DesignInformation = meta.story({
+	args: {
+		name: "information",
+		design: "Information",
+		mode: "Image",
+		accessibleName: "Additional information available",
+	},
+});
+
+export const InContrastSurface = meta.story({
+	args: {
+		name: "save",
+		design: "Contrast",
+	},
+	render: (args) => (
+		<div
+			style={{
+				background: "var(--sapShellColor)",
+				padding: "16px",
+				borderRadius: "8px",
+				display: "inline-flex",
+			}}
+		>
+			<Icon {...args} />
+		</div>
+	),
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

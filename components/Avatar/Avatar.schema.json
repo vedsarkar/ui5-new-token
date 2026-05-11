@@ -1,0 +1,95 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "AvatarProps",
+	"x-component": "Avatar",
+	"type": "object",
+	"properties": {
+		"accessibilityAttributes": {
+			"description": "Defines the additional accessibility attributes that will be applied to the component.\nThe following field is supported:\n\n- **hasPopup**: Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by the button.\nAccepts the following string values: `dialog`, `grid`, `listbox`, `menu` or `tree`.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.",
+			"default": {},
+			"x-typescriptType": "AvatarAccessibilityAttributes"
+		},
+		"accessibleName": {
+			"description": "Defines the text alternative of the component.\nIf not provided a default text alternative will be set, if present.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"badge": {
+			"description": "Defines the optional badge that will be used for visual affordance.\n\n**Recommendation:** While badges are supported on all avatars, it is recommended\nto use them with interactive avatars (via `mode=\"Interactive\"` or `interactive` attribute)\nto provide better user experience and accessibility.\n\n**Note:** While the slot allows for custom badges, to achieve\nthe Fiori design, use the `AvatarBadge` component.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"badge\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v1.7.0](https://github.com/UI5/webcomponents/releases/tag/v1.7.0) of **@ui5/webcomponents**.\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"children": {
+			"description": "Receives the desired `<img>` tag\n\n**Note:** If you experience flickering of the provided image, you can hide the component until it is defined with the following CSS:<br/>\n`ui5-avatar:not(:defined) {`<br/>\n&nbsp;&nbsp;&nbsp;&nbsp;`visibility: hidden;`<br/>\n`}`\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"colorScheme": {
+			"description": "Defines the background color of the desired image.\nIf `colorScheme` is set to `Auto`, the avatar will be displayed with the `Accent6` color.",
+			"default": "Auto",
+			"x-typescriptType": "AvatarColorScheme | 'Auto' | 'Accent1' | 'Accent2' | 'Accent3' | 'Accent4' | 'Accent5' | 'Accent6' | 'Accent7' | 'Accent8' | 'Accent9' | 'Accent10' | 'Placeholder' | 'Transparent'"
+		},
+		"disabled": {
+			"description": "Defines whether the component is disabled.\nA disabled component can't be pressed or\nfocused, and it is not in the tab chain.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"fallbackIcon": {
+			"description": "Defines the name of the fallback icon, which should be displayed in the following cases:\n\n\t- If the initials are not valid (more than 3 letters, unsupported languages or empty initials).\n\t- If there are three initials and they do not fit in the shape (e.g. WWW for some of the sizes).\n\t- If the image src is wrong.\n\n**Note:** If not set, a default fallback icon \"employee\" is displayed.\n\n**Note:** You should import the desired icon first, then use its name as \"fallback-icon\".\n\n`import \"@ui5/webcomponents-icons/dist/{icon_name}.js\"`\n\n`<Avatar fallback-icon=\"alert\">`\n\nSee all the available icons in the [Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html).",
+			"default": "employee",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"icon": {
+			"description": "Defines the name of the UI5 Icon, that will be displayed.\n\n**Note:** If `image` slot is provided, the property will be ignored.\n\n**Note:** You should import the desired icon first, then use its name as \"icon\".\n\n`import \"@ui5/webcomponents-icons/dist/{icon_name}.js\"`\n\n`<Avatar icon=\"employee\">`\n\n**Note:** If no icon or an empty one is provided, by default the \"employee\" icon should be displayed.\n\nSee all the available icons in the [Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"initials": {
+			"description": "Defines the displayed initials.\n\nUp to three Latin letters can be displayed as initials.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"interactive": {
+			"description": "Defines if the avatar is interactive (focusable and pressable).\n\n**Note:** When set to `true`, this property takes precedence over the `mode` property,\nand the avatar will be rendered as interactive (role=\"button\", focusable) regardless of the `mode` value.\n\n**Note:** This property won't have effect if the `disabled`\nproperty is set to `true`.",
+			"default": false,
+			"deprecated": true,
+			"x-deprecationReason": "Set `mode=\"Interactive\"` instead for the same functionality with proper accessibility.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"mode": {
+			"description": "Defines the mode of the component.\n\n**Note:**\n- `Image` (default) - renders with role=\"img\"\n- `Decorative` - renders with role=\"presentation\" and aria-hidden=\"true\", making it purely decorative\n- `Interactive` - renders with role=\"button\", focusable (tabindex=\"0\"), and supports keyboard interaction\n\n**Note:** This property is ignored when the `interactive` property is set to `true`.\nIn that case, the avatar will always be rendered as interactive.\n\n**Note:** Available since [v2.20](https://github.com/UI5/webcomponents/releases/tag/v2.20) of **@ui5/webcomponents**.",
+			"default": "Image",
+			"x-typescriptType": "AvatarMode | 'Image' | 'Decorative' | 'Interactive'"
+		},
+		"onClick": {
+			"description": "Fired on mouseup, space and enter if avatar is interactive\n\n**Note:** The event will not be fired if the `disabled`\nproperty is set to `true`.\n\n**Note:** Available since [v2.11.0](https://github.com/UI5/webcomponents/releases/tag/v2.11.0) of **@ui5/webcomponents**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<AvatarDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<AvatarDomRef>) => void"
+		},
+		"shape": {
+			"description": "Defines the shape of the component.",
+			"default": "Circle",
+			"x-typescriptType": "AvatarShape | 'Circle' | 'Square'"
+		},
+		"size": {
+			"description": "Defines predefined size of the component.",
+			"default": "S",
+			"x-typescriptType": "AvatarSize | 'XS' | 'S' | 'M' | 'L' | 'XL'"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

@@ -1,0 +1,53 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "IconProps",
+	"x-component": "Icon",
+	"type": "object",
+	"properties": {
+		"accessibleName": {
+			"description": "Defines the text alternative of the component.\nIf not provided a default text alternative will be set, if present.\n\n**Note:** Every icon should have a text alternative in order to\ncalculate its accessible name.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"design": {
+			"description": "Defines the component semantic design.\n\n**Note:** Available since [v1.9.2](https://github.com/UI5/webcomponents/releases/tag/v1.9.2) of **@ui5/webcomponents**.",
+			"default": "Default",
+			"x-typescriptType": "'Default' | 'Positive' | 'Negative' | IconDesign | 'Contrast' | 'Critical' | 'Information' | 'Neutral' | 'NonInteractive'"
+		},
+		"mode": {
+			"description": "Defines the mode of the component.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.",
+			"default": "Decorative",
+			"x-typescriptType": "'Image' | 'Decorative' | 'Interactive' | IconMode"
+		},
+		"name": {
+			"description": "Defines the unique identifier (icon name) of the component.\n\nTo browse all available icons, see the\n[SAP Icons](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html),\n[SAP Fiori Tools](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons-TNT) and\n[SAP Business Suite](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html)\n\nExample:\n`name='add'`, `name='delete'`, `name='employee'`.\n\n**Note:** To use the SAP Fiori Tools icons,\nyou need to set the `tnt` prefix in front of the icon's name.\n\nExample:\n`name='tnt/antenna'`, `name='tnt/actor'`, `name='tnt/api'`.\n\n**Note:** To use the SAP Business Suite icons,\nyou need to set the `business-suite` prefix in front of the icon's name.\n\nExample:\n`name='business-suite/3d'`, `name='business-suite/1x2-grid-layout'`, `name='business-suite/4x4-grid-layout'`.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onClick": {
+			"description": "Fired when the component is activated by mouse/touch, keyboard (Enter or Space),\nor screen reader virtual cursor activation.\n\n**Note:** The event will not be fired if the `mode` property is set to `Decorative` or `Image`.\n\n**Note:** Available since [v2.11.0](https://github.com/UI5/webcomponents/releases/tag/v2.11.0) of **@ui5/webcomponents**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<IconDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<IconDomRef>) => void"
+		},
+		"showTooltip": {
+			"description": "Defines whether the component should have a tooltip.\n\n**Note:** The tooltip text should be provided via the `accessible-name` property.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

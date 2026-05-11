@@ -1,9 +1,5 @@
 # BarChart
 
-```tsx
-import { BarChart } from "@reltio/design/charts";
-```
-
 `BarChart` renders a vertical-bar comparison of one or more series across a categorical X axis. It is a thin Reltio wrapper around the shared internal `Chart` (Apache ECharts) — you pass an array of row-objects + a category key + a list of series; the wrapper builds the `EChartsOption` and delegates rendering to `Chart`.
 
 ### Data shape

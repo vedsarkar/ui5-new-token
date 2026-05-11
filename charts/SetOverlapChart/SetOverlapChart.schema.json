@@ -1,37 +1,34 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "SetOverlapChartProps",
-  "x-component": "SetOverlapChart",
-  "type": "object",
-  "properties": {
-    "intersections": {
-      "description": "Intersection columns to visualize. Each entry becomes a vertical bar\nin the intersection chart and a column of dots in the matrix.\n\n**Data requirements vary by mode:**\n- `\"intersection\"` — `elements` must be populated with record identifiers\n- `\"distinctIntersection\"` — `elements` should be empty (`[]`)",
-      "x-typescriptType": "Array<Intersection>",
-      "type": "array"
-    },
-    "sets": {
-      "description": "Sets to be visualized. Each entry becomes a horizontal\nbar in the set chart and a row of dots in the matrix.\n\n**Data requirements vary by mode:**\n- `\"intersection\"` — `elements` must be populated with record identifiers\n- `\"distinctIntersection\"` — `elements` should be empty (`[]`)",
-      "x-typescriptType": "Array<DataSet>",
-      "type": "array"
-    },
-    "intersectionChartAxisLabel": {
-      "description": "Label text rendered alongside the intersection chart Y-axis.\nExamples: `\"Profile count\"`, `\"Record count\"`",
-      "x-typescriptType": "string",
-      "type": "string"
-    },
-    "mode": {
-      "description": "Combination semantics for intersection columns.\nControls how hover highlighting is computed and what data fields are used.\n\n- `\"intersection\"` — overlapping counts; hover uses element-level filtering\n- `\"distinctIntersection\"` — mutually exclusive counts; hover uses structural matching\n\nThe two modes are **not interchangeable** with the same data.",
-      "default": "intersection",
-      "x-typescriptType": "SetOverlapChartMode"
-    },
-    "setsChartAxisLabel": {
-      "description": "Label text rendered alongside the set chart X-axis.\nExamples: `\"Set Size\"`, `\"Source system\"`",
-      "x-typescriptType": "string",
-      "type": "string"
-    }
-  },
-  "required": [
-    "intersections",
-    "sets"
-  ]
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "SetOverlapChartProps",
+	"x-component": "SetOverlapChart",
+	"type": "object",
+	"properties": {
+		"intersections": {
+			"description": "Intersection columns to visualize. Each entry becomes a vertical bar\nin the intersection chart and a column of dots in the matrix.\n\n**Data requirements vary by mode:**\n- `\"intersection\"` — `elements` must be populated with record identifiers\n- `\"distinctIntersection\"` — `elements` should be empty (`[]`)",
+			"x-typescriptType": "Array<Intersection>",
+			"type": "array"
+		},
+		"sets": {
+			"description": "Sets to be visualized. Each entry becomes a horizontal\nbar in the set chart and a row of dots in the matrix.\n\n**Data requirements vary by mode:**\n- `\"intersection\"` — `elements` must be populated with record identifiers\n- `\"distinctIntersection\"` — `elements` should be empty (`[]`)",
+			"x-typescriptType": "Array<DataSet>",
+			"type": "array"
+		},
+		"intersectionChartAxisLabel": {
+			"description": "Label text rendered alongside the intersection chart Y-axis.\nExamples: `\"Profile count\"`, `\"Record count\"`",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"mode": {
+			"description": "Combination semantics for intersection columns.\nControls how hover highlighting is computed and what data fields are used.\n\n- `\"intersection\"` — overlapping counts; hover uses element-level filtering\n- `\"distinctIntersection\"` — mutually exclusive counts; hover uses structural matching\n\nThe two modes are **not interchangeable** with the same data.",
+			"default": "intersection",
+			"x-typescriptType": "SetOverlapChartMode"
+		},
+		"setsChartAxisLabel": {
+			"description": "Label text rendered alongside the set chart X-axis.\nExamples: `\"Set Size\"`, `\"Source system\"`",
+			"x-typescriptType": "string",
+			"type": "string"
+		}
+	},
+	"required": ["intersections", "sets"]
 }

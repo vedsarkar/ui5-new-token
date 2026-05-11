@@ -28,9 +28,16 @@ const generateScopedName = (name, filename) => {
 	return `${componentName}_${name}__${hash}`;
 };
 
+/** Escape characters that would prematurely terminate the styleInject
+ * template literal: backticks and `${` interpolation openings inside CSS
+ * (a CSS comment of the form `/* `.foo` *\/` or a CSS variable named
+ * `--${...}` would otherwise break the generated `.module.css.ts`). */
+const escapeForTemplateLiteral = (css) =>
+	css.replaceAll("\\", "\\\\").replaceAll("`", "\\`").replaceAll("${", "\\${");
+
 const template = (css, tokens) => `import styleInject from 'style-inject';
 const tokens = ${JSON.stringify(tokens, null, "\t")};
-styleInject(\`\n${css}\`);
+styleInject(\`\n${escapeForTemplateLiteral(css)}\`);
 export default tokens;
 `;
 

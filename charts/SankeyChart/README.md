@@ -1,9 +1,5 @@
 # SankeyChart
 
-```tsx
-import { SankeyChart } from "@reltio/design/charts";
-```
-
 `SankeyChart` renders a flow diagram where each labeled **node** is connected to other nodes by **ribbons** whose width is proportional to the flow value. Use it to show how records / users / volume flow between stages or systems — match-merge pipelines, source-system contributions across attributes, attribution by channel.
 
 ### Data shape

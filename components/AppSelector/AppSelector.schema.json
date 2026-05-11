@@ -1,37 +1,35 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "AppSelectorProps",
-  "x-component": "AppSelector",
-  "type": "object",
-  "properties": {
-    "apps": {
-      "description": "List of apps to display, grouped by category.\nApps missing `name` or `uri` are silently ignored.\nThe list of available apps for a given tenant\ncan be retrieved from Reltio Config Service.",
-      "x-typescriptType": "Array<AppEntry>",
-      "type": "array"
-    },
-    "env": {
-      "description": "Environment identifier substituted into URI templates (`${environment}`).",
-      "x-typescriptType": "string",
-      "type": "string"
-    },
-    "label": {
-      "description": "Text label displayed next to the trigger icon.\nWhen omitted, the trigger renders as an icon-only button.",
-      "x-typescriptType": "string",
-      "type": "string"
-    },
-    "positionArea": {
-      "description": "CSS `position-area`-style value controlling popover placement relative to the trigger.\nMapped internally to the underlying UI5 `Popover` placement\n(`top` → `Top`, `bottom` → `Bottom`, `left` → `Start`, `right` → `End`).",
-      "default": "right span-top",
-      "x-typescriptType": "string",
-      "type": "string"
-    },
-    "tenant": {
-      "description": "Tenant identifier substituted into URI templates (`${tenant}`).",
-      "x-typescriptType": "string",
-      "type": "string"
-    }
-  },
-  "required": [
-    "apps"
-  ]
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "AppSelectorProps",
+	"x-component": "AppSelector",
+	"type": "object",
+	"properties": {
+		"apps": {
+			"description": "List of apps to display, grouped by category.\nApps missing `name` or `uri` are silently ignored.\nThe list of available apps for a given tenant\ncan be retrieved from Reltio Config Service.",
+			"x-typescriptType": "Array<AppEntry>",
+			"type": "array"
+		},
+		"env": {
+			"description": "Environment identifier substituted into URI templates (`${environment}`).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"label": {
+			"description": "Text label displayed next to the trigger icon.\nWhen omitted, the trigger renders as an icon-only button.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"positionArea": {
+			"description": "CSS `position-area`-style value controlling popover placement relative to the trigger.\nMapped internally to the underlying UI5 `Popover` placement\n(`top` → `Top`, `bottom` → `Bottom`, `left` → `Start`, `right` → `End`).",
+			"default": "right span-top",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"tenant": {
+			"description": "Tenant identifier substituted into URI templates (`${tenant}`).",
+			"x-typescriptType": "string",
+			"type": "string"
+		}
+	},
+	"required": ["apps"]
 }

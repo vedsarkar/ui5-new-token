@@ -1,9 +1,5 @@
 # SetOverlapChart
 
-```tsx
-import { SetOverlapChart } from "@reltio/design/charts";
-```
-
 `SetOverlapChart` is an **UpSet-style** diagram for visualizing how records overlap across multiple sets — typically source systems contributing to the same entity. It composes three coordinated sub-charts: a **horizontal set bar** on the left (size of each set), a **dot matrix** in the middle (which sets each intersection covers), and a **vertical intersection bar** at the top (size of each intersection).
 
 Built with custom SVG and `d3-scale`, **not ECharts** — UpSet does not map cleanly to a standard chart series, and the coordinated-axis interaction across the three sub-charts requires shared scales.

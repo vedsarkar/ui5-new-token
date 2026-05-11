@@ -1,0 +1,469 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as PopoverStories from "./Popover.stories";
+import schema from "./Popover.schema.json";
+
+<Meta of={PopoverStories} />
+
+# Popover
+
+```tsx
+import { Popover } from "@reltio/design/components";
+```
+
+`Popover` is the SAP Fiori floating overlay anchored to a target element, re-exported from `@ui5/webcomponents-react/Popover` as the canonical Reltio entry point. Use it for context menus, action sheets, secondary detail panels, filter pickers, and similar lightweight overlays that should appear next to a trigger and disappear when the user clicks away.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Popover`. The Reltio layer adds curation (this is the endorsed anchored-overlay surface), pinned versioning, and Reltio-specific guidance.
+
+### Anchoring — `opener` is required
+
+The popover positions itself relative to a target element passed via `opener`. There are two ways to pass it:
+
+```tsx
+// 1. By DOM `id` (most common)
+<>
+  <Button id="filter-trigger" onClick={() => setOpen(true)}>Filters</Button>
+  <Popover open={open} opener="filter-trigger" onClose={() => setOpen(false)}>
+    {/* body */}
+  </Popover>
+</>
+
+// 2. By HTMLElement reference
+<Popover open={open} opener={triggerRef.current} onClose={() => setOpen(false)} />
+```
+
+Without `opener`, the popover renders at the top-left corner of the viewport. Always set it.
+
+### Modal vs. non-modal
+
+| `modal` | Behavior | Use for |
+|---|---|---|
+| `false` (default) | A click anywhere outside the popover dismisses it. The page behind stays interactive. | Context menus, quick filter panels, ephemeral previews. |
+| `true` | Adds a backdrop, traps focus inside the popover, blocks interaction with the page behind. | Confirmation flows that need explicit acknowledgement, multi-step pickers (entity selection, advanced filter builder). |
+
+For most popovers, leave `modal={false}` — modal popovers feel like dialogs and should usually be promoted to a real `Dialog` (not yet endorsed) instead.
+
+### Placement & alignment
+
+`placement` (`Top`, `Bottom`, `Start`, `End`) and `horizontalAlign` (`Start`, `End`, `Center`, `Stretch`) decide where the popover lands relative to the opener. The Popover automatically flips to the opposite side if there isn't enough viewport space, so `placement="Bottom"` is a reasonable default.
+
+For Reltio MDM screens:
+- **Toolbars / page header actions** → `placement="Bottom"` (popover hangs below the action)
+- **Side rail / inline-edit triggers** → `placement="End"` (popover appears to the right of a left-rail item, or at the start in RTL)
+- **Footer / bottom-pinned actions** → `placement="Top"` (popover floats above the trigger)
+
+### Header & footer slots
+
+Pass `headerText` for a simple title bar, or use the `header` slot for richer content (title + actions). Use the `footer` slot for confirmation buttons (`Apply`, `Cancel`).
+
+```tsx
+<Popover open headerText="Filter by source" opener="filter-trigger">
+  {/* body */}
+  <div slot="footer" style={{ display: "flex", gap: 8, padding: 8 }}>
+    <Button design="Transparent">Cancel</Button>
+    <Button design="Emphasized">Apply</Button>
+  </div>
+</Popover>
+```
+
+### Initial focus
+
+Set `initialFocus` to the `id` of the element that should receive focus when the popover opens. Especially important for keyboard users — without it, the popover root takes focus and the user has to tab into the body manually.
+
+### Accessibility
+
+- Set `accessibleName` (or `accessibleNameRef`) so screen readers announce the popover purpose when it opens.
+- Always wire `onClose` to flip your `open` state — without it, the popover gets stuck open after a click-outside.
+- For long popover bodies, ensure scrollable regions are reachable via keyboard (the popover itself handles arrow-key trap correctly by default).
+
+### See also
+
+- [SAP Fiori Popover design guideline](https://experience.sap.com/fiori-design-web/popover/) — semantic guidance and visual patterns
+- [UI5 Popover web component reference](https://ui5.github.io/webcomponents/components/Popover/) — full underlying API
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+{/* __JSON_SCHEMA__
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "PopoverProps",
+	"x-component": "Popover",
+	"type": "object",
+	"properties": {
+		"accessibleDescription": {
+			"description": "Defines the accessible description of the component.\n\n**Note:** Available since [v2.11.0](https://github.com/UI5/webcomponents/releases/tag/v2.11.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleDescriptionRef": {
+			"description": "Receives id(or many ids) of the elements that describe the component.\n\n**Note:** Available since [v2.11.0](https://github.com/UI5/webcomponents/releases/tag/v2.11.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleName": {
+			"description": "Defines the accessible name of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleNameRef": {
+			"description": "Defines the IDs of the elements that label the component.\n\n**Note:** Available since [v1.1.0](https://github.com/UI5/webcomponents/releases/tag/v1.1.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleRole": {
+			"description": "Allows setting a custom role.\n\n**Note:** Available since [v1.10.0](https://github.com/UI5/webcomponents/releases/tag/v1.10.0) of **@ui5/webcomponents**.",
+			"default": "Dialog",
+			"x-typescriptType": "PopupAccessibleRole | 'None' | 'Dialog' | 'AlertDialog'"
+		},
+		"allowTargetOverlap": {
+			"description": "Determines if there is no enough space, the component can be placed\nover the target.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"children": {
+			"description": "Defines the content of the Popup.\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"footer": {
+			"description": "Defines the footer HTML Element.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"footer\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"header": {
+			"description": "Defines the header HTML Element.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"header\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"headerText": {
+			"description": "Defines the header text.\n\n**Note:** If `header` slot is provided, the `headerText` is ignored.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"hideArrow": {
+			"description": "Determines whether the component arrow is hidden.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"horizontalAlign": {
+			"description": "Determines the horizontal alignment of the component.",
+			"default": "Center",
+			"x-typescriptType": "PopoverHorizontalAlign | 'Center' | 'Start' | 'End' | 'Stretch'"
+		},
+		"initialFocus": {
+			"description": "Defines the ID of the HTML Element, which will get the initial focus.\n\n**Note:** If an element with `autofocus` attribute is added inside the component,\n`initialFocus` won't take effect.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"modal": {
+			"description": "Defines whether the component should close when\nclicking/tapping outside the popover.\nIf enabled, it blocks any interaction with the background.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"onBeforeClose": {
+			"description": "Fired before the component is closed. This event can be cancelled, which will prevent the popup from closing.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|❌|",
+			"x-typescriptType": "(event: Ui5CustomEvent<PopoverDomRef, PopupBeforeCloseEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<PopoverDomRef, PopupBeforeCloseEventDetail>) => void"
+		},
+		"onBeforeOpen": {
+			"description": "Fired before the component is opened. This event can be cancelled, which will prevent the popup from opening.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|❌|",
+			"x-typescriptType": "(event: Ui5CustomEvent<PopoverDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<PopoverDomRef>) => void"
+		},
+		"onClose": {
+			"description": "Fired after the component is closed.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|❌|",
+			"x-typescriptType": "(event: Ui5CustomEvent<PopoverDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<PopoverDomRef>) => void"
+		},
+		"onOpen": {
+			"description": "Fired after the component is opened.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|❌|",
+			"x-typescriptType": "(event: Ui5CustomEvent<PopoverDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<PopoverDomRef>) => void"
+		},
+		"open": {
+			"description": "Indicates if the element is open\n\n**Note:** Available since [v1.2.0](https://github.com/UI5/webcomponents/releases/tag/v1.2.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"opener": {
+			"description": "Defines the ID or DOM Reference of the element at which the popover is shown.\nWhen using this attribute in a declarative way, you must only use the `id` (as a string) of the element at which you want to show the popover.\nYou can only set the `opener` attribute to a DOM Reference when using JavaScript.\n\n**Note:** Available since [v1.2.0](https://github.com/UI5/webcomponents/releases/tag/v1.2.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string | HTMLElement"
+		},
+		"placement": {
+			"description": "Determines on which side the component is placed at.",
+			"default": "End",
+			"x-typescriptType": "'Top' | 'Bottom' | 'Start' | 'End' | PopoverPlacement"
+		},
+		"preventFocusRestore": {
+			"description": "Defines if the focus should be returned to the previously focused element,\nwhen the popup closes.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"preventInitialFocus": {
+			"description": "Indicates whether initial focus should be prevented.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"resizable": {
+			"description": "Determines whether the component is resizable.\n**Note:** This property is effective only on desktop devices.\n\n**Note:** Available since [v2.19.0](https://github.com/UI5/webcomponents/releases/tag/v2.19.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"verticalAlign": {
+			"description": "Determines the vertical alignment of the component.",
+			"default": "Center",
+			"x-typescriptType": "'Top' | 'Bottom' | 'Center' | 'Stretch' | PopoverVerticalAlign"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import { Button } from "@ui5/webcomponents-react/Button";
+import { Popover } from "@ui5/webcomponents-react/Popover";
+import { useState } from "react";
+import { fn } from "storybook/test";
+import preview from "../../.storybook/preview";
+
+const meta = preview.meta({
+	component: Popover,
+	parameters: {
+		layout: "centered",
+	},
+	args: {
+		opener: "popover-opener",
+		onClose: fn(),
+	},
+});
+
+export default meta;
+
+const TriggerWrapper = ({
+	children,
+	openerLabel = "Open popover",
+}: {
+	children: (open: boolean, setOpen: (v: boolean) => void) => React.ReactNode;
+	openerLabel?: string;
+}) => {
+	const [open, setOpen] = useState(false);
+	return (
+		<div style={{ padding: "120px 60px" }}>
+			<Button id="popover-opener" onClick={() => setOpen(true)}>
+				{openerLabel}
+			</Button>
+			{children(open, setOpen)}
+		</div>
+	);
+};
+
+export const Default = meta.story({
+	render: (args) => (
+		<TriggerWrapper>
+			{(open, setOpen) => (
+				<Popover {...args} open={open} onClose={() => setOpen(false)}>
+					<div style={{ padding: "16px", maxWidth: "260px" }}>
+						<p style={{ margin: 0 }}>
+							A simple popover anchored to the trigger button. Click outside to
+							dismiss.
+						</p>
+					</div>
+				</Popover>
+			)}
+		</TriggerWrapper>
+	),
+});
+
+export const WithHeader = meta.story({
+	render: (args) => (
+		<TriggerWrapper openerLabel="Open with header">
+			{(open, setOpen) => (
+				<Popover
+					{...args}
+					open={open}
+					onClose={() => setOpen(false)}
+					headerText="Entity details"
+				>
+					<div style={{ padding: "16px", maxWidth: "280px" }}>
+						<p style={{ margin: 0 }}>Last modified: 2 hours ago by Jane Doe.</p>
+					</div>
+				</Popover>
+			)}
+		</TriggerWrapper>
+	),
+});
+
+export const WithFooter = meta.story({
+	render: (args) => (
+		<TriggerWrapper openerLabel="Filters">
+			{(open, setOpen) => (
+				<Popover
+					{...args}
+					open={open}
+					onClose={() => setOpen(false)}
+					headerText="Filter by source"
+				>
+					<div style={{ padding: "16px", minWidth: "240px" }}>
+						<p style={{ margin: 0 }}>Filter form goes here.</p>
+					</div>
+					<div
+						slot="footer"
+						style={{
+							display: "flex",
+							justifyContent: "flex-end",
+							gap: "8px",
+							padding: "8px 12px",
+						}}
+					>
+						<Button design="Transparent" onClick={() => setOpen(false)}>
+							Cancel
+						</Button>
+						<Button design="Emphasized" onClick={() => setOpen(false)}>
+							Apply
+						</Button>
+					</div>
+				</Popover>
+			)}
+		</TriggerWrapper>
+	),
+});
+
+export const PlacementTop = meta.story({
+	args: {
+		placement: "Top",
+	},
+	render: (args) => (
+		<TriggerWrapper openerLabel="Popover above">
+			{(open, setOpen) => (
+				<Popover {...args} open={open} onClose={() => setOpen(false)}>
+					<div style={{ padding: "16px", maxWidth: "260px" }}>
+						<p style={{ margin: 0 }}>
+							Anchored above the trigger. Useful for footer-pinned actions.
+						</p>
+					</div>
+				</Popover>
+			)}
+		</TriggerWrapper>
+	),
+});
+
+export const PlacementEnd = meta.story({
+	args: {
+		placement: "End",
+	},
+	render: (args) => (
+		<TriggerWrapper openerLabel="Popover to the side">
+			{(open, setOpen) => (
+				<Popover {...args} open={open} onClose={() => setOpen(false)}>
+					<div style={{ padding: "16px", maxWidth: "240px" }}>
+						<p style={{ margin: 0 }}>
+							Anchored to the end (right in LTR, left in RTL).
+						</p>
+					</div>
+				</Popover>
+			)}
+		</TriggerWrapper>
+	),
+});
+
+export const ModalBackdrop = meta.story({
+	args: {
+		modal: true,
+	},
+	render: (args) => (
+		<TriggerWrapper openerLabel="Open modal popover">
+			{(open, setOpen) => (
+				<Popover
+					{...args}
+					open={open}
+					onClose={() => setOpen(false)}
+					headerText="Confirm action"
+				>
+					<div style={{ padding: "16px", maxWidth: "280px" }}>
+						<p style={{ margin: 0 }}>
+							Modal popovers add a backdrop and trap focus until dismissed.
+							Prefer a real Dialog for hard blockers.
+						</p>
+					</div>
+					<div
+						slot="footer"
+						style={{
+							display: "flex",
+							justifyContent: "flex-end",
+							gap: "8px",
+							padding: "8px 12px",
+						}}
+					>
+						<Button design="Emphasized" onClick={() => setOpen(false)}>
+							OK
+						</Button>
+					</div>
+				</Popover>
+			)}
+		</TriggerWrapper>
+	),
+});
+
+export const LongScrollableContent = meta.story({
+	render: (args) => (
+		<TriggerWrapper openerLabel="Long content">
+			{(open, setOpen) => (
+				<Popover
+					{...args}
+					open={open}
+					onClose={() => setOpen(false)}
+					headerText="Activity feed"
+				>
+					<div style={{ padding: "16px", maxWidth: "320px" }}>
+						{Array.from({ length: 14 }, (_, i) => (
+							<p
+								/* biome-ignore lint/suspicious/noArrayIndexKey: synthetic
+								 * demo-only feed where the index IS the stable identity *\/
+								key={i}
+								style={{
+									margin: "0 0 12px 0",
+									fontSize: "12px",
+									color: "var(--sapContent_LabelColor)",
+								}}
+							>
+								Activity entry #{i + 1}: entity field updated by user.
+							</p>
+						))}
+					</div>
+				</Popover>
+			)}
+		</TriggerWrapper>
+	),
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

@@ -1,9 +1,5 @@
 # DonutChart
 
-```tsx
-import { DonutChart } from "@reltio/design/charts";
-```
-
 `DonutChart` renders a segmented ring showing each item's share of the total. Use it for **proportional comparison** with a small number of segments (typically up to ~7) — for many segments use a `BarChart` instead, where small slices are easier to read.
 
 ### Data shape

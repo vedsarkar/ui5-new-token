@@ -1,9 +1,5 @@
 # TextArea
 
-```tsx
-import { TextArea } from "@reltio/design/components";
-```
-
 `TextArea` is a SAP Fiori-styled multi-line text input. It is a Reltio component (not a UI5 web component) so it integrates naturally with the platform — works inside `<form>`, supports `name` / `defaultValue` / refs out of the box, and accepts every native `<textarea>` attribute via spread.
 
 ### Validation states (`valueState`)

@@ -88,9 +88,14 @@ function buildGeoOption(
 	return {
 		tooltip: {
 			trigger: "item",
-			formatter: (params: { marker: string; name: string; value: number }) => {
-				const val = formatWithUnits(params.value, units);
-				return `${params.marker} ${params.name}: ${val}`;
+			formatter: (params) => {
+				const p = params as {
+					marker: string;
+					name: string;
+					value: number;
+				};
+				const val = formatWithUnits(p.value, units);
+				return `${p.marker} ${p.name}: ${val}`;
 			},
 		},
 		visualMap: {

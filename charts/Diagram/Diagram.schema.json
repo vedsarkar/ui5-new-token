@@ -1,27 +1,27 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "DiagramProps",
-  "x-component": "Diagram",
-  "type": "object",
-  "properties": {
-    "edges": {
-      "description": "Array of edges connecting nodes by id.",
-      "x-typescriptType": "Array<DiagramEdge>",
-      "type": "array"
-    },
-    "layout": {
-      "description": "Layout direction for the dagre algorithm.\n- `\"top-to-bottom\"` — parent nodes above children (default)\n- `\"left-to-right\"` — parent nodes to the left of children",
-      "default": "top-to-bottom",
-      "x-typescriptType": "DiagramLayout"
-    },
-    "nodes": {
-      "description": "Array of diagram nodes.",
-      "x-typescriptType": "Array<DiagramNode>",
-      "type": "array"
-    },
-    "nodeTypes": {
-      "description": "Custom node type components merged with the built-in `markdown` type.\nKeys are type names, values are React components receiving `NodeProps`.",
-      "x-typescriptType": "Record<string, ComponentType<NodeProps>>"
-    }
-  }
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "DiagramProps",
+	"x-component": "Diagram",
+	"type": "object",
+	"properties": {
+		"edges": {
+			"description": "Array of edges connecting nodes by id.",
+			"x-typescriptType": "Array<DiagramEdge>",
+			"type": "array"
+		},
+		"layout": {
+			"description": "Layout direction for the dagre algorithm.\n- `\"top-to-bottom\"` — parent nodes above children (default)\n- `\"left-to-right\"` — parent nodes to the left of children",
+			"default": "top-to-bottom",
+			"x-typescriptType": "DiagramLayout"
+		},
+		"nodes": {
+			"description": "Array of diagram nodes.",
+			"x-typescriptType": "Array<DiagramNode>",
+			"type": "array"
+		},
+		"nodeTypes": {
+			"description": "Custom node type components merged with the built-in `markdown` type.\nKeys are type names, values are React components receiving `NodeProps`.",
+			"x-typescriptType": "Record<string, ComponentType<NodeProps>>"
+		}
+	}
 }

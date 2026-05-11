@@ -1,9 +1,5 @@
 # Diagram
 
-```tsx
-import { Diagram } from "@reltio/design/charts";
-```
-
 `Diagram` renders a **node-edge diagram with auto-layout** — best suited for hierarchical or pipeline-shaped graphs (DAG, workflow, lineage, decision tree). Built on top of [`@xyflow/react`](https://reactflow.dev/) for the canvas + [`dagre`](https://github.com/dagrejs/dagre) for the layout algorithm. For general / cyclic topologies prefer `GraphChart` (force-directed).
 
 ### Data shape

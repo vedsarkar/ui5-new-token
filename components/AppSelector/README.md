@@ -1,9 +1,5 @@
 # AppSelector
 
-```tsx
-import { AppSelector } from "@reltio/design/components";
-```
-
 `AppSelector` is a thin Reltio business wrapper around the SAP Fiori [`ProductSwitch`](https://ui5.github.io/webcomponents/components/fiori/ProductSwitch/) from `@ui5/webcomponents-react`. It accepts the raw apps list (typically returned by Reltio Config Service) and renders the canonical 3×3 grid trigger button + popover with apps grouped by category. Grid layout, keyboard navigation, focus, hover, and selected state are all inherited from the underlying SAP component — `AppSelector` only adds the three Reltio-specific concerns described below.
 
 ### URI templates

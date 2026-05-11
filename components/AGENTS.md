@@ -2,16 +2,29 @@
 
 This directory contains **Reltio-specific** components — MDM business components and primitives built on top of [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/). It is not a duplicate of UI5: every component here either composes several UI5 parts with MDM business logic, or fills a primitive gap that UI5 does not cover.
 
-> **Compose, don't reinvent.** If UI5 already ships a component that fits the design, use it directly. Wrap only when there is real Reltio-specific value to add.
+This is also where the **endorsed UI5 surface** lives as documentation-only directories (e.g. `components/Button/`) — README + types re-export + stories + auto-generated `schema.json`, no runtime code. Those directories are what `@reltio/design` re-exports for app teams.
 
-## When to build a Reltio component vs. use UI5 directly
+> **Compose, don't reinvent.** If UI5 already ships a component that fits the design, surface it as an endorsed re-export from `@reltio/design`. Wrap with custom code only when there is real Reltio-specific value to add (MDM business logic or filling a UI5 primitive gap).
+
+> **Two import contexts, two conventions.** Inside this repo (Reltio component authors), we import UI5 directly from `@ui5/webcomponents-react/X` — we are the wrappers. In app code (consumers) and every public-facing example (README, stories, MDX), the convention is `import { X } from "@reltio/design/components"` — so apps inherit the pinned, CoE-tested UI5 version transitively. See the [UI Architecture guide](/?path=/docs/guides-ui-architecture--docs) for the rationale.
+
+> **CRITICAL — always include the `/components` subpath.** The published `packages/design/package.json` exposes only subpath entries (`./components`, `./charts`, `./utils`) — there is no `main`/`exports` target for the bare package name. Any `import { X } from "@reltio/design"` (without subpath) **resolves to nothing and breaks at app install time**. This is the most common mistake when authoring READMEs and component MDX — double-check before committing. The Reltio Design MCP rewrites generated snippets to `@reltio/design/components` automatically via [`.storybook/reltioManifestPreset.ts`](../.storybook/reltioManifestPreset.ts), so AI agents reading from MCP always see the correct path.
+
+## When to build a Reltio component vs. endorse a UI5 component
 
 Walk through the decision tree before creating anything new under this folder:
 
 ```
 Does @ui5/webcomponents-react already ship a component that fits the design?
-├── Yes → Import it directly. Do NOT wrap.
-│         e.g. import { Button } from "@ui5/webcomponents-react/Button";
+├── Yes → Is it already endorsed (re-exported from @reltio/design)?
+│         ├── Yes → Just import it. No new files needed.
+│         │
+│         └── No  → Add a documentation-only directory here:
+│                   components/<UI5Name>/ with README.md +
+│                   <UI5Name>.types.ts (re-exporting the UI5 type) +
+│                   <UI5Name>.stories.tsx, then add the named export
+│                   to packages/design/components.ts and
+│                   components/index.ts. The component is now endorsed.
 │
 └── No → Do you need to compose several UI5 components with Reltio business logic
          (entity profile, match group, source priority, MDM workflow ...)?
@@ -51,11 +64,15 @@ components/ComponentName/
 
 Both `README.md` and `ComponentName.story.mdx` are part of the final (shipped) component layout. While iterating on a new component locally, you can skip them — the component will render via the simpler default autodocs page until you opt it into the static MDX pipeline. See the **Documentation** section below for the two-stage workflow and the full rationale.
 
-### Documentation-only directories (exception)
+### Documentation-only directories (endorsed UI5 components)
 
-A directory under `components/` may contain **only** a `*.stories.tsx` file (no `.tsx`, `.types.ts`, `.module.css`, `README.md`, or `index.ts`) when its sole purpose is to document the recommended way to consume a native UI5 component directly — without authoring any Reltio code. The stories file imports the component straight from `@ui5/webcomponents-react`, and the directory name simply provides a stable Storybook navigation path.
+A directory under `components/` may document a UI5 component without authoring any Reltio runtime code. Two stages exist for this pattern:
 
-Use this exception only for documentation. As soon as any custom logic, types, or styles are introduced, the directory must follow the full structure above.
+**Stage 1 — iterate (autodocs only):** A `*.stories.tsx` file alone is enough — no `.tsx`, no `.types.ts`, no `.module.css`, no `README.md`, no `index.ts`. The stories file imports the component straight from `@ui5/webcomponents-react`, and the directory name provides a stable Storybook navigation path. Use this while you're still picking variants and edge cases for the endorsed surface.
+
+**Stage 2 — endorse (full doc pipeline):** When the curated set of stories is stable enough to publish, add `README.md` + `<UI5Name>.types.ts` (a `ComponentPropsWithoutRef<typeof UI5Component>` re-export) so the build pipeline regenerates `<UI5Name>.story.mdx` (with full prop tables) and `<UI5Name>.schema.json` (publishable JSON Schema). Then add the named re-export to both `packages/design/components.ts` and `components/index.ts`. The component is now part of the endorsed surface — apps can `import { <UI5Name> } from "@reltio/design/components"` (always with the `/components` subpath, never bare). See `components/Button/` for the canonical example.
+
+Use this exception only for endorsement. As soon as any custom logic, styles, or props are introduced, the directory must follow the full Reltio component structure above (and is no longer just a UI5 re-export).
 
 ## Component Standards
 
@@ -63,11 +80,13 @@ Use this exception only for documentation. As soon as any custom logic, types, o
 
 Always import components via their `index.ts` (Public API). Direct imports of internal files (`.tsx`, `.types.ts`, `.module.css`) from outside the component folder are **strictly forbidden**.
 
-**Good:**
+**Good — inside this monorepo (Reltio component authors):**
 ```typescript
 import { Chat } from "@/components/Chat";
 import { Button } from "@ui5/webcomponents-react/Button";
 ```
+
+UI5 imports are allowed here because we are the authors of the wrappers — Reltio components reach into the underlying UI5 surface to compose. App-facing examples (READMEs, MDX, story snippets via MCP) always show `import { Button } from "@reltio/design/components"` instead — note the **mandatory `/components` subpath**.
 
 **Bad:**
 ```typescript
@@ -316,7 +335,7 @@ The static MDX produces this visible structure:
 
 ```
 # ComponentName                            ← README H1
-import { ... } from "@reltio/design/components";   ← README import code-fence
+import { ... } from "@reltio/design/components";   ← AUTO-INJECTED import (build script)
 [intro paragraph]                          ← README intro
 ### Subsection / ### Subsection            ← README ### sections (no H2)
 
@@ -347,14 +366,10 @@ This summary lands in IDE Quick Info, Storybook's Manifest Debugger, the autodoc
 
 ### `README.md` conventions
 
-Required structure:
+Required structure — narrative only, no import line:
 
 ````markdown
 # ComponentName
-
-```tsx
-import { ComponentName } from "@reltio/design/components";
-```
 
 One-paragraph intro: what is this component, what does it wrap (if anything),
 and what concerns does it own that justify its existence as a wrapper.
@@ -374,7 +389,7 @@ Compact narrative — only critical info not visible elsewhere on the page.
 
 **Rules:**
 - Starts with `# ComponentName` H1 (one only) — Storybook renders it as the page title; in raw markdown the file stays self-contained for GitHub/Bitbucket viewers
-- Followed by a `tsx` code-fence with the canonical import — agents see this immediately
+- **Do NOT include a `tsx` code-fence with the import line.** The build script ([`scripts/build-component-docs.mjs`](../scripts/build-component-docs.mjs)) auto-injects the canonical import (`import { <Name> } from "@reltio/design/components"` for components, `/charts` for charts) right after the H1. Any `tsx import { ... } from "@reltio/design..."` block found in the README is stripped during build to prevent stale paths surviving across renames or repackagings. This eliminates a recurring class of mistakes (typing `from "@reltio/design"` without the mandatory subpath, or referencing the wrong subpath after a chart-vs-component move).
 - Short intro paragraph — the WHY of the component
 - All subsections use `###` (H3). No H2 inside README — H2-level section headers (PROP TYPES, STORIES) are owned by the docs page itself via `<SectionHeading>` and `<Stories />`
 - **Compact:** do NOT duplicate prop descriptions (those live in `.types.ts` JSDoc), do NOT duplicate code examples (those live in `.stories.tsx`)
@@ -440,7 +455,7 @@ At this stage no `README.md` and no `.story.mdx` exist on disk. The component is
 
 When the API is stable enough to publish and you want AI agents to receive the rich payload:
 
-1. **Write `README.md`** — H1 with component name, canonical import code-fence, one-paragraph intro, H3 subsections only, compact and non-duplicative (see [README conventions](#readmemd-conventions) above).
+1. **Write `README.md`** — H1 with component name, one-paragraph intro, H3 subsections only, compact and non-duplicative (see [README conventions](#readmemd-conventions) above). **Do NOT add an import code-fence — the build script injects the canonical import automatically.**
 2. The component is now opted in automatically — the docs script globs `components/*` and `charts/*` and picks up any folder with `README.md` + `<Name>.types.ts` + `<Name>.stories.tsx`.
 3. **Generate the docs page** — `npm run build-component-docs`. It produces `ComponentName.story.mdx`. Never edit this file by hand — it is overwritten on every build.
 4. **Format & lint** — `npm run format` && `npm run lint`. Both must pass with no errors.

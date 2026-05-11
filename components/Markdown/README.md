@@ -1,9 +1,5 @@
 # Markdown
 
-```tsx
-import { Markdown } from "@reltio/design/components";
-```
-
 `Markdown` is a safe Markdown renderer for content authored at runtime — AI assistant replies, user-supplied notes, audit-trail entries. Built on [`markdown-to-jsx`](https://github.com/quantizor/markdown-to-jsx) with sanitization on, GitHub Flavored Markdown enabled, and the entire render tree wrapped in an internal `ErrorBoundary` so a single malformed input cannot crash the surrounding UI.
 
 ### Safety

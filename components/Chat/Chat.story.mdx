@@ -55,32 +55,32 @@ The container has `role="log"`, `aria-live="polite"`, and `aria-label="Chat mess
 
 {/* __JSON_SCHEMA__
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "ChatProps",
-  "x-component": "Chat",
-  "type": "object",
-  "properties": {
-    "messages": {
-      "description": "List of messages to display in order. Each message is rendered by type (user → UserMessage, assistant → AssistantMessage).",
-      "x-typescriptType": "Array<Message>",
-      "type": "array"
-    },
-    "initialLoading": {
-      "description": "When true, chat data is initially loading. The Skeleton component is shown in place of the message list until data is available.",
-      "default": false,
-      "x-typescriptType": "boolean",
-      "type": "boolean"
-    },
-    "thinking": {
-      "description": "When true, shows the AssistantLoader below the message list to indicate the assistant is generating a response.\nFully controlled from outside — no internal logic derives this state.",
-      "default": false,
-      "x-typescriptType": "boolean",
-      "type": "boolean"
-    }
-  },
-  "required": [
-    "messages"
-  ]
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "ChatProps",
+	"x-component": "Chat",
+	"type": "object",
+	"properties": {
+		"messages": {
+			"description": "List of messages to display in order. Each message is rendered by type (user → UserMessage, assistant → AssistantMessage).",
+			"x-typescriptType": "Array<Message>",
+			"type": "array"
+		},
+		"initialLoading": {
+			"description": "When true, chat data is initially loading. The Skeleton component is shown in place of the message list until data is available.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"thinking": {
+			"description": "When true, shows the AssistantLoader below the message list to indicate the assistant is generating a response.\nFully controlled from outside — no internal logic derives this state.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	},
+	"required": [
+		"messages"
+	]
 }
 */}
 

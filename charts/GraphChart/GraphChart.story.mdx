@@ -53,32 +53,32 @@ The wrapper does not expose force-simulation parameters; use `"force"` defaults 
 
 {/* __JSON_SCHEMA__
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "GraphChartProps",
-  "x-component": "GraphChart",
-  "type": "object",
-  "properties": {
-    "layout": {
-      "description": "Graph layout algorithm.\n- `\"force\"` — physics simulation (default)\n- `\"circular\"` — nodes arranged on a circle",
-      "default": "force",
-      "x-typescriptType": "GraphChartLayout"
-    },
-    "links": {
-      "description": "Array of links connecting nodes by id.",
-      "x-typescriptType": "Array<GraphChartLink>",
-      "type": "array"
-    },
-    "nodes": {
-      "description": "Array of graph nodes.",
-      "x-typescriptType": "Array<GraphChartNode>",
-      "type": "array"
-    },
-    "units": {
-      "description": "Unit suffix appended to tooltip values.\nExamples: \"connections\", \"score\", \"records\"",
-      "x-typescriptType": "string",
-      "type": "string"
-    }
-  }
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "GraphChartProps",
+	"x-component": "GraphChart",
+	"type": "object",
+	"properties": {
+		"layout": {
+			"description": "Graph layout algorithm.\n- `\"force\"` — physics simulation (default)\n- `\"circular\"` — nodes arranged on a circle",
+			"default": "force",
+			"x-typescriptType": "GraphChartLayout"
+		},
+		"links": {
+			"description": "Array of links connecting nodes by id.",
+			"x-typescriptType": "Array<GraphChartLink>",
+			"type": "array"
+		},
+		"nodes": {
+			"description": "Array of graph nodes.",
+			"x-typescriptType": "Array<GraphChartNode>",
+			"type": "array"
+		},
+		"units": {
+			"description": "Unit suffix appended to tooltip values.\nExamples: \"connections\", \"score\", \"records\"",
+			"x-typescriptType": "string",
+			"type": "string"
+		}
+	}
 }
 */}
 

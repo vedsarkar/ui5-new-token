@@ -1,0 +1,51 @@
+# BusyIndicator
+
+`BusyIndicator` is the SAP Fiori indeterminate loading spinner, re-exported from `@ui5/webcomponents-react/BusyIndicator` as the canonical Reltio entry point. Use it whenever the app is waiting for an asynchronous operation whose duration cannot be predicted — REST calls, background MDM jobs, lazy-loaded view sections.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/BusyIndicator`. The Reltio layer adds curation (this is the endorsed indeterminate-loading surface), pinned versioning, and Reltio-specific guidance.
+
+### Wrap children — don't replace them
+
+Unlike a full-screen loader, `BusyIndicator` is a **wrapper** that keeps the underlying content in place and renders a spinner overlay on top:
+
+```tsx
+<BusyIndicator active={isLoading}>
+  <EntityProfile entityId={id} />
+</BusyIndicator>
+```
+
+This pattern preserves layout (the parent doesn't collapse to spinner-size), preserves scroll position, and preserves the previous content as visual context while the new request lands. Use it instead of conditionally rendering `<Spinner />` vs `<Content />`.
+
+For loading placeholders that fully replace the eventual content (skeleton bars while the entire page is loading), use the Reltio [`Skeleton`](?path=/docs/components-skeleton--docs) component instead.
+
+### `delay` — avoid spinner flicker on fast responses
+
+`delay` (default `1000`ms) suppresses the spinner for fast operations. If the request returns within the delay window, the spinner never appears — the user sees only the result. This avoids the jarring "flash spinner → flash content" effect when a request takes 200ms to complete.
+
+For Reltio MDM workflows where any indication of work-in-progress matters more than visual smoothness (writing, merging, validating), pass `delay={0}` so the spinner appears immediately.
+
+### `text` and `textPlacement`
+
+Pass a short label to communicate what is being loaded — much better UX than a context-less spinner:
+
+```tsx
+<BusyIndicator active text="Validating entity…" textPlacement="Bottom">
+  <EntityForm />
+</BusyIndicator>
+```
+
+Keep `text` short (≤ 30 characters); use full sentences with a trailing ellipsis (`"Loading entities…"`).
+
+### Sizes
+
+| `size` | Usage |
+|---|---|
+| `S` | Inline button-level spinner. |
+| `M` (default) | Standard component- or section-level spinner. |
+| `L` | Page- or floorplan-level spinner. |
+
+### See also
+
+- [SAP Fiori Busy Indicator design guideline](https://experience.sap.com/fiori-design-web/busy-indicator/) — semantic guidance and visual patterns
+- [UI5 BusyIndicator web component reference](https://ui5.github.io/webcomponents/components/BusyIndicator/) — full underlying API
+- [Skeleton](?path=/docs/components-skeleton--docs) — Reltio primitive for full-replacement loading placeholders

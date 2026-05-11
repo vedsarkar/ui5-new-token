@@ -1,0 +1,150 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "PopoverProps",
+	"x-component": "Popover",
+	"type": "object",
+	"properties": {
+		"accessibleDescription": {
+			"description": "Defines the accessible description of the component.\n\n**Note:** Available since [v2.11.0](https://github.com/UI5/webcomponents/releases/tag/v2.11.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleDescriptionRef": {
+			"description": "Receives id(or many ids) of the elements that describe the component.\n\n**Note:** Available since [v2.11.0](https://github.com/UI5/webcomponents/releases/tag/v2.11.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleName": {
+			"description": "Defines the accessible name of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleNameRef": {
+			"description": "Defines the IDs of the elements that label the component.\n\n**Note:** Available since [v1.1.0](https://github.com/UI5/webcomponents/releases/tag/v1.1.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleRole": {
+			"description": "Allows setting a custom role.\n\n**Note:** Available since [v1.10.0](https://github.com/UI5/webcomponents/releases/tag/v1.10.0) of **@ui5/webcomponents**.",
+			"default": "Dialog",
+			"x-typescriptType": "PopupAccessibleRole | 'None' | 'Dialog' | 'AlertDialog'"
+		},
+		"allowTargetOverlap": {
+			"description": "Determines if there is no enough space, the component can be placed\nover the target.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"children": {
+			"description": "Defines the content of the Popup.\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"footer": {
+			"description": "Defines the footer HTML Element.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"footer\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"header": {
+			"description": "Defines the header HTML Element.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"header\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"headerText": {
+			"description": "Defines the header text.\n\n**Note:** If `header` slot is provided, the `headerText` is ignored.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"hideArrow": {
+			"description": "Determines whether the component arrow is hidden.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"horizontalAlign": {
+			"description": "Determines the horizontal alignment of the component.",
+			"default": "Center",
+			"x-typescriptType": "PopoverHorizontalAlign | 'Center' | 'Start' | 'End' | 'Stretch'"
+		},
+		"initialFocus": {
+			"description": "Defines the ID of the HTML Element, which will get the initial focus.\n\n**Note:** If an element with `autofocus` attribute is added inside the component,\n`initialFocus` won't take effect.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"modal": {
+			"description": "Defines whether the component should close when\nclicking/tapping outside the popover.\nIf enabled, it blocks any interaction with the background.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"onBeforeClose": {
+			"description": "Fired before the component is closed. This event can be cancelled, which will prevent the popup from closing.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|❌|",
+			"x-typescriptType": "(event: Ui5CustomEvent<PopoverDomRef, PopupBeforeCloseEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<PopoverDomRef, PopupBeforeCloseEventDetail>) => void"
+		},
+		"onBeforeOpen": {
+			"description": "Fired before the component is opened. This event can be cancelled, which will prevent the popup from opening.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|❌|",
+			"x-typescriptType": "(event: Ui5CustomEvent<PopoverDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<PopoverDomRef>) => void"
+		},
+		"onClose": {
+			"description": "Fired after the component is closed.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|❌|",
+			"x-typescriptType": "(event: Ui5CustomEvent<PopoverDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<PopoverDomRef>) => void"
+		},
+		"onOpen": {
+			"description": "Fired after the component is opened.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|❌|",
+			"x-typescriptType": "(event: Ui5CustomEvent<PopoverDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<PopoverDomRef>) => void"
+		},
+		"open": {
+			"description": "Indicates if the element is open\n\n**Note:** Available since [v1.2.0](https://github.com/UI5/webcomponents/releases/tag/v1.2.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"opener": {
+			"description": "Defines the ID or DOM Reference of the element at which the popover is shown.\nWhen using this attribute in a declarative way, you must only use the `id` (as a string) of the element at which you want to show the popover.\nYou can only set the `opener` attribute to a DOM Reference when using JavaScript.\n\n**Note:** Available since [v1.2.0](https://github.com/UI5/webcomponents/releases/tag/v1.2.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string | HTMLElement"
+		},
+		"placement": {
+			"description": "Determines on which side the component is placed at.",
+			"default": "End",
+			"x-typescriptType": "'Top' | 'Bottom' | 'Start' | 'End' | PopoverPlacement"
+		},
+		"preventFocusRestore": {
+			"description": "Defines if the focus should be returned to the previously focused element,\nwhen the popup closes.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"preventInitialFocus": {
+			"description": "Indicates whether initial focus should be prevented.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"resizable": {
+			"description": "Determines whether the component is resizable.\n**Note:** This property is effective only on desktop devices.\n\n**Note:** Available since [v2.19.0](https://github.com/UI5/webcomponents/releases/tag/v2.19.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"verticalAlign": {
+			"description": "Determines the vertical alignment of the component.",
+			"default": "Center",
+			"x-typescriptType": "'Top' | 'Bottom' | 'Center' | 'Stretch' | PopoverVerticalAlign"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

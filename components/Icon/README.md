@@ -1,0 +1,70 @@
+# Icon
+
+```tsx
+import { Icon } from "@reltio/design/components";
+import "@ui5/webcomponents-icons/dist/save.js";
+
+<Icon name="save" />;
+```
+
+`Icon` is the SAP Fiori icon element, re-exported from `@ui5/webcomponents-react/Icon` as the canonical Reltio entry point. Use it for inline glyphs, status indicators, navigation cues, and decorative accents — anywhere a single visual symbol communicates intent.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Icon`. The Reltio layer adds curation (this is the endorsed icon-rendering surface), pinned versioning, and Reltio-specific guidance.
+
+### Loading icons — side-effect imports
+
+Each icon is loaded individually as a side-effect import — only the icons you actually `import` end up in your bundle:
+
+```tsx
+import "@ui5/webcomponents-icons/dist/save.js";
+import "@ui5/webcomponents-icons/dist/edit.js";
+import "@ui5/webcomponents-icons/dist/delete.js";
+
+<Icon name="save" />;
+<Icon name="edit" />;
+<Icon name="delete" />;
+```
+
+Browse the full set in the [SAP Fiori Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html). Use kebab-case names (`navigation-right-arrow`, not `navigationRightArrow`).
+
+> **No need to install `@ui5/webcomponents-icons` separately** — it arrives transitively via `@reltio/design`. Just write the side-effect import.
+
+See the [Icon Library guide](?path=/docs/guides-icon-library--docs) for icon discovery and Reltio-specific picking guidance.
+
+### `mode` — pick the interaction model
+
+| `mode` | Behavior | Use case |
+|---|---|---|
+| `Decorative` (default) | Visible, not focusable, not announced by screen readers. | Inline accent next to a label, button decoration. |
+| `Image` | Visible, not focusable, announced via `accessibleName`. | Standalone status indicator (e.g. row state). |
+| `Interactive` | Focusable, clickable, announced as a button. Pair with `onClick` and `accessibleName`. | Icon-only action (replace with a `Button icon=…` if there's any chance of confusion). |
+
+For most action triggers, prefer a `Button` with `icon` over an `Interactive` `Icon` — the button gives you better focus-ring, hover, disabled, and tooltip semantics for free.
+
+### `design` — semantic color
+
+Icons can carry semantic color through `design`:
+
+| `design` | Color | Use for |
+|---|---|---|
+| `Default` | Neutral | Generic decoration. |
+| `Negative` | Error red | Failure, validation error, destructive intent. |
+| `Critical` | Warning amber | Attention, pending review, suboptimal state. |
+| `Positive` | Success green | Success, completion, validated. |
+| `Information` | Info blue | Informational, neutral status. |
+| `Contrast` | Inverted | Use on dark surfaces only. |
+| `NonInteractive` | Muted | De-emphasized, disabled-like. |
+
+Semantic color is **stronger** than icon shape — pair both for clarity (`design="Negative" name="error"`).
+
+### Accessibility
+
+- **Decorative icons** (`mode="Decorative"`) — omit `accessibleName`. Screen readers will skip them. Always pair with adjacent visible text that conveys the meaning.
+- **Image icons** (`mode="Image"`) — set `accessibleName` to the meaning the icon conveys (`"Approved"`, `"Pending review"`).
+- **Interactive icons** (`mode="Interactive"`) — set `accessibleName` to the action verb (`"Edit entity"`, `"Delete row"`). Without it, screen-reader users cannot operate the control.
+
+### See also
+
+- [Icon Library guide](?path=/docs/guides-icon-library--docs) — Reltio icon-picking guidelines and full set browsing
+- [SAP Fiori Icon design guideline](https://experience.sap.com/fiori-design-web/icon/) — semantic guidance and visual patterns
+- [UI5 Icon web component reference](https://ui5.github.io/webcomponents/components/Icon/) — full underlying API

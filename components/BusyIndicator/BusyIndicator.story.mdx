@@ -1,0 +1,280 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as BusyIndicatorStories from "./BusyIndicator.stories";
+import schema from "./BusyIndicator.schema.json";
+
+<Meta of={BusyIndicatorStories} />
+
+# BusyIndicator
+
+```tsx
+import { BusyIndicator } from "@reltio/design/components";
+```
+
+`BusyIndicator` is the SAP Fiori indeterminate loading spinner, re-exported from `@ui5/webcomponents-react/BusyIndicator` as the canonical Reltio entry point. Use it whenever the app is waiting for an asynchronous operation whose duration cannot be predicted — REST calls, background MDM jobs, lazy-loaded view sections.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/BusyIndicator`. The Reltio layer adds curation (this is the endorsed indeterminate-loading surface), pinned versioning, and Reltio-specific guidance.
+
+### Wrap children — don't replace them
+
+Unlike a full-screen loader, `BusyIndicator` is a **wrapper** that keeps the underlying content in place and renders a spinner overlay on top:
+
+```tsx
+<BusyIndicator active={isLoading}>
+  <EntityProfile entityId={id} />
+</BusyIndicator>
+```
+
+This pattern preserves layout (the parent doesn't collapse to spinner-size), preserves scroll position, and preserves the previous content as visual context while the new request lands. Use it instead of conditionally rendering `<Spinner />` vs `<Content />`.
+
+For loading placeholders that fully replace the eventual content (skeleton bars while the entire page is loading), use the Reltio [`Skeleton`](?path=/docs/components-skeleton--docs) component instead.
+
+### `delay` — avoid spinner flicker on fast responses
+
+`delay` (default `1000`ms) suppresses the spinner for fast operations. If the request returns within the delay window, the spinner never appears — the user sees only the result. This avoids the jarring "flash spinner → flash content" effect when a request takes 200ms to complete.
+
+For Reltio MDM workflows where any indication of work-in-progress matters more than visual smoothness (writing, merging, validating), pass `delay={0}` so the spinner appears immediately.
+
+### `text` and `textPlacement`
+
+Pass a short label to communicate what is being loaded — much better UX than a context-less spinner:
+
+```tsx
+<BusyIndicator active text="Validating entity…" textPlacement="Bottom">
+  <EntityForm />
+</BusyIndicator>
+```
+
+Keep `text` short (≤ 30 characters); use full sentences with a trailing ellipsis (`"Loading entities…"`).
+
+### Sizes
+
+| `size` | Usage |
+|---|---|
+| `S` | Inline button-level spinner. |
+| `M` (default) | Standard component- or section-level spinner. |
+| `L` | Page- or floorplan-level spinner. |
+
+### See also
+
+- [SAP Fiori Busy Indicator design guideline](https://experience.sap.com/fiori-design-web/busy-indicator/) — semantic guidance and visual patterns
+- [UI5 BusyIndicator web component reference](https://ui5.github.io/webcomponents/components/BusyIndicator/) — full underlying API
+- [Skeleton](?path=/docs/components-skeleton--docs) — Reltio primitive for full-replacement loading placeholders
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+{/* __JSON_SCHEMA__
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "BusyIndicatorProps",
+	"x-component": "BusyIndicator",
+	"type": "object",
+	"properties": {
+		"active": {
+			"description": "Defines if the busy indicator is visible on the screen. By default it is not.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"children": {
+			"description": "Determines the content over which the component will appear.\n\n__Supported Node Type/s:__ `Array<Node>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"delay": {
+			"description": "Defines the delay in milliseconds, after which the busy indicator will be visible on the screen.",
+			"default": 1000,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"size": {
+			"description": "Defines the size of the component.",
+			"default": "M",
+			"x-typescriptType": "'S' | 'M' | 'L' | BusyIndicatorSize"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"text": {
+			"description": "Defines text to be displayed below the component. It can be used to inform the user of the current operation.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"textPlacement": {
+			"description": "Defines the placement of the text.",
+			"default": "Bottom",
+			"x-typescriptType": "BusyIndicatorTextPlacement | 'Top' | 'Bottom'"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import { BusyIndicator } from "@ui5/webcomponents-react/BusyIndicator";
+import preview from "../../.storybook/preview";
+
+const meta = preview.meta({
+	component: BusyIndicator,
+	parameters: {
+		layout: "centered",
+	},
+	args: {
+		active: true,
+		delay: 0,
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({
+	render: (args) => (
+		<BusyIndicator {...args}>
+			<div
+				style={{
+					width: "240px",
+					height: "120px",
+					padding: "16px",
+					border: "1px solid var(--sapList_BorderColor)",
+					borderRadius: "8px",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					color: "var(--sapContent_LabelColor)",
+				}}
+			>
+				Wrapped content
+			</div>
+		</BusyIndicator>
+	),
+});
+
+export const WithText = meta.story({
+	args: {
+		text: "Loading entity…",
+	},
+	render: (args) => (
+		<BusyIndicator {...args}>
+			<div
+				style={{
+					width: "280px",
+					height: "120px",
+					padding: "16px",
+					border: "1px solid var(--sapList_BorderColor)",
+					borderRadius: "8px",
+				}}
+			/>
+		</BusyIndicator>
+	),
+});
+
+export const TextPlacementBottom = meta.story({
+	args: {
+		text: "Validating…",
+		textPlacement: "Bottom",
+	},
+	render: (args) => (
+		<BusyIndicator {...args}>
+			<div
+				style={{
+					width: "280px",
+					height: "120px",
+					border: "1px solid var(--sapList_BorderColor)",
+					borderRadius: "8px",
+				}}
+			/>
+		</BusyIndicator>
+	),
+});
+
+export const SizeSmall = meta.story({
+	args: {
+		size: "S",
+	},
+	render: (args) => (
+		<BusyIndicator {...args}>
+			<div style={{ width: "120px", height: "32px" }} />
+		</BusyIndicator>
+	),
+});
+
+export const SizeLarge = meta.story({
+	args: {
+		size: "L",
+	},
+	render: (args) => (
+		<BusyIndicator {...args}>
+			<div
+				style={{
+					width: "320px",
+					height: "200px",
+					border: "1px solid var(--sapList_BorderColor)",
+					borderRadius: "8px",
+				}}
+			/>
+		</BusyIndicator>
+	),
+});
+
+export const InactiveShowsContent = meta.story({
+	args: {
+		active: false,
+	},
+	render: (args) => (
+		<BusyIndicator {...args}>
+			<div
+				style={{
+					width: "280px",
+					padding: "20px",
+					border: "1px solid var(--sapList_BorderColor)",
+					borderRadius: "8px",
+				}}
+			>
+				Operation complete — content fully visible.
+			</div>
+		</BusyIndicator>
+	),
+});
+
+export const DelayedAppearance = meta.story({
+	args: {
+		delay: 1500,
+		text: "Spinner appears after 1.5s of latency",
+	},
+	render: (args) => (
+		<BusyIndicator {...args}>
+			<div
+				style={{
+					width: "320px",
+					height: "120px",
+					border: "1px solid var(--sapList_BorderColor)",
+					borderRadius: "8px",
+				}}
+			/>
+		</BusyIndicator>
+	),
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

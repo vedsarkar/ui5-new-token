@@ -1,6 +1,6 @@
 # Reltio Design Platform
 
-Reltio Design Platform is the UI development, testing, and documentation ecosystem for the Reltio MDM product suite. It builds on the SAP Fiori design system (Horizon visual theme): [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/) provides the base components and icons, and Reltio Design adds MDM-specific business components, charts, hooks, and API utilities on top.
+Reltio Design Platform is the UI development, testing, and documentation ecosystem for the Reltio MDM product suite. It builds on the SAP Fiori design system (Horizon visual theme) and is delivered to apps as a single npm package — **`@reltio/design`** — which re-exports a curated set of [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/) components alongside Reltio MDM business components, charts, hooks, and utilities. UI5 itself is a transitive, pinned dependency: apps install `@reltio/design` and never touch `@ui5/*` directly.
 
 ## 📋 Table of Contents
 
@@ -22,8 +22,9 @@ Reltio Design Platform is the UI development, testing, and documentation ecosyst
 
 Reltio Design Platform provides:
 
-- 🧱 **UI5 foundation** — `@ui5/webcomponents-react` and `@ui5/webcomponents-icons` are used directly for base components (Button, Input, Dialog, Table, ...)
-- 🎯 **MDM business components** — Reltio-specific compositions on top of UI5 (Chat, Markdown, Details, ...)
+- 📦 **Single distribution package** — `@reltio/design` is the only thing apps install. Re-exports endorsed UI5 components (Button, Avatar, Dialog, MessageStrip, Popover, ...) plus all Reltio MDM components.
+- 🔒 **Pinned UI5 version** — `@ui5/webcomponents-react` is a transitive dependency at an exact version the UI Center of Excellence has run through Chromatic visual regression, accessibility, and interaction tests. Apps inherit the tested version automatically.
+- 🎯 **MDM business components** — Reltio-specific compositions on top of UI5 (Chat, AppSelector, Markdown, Details, ...)
 - 📊 **Charts** — ECharts-based visualizations under `charts/`
 - 🎨 **SAP Horizon design tokens** — generated into static `public/variables.css`, `public/fonts.css`, `public/fonts/*.woff2`; consumed via the `data-theme` attribute
 - 📚 **Storybook documentation** — stories double as visual tests, accessibility checks, and live API references
@@ -34,18 +35,23 @@ Reltio Design Platform provides:
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │  Reltio MDM apps & partners                                  │
+│   import { Button, Chat, MessageStrip, ... }                 │
+│     from "@reltio/design/components";                        │
 └──────────────────────────────────────────────────────────────┘
                               ▲
 ┌─────────────────────────────┴────────────────────────────────┐
-│  @reltio/design (this repo)                                  │
-│   • Business components (Chat, Markdown, Details, ...)       │
-│   • Reltio primitives (only when UI5 doesn't cover the need) │
+│  @reltio/design — single endorsed entry point                │
+│   • Reltio MDM components (Chat, AppSelector, Details, ...)  │
+│   • Reltio primitives (Markdown, Skeleton, ErrorBoundary)    │
 │   • Charts (ECharts)                                         │
 │   • Hooks & Reltio API utilities                             │
+│   • Re-exports of endorsed UI5 components, pinned version    │
 └─────────────────────────────┬────────────────────────────────┘
                               ▲
 ┌─────────────────────────────┴────────────────────────────────┐
-│  @ui5/webcomponents-react   +   @ui5/webcomponents-icons     │
+│  @ui5/webcomponents-react @ 2.21.3 (pinned, transitive)      │
+│   Apps never install this directly. CoE upgrades via         │
+│   `@reltio/design` releases after Chromatic + a11y tests.    │
 └─────────────────────────────┬────────────────────────────────┘
                               ▲
 ┌─────────────────────────────┴────────────────────────────────┐
@@ -56,7 +62,7 @@ Reltio Design Platform provides:
 └──────────────────────────────────────────────────────────────┘
 ```
 
-> **Compose, don't reinvent.** If `@ui5/webcomponents-react` already ships a component that fits, use it directly. Build a Reltio component only when there is real MDM business value to add.
+> **Compose, don't reinvent.** If `@reltio/design` already re-exports a UI5 component that fits, use it directly. Build a Reltio component only when there is real MDM business value to add. See the [UI Architecture guide](/?path=/docs/guides-ui-architecture--docs) for the full rationale on why everything goes through a single entry point.
 
 ## Getting Started
 
@@ -98,34 +104,33 @@ Load the platform's static CSS files in `<head>` and set the `data-theme` attrib
 
 Switch the theme by toggling `data-theme="horizon-light"` or `data-theme="horizon-dark"` on any ancestor element. Nested theming is supported.
 
-### Using UI5 components directly
+### Using endorsed UI5 components
 
-UI5 components cover the vast majority of base UI needs. Import them straight from `@ui5/webcomponents-react`:
+Endorsed SAP Fiori components are re-exported from `@reltio/design/components` — that's where you import them from in app code. No need to install `@ui5/webcomponents-react` yourself; it arrives transitively at the version the CoE has tested.
 
 ```tsx
-import { Button } from "@ui5/webcomponents-react/Button";
-import { Input } from "@ui5/webcomponents-react/Input";
-import { Icon } from "@ui5/webcomponents-react/Icon";
+import { Button, Icon } from "@reltio/design/components";
 import "@ui5/webcomponents-icons/dist/save.js";
 
 function SaveBar() {
   return (
-    <>
-      <Input placeholder="Entity name" />
-      <Button design="Emphasized" icon="save">
-        Save
-      </Button>
-    </>
+    <Button design="Emphasized" icon="save">
+      Save
+    </Button>
   );
 }
 ```
 
+> **Always include the `/components` subpath.** The published package exposes only subpath entries (`/components`, `/charts`, `/utils`) — a bare `from "@reltio/design"` has no `main`/`exports` target and breaks at install time.
+
+If a UI5 component you need is not yet re-exported from `@reltio/design/components`, open an issue with the CoE so it can be added — do not work around the contract by installing `@ui5/webcomponents-react` directly. Read why in the [UI Architecture guide](/?path=/docs/guides-ui-architecture--docs).
+
 ### Using Reltio MDM components
 
-Reltio components are exported from `@reltio/design`:
+Reltio components live behind the same subpath — same import:
 
 ```tsx
-import { Chat, Markdown, Details } from "@reltio/design";
+import { Chat, Markdown, Details, AppSelector } from "@reltio/design/components";
 
 function AssistantPanel({ messages }) {
   return <Chat messages={messages} />;
@@ -137,7 +142,7 @@ function AssistantPanel({ messages }) {
 All Reltio components are typed with TypeScript. Types are exported alongside components:
 
 ```tsx
-import { Chat, type ChatProps } from "@reltio/design";
+import { Chat, type ChatProps } from "@reltio/design/components";
 ```
 
 ## For Designers
@@ -180,7 +185,7 @@ reltio-design/
 
 ### Creating a new Reltio component
 
-> **Step 0 — check UI5 first.** Before creating anything here, verify whether `@ui5/webcomponents-react` already ships a component that fits the design. If yes, use it directly. Wrap only when there is real MDM/business value to add.
+> **Step 0 — check `@reltio/design` first.** Before creating anything here, check whether the package already re-exports a UI5 component that fits the design (browse Storybook → Components, or use the [Reltio Design MCP](/?path=/docs/guides-reltio-design-mcp--docs)). If yes, just import it. If a UI5 component you need is not yet re-exported, open an issue with the CoE so it gets endorsed. Wrap only when there is real MDM/business value to add (entity profile, match group, source priority, MDM workflow, …).
 
 1. **Create the component directory:**
 

@@ -1,9 +1,5 @@
 # RadarChart
 
-```tsx
-import { RadarChart } from "@reltio/design/charts";
-```
-
 `RadarChart` renders a multi-axis polygon plot for **comparing several entities across the same set of metrics**. Each radial spoke is a metric (`indicators`), each filled polygon is one entity (`series`). Useful for at-a-glance comparison of source-system quality, profile completeness, etc. — situations where the absolute values matter less than the **shape** of each polygon.
 
 ### Data shape
