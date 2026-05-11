@@ -1,0 +1,56 @@
+# Select
+
+`Select` is the SAP Fiori closed-list dropdown, re-exported from `@ui5/webcomponents-react/Select` as the canonical Reltio entry point. Use it when the user picks **exactly one** option from a known, finite list — entity type, source-priority rule, lookup-table reference — and free-text entry is not allowed.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Select`. The Reltio layer adds curation (this is the endorsed single-select dropdown surface), pinned versioning, and Reltio-specific guidance.
+
+### Select vs. ComboBox vs. SegmentedButton vs. RadioButton
+
+- **`Select`** — 6+ options, the user picks from a closed list, no typing.
+- **`ComboBox`** — Long list **with** filter-as-you-type and optional free-text entry.
+- **`SegmentedButton`** — 2–5 short options that should stay visible inline.
+- **`RadioButton`** — 2–5 options in a form where state is applied on submit.
+
+Select is the default for "long list, single pick, no typing" — most attribute-type fields, lookup-table references, and configuration dropdowns fall here.
+
+### Options — `Option` + `OptionCustom`
+
+```tsx
+<Select>
+  <Option>Organization</Option>
+  <Option selected>Individual</Option>
+  <Option>Product</Option>
+</Select>
+```
+
+Mark the currently selected option with `selected`. `Option` supports:
+- `icon` — leading icon (load via side-effect import like every UI5 icon).
+- `additionalText` — secondary label aligned to the right (category, code, ID).
+
+For richer cell layouts (multi-line option with description), use `OptionCustom` and place arbitrary children. The custom option still owns selection — just style the inner content.
+
+### `Select` does NOT support empty selection
+
+By default the first option is selected when no `selected` is set. There is no built-in placeholder option. If you need "no value picked yet" semantics, add an explicit `<Option>—</Option>` (or a localized "None" label) at the top of the list and treat it as your empty sentinel.
+
+### Validation — `valueState`
+
+Use `valueState` (`None`, `Information`, `Critical`, `Negative`, `Positive`) and pair with `valueStateMessage` slot for the explanation.
+
+### Required vs. disabled vs. readonly
+
+- **`required`** — form rejects submission without a non-empty choice; pair with a visible asterisk in the label.
+- **`disabled`** — control unavailable in this context.
+- **`readonly`** — choice shown, user cannot change it (tenant policy).
+
+### Accessibility
+
+Set `accessibleName` so screen readers announce the field's purpose. UI5 already wires keyboard navigation (arrow keys, type-to-search). The dropdown is rendered via popover so it escapes overflow containers automatically.
+
+### See also
+
+- [SAP Fiori Select design guideline](https://experience.sap.com/fiori-design-web/select/) — semantic guidance and visual patterns
+- [UI5 Select web component reference](https://ui5.github.io/webcomponents/components/Select/) — full underlying API
+- [ComboBox](?path=/docs/components-combobox--docs) — filter-as-you-type alternative
+- [SegmentedButton](?path=/docs/components-segmentedbutton--docs) — visible-inline alternative for short option sets
+- [RadioButton](?path=/docs/components-radiobutton--docs) — form-style alternative

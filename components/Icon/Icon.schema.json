@@ -17,7 +17,7 @@
 		"design": {
 			"description": "Defines the component semantic design.\n\n**Note:** Available since [v1.9.2](https://github.com/UI5/webcomponents/releases/tag/v1.9.2) of **@ui5/webcomponents**.",
 			"default": "Default",
-			"x-typescriptType": "'Default' | 'Positive' | 'Negative' | IconDesign | 'Contrast' | 'Critical' | 'Information' | 'Neutral' | 'NonInteractive'"
+			"x-typescriptType": "'Default' | 'Positive' | 'Negative' | 'Critical' | 'Information' | IconDesign | 'Contrast' | 'Neutral' | 'NonInteractive'"
 		},
 		"mode": {
 			"description": "Defines the mode of the component.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.",

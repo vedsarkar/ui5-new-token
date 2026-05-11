@@ -1,0 +1,42 @@
+# Slider
+
+`Slider` is the SAP Fiori single-thumb numeric slider, re-exported from `@ui5/webcomponents-react/Slider` as the canonical Reltio entry point. Use it when the user picks a single value from a continuous numeric range and benefits from a visual sense of where they are — auto-merge thresholds, confidence percentages, retention windows.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Slider`. The Reltio layer adds curation (this is the endorsed single-value slider surface), pinned versioning, and Reltio-specific guidance.
+
+### Slider vs. StepInput vs. Input type="Number"
+
+- **`Slider`** — Continuous value where the visual position matters. Imprecise numeric entry; the user "feels" the value.
+- **`StepInput`** — Discrete numeric value with explicit increment / decrement buttons. The user wants the exact value visible.
+- **`Input type="Number"`** — Precise numeric entry. The user types the value.
+
+For values where the exact number is critical (counts, IDs, money), prefer `Input` or `StepInput`. For "set me approximately around 80%", `Slider` is faster.
+
+### `min`, `max`, `step`
+
+`min` and `max` define the full track. `step` is the granularity at which the handle can land:
+
+```tsx
+<Slider min={0} max={100} step={5} value={85} />
+```
+
+`step={1}` is the default. For percentages and scores, `step={5}` or `step={10}` gives a usable feel.
+
+### Tickmarks and labels
+
+- **`showTickmarks`** — Render evenly spaced marks at every `step`.
+- **`labelInterval`** — Render numeric labels at every Nth tickmark (`labelInterval={2}` = every 2nd tick).
+- **`showTooltip`** — Show the current value above the handle while dragging.
+
+For configuration dashboards (auto-merge threshold, source weight), combine tickmarks + labels + tooltips so the user sees both the absolute scale and the current value precisely.
+
+### Accessibility
+
+Set `accessibleName` so screen readers announce the field's purpose. Without it, the slider is announced as just "slider", which is meaningless in a settings form with multiple sliders.
+
+### See also
+
+- [SAP Fiori Slider design guideline](https://experience.sap.com/fiori-design-web/slider/) — semantic guidance and visual patterns
+- [UI5 Slider web component reference](https://ui5.github.io/webcomponents/components/Slider/) — full underlying API
+- [RangeSlider](?path=/docs/components-rangeslider--docs) — dual-thumb range variant
+- [StepInput](?path=/docs/components-stepinput--docs) — discrete-increment numeric input

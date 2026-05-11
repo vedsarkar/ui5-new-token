@@ -27,13 +27,11 @@ There is no Reltio wrapping or default override: the props, slots, and runtime b
 
 The `design` prop is **semantic** — it sets both the color and the default icon, and screen readers announce the matching role. Pick by meaning, not by visual preference.
 
-| `design` | Color | Use for |
-|---|---|---|
-| `Information` (default) | Blue | Neutral context, "FYI" messages, non-blocking guidance. |
-| `Positive` | Green | Success outcomes — "Entity saved", "Merge completed", "Validation passed". |
-| `Warning` | Amber | Attention needed but the user can proceed — "3 records pending review", "Source priority differs from default". |
-| `Negative` | Red | Failure or blocker — "Save failed", "Merge conflicts detected", "API unavailable". |
-| `ColorSet1`/`ColorSet2` | Custom palette | Reserved for branding-specific cases; avoid in MDM screens unless a specific guideline applies. |
+- **`Information` (default)** — Blue. Neutral context, "FYI" messages, non-blocking guidance.
+- **`Positive`** — Green. Success outcomes — "Entity saved", "Merge completed", "Validation passed".
+- **`Warning`** — Amber. Attention needed but the user can proceed — "3 records pending review", "Source priority differs from default".
+- **`Negative`** — Red. Failure or blocker — "Save failed", "Merge conflicts detected", "API unavailable".
+- **`ColorSet1`/`ColorSet2`** — Custom palette. Reserved for branding-specific cases; avoid in MDM screens unless a specific guideline applies.
 
 Don't pick `Negative` for "important but not bad" messages — that train screen-reader users to ignore real errors. Use `Warning` for "needs attention", `Negative` only for "something went wrong".
 

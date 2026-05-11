@@ -1,0 +1,211 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as DynamicDateRangeStories from "./DynamicDateRange.stories";
+import schema from "./DynamicDateRange.schema.json";
+
+<Meta of={DynamicDateRangeStories} />
+
+# DynamicDateRange
+
+```tsx
+import { DynamicDateRange } from "@reltio/design/components";
+```
+
+`DynamicDateRange` is the SAP Fiori semantic date-range picker, re-exported from `@ui5/webcomponents-react/DynamicDateRange` as the canonical Reltio entry point. Use it for filter bars where the user thinks in terms of business-meaningful ranges — "Today", "Yesterday", "Last 7 days", "Next 30 days" — and only occasionally needs to pick an absolute date.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/DynamicDateRange`. The Reltio layer adds curation (this is the endorsed semantic-range surface), pinned versioning, and Reltio-specific guidance.
+
+### When to use DynamicDateRange vs. DateRangePicker
+
+- **`DynamicDateRange`** — Reporting, audit logs, dashboards. The user thinks in named ranges; the absolute dates are derived. The selected range is **dynamic** — "Last 7 days" means "the 7 days before the moment the query runs", not a fixed window.
+- **`DateRangePicker`** — Persisted business data (entity validity windows). The user picks a fixed start and end and the system stores those dates literally.
+
+### Registering options — side-effect imports
+
+Options must be registered via side-effect imports **at the app entry point**, not inside the component file (so the registration happens once and stays alive across renders):
+
+```tsx
+import "@ui5/webcomponents/dist/dynamic-date-range-options/Today.js";
+import "@ui5/webcomponents/dist/dynamic-date-range-options/Yesterday.js";
+import "@ui5/webcomponents/dist/dynamic-date-range-options/DateRange.js";
+import "@ui5/webcomponents/dist/dynamic-date-range-options/LastOptions.js";
+```
+
+Without the matching side-effect import, the operator string in `options` is ignored.
+
+### `options` — comma-separated capitalised string
+
+`options` is a single comma-separated string in capital case:
+
+```tsx
+<DynamicDateRange options="TODAY, YESTERDAY, LASTDAYS, DATERANGE" />
+```
+
+Available standard operators (each has its own side-effect import):
+
+- **`TODAY`** — The current date.
+- **`YESTERDAY`** — The day before today.
+- **`TOMORROW`** — The day after today.
+- **`DATE`** — A single absolute date.
+- **`DATERANGE`** — An absolute date range.
+- **`DATETIMERANGE`** — An absolute datetime range.
+- **`FROMDATETIME`** — Open-ended range from a datetime to "now".
+- **`TODATETIME`** — Open-ended range from "the past" to a datetime.
+- **`LASTDAYS` / `LASTWEEKS` / `LASTMONTHS` / `LASTQUARTERS` / `LASTYEARS`** — Last X period from today (parameterized).
+- **`NEXTDAYS` / `NEXTWEEKS` / `NEXTMONTHS` / `NEXTQUARTERS` / `NEXTYEARS`** — Next X period from today (parameterized).
+
+`LASTOPTIONS` and `NEXTOPTIONS` share a single side-effect import file (`LastOptions.js`, `NextOptions.js`).
+
+### `value` — operator + values
+
+The current selection is a structured object, not a string:
+
+```tsx
+// Static range
+<DynamicDateRange value={{ operator: "TODAY" }} />
+
+// Parameterized range
+<DynamicDateRange value={{ operator: "LASTDAYS", values: [7] }} />
+
+// Absolute range
+<DynamicDateRange value={{ operator: "DATERANGE", values: [new Date("2026-05-01"), new Date("2026-05-31")] }} />
+```
+
+The `values` array is operator-specific: `LASTDAYS` expects `[number]`, `DATERANGE` expects `[Date, Date]`, `TODAY` expects nothing.
+
+### Converting `value` to concrete dates
+
+UI5 exposes a `toDates` instance method on the component DOM ref to resolve the dynamic value to a concrete `[Date, Date]` pair at query time:
+
+```tsx
+const ref = useRef<DynamicDateRangeDomRef>(null);
+const [from, to] = ref.current?.toDates(value) ?? [];
+```
+
+Call this **at the moment you run the query**, not on render — otherwise "Last 7 days" will be evaluated against the render timestamp, not the user-visible "now".
+
+### See also
+
+- [UI5 DynamicDateRange web component reference](https://ui5.github.io/webcomponents/components/DynamicDateRange/) — full underlying API, including how to register custom operators
+- [DateRangePicker](?path=/docs/components-daterangepicker--docs) — absolute date-range variant
+- [DateTimePicker](?path=/docs/components-datetimepicker--docs) — single datetime variant
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+{/* __JSON_SCHEMA__
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "DynamicDateRangeProps",
+	"x-component": "DynamicDateRange",
+	"type": "object",
+	"properties": {
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onChange": {
+			"description": "Fired when the input operation has finished by pressing Enter or on focusout or a value is selected in the popover.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<DynamicDateRangeDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<DynamicDateRangeDomRef>) => void"
+		},
+		"options": {
+			"description": "Defines the options listed as a string, separated by commas and using capital case.\nExample: \"TODAY, YESTERDAY, DATERANGE\"",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"value": {
+			"description": "Defines the value object.",
+			"x-typescriptType": "DynamicDateRangeValue"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import { DynamicDateRange } from "@ui5/webcomponents-react/DynamicDateRange";
+import { fn } from "storybook/test";
+import preview from "../../.storybook/preview";
+import "@ui5/webcomponents/dist/dynamic-date-range-options/Today.js";
+import "@ui5/webcomponents/dist/dynamic-date-range-options/Yesterday.js";
+import "@ui5/webcomponents/dist/dynamic-date-range-options/Tomorrow.js";
+import "@ui5/webcomponents/dist/dynamic-date-range-options/SingleDate.js";
+import "@ui5/webcomponents/dist/dynamic-date-range-options/DateRange.js";
+import "@ui5/webcomponents/dist/dynamic-date-range-options/LastOptions.js";
+import "@ui5/webcomponents/dist/dynamic-date-range-options/NextOptions.js";
+
+const meta = preview.meta({
+	component: DynamicDateRange,
+	parameters: {
+		layout: "centered",
+	},
+	args: {
+		onChange: fn(),
+	},
+	decorators: [
+		(Story) => (
+			<div style={{ width: "320px" }}>
+				<Story />
+			</div>
+		),
+	],
+});
+
+export default meta;
+
+export const Default = meta.story({
+	args: {
+		options: "TODAY, YESTERDAY, TOMORROW, DATE, DATERANGE",
+	},
+});
+
+export const RelativeOnly = meta.story({
+	args: {
+		options: "TODAY, YESTERDAY, LASTDAYS, LASTWEEKS, LASTMONTHS",
+	},
+});
+
+export const FullSet = meta.story({
+	args: {
+		options:
+			"TODAY, YESTERDAY, TOMORROW, DATE, DATERANGE, LASTDAYS, LASTWEEKS, LASTMONTHS, NEXTDAYS, NEXTWEEKS",
+	},
+});
+
+export const Preselected = meta.story({
+	args: {
+		options: "TODAY, YESTERDAY, DATERANGE",
+		value: { operator: "TODAY" },
+	},
+});
+
+export const PreselectedRelative = meta.story({
+	args: {
+		options: "TODAY, LASTDAYS, LASTWEEKS",
+		value: { operator: "LASTDAYS", values: [7] },
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

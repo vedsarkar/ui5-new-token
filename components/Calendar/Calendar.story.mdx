@@ -1,0 +1,250 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as CalendarStories from "./Calendar.stories";
+import schema from "./Calendar.schema.json";
+
+<Meta of={CalendarStories} />
+
+# Calendar
+
+```tsx
+import { Calendar } from "@reltio/design/components";
+```
+
+`Calendar` is the SAP Fiori standalone calendar grid, re-exported from `@ui5/webcomponents-react/Calendar` as the canonical Reltio entry point. Use it when the date selection has to stay visible on the surface — entity validity scheduling, batch-job timing screens, audit-log filters — rather than open from a small input field. For inline-input date pickers prefer `DatePicker`, `DateRangePicker`, or `DateTimePicker`.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Calendar`. The Reltio layer adds curation (this is the endorsed inline-calendar surface), pinned versioning, and Reltio-specific guidance.
+
+### Selection model — single, multiple, range
+
+- **`Single` (default)** — One day at a time. Effective-date pickers, single-event scheduling.
+- **`Multiple`** — Several discrete days. Reviewer availability, recurring exception days.
+- **`Range`** — Continuous start-to-end range. Validity windows, audit-log time spans, batch-job effective windows.
+
+The selected days are passed as children — `<CalendarDate value="…" />` for `Single`/`Multiple` and `<CalendarDateRange startValue="…" endValue="…" />` for `Range`. Dates must be ISO `yyyy-MM-dd` (unless `formatPattern` is set).
+
+```tsx
+<Calendar selectionMode="Range" onSelectionChange={(e) => persist(e.detail.values)}>
+  <CalendarDateRange startValue="2026-05-04" endValue="2026-05-15" />
+</Calendar>
+```
+
+### Bounds — `minDate` / `maxDate`
+
+Constrain selection to a fixed window. Use this to prevent picking dates outside the entity's lifecycle, the active tenant period, or a moderator-defined audit retention window. Both bounds are inclusive and ISO `yyyy-MM-dd`.
+
+### Secondary calendar type
+
+`secondaryCalendarType` overlays a second calendar (Islamic, Buddhist, Japanese, Persian) on top of the Gregorian grid. Useful for tenants whose business workflows span multiple cultures; pair with `primaryCalendarType` if the Gregorian calendar is not the default.
+
+### Highlights vs. selection — special dates and legend
+
+For decoration (holidays, milestones, blocked dates that the user can still see), use `<SpecialCalendarDate type="…" value="…" />` as a child. Pair with `<CalendarLegend>` + `<CalendarLegendItem>` so screen readers and color-blind users can interpret the meaning. Highlights do **not** participate in selection.
+
+### Week numbering
+
+By default the calendar uses the tenant's locale. Force ISO 8601 (week 1 contains the first Thursday of the year) with `calendarWeekNumbering="ISO_8601"` for compliance / reporting screens. Hide the column entirely via `hideWeekNumbers` when it adds noise.
+
+### See also
+
+- [SAP Fiori Calendar design guideline](https://experience.sap.com/fiori-design-web/calendar/) — semantic guidance and visual patterns
+- [UI5 Calendar web component reference](https://ui5.github.io/webcomponents/components/Calendar/) — full underlying API
+- [DatePicker](?path=/docs/components-datepicker--docs) — inline-input variant when the calendar should hide until the field is focused
+- [DateRangePicker](?path=/docs/components-daterangepicker--docs) — inline-input variant for ranges
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+{/* __JSON_SCHEMA__
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "CalendarProps",
+	"x-component": "Calendar",
+	"type": "object",
+	"properties": {
+		"calendarLegend": {
+			"description": "Defines the calendar legend of the component.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"calendarLegend\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v1.23.0](https://github.com/UI5/webcomponents/releases/tag/v1.23.0) of **@ui5/webcomponents**.\n\n__Supported Node Type/s:__ `Array<CalendarLegend>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"calendarWeekNumbering": {
+			"description": "Defines how to calculate calendar weeks and first day of the week.\nIf not set, the calendar will be displayed according to the currently set global configuration.\n\n**Note:** Available since [v2.2.0](https://github.com/UI5/webcomponents/releases/tag/v2.2.0) of **@ui5/webcomponents**.",
+			"default": "Default",
+			"x-typescriptType": "'Default' | CalendarWeekNumbering | 'ISO_8601' | 'MiddleEastern' | 'WesternTraditional'"
+		},
+		"children": {
+			"description": "Defines the selected date or dates (depending on the `selectionMode` property)\nfor this calendar as instances of `CalendarDate` or `CalendarDateRange`.\nUse `CalendarDate` for single or multiple selection, and `CalendarDateRange` for range selection.\n\n__Supported Node Type/s:__ `Array<ICalendarSelectedDates>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"disabledDates": {
+			"description": "Defines the disabled date ranges that cannot be selected in the calendar.\nUse `CalendarDateRange` elements to specify ranges of disabled dates.\nEach range can define a start date, an end date, or both.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"disabledDates\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v2.16.0](https://github.com/UI5/webcomponents/releases/tag/v2.16.0) of **@ui5/webcomponents**.\n\n__Supported Node Type/s:__ `Array<CalendarDateRange>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"displayFormat": {
+			"description": "Determines the format, displayed in the input field.\n\n**Note:** Available since [v2.14.0](https://github.com/UI5/webcomponents/releases/tag/v2.14.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"formatPattern": {
+			"description": "Determines the format, displayed in the input field.",
+			"deprecated": true,
+			"x-deprecationReason": "Use displayFormat and valueFormat instead",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"hideWeekNumbers": {
+			"description": "Defines the visibility of the week numbers column.\n\n**Note:** For calendars other than Gregorian,\nthe week numbers are not displayed regardless of what is set.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"maxDate": {
+			"description": "Determines the maximum date available for selection.\n\n**Note:** If the formatPattern property is not set, the maxDate value must be provided in the ISO date format (yyyy-MM-dd).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"minDate": {
+			"description": "Determines the minimum date available for selection.\n\n**Note:** If the formatPattern property is not set, the minDate value must be provided in the ISO date format (yyyy-MM-dd).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onSelectionChange": {
+			"description": "Fired when the selected dates change.\n\n**Note:** If you call `preventDefault()` for this event, the component will not\ncreate instances of `CalendarDate` for the newly selected dates. In that case you should do this manually.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<CalendarDomRef, CalendarSelectionChangeEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<CalendarDomRef, CalendarSelectionChangeEventDetail>) => void"
+		},
+		"primaryCalendarType": {
+			"description": "Sets a calendar type used for display.\nIf not set, the calendar type of the global configuration is used.",
+			"x-typescriptType": "CalendarType | 'Gregorian' | 'Islamic' | 'Japanese' | 'Buddhist' | 'Persian'"
+		},
+		"secondaryCalendarType": {
+			"description": "Defines the secondary calendar type.\nIf not set, the calendar will only show the primary calendar type.",
+			"x-typescriptType": "CalendarType | 'Gregorian' | 'Islamic' | 'Japanese' | 'Buddhist' | 'Persian'"
+		},
+		"selectionMode": {
+			"description": "Defines the type of selection used in the calendar component.\nAccepted property values are:\n\n- `CalendarSelectionMode.Single` - enables a single date selection.(default value)\n- `CalendarSelectionMode.Range` - enables selection of a date range.\n- `CalendarSelectionMode.Multiple` - enables selection of multiple dates.",
+			"default": "Single",
+			"x-typescriptType": "CalendarSelectionMode | 'Single' | 'Multiple' | 'Range'"
+		},
+		"specialDates": {
+			"description": "Defines the special dates, visually emphasized in the calendar.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"specialDates\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v1.23.0](https://github.com/UI5/webcomponents/releases/tag/v1.23.0) of **@ui5/webcomponents**.\n\n__Supported Node Type/s:__ `Array<SpecialCalendarDate>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"valueFormat": {
+			"description": "Determines the format, used for the value attribute.\n\n**Note:** Available since [v2.14.0](https://github.com/UI5/webcomponents/releases/tag/v2.14.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import { Calendar } from "@ui5/webcomponents-react/Calendar";
+import { CalendarDate } from "@ui5/webcomponents-react/CalendarDate";
+import { CalendarDateRange } from "@ui5/webcomponents-react/CalendarDateRange";
+import { fn } from "storybook/test";
+import preview from "../../.storybook/preview";
+
+const meta = preview.meta({
+	component: Calendar,
+	parameters: {
+		layout: "centered",
+	},
+	args: {
+		onSelectionChange: fn(),
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({});
+
+export const PreselectedDate = meta.story({
+	render: (args) => (
+		<Calendar {...args}>
+			<CalendarDate value="2026-05-11" />
+		</Calendar>
+	),
+});
+
+export const RangeSelection = meta.story({
+	args: {
+		selectionMode: "Range",
+	},
+	render: (args) => (
+		<Calendar {...args}>
+			<CalendarDateRange startValue="2026-05-04" endValue="2026-05-15" />
+		</Calendar>
+	),
+});
+
+export const MultipleSelection = meta.story({
+	args: {
+		selectionMode: "Multiple",
+	},
+	render: (args) => (
+		<Calendar {...args}>
+			<CalendarDate value="2026-05-06" />
+			<CalendarDate value="2026-05-13" />
+			<CalendarDate value="2026-05-20" />
+		</Calendar>
+	),
+});
+
+export const WithMinMax = meta.story({
+	args: {
+		minDate: "2026-05-01",
+		maxDate: "2026-05-31",
+	},
+	render: (args) => (
+		<Calendar {...args}>
+			<CalendarDate value="2026-05-15" />
+		</Calendar>
+	),
+});
+
+export const HideWeekNumbers = meta.story({
+	args: {
+		hideWeekNumbers: true,
+	},
+});
+
+export const IslamicSecondary = meta.story({
+	args: {
+		secondaryCalendarType: "Islamic",
+	},
+});
+
+export const NonWorkingDaysVisible = meta.story({
+	args: {
+		calendarWeekNumbering: "ISO_8601",
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

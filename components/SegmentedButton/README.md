@@ -1,0 +1,52 @@
+# SegmentedButton
+
+`SegmentedButton` is the SAP Fiori inline option-bar, re-exported from `@ui5/webcomponents-react/SegmentedButton` as the canonical Reltio entry point. Use it for compact, mutually-exclusive choices that stay visible on the surface — view-mode switchers (List / Table / Compact), time-window pickers (Day / Week / Month / Year), filter quick-toggles.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/SegmentedButton`. The Reltio layer adds curation (this is the endorsed inline-option-bar surface), pinned versioning, and Reltio-specific guidance.
+
+### SegmentedButton vs. Select vs. RadioButton vs. Tab
+
+- **`SegmentedButton`** — 2–5 short options. Always visible inline. The choice changes the view immediately.
+- **`Select`** — 6+ options or limited horizontal space. Options hidden until the dropdown opens.
+- **`RadioButton`** — Form-style selection where state is applied on submit (not immediate).
+- **`Tab` (TabContainer)** — Tabs are for **content panels**, not for picking a value. If the choice swaps a content section, prefer Tab.
+
+If the choice has more than five reasonable options, switch to `Select` — wide segmented bars wrap awkwardly.
+
+### Selection mode — `selectionMode`
+
+- **`Single` (default)** — Exactly one item is selected at a time. View-mode toggles, time-range pickers.
+- **`Multiple`** — Several items can be selected at once. Status-tag filters (Open + In Review).
+
+Set `selected` on the appropriate child item(s) to reflect state. The parent component does not auto-select.
+
+### Items — text, icon, or both
+
+Pass `SegmentedButtonItem` children with either text content, an `icon`, or both:
+
+```tsx
+<SegmentedButton accessibleName="View mode">
+  <SegmentedButtonItem icon="list" selected>List</SegmentedButtonItem>
+  <SegmentedButtonItem icon="table-view">Table</SegmentedButtonItem>
+  <SegmentedButtonItem icon="menu2">Compact</SegmentedButtonItem>
+</SegmentedButton>
+```
+
+### Icon-only segments need accessible names
+
+When a segment has only an `icon` (no text), you **must** set `accessibleName` and `tooltip` on the item — without `accessibleName` screen readers cannot interpret it, without `tooltip` sighted users cannot discover the action. Same rule as icon-only `Button`.
+
+### Per-item `disabled`
+
+Disable individual items via `disabled` on the child. Use this for context-dependent options (e.g. "Year" view is disabled before enough data has accumulated) and pair with an explanation tooltip.
+
+### Accessibility
+
+Set `accessibleName` on the `SegmentedButton` itself to announce the group's purpose. UI5 already wires keyboard navigation (arrow keys) and roving tabindex — do not override `tabindex` on items.
+
+### See also
+
+- [SAP Fiori Segmented Button design guideline](https://experience.sap.com/fiori-design-web/segmented-button/) — semantic guidance and visual patterns
+- [UI5 SegmentedButton web component reference](https://ui5.github.io/webcomponents/components/SegmentedButton/) — full underlying API
+- [Select](?path=/docs/components-select--docs) — dropdown variant for longer option sets
+- [RadioButton](?path=/docs/components-radiobutton--docs) — form-style alternative

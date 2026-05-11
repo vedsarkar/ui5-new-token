@@ -25,10 +25,8 @@ Without `opener`, the popover renders at the top-left corner of the viewport. Al
 
 ### Modal vs. non-modal
 
-| `modal` | Behavior | Use for |
-|---|---|---|
-| `false` (default) | A click anywhere outside the popover dismisses it. The page behind stays interactive. | Context menus, quick filter panels, ephemeral previews. |
-| `true` | Adds a backdrop, traps focus inside the popover, blocks interaction with the page behind. | Confirmation flows that need explicit acknowledgement, multi-step pickers (entity selection, advanced filter builder). |
+- **`false` (default)** — A click anywhere outside the popover dismisses it. The page behind stays interactive. Context menus, quick filter panels, ephemeral previews.
+- **`true`** — Adds a backdrop, traps focus inside the popover, blocks interaction with the page behind. Confirmation flows that need explicit acknowledgement, multi-step pickers (entity selection, advanced filter builder).
 
 For most popovers, leave `modal={false}` — modal popovers feel like dialogs and should usually be promoted to a real `Dialog` (not yet endorsed) instead.
 

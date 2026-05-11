@@ -27,7 +27,7 @@
 		"accessibleRole": {
 			"description": "Allows setting a custom role.\n\n**Note:** Available since [v1.10.0](https://github.com/UI5/webcomponents/releases/tag/v1.10.0) of **@ui5/webcomponents**.",
 			"default": "Dialog",
-			"x-typescriptType": "PopupAccessibleRole | 'None' | 'Dialog' | 'AlertDialog'"
+			"x-typescriptType": "'None' | PopupAccessibleRole | 'Dialog' | 'AlertDialog'"
 		},
 		"allowTargetOverlap": {
 			"description": "Determines if there is no enough space, the component can be placed\nover the target.",

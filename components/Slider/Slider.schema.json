@@ -1,0 +1,96 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "SliderProps",
+	"x-component": "Slider",
+	"type": "object",
+	"properties": {
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.\n\n**Note:** Available since [v1.4.0](https://github.com/UI5/webcomponents/releases/tag/v1.4.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"disabled": {
+			"description": "Defines whether the slider is in disabled state.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"editableTooltip": {
+			"description": "Indicates whether input fields should be used as tooltips for the handles.\n\n**Note:** Setting this option to true will only work if showTooltip is set to true.\n**Note:** In order for the component to comply with the accessibility standard, it is recommended to set the editableTooltip property to true.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"labelInterval": {
+			"description": "Displays a label with a value on every N-th step.\n\n**Note:** The step and tickmarks properties must be enabled.\nExample - if the step value is set to 2 and the label interval is also specified to 2 - then every second\ntickmark will be labelled, which means every 4th value number.",
+			"default": 0,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"max": {
+			"description": "Defines the maximum value of the slider.",
+			"default": 100,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"min": {
+			"description": "Defines the minimum value of the slider.",
+			"default": 0,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"name": {
+			"description": "Determines the name by which the component will be identified upon submission in an HTML form.\n\n**Note:** This property is only applicable within the context of an HTML Form element.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onChange": {
+			"description": "Fired when the value changes and the user has finished interacting with the slider.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<SliderDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<SliderDomRef>) => void"
+		},
+		"onInput": {
+			"description": "Fired when the value changes due to user interaction that is not yet finished - during mouse/touch dragging.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<SliderDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<SliderDomRef>) => void"
+		},
+		"showTickmarks": {
+			"description": "Enables tickmarks visualization for each step.\n\n**Note:** The step must be a positive number.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"showTooltip": {
+			"description": "Enables handle tooltip displaying the current value.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"step": {
+			"description": "Defines the size of the slider's selection intervals (e.g. min = 0, max = 10, step = 5 would result in possible selection of the values 0, 5, 10).\n\n**Note:** If set to 0 the slider handle movement is disabled.",
+			"default": 1,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"value": {
+			"description": "Current value of the slider",
+			"default": 0,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

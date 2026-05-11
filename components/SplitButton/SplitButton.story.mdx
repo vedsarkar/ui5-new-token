@@ -1,0 +1,252 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as SplitButtonStories from "./SplitButton.stories";
+import schema from "./SplitButton.schema.json";
+
+<Meta of={SplitButtonStories} />
+
+# SplitButton
+
+```tsx
+import { SplitButton } from "@reltio/design/components";
+```
+
+`SplitButton` is the SAP Fiori dual-action button — a main click target plus a small arrow that opens a related menu — re-exported from `@ui5/webcomponents-react/SplitButton` as the canonical Reltio entry point. Use it when one action is clearly primary but secondary variants should be discoverable without crowding the toolbar — "Save / Save as draft / Save and continue", "Approve / Approve with note / Approve later".
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/SplitButton`. The Reltio layer adds curation (this is the endorsed split-action surface), pinned versioning, and Reltio-specific guidance.
+
+### SplitButton vs. Button vs. Menu
+
+- **`SplitButton`** — One primary action with several closely-related variants. Clicking the main half performs the primary action; clicking the arrow opens the menu.
+- **`Button`** — Single action with no variants.
+- **`Menu` on a `Button` (kebab / overflow)** — Several actions of similar importance; the menu opens on any click.
+
+If the secondary actions are not variants of the same primary action (e.g. "Save" and "Cancel"), they belong in separate buttons — not as menu items of a `SplitButton`.
+
+### Two handlers — `onClick` vs. `onArrowClick`
+
+```tsx
+<SplitButton
+  icon="save"
+  onClick={() => save()}              // main half — perform the primary action
+  onArrowClick={() => openMenu()}     // arrow half — open the variant menu
+>
+  Save
+</SplitButton>
+```
+
+The `onClick` handler only fires on the main label half. The `onArrowClick` handler only fires on the small arrow. Wire both.
+
+### Pairing with `Menu` for the dropdown
+
+UI5 does not auto-render the menu — you pass `onArrowClick`, manage the menu's `open` state, and attach a `Menu` with the split button as `opener`:
+
+```tsx
+const splitRef = useRef<HTMLElement>(null);
+const [open, setOpen] = useState(false);
+
+<SplitButton ref={splitRef} onArrowClick={() => setOpen(true)}>
+  Save
+</SplitButton>
+<Menu
+  opener={splitRef.current ?? undefined}
+  open={open}
+  onClose={() => setOpen(false)}
+>
+  <MenuItem text="Save" />
+  <MenuItem text="Save and continue" />
+  <MenuItem text="Save as draft" />
+</Menu>
+```
+
+Place the primary action **first** in the menu, even though the user can already trigger it from the main half — keyboard users and screen-reader users navigate the menu independently and expect the primary action to be reachable.
+
+### `design` — semantic + style
+
+Same vocabulary as `Button`: `Default`, `Emphasized`, `Positive`, `Negative`, `Attention`, `Transparent`. Use `Emphasized` for the single primary action of a form or dialog; reserve `Negative` for destructive primary actions (Delete and variants).
+
+### Accessibility
+
+Set `accessibleName` (or rely on the text content) so screen readers announce the primary action. UI5 already handles the arrow's accessible name (e.g. "More actions"). For icon-only main half, set `accessibleName` explicitly.
+
+### See also
+
+- [SAP Fiori Split Button design guideline](https://experience.sap.com/fiori-design-web/split-button/) — semantic guidance and visual patterns
+- [UI5 SplitButton web component reference](https://ui5.github.io/webcomponents/components/SplitButton/) — full underlying API
+- [Button](?path=/docs/components-button--docs) — single-action variant
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+{/* __JSON_SCHEMA__
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "SplitButtonProps",
+	"x-component": "SplitButton",
+	"type": "object",
+	"properties": {
+		"accessibilityAttributes": {
+			"description": "Defines the additional accessibility attributes that will be applied to the component.\nThe `accessibilityAttributes` property accepts an object with the following optional fields:\n\n- **root**: Attributes that will be applied to the main (text) button.\n  - **hasPopup**: Indicates the presence and type of popup triggered by the button.\n    Accepts string values: `\"dialog\"`, `\"grid\"`, `\"listbox\"`, `\"menu\"`, or `\"tree\"`.\n  - **roleDescription**: Provides a human-readable description for the role of the button.\n    Accepts any string value.\n  - **title**: Specifies a tooltip or description for screen readers.\n    Accepts any string value.\n\t- **ariaKeyShortcuts**: Defines keyboard shortcuts that activate or give focus to the button.\n\n- **arrowButton**: Attributes applied specifically to the arrow (split) button.\n  - **hasPopup**: Indicates the presence and type of popup triggered by the arrow button.\n    Accepts string values: `\"dialog\"`, `\"grid\"`, `\"listbox\"`, `\"menu\"`, or `\"tree\"`.\n  - **expanded**: Indicates whether the popup triggered by the arrow button is currently expanded.\n    Accepts boolean values: `true` or `false`.\n\n**Note:** Available since [v2.13.0](https://github.com/UI5/webcomponents/releases/tag/v2.13.0) of **@ui5/webcomponents**.",
+			"default": {},
+			"x-typescriptType": "SplitButtonAccessibilityAttributes"
+		},
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"activeArrowButton": {
+			"description": "Defines whether the arrow button should have the active state styles or not.\n\n**Note:** Available since [v1.21.0](https://github.com/UI5/webcomponents/releases/tag/v1.21.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"children": {
+			"description": "Defines the text of the component.\n\n**Note:** Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.\n\n__Supported Node Type/s:__ `Array<Node>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"design": {
+			"description": "Defines the component design.",
+			"default": "Default",
+			"x-typescriptType": "'Transparent' | ButtonDesign | 'Default' | 'Positive' | 'Negative' | 'Emphasized' | 'Attention'"
+		},
+		"disabled": {
+			"description": "Defines whether the component is disabled.\nA disabled component can't be pressed or\nfocused, and it is not in the tab chain.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"icon": {
+			"description": "Defines the icon to be displayed as graphical element within the component.\nThe SAP-icons font provides numerous options.\n\nExample:\n\nSee all available icons in the [Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onArrowClick": {
+			"description": "Fired when the user clicks on the arrow action.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<SplitButtonDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<SplitButtonDomRef>) => void"
+		},
+		"onClick": {
+			"description": "Fired when the user clicks on the default action.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<SplitButtonDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<SplitButtonDomRef>) => void"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import { Menu } from "@ui5/webcomponents-react/Menu";
+import { MenuItem } from "@ui5/webcomponents-react/MenuItem";
+import { SplitButton } from "@ui5/webcomponents-react/SplitButton";
+import { useRef, useState } from "react";
+import { fn } from "storybook/test";
+import preview from "../../.storybook/preview";
+import "@ui5/webcomponents-icons/dist/save.js";
+import "@ui5/webcomponents-icons/dist/decline.js";
+
+const meta = preview.meta({
+	component: SplitButton,
+	parameters: {
+		layout: "centered",
+	},
+	args: {
+		children: "Save",
+		icon: "save",
+		onClick: fn(),
+		onArrowClick: fn(),
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({});
+
+export const Emphasized = meta.story({
+	args: {
+		design: "Emphasized",
+	},
+});
+
+export const Positive = meta.story({
+	args: {
+		design: "Positive",
+		children: "Approve",
+		icon: undefined,
+	},
+});
+
+export const Negative = meta.story({
+	args: {
+		design: "Negative",
+		children: "Delete",
+		icon: "decline",
+	},
+});
+
+export const Disabled = meta.story({
+	args: {
+		disabled: true,
+	},
+});
+
+export const WithDropdownMenu = meta.story({
+	args: {
+		design: "Emphasized",
+		children: "Save",
+		icon: "save",
+	},
+	render: (args) => {
+		const SplitButtonWithMenu = () => {
+			const splitRef = useRef<HTMLElement>(null);
+			const [menuOpen, setMenuOpen] = useState(false);
+			return (
+				<>
+					<SplitButton
+						{...args}
+						ref={splitRef as never}
+						onArrowClick={() => setMenuOpen(true)}
+					/>
+					<Menu
+						opener={splitRef.current ?? undefined}
+						open={menuOpen}
+						onClose={() => setMenuOpen(false)}
+					>
+						<MenuItem text="Save" />
+						<MenuItem text="Save and continue" />
+						<MenuItem text="Save as draft" />
+					</Menu>
+				</>
+			);
+		};
+		return <SplitButtonWithMenu />;
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

@@ -1,0 +1,54 @@
+# DateRangePicker
+
+`DateRangePicker` is the SAP Fiori inline date-range input, re-exported from `@ui5/webcomponents-react/DateRangePicker` as the canonical Reltio entry point. Use it whenever the user has to pick a contiguous start-end window — entity validity periods, audit-log time spans, batch-job effective intervals, report time windows.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/DateRangePicker`. The Reltio layer adds curation (this is the endorsed date-range input surface), pinned versioning, and Reltio-specific guidance.
+
+### When to use DateRangePicker vs. two DatePickers
+
+- **`DateRangePicker`** — Single semantic concept ("validity window"). Calendar shows both bounds at once and enforces start ≤ end automatically.
+- **Two `DatePicker`s** — Independent fields with separate labels and validation ("first activity date" + "last activity date"). The user expects them to be unrelated.
+
+### `value` and `delimiter` — one string, two dates
+
+The range value is a single string of `start{delimiter}end`. The default delimiter is ` - ` (space-dash-space). Override via `delimiter` only when the chosen `formatPattern` already contains the default delimiter (e.g. `M-d-yyyy`) — otherwise the parser cannot split start from end.
+
+```tsx
+<DateRangePicker
+  formatPattern="yyyy-MM-dd"
+  delimiter=" → "
+  value="2026-05-01 → 2026-05-31"
+/>
+```
+
+### `formatPattern` — display vs. value
+
+Same rules as `DatePicker`: the pattern controls both display and the parsing of typed input. For mixed-locale tenants, prefer ISO `yyyy-MM-dd` so the persisted value never depends on rendering locale:
+
+```tsx
+<DateRangePicker formatPattern="yyyy-MM-dd" />
+```
+
+`value`, `minDate`, and `maxDate` must all match this pattern.
+
+### `minDate` / `maxDate` — shared bounds
+
+`minDate` and `maxDate` apply to **both** start and end. They are inclusive. The component also enforces start ≤ end at the picker level — the user cannot drag the range out of order.
+
+For "end must be at least one day after start" (or other relative constraints), validate in your form layer; UI5 does not enforce a minimum range width.
+
+### Validation — `valueState`
+
+Use `valueState` (`None`, `Information`, `Critical`, `Negative`, `Positive`) and pair with `valueStateMessage` slot for the explanation. Without a message, the color alone is meaningless to screen readers.
+
+### Accessibility
+
+Set `accessibleName` so screen readers announce the field's purpose. Without it, screen readers announce just "date range input", which is meaningless in a form with several time windows.
+
+### See also
+
+- [SAP Fiori Date Range Picker design guideline](https://experience.sap.com/fiori-design-web/date-range-picker/) — semantic guidance and visual patterns
+- [UI5 DateRangePicker web component reference](https://ui5.github.io/webcomponents/components/DateRangePicker/) — full underlying API
+- [DatePicker](?path=/docs/components-datepicker--docs) — single-date variant
+- [DateTimePicker](?path=/docs/components-datetimepicker--docs) — date + time variant
+- [DynamicDateRange](?path=/docs/components-dynamicdaterange--docs) — semantic range like "Last 7 days"

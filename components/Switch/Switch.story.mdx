@@ -1,0 +1,280 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as SwitchStories from "./Switch.stories";
+import schema from "./Switch.schema.json";
+
+<Meta of={SwitchStories} />
+
+# Switch
+
+```tsx
+import { Switch } from "@reltio/design/components";
+```
+
+`Switch` is the SAP Fiori binary on/off toggle, re-exported from `@ui5/webcomponents-react/Switch` as the canonical Reltio entry point. Use it for **immediate** persistent settings — feature toggles, real-time-sync flags, notification preferences, auto-merge on/off — where the change takes effect the moment the user flips the switch.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Switch`. The Reltio layer adds curation (this is the endorsed immediate-toggle surface), pinned versioning, and Reltio-specific guidance.
+
+### Switch vs. CheckBox
+
+This is the most common confusion in product design — the rule is **about timing**:
+
+- **`Switch`** — The change is applied **immediately** when the user flips it. There is no Save / Cancel — flipping it IS the save.
+- **`CheckBox`** — The change is part of a form and applied **on submit**. The user can flip it and then Cancel to discard the change.
+
+If your form has a Save button and the switch's value participates in that submission, you almost certainly want a `CheckBox` instead. Reserve `Switch` for tenant settings, user preferences, feature toggles — places where there is no Save button.
+
+### Labels — accessible name is mandatory
+
+Switch has no built-in label text — you must provide context elsewhere (a row label, a heading) AND set `accessibleName` so screen readers announce the purpose:
+
+```tsx
+<div style={{ display: "flex", justifyContent: "space-between" }}>
+  <span>Auto-merge entities</span>
+  <Switch accessibleName="Auto-merge entities" checked />
+</div>
+```
+
+### On/off labels — `textOn` / `textOff`
+
+By default the switch is unlabeled (just the visual slider). You can add short labels inside the track for clarity:
+
+```tsx
+<Switch textOn="On" textOff="Off" />
+```
+
+Limit `textOn` / `textOff` to 3 characters each. SAP recommends locale-aware labels in non-English UIs ("Ein"/"Aus" in German, etc.).
+
+### `design` — visual variant
+
+- **`Textual` (default)** — Standard switch with optional textual labels.
+- **`Graphical`** — Switch with check/decline iconography — useful when the on/off semantics are about acceptance ("Accept matches", "Reject batch").
+
+### Disabled vs. readonly
+
+- **`disabled`** — switch unavailable in this context (no tenant license, missing permission). Pair with an explanation tooltip.
+- **`readonly`** — switch state shown, user cannot change it (tenant-policy-enforced setting). UI5 supports this via the `readonly` attribute.
+
+### See also
+
+- [SAP Fiori Switch design guideline](https://experience.sap.com/fiori-design-web/switch/) — semantic guidance and visual patterns
+- [UI5 Switch web component reference](https://ui5.github.io/webcomponents/components/Switch/) — full underlying API
+- [CheckBox](?path=/docs/components-checkbox--docs) — form-submit alternative
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+{/* __JSON_SCHEMA__
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "SwitchProps",
+	"x-component": "Switch",
+	"type": "object",
+	"properties": {
+		"accessibleName": {
+			"description": "Sets the accessible ARIA name of the component.\n\n**Note**: We recommend that you set an accessibleNameRef pointing to an external label or at least an `accessibleName`.\nProviding an `accessibleNameRef` or an `accessibleName` is mandatory in the cases when `textOn` and `textOff` properties aren't set.\n\n**Note:** Available since [v1.2.0](https://github.com/UI5/webcomponents/releases/tag/v1.2.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleNameRef": {
+			"description": "Receives id(or many ids) of the elements that label the component.\n\n**Note**: We recommend that you set an accessibleNameRef pointing to an external label or at least an `accessibleName`.\nProviding an `accessibleNameRef` or an `accessibleName` is mandatory in the cases when `textOn` and `textOff` properties aren't set.\n\n**Note:** Available since [v1.1.0](https://github.com/UI5/webcomponents/releases/tag/v1.1.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"checked": {
+			"description": "Defines if the component is checked.\n\n**Note:** The property can be changed with user interaction,\neither by clicking the component, or by pressing the `Enter` or `Space` key.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"design": {
+			"description": "Defines the component design.\n\n**Note:** If `Graphical` type is set,\npositive and negative icons will replace the `textOn` and `textOff`.",
+			"default": "Textual",
+			"x-typescriptType": "SwitchDesign | 'Textual' | 'Graphical'"
+		},
+		"disabled": {
+			"description": "Defines whether the component is disabled.\n\n**Note:** A disabled component is noninteractive.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"name": {
+			"description": "Determines the name by which the component will be identified upon submission in an HTML form.\n\n**Note:** This property is only applicable within the context of an HTML Form element.\n\n**Note:** Available since [v1.16.0](https://github.com/UI5/webcomponents/releases/tag/v1.16.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onChange": {
+			"description": "Fired when the component checked state changes.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<SwitchDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<SwitchDomRef>) => void"
+		},
+		"readonly": {
+			"description": "Defines whether the component is in readonly state.\n\n**Note:** A readonly switch cannot be toggled by user interaction,\nbut can still be focused and its value read programmatically.\n\n**Note:** Available since [v2.21.0](https://github.com/UI5/webcomponents/releases/tag/v2.21.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"required": {
+			"description": "Defines whether the component is required.\n\n**Note:** Available since [v1.16.0](https://github.com/UI5/webcomponents/releases/tag/v1.16.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"textOff": {
+			"description": "Defines the text, displayed when the component is not checked.\n\n**Note:** We recommend using short texts, up to 3 letters (larger texts would be cut off).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"textOn": {
+			"description": "Defines the text, displayed when the component is checked.\n\n**Note:** We recommend using short texts, up to 3 letters (larger texts would be cut off).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"tooltip": {
+			"description": "Defines the tooltip of the component.\n\n**Note:** If applicable an external label reference should always be the preferred option to provide context to the `Switch` component over a tooltip.\n\n**Note:** Available since [v1.9.0](https://github.com/UI5/webcomponents/releases/tag/v1.9.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"value": {
+			"description": "Defines the form value of the component.\n\n**Note:** Available since [v2.12.0](https://github.com/UI5/webcomponents/releases/tag/v2.12.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import { Switch } from "@ui5/webcomponents-react/Switch";
+import { fn } from "storybook/test";
+import preview from "../../.storybook/preview";
+
+const meta = preview.meta({
+	component: Switch,
+	parameters: {
+		layout: "centered",
+	},
+	args: {
+		accessibleName: "Auto-merge entities",
+		onChange: fn(),
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({});
+
+export const Checked = meta.story({
+	args: {
+		checked: true,
+	},
+});
+
+export const WithLabels = meta.story({
+	args: {
+		textOn: "On",
+		textOff: "Off",
+		checked: true,
+	},
+});
+
+export const Graphical = meta.story({
+	args: {
+		design: "Graphical",
+		checked: true,
+	},
+});
+
+export const AcceptReject = meta.story({
+	args: {
+		design: "Graphical",
+		accessibleName: "Auto-accept merge candidates",
+	},
+});
+
+export const Disabled = meta.story({
+	args: {
+		disabled: true,
+		checked: true,
+	},
+});
+
+export const ReadOnly = meta.story({
+	args: {
+		readonly: true,
+		checked: true,
+	},
+});
+
+export const InSettingsRow = meta.story({
+	args: {},
+	render: (args) => (
+		<div
+			style={{
+				display: "flex",
+				flexDirection: "column",
+				gap: "12px",
+				width: "320px",
+			}}
+		>
+			<div
+				style={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+				}}
+			>
+				<span>Auto-merge entities</span>
+				<Switch {...args} accessibleName="Auto-merge entities" checked />
+			</div>
+			<div
+				style={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+				}}
+			>
+				<span>Email notifications</span>
+				<Switch {...args} accessibleName="Email notifications" />
+			</div>
+			<div
+				style={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+				}}
+			>
+				<span>Real-time sync</span>
+				<Switch {...args} accessibleName="Real-time sync" checked />
+			</div>
+		</div>
+	),
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

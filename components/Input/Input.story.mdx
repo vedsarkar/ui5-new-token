@@ -1,0 +1,380 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as InputStories from "./Input.stories";
+import schema from "./Input.schema.json";
+
+<Meta of={InputStories} />
+
+# Input
+
+```tsx
+import { Input } from "@reltio/design/components";
+```
+
+`Input` is the SAP Fiori single-line text field, re-exported from `@ui5/webcomponents-react/Input` as the canonical Reltio entry point. Use it for every free-text or short structured value — entity attribute fields, search inputs, ID lookups, numeric scores, password/secret fields.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Input`. The Reltio layer adds curation (this is the endorsed text-input surface), pinned versioning, and Reltio-specific guidance.
+
+### When to use Input vs. ComboBox vs. MultiInput vs. TextArea
+
+- **`Input`** — Single line, free text. Optionally an open-ended suggestion list (no strict match).
+- **`ComboBox`** — Single line, dropdown of canonical options the user filters. The chosen value usually has to match an option.
+- **`MultiInput`** — Several tagged values in a single field (multi-select free-text, recipient lists, tag-style filters).
+- **`TextArea`** — Multiple lines of free text (description, notes, JSON snippet).
+
+### `type` — semantic + browser keyboard
+
+- **`Text` (default)** — Generic text field. Plain string.
+- **`Email`** — Email address. Mobile keyboard shows `@`; browser validates basic format.
+- **`Tel`** — Phone number. Mobile keyboard shows digits.
+- **`URL`** — URL. Mobile keyboard shows `/`.
+- **`Number`** — Numeric input. Mobile shows numeric pad; arrow keys step the value.
+- **`Password`** — Secret value. Characters are masked; pair with `accessibleName` like "API client secret".
+- **`Search`** — Search field. Some platforms show a "search" submit key.
+
+`type` is a hint to the browser/keyboard layer — it does NOT enforce validation. Always validate semantically in the form layer.
+
+### Suggestions — `showSuggestions` + `SuggestionItem`
+
+Toggle `showSuggestions` and pass `SuggestionItem` / `SuggestionItemGroup` / `SuggestionItemCustom` children to attach an autocomplete list:
+
+```tsx
+<Input showSuggestions placeholder="Pick an entity type">
+  <SuggestionItem text="Organization" />
+  <SuggestionItem text="Individual" />
+  <SuggestionItem text="Product" />
+</Input>
+```
+
+For server-driven suggestion lists (Reltio API lookup), update the children in response to `onInput`. Group with `SuggestionItemGroup` so users can scan by category.
+
+Use `SuggestionItemCustom` when you need a richer cell layout (icon, secondary text, badge). Each custom suggestion's wrapper still controls selection — just style the inner content.
+
+### Validation — `valueState`
+
+Use `valueState` (`None`, `Information`, `Critical`, `Negative`, `Positive`) and pair with `valueStateMessage` slot for the explanation. Without a message, the color alone is meaningless to screen readers.
+
+### Slots — icon, `valueStateMessage`
+
+- **`icon`** slot — render a glyph or value-help button on the right of the input. Pair with `accessibleName` on the icon for screen readers.
+- **`valueStateMessage`** slot — multi-line / formatted validation message anchored below the field.
+
+### Required vs. disabled vs. readonly
+
+- **`required`** — form rejects submission without a value; pair with a visible asterisk in the label.
+- **`disabled`** — field unavailable in this context; pair with an explanation elsewhere.
+- **`readonly`** — value set; user is told what it is, cannot change it.
+
+### Accessibility
+
+Set `accessibleName` (or `accessibleNameRef` pointing at a visible label) so screen readers announce the field's purpose. `placeholder` is **not a substitute** for an accessible name — it disappears once the user starts typing.
+
+### See also
+
+- [SAP Fiori Input design guideline](https://experience.sap.com/fiori-design-web/input/) — semantic guidance and visual patterns
+- [UI5 Input web component reference](https://ui5.github.io/webcomponents/components/Input/) — full underlying API
+- [ComboBox](?path=/docs/components-combobox--docs) — autocomplete with a canonical list
+- [MultiInput](?path=/docs/components-multiinput--docs) — multi-tag variant
+- [TextArea](?path=/docs/components-textarea--docs) — multi-line variant
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+{/* __JSON_SCHEMA__
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "InputProps",
+	"x-component": "Input",
+	"type": "object",
+	"properties": {
+		"accessibleDescription": {
+			"description": "Defines the accessible description of the component.\n\n**Note:** Available since [v2.9.0](https://github.com/UI5/webcomponents/releases/tag/v2.9.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleDescriptionRef": {
+			"description": "Receives id(or many ids) of the elements that describe the input.\n\n**Note:** Available since [v2.9.0](https://github.com/UI5/webcomponents/releases/tag/v2.9.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleNameRef": {
+			"description": "Receives id(or many ids) of the elements that label the input.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"children": {
+			"description": "Defines the suggestion items.\n\n**Note:** The suggestions would be displayed only if the `showSuggestions`\nproperty is set to `true`.\n\n**Note:** The `<SuggestionItem>`, `<SuggestionItemGroup>` and `SuggestionItemCustom` are recommended to be used as suggestion items.\n\n__Supported Node Type/s:__ `Array<IInputSuggestionItem>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"disabled": {
+			"description": "Defines whether the component is in disabled state.\n\n**Note:** A disabled component is completely noninteractive.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"filter": {
+			"description": "Defines the filter type of the component.\n\n**Note:** Available since [v2.19.0](https://github.com/UI5/webcomponents/releases/tag/v2.19.0) of **@ui5/webcomponents**.",
+			"default": "None",
+			"x-typescriptType": "'None' | 'StartsWithPerTerm' | 'StartsWith' | 'Contains' | InputSuggestionsFilter"
+		},
+		"icon": {
+			"description": "Defines the icon to be displayed in the component.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"icon\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<IIcon>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"maxlength": {
+			"description": "Sets the maximum number of characters available in the input field.\n\n**Note:** This property is not compatible with the ui5-input type InputType.Number. If the ui5-input type is set to Number, the maxlength value is ignored.",
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"name": {
+			"description": "Determines the name by which the component will be identified upon submission in an HTML form.\n\n**Note:** This property is only applicable within the context of an HTML Form element.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"noTypeahead": {
+			"description": "Defines whether the value will be autcompleted to match an item\n\n**Note:** Available since [v1.4.0](https://github.com/UI5/webcomponents/releases/tag/v1.4.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"onChange": {
+			"description": "Fired when the input operation has finished by pressing Enter or on focusout.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<InputDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<InputDomRef>) => void"
+		},
+		"onClose": {
+			"description": "Fired when the suggestions picker is closed.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|❌|",
+			"x-typescriptType": "(event: Ui5CustomEvent<InputDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<InputDomRef>) => void"
+		},
+		"onInput": {
+			"description": "Fired when the value of the component changes at each keystroke,\nand when a suggestion item has been selected.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<InputDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<InputDomRef>) => void"
+		},
+		"onOpen": {
+			"description": "Fired when the suggestions picker is open.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<InputDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<InputDomRef>) => void"
+		},
+		"onSelect": {
+			"description": "Fired when some text has been selected.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<InputDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<InputDomRef>) => void"
+		},
+		"onSelectionChange": {
+			"description": "Fired when the user navigates to a suggestion item via the ARROW keys,\nas a preview, before the final selection.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<InputDomRef, InputSelectionChangeEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<InputDomRef, InputSelectionChangeEventDetail>) => void"
+		},
+		"open": {
+			"description": "Defines whether the suggestions picker is open.\nThe picker will not open if the `showSuggestions` property is set to `false`, the input is disabled or the input is readonly.\nThe picker will close automatically and `close` event will be fired if the input is not in the viewport.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"placeholder": {
+			"description": "Defines a short hint intended to aid the user with data entry when the\ncomponent has no value.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"readonly": {
+			"description": "Defines whether the component is read-only.\n\n**Note:** A read-only component is not editable,\nbut still provides visual feedback upon user interaction.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"required": {
+			"description": "Defines whether the component is required.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"showClearIcon": {
+			"description": "Defines whether the clear icon of the input will be shown.\n\n**Note:** Available since [v1.2.0](https://github.com/UI5/webcomponents/releases/tag/v1.2.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"showSuggestions": {
+			"description": "Defines whether the component should show suggestions, if such are present.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"type": {
+			"description": "Defines the HTML type of the component.\n\n**Notes:**\n\n- The particular effect of this property differs depending on the browser\nand the current language settings, especially for type `Number`.\n- The property is mostly intended to be used with touch devices\nthat use different soft keyboard layouts depending on the given input type.",
+			"default": "Text",
+			"x-typescriptType": "InputType | 'Text' | 'Email' | 'Number' | 'Password' | 'Tel' | 'URL' | 'Search'"
+		},
+		"value": {
+			"description": "Defines the value of the component.\n\n**Note:** The property is updated upon typing.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"valueState": {
+			"description": "Defines the value state of the component.",
+			"default": "None",
+			"x-typescriptType": "'Positive' | 'Negative' | ValueState | 'None' | 'Critical' | 'Information'"
+		},
+		"valueStateMessage": {
+			"description": "Defines the value state message that will be displayed as pop up under the component.\nThe value state message slot should contain only one root element.\n\n**Note:** If not specified, a default text (in the respective language) will be displayed.\n\n**Note:** The `valueStateMessage` would be displayed,\nwhen the component is in `Information`, `Critical` or `Negative` value state.\n\n**Note:** If the component has `suggestionItems`,\nthe `valueStateMessage` would be displayed as part of the same popover, if used on desktop, or dialog - on phone.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"valueStateMessage\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import { Input } from "@ui5/webcomponents-react/Input";
+import { SuggestionItem } from "@ui5/webcomponents-react/SuggestionItem";
+import { SuggestionItemGroup } from "@ui5/webcomponents-react/SuggestionItemGroup";
+import { fn } from "storybook/test";
+import preview from "../../.storybook/preview";
+
+const meta = preview.meta({
+	component: Input,
+	parameters: {
+		layout: "centered",
+	},
+	args: {
+		placeholder: "First name",
+		onChange: fn(),
+		onInput: fn(),
+	},
+	decorators: [
+		(Story) => (
+			<div style={{ width: "320px" }}>
+				<Story />
+			</div>
+		),
+	],
+});
+
+export default meta;
+
+export const Default = meta.story({});
+
+export const WithValue = meta.story({
+	args: {
+		value: "Jane",
+	},
+});
+
+export const Email = meta.story({
+	args: {
+		type: "Email",
+		placeholder: "Reltio account email",
+	},
+});
+
+export const NumberType = meta.story({
+	args: {
+		type: "Number",
+		placeholder: "Match score (0–100)",
+	},
+});
+
+export const Password = meta.story({
+	args: {
+		type: "Password",
+		placeholder: "API client secret",
+	},
+});
+
+export const WithSuggestions = meta.story({
+	args: {
+		showSuggestions: true,
+		placeholder: "Pick an entity type",
+	},
+	render: (args) => (
+		<Input {...args}>
+			<SuggestionItem text="Organization" />
+			<SuggestionItem text="Individual" />
+			<SuggestionItem text="Product" />
+			<SuggestionItem text="Location" />
+		</Input>
+	),
+});
+
+export const GroupedSuggestions = meta.story({
+	args: {
+		showSuggestions: true,
+		placeholder: "Pick a Reltio attribute",
+	},
+	render: (args) => (
+		<Input {...args}>
+			<SuggestionItemGroup headerText="Identity">
+				<SuggestionItem text="firstName" />
+				<SuggestionItem text="lastName" />
+				<SuggestionItem text="email" />
+			</SuggestionItemGroup>
+			<SuggestionItemGroup headerText="Address">
+				<SuggestionItem text="streetAddress" />
+				<SuggestionItem text="city" />
+				<SuggestionItem text="postalCode" />
+			</SuggestionItemGroup>
+		</Input>
+	),
+});
+
+export const Required = meta.story({
+	args: {
+		required: true,
+	},
+});
+
+export const Disabled = meta.story({
+	args: {
+		disabled: true,
+		value: "Jane Doe",
+	},
+});
+
+export const ReadOnly = meta.story({
+	args: {
+		readonly: true,
+		value: "Jane Doe",
+	},
+});
+
+export const ErrorState = meta.story({
+	args: {
+		valueState: "Negative",
+		value: "jane.doe",
+		placeholder: "Email is invalid",
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

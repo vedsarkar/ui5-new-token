@@ -1,0 +1,80 @@
+# MultiInput
+
+`MultiInput` is the SAP Fiori multi-token text field, re-exported from `@ui5/webcomponents-react/MultiInput` as the canonical Reltio entry point. Use it whenever the value is a list of free-text or semi-structured entries — recipient lists, tag pickers, custom filter terms, hashtag-style attribute values.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/MultiInput`. The Reltio layer adds curation (this is the endorsed multi-token input surface), pinned versioning, and Reltio-specific guidance.
+
+### MultiInput vs. MultiComboBox
+
+- **`MultiInput`** — Free-text or token-style values. The list of possible values is open-ended or contextual (recipients, tags).
+- **`MultiComboBox`** — Multi-select from a canonical list. The user picks from a known set of options.
+
+### Tokens — passed via the `tokens` slot
+
+Each token is a `Token` component with `slot="tokens"`:
+
+```tsx
+<MultiInput placeholder="Add reviewers">
+  <Token text="jane.doe@example.com" slot="tokens" />
+  <Token text="john.smith@example.com" slot="tokens" />
+</MultiInput>
+```
+
+Manage the array of tokens in your component state. On `onTokenDelete`, remove the matching token. On `Enter` (or after parsing `onChange`), append a new token.
+
+### Suggestions — optional
+
+Combine tokens with autocomplete suggestions to scaffold structured tag entry:
+
+```tsx
+<MultiInput showSuggestions>
+  <Token text="priority:high" slot="tokens" />
+  <SuggestionItem text="status:open" />
+  <SuggestionItem text="status:in-review" />
+  <SuggestionItem text="priority:low" />
+</MultiInput>
+```
+
+Tokens are rendered inside the field; suggestions appear in the dropdown. The same input feeds both — the user can either pick a suggestion or type a free-text token.
+
+### Value-help icon — `showValueHelpIcon`
+
+Set `showValueHelpIcon` to render a Value-Help button on the right of the input. Wire `onValueHelpTrigger` to open a richer picker dialog (e.g. a tag explorer, a directory search). This is the canonical SAP pattern for "open a richer picker" workflows.
+
+### Parsing typed input — `onChange`
+
+By default UI5 does **not** automatically convert typed text into a token on `Enter` — your handler decides. Common pattern:
+
+```tsx
+const [tokens, setTokens] = useState<string[]>([]);
+
+<MultiInput
+  showSuggestions
+  onChange={(event) => {
+    const text = event.target.value.trim();
+    if (text && !tokens.includes(text)) {
+      setTokens([...tokens, text]);
+      event.target.value = "";
+    }
+  }}
+  onTokenDelete={(event) => {
+    const removed = event.detail.tokens.map((t) => t.text);
+    setTokens(tokens.filter((t) => !removed.includes(t)));
+  }}
+>
+  {tokens.map((t) => (
+    <Token key={t} text={t} slot="tokens" />
+  ))}
+</MultiInput>
+```
+
+### Validation — `valueState`
+
+Use `valueState` (`None`, `Information`, `Critical`, `Negative`, `Positive`) and pair with `valueStateMessage` slot for the explanation.
+
+### See also
+
+- [SAP Fiori MultiInput design guideline](https://experience.sap.com/fiori-design-web/multi-input/) — semantic guidance and visual patterns
+- [UI5 MultiInput web component reference](https://ui5.github.io/webcomponents/components/MultiInput/) — full underlying API
+- [MultiComboBox](?path=/docs/components-multicombobox--docs) — multi-select from a canonical list
+- [Input](?path=/docs/components-input--docs) — single-value variant

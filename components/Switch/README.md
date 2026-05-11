@@ -1,0 +1,51 @@
+# Switch
+
+`Switch` is the SAP Fiori binary on/off toggle, re-exported from `@ui5/webcomponents-react/Switch` as the canonical Reltio entry point. Use it for **immediate** persistent settings — feature toggles, real-time-sync flags, notification preferences, auto-merge on/off — where the change takes effect the moment the user flips the switch.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Switch`. The Reltio layer adds curation (this is the endorsed immediate-toggle surface), pinned versioning, and Reltio-specific guidance.
+
+### Switch vs. CheckBox
+
+This is the most common confusion in product design — the rule is **about timing**:
+
+- **`Switch`** — The change is applied **immediately** when the user flips it. There is no Save / Cancel — flipping it IS the save.
+- **`CheckBox`** — The change is part of a form and applied **on submit**. The user can flip it and then Cancel to discard the change.
+
+If your form has a Save button and the switch's value participates in that submission, you almost certainly want a `CheckBox` instead. Reserve `Switch` for tenant settings, user preferences, feature toggles — places where there is no Save button.
+
+### Labels — accessible name is mandatory
+
+Switch has no built-in label text — you must provide context elsewhere (a row label, a heading) AND set `accessibleName` so screen readers announce the purpose:
+
+```tsx
+<div style={{ display: "flex", justifyContent: "space-between" }}>
+  <span>Auto-merge entities</span>
+  <Switch accessibleName="Auto-merge entities" checked />
+</div>
+```
+
+### On/off labels — `textOn` / `textOff`
+
+By default the switch is unlabeled (just the visual slider). You can add short labels inside the track for clarity:
+
+```tsx
+<Switch textOn="On" textOff="Off" />
+```
+
+Limit `textOn` / `textOff` to 3 characters each. SAP recommends locale-aware labels in non-English UIs ("Ein"/"Aus" in German, etc.).
+
+### `design` — visual variant
+
+- **`Textual` (default)** — Standard switch with optional textual labels.
+- **`Graphical`** — Switch with check/decline iconography — useful when the on/off semantics are about acceptance ("Accept matches", "Reject batch").
+
+### Disabled vs. readonly
+
+- **`disabled`** — switch unavailable in this context (no tenant license, missing permission). Pair with an explanation tooltip.
+- **`readonly`** — switch state shown, user cannot change it (tenant-policy-enforced setting). UI5 supports this via the `readonly` attribute.
+
+### See also
+
+- [SAP Fiori Switch design guideline](https://experience.sap.com/fiori-design-web/switch/) — semantic guidance and visual patterns
+- [UI5 Switch web component reference](https://ui5.github.io/webcomponents/components/Switch/) — full underlying API
+- [CheckBox](?path=/docs/components-checkbox--docs) — form-submit alternative

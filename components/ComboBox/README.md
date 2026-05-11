@@ -1,0 +1,53 @@
+# ComboBox
+
+`ComboBox` is the SAP Fiori single-select autocomplete input, re-exported from `@ui5/webcomponents-react/ComboBox` as the canonical Reltio entry point. Use it when the user has to pick one option from a long list — source systems, entity types, lookup-table values, country codes — and the typed prefix should narrow the dropdown.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/ComboBox`. The Reltio layer adds curation (this is the endorsed single-select autocomplete surface), pinned versioning, and Reltio-specific guidance.
+
+### ComboBox vs. Select vs. Input + suggestions
+
+- **`ComboBox`** — Long list (≥ 10 items), user benefits from filter-as-you-type, may need to enter a value not in the list.
+- **`Select`** — Short, closed list (3–9 items). User picks from the dropdown only — no free-text entry.
+- **`Input` with `showSuggestions`** — Free-text input where the suggestion list is contextual / async (history, search hints), not the canonical source of truth.
+
+### Items — `ComboBoxItem` + groups
+
+Pass items as children. For long lists, group with `ComboBoxItemGroup` so users can scan by category:
+
+```tsx
+<ComboBox placeholder="Pick a source system">
+  <ComboBoxItemGroup headerText="ERP">
+    <ComboBoxItem text="SAP" />
+    <ComboBoxItem text="Oracle EBS" />
+  </ComboBoxItemGroup>
+  <ComboBoxItemGroup headerText="CRM">
+    <ComboBoxItem text="Salesforce" />
+  </ComboBoxItemGroup>
+</ComboBox>
+```
+
+Use `additionalText` on an item to show a secondary label aligned to the right (category, ID, code) without breaking the autocomplete match.
+
+### Filtering — `filter`
+
+- **`StartsWithPerTerm` (default)** — The typed text matches the start of any word in the item.
+- **`StartsWith`** — The typed text matches the start of the item only.
+- **`Contains`** — The typed text appears anywhere in the item.
+- **`None`** — No client-side filter; the parent decides which items to render.
+
+For server-driven suggestions (Reltio API lookup), set `filter="None"` and update the children in response to `onInput`.
+
+### Free-text vs. strict pick
+
+By default the user can type any value and submit it — the dropdown is a suggestion list, not a constraint. To require a pick from the list, set `valueState="Negative"` in your form layer when the entered value does not match any item, and reject the form submission. There is no built-in "strict mode".
+
+### Validation — `valueState`
+
+Use `valueState` (`None`, `Information`, `Critical`, `Negative`, `Positive`) and pair with `valueStateMessage` slot for the explanation. Without a message, the color is meaningless to screen readers.
+
+### See also
+
+- [SAP Fiori ComboBox design guideline](https://experience.sap.com/fiori-design-web/combo-box/) — semantic guidance and visual patterns
+- [UI5 ComboBox web component reference](https://ui5.github.io/webcomponents/components/ComboBox/) — full underlying API
+- [MultiComboBox](?path=/docs/components-multicombobox--docs) — multi-select variant
+- [Select](?path=/docs/components-select--docs) — closed-list dropdown without filtering

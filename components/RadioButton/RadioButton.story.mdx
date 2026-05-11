@@ -1,0 +1,264 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as RadioButtonStories from "./RadioButton.stories";
+import schema from "./RadioButton.schema.json";
+
+<Meta of={RadioButtonStories} />
+
+# RadioButton
+
+```tsx
+import { RadioButton } from "@reltio/design/components";
+```
+
+`RadioButton` is the SAP Fiori single-select control for small, mutually-exclusive option sets, re-exported from `@ui5/webcomponents-react/RadioButton` as the canonical Reltio entry point. Use it for "exactly one of these few" choices — source-priority strategy, layout mode, match-rule severity threshold — where the user benefits from seeing every option at once.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/RadioButton`. The Reltio layer adds curation (this is the endorsed single-select-from-small-set surface), pinned versioning, and Reltio-specific guidance.
+
+### RadioButton vs. Select vs. CheckBox vs. Switch
+
+- **`RadioButton`** — 2–5 mutually-exclusive options. Every option visible. State applied on form submit.
+- **`Select`** — 6+ options or limited screen space. Options hidden until the dropdown opens.
+- **`CheckBox`** — Independent toggles or multi-select.
+- **`Switch`** — Single binary setting that takes effect immediately.
+
+If the choice has more than five reasonable options, switch to `Select` — long radio groups are exhausting to scan.
+
+### `name` — groups radios together
+
+Radios with the same `name` form a group: selecting one auto-deselects the others. This is mandatory — without `name`, every radio behaves independently and the user can select all of them.
+
+```tsx
+<RadioButton name="source-priority" text="SAP wins" checked />
+<RadioButton name="source-priority" text="Salesforce wins" />
+<RadioButton name="source-priority" text="Workday wins" />
+```
+
+Wrap the group in `<div role="radiogroup" aria-label="Source priority">` so screen readers announce the group purpose.
+
+### Labels — always set `text`
+
+Every `RadioButton` MUST have a visible `text` label. Screen readers, focus order, and click targets all rely on it. Do not place a `<label>` element next to a bare `RadioButton` — UI5 already renders the label and handles the click target.
+
+For wrapping multi-line labels (long policy text), pass `wrappingType="Normal"`.
+
+### Validation — `valueState`
+
+`valueState` on a single radio is rare; usually validation lives on the group level. When you do need it (e.g. "this choice will overwrite a default"), pair with `valueStateMessage` slot for the explanation.
+
+### Required vs. disabled vs. readonly
+
+- **`required`** — at least one radio in the group must be checked before form submission.
+- **`disabled`** — the option is unavailable in this context; usually paired with an explanation.
+- **`readonly`** — the choice is shown but the user cannot change it (tenant policy).
+
+### See also
+
+- [SAP Fiori Radio Button design guideline](https://experience.sap.com/fiori-design-web/radio-button/) — semantic guidance and visual patterns
+- [UI5 RadioButton web component reference](https://ui5.github.io/webcomponents/components/RadioButton/) — full underlying API
+- [Select](?path=/docs/components-select--docs) — dropdown variant for longer option sets
+- [CheckBox](?path=/docs/components-checkbox--docs) — independent / multi-select variant
+- [Switch](?path=/docs/components-switch--docs) — immediate-toggle variant
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+{/* __JSON_SCHEMA__
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "RadioButtonProps",
+	"x-component": "RadioButton",
+	"type": "object",
+	"properties": {
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.\n\n**Note:** Available since [v1.6.0](https://github.com/UI5/webcomponents/releases/tag/v1.6.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleNameRef": {
+			"description": "Defines the IDs of the elements that label the component.\n\n**Note:** Available since [v1.1.0](https://github.com/UI5/webcomponents/releases/tag/v1.1.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"checked": {
+			"description": "Defines whether the component is checked or not.\n\n**Note:** The property value can be changed with user interaction,\neither by clicking/tapping on the component,\nor by using the Space or Enter key.\n\n**Note:** Only enabled radio buttons can be checked.\nRead-only radio buttons are not selectable, and therefore are always unchecked.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"disabled": {
+			"description": "Defines whether the component is disabled.\n\n**Note:** A disabled component is completely noninteractive.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"name": {
+			"description": "Determines the name by which the component will be identified upon submission in an HTML form.\n\nRadio buttons with the same `name` will form a radio button group.\n\n**Note:** By this name the component will be identified upon submission in an HTML form.\n\n**Note:** The selection can be changed with `ARROW_UP/DOWN` and `ARROW_LEFT/RIGHT` keys between radio buttons in same group.\n\n**Note:** Only one radio button can be selected per group.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onChange": {
+			"description": "Fired when the component checked state changes.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<RadioButtonDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<RadioButtonDomRef>) => void"
+		},
+		"readonly": {
+			"description": "Defines whether the component is read-only.\n\n**Note:** A read-only component isn't editable or selectable.\nHowever, because it's focusable, it still provides visual feedback upon user interaction.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"required": {
+			"description": "Defines whether the component is required.\n\n**Note:** Available since [v1.9.0](https://github.com/UI5/webcomponents/releases/tag/v1.9.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"text": {
+			"description": "Defines the text of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"value": {
+			"description": "Defines the form value of the component.\nWhen a form with a radio button group is submitted, the group's value\nwill be the value of the currently selected radio button.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"valueState": {
+			"description": "Defines the value state of the component.",
+			"default": "None",
+			"x-typescriptType": "'Positive' | 'Negative' | ValueState | 'None' | 'Critical' | 'Information'"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"wrappingType": {
+			"description": "Defines whether the component text wraps when there is not enough space.\n\n**Note:** for option \"Normal\" the text will wrap and the words will not be broken based on hyphenation.",
+			"default": "Normal",
+			"x-typescriptType": "'None' | WrappingType | 'Normal'"
+		}
+	}
+}
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import { RadioButton } from "@ui5/webcomponents-react/RadioButton";
+import { fn } from "storybook/test";
+import preview from "../../.storybook/preview";
+
+const meta = preview.meta({
+	component: RadioButton,
+	parameters: {
+		layout: "centered",
+	},
+	args: {
+		text: "Source priority: SAP wins",
+		name: "source-priority",
+		onChange: fn(),
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({});
+
+export const Checked = meta.story({
+	args: {
+		checked: true,
+	},
+});
+
+export const Group = meta.story({
+	args: {
+		text: undefined,
+	},
+	render: () => (
+		<div
+			role="radiogroup"
+			aria-label="Source priority"
+			style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+		>
+			<RadioButton name="src" text="SAP wins" checked />
+			<RadioButton name="src" text="Salesforce wins" />
+			<RadioButton name="src" text="Workday wins" />
+			<RadioButton name="src" text="Most recent wins" />
+		</div>
+	),
+});
+
+export const Required = meta.story({
+	args: {
+		required: true,
+		text: "Required choice",
+	},
+});
+
+export const Disabled = meta.story({
+	args: {
+		disabled: true,
+		checked: true,
+		text: "Set by tenant policy",
+	},
+});
+
+export const ReadOnly = meta.story({
+	args: {
+		readonly: true,
+		checked: true,
+		text: "Read-only state",
+	},
+});
+
+export const Warning = meta.story({
+	args: {
+		valueState: "Critical",
+		checked: true,
+		text: "Will overwrite the current default",
+	},
+});
+
+export const ErrorState = meta.story({
+	args: {
+		valueState: "Negative",
+		text: "Required selection",
+	},
+});
+
+export const Wrapping = meta.story({
+	args: {
+		wrappingType: "Normal",
+		text: "I confirm this priority change will be applied retroactively to every matched entity across all source systems.",
+	},
+	decorators: [
+		(Story) => (
+			<div style={{ width: "320px" }}>
+				<Story />
+			</div>
+		),
+	],
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

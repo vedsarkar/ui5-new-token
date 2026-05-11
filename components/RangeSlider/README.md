@@ -1,0 +1,43 @@
+# RangeSlider
+
+`RangeSlider` is the SAP Fiori dual-thumb numeric range slider, re-exported from `@ui5/webcomponents-react/RangeSlider` as the canonical Reltio entry point. Use it for filtering by a numeric window — match-score thresholds, confidence-percentage filters, audit-log range queries — where the user benefits from a visual representation of the interval.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/RangeSlider`. The Reltio layer adds curation (this is the endorsed numeric-range surface), pinned versioning, and Reltio-specific guidance.
+
+### RangeSlider vs. two Sliders vs. two Inputs
+
+- **`RangeSlider`** — Single semantic concept: a contiguous numeric window. Start ≤ end is enforced automatically.
+- **Two `Slider`s** — Independent values that happen to look similar — for example "min score for auto-merge" and "min score for review", which are not really endpoints of the same range.
+- **Two `Input`s** — Precise numeric entry where the user types exact values.
+
+### `min`, `max`, `step`
+
+`min` and `max` define the full track. `step` is the granularity at which the handles can land:
+
+```tsx
+<RangeSlider min={0} max={100} step={5} startValue={60} endValue={95} />
+```
+
+For percentages and scores, `step={5}` or `step={10}` gives a usable feel; `step={1}` is too jittery for narrow tracks.
+
+### `startValue` / `endValue` — both clamped
+
+`startValue` and `endValue` are clamped to `[min, max]` and the component enforces `startValue ≤ endValue`. If you set the props in reverse, UI5 swaps them silently. To enforce a minimum gap (e.g. "the range must span at least 10 units"), validate in your form layer; UI5 has no built-in minimum-width.
+
+### Tickmarks and labels
+
+- **`showTickmarks`** — Render evenly spaced marks at every `step`.
+- **`labelInterval`** — Render numeric labels at every Nth tickmark (`labelInterval={2}` = every 2nd tick).
+- **`showTooltip`** — Show the current value above each handle while dragging.
+
+Combine tickmarks + labels + tooltips for filter-bar UIs where the user needs both fine control and a precise readout.
+
+### Accessibility
+
+Set `accessibleName` so screen readers announce the field's purpose. UI5 already announces both values and the percentage on the track — without an accessible name, the announcement is anonymous and meaningless in a form with multiple sliders.
+
+### See also
+
+- [SAP Fiori Range Slider design guideline](https://experience.sap.com/fiori-design-web/range-slider/) — semantic guidance and visual patterns
+- [UI5 RangeSlider web component reference](https://ui5.github.io/webcomponents/components/RangeSlider/) — full underlying API
+- [Slider](?path=/docs/components-slider--docs) — single-value variant

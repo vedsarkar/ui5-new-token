@@ -1,0 +1,237 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as SegmentedButtonStories from "./SegmentedButton.stories";
+import schema from "./SegmentedButton.schema.json";
+
+<Meta of={SegmentedButtonStories} />
+
+# SegmentedButton
+
+```tsx
+import { SegmentedButton } from "@reltio/design/components";
+```
+
+`SegmentedButton` is the SAP Fiori inline option-bar, re-exported from `@ui5/webcomponents-react/SegmentedButton` as the canonical Reltio entry point. Use it for compact, mutually-exclusive choices that stay visible on the surface — view-mode switchers (List / Table / Compact), time-window pickers (Day / Week / Month / Year), filter quick-toggles.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/SegmentedButton`. The Reltio layer adds curation (this is the endorsed inline-option-bar surface), pinned versioning, and Reltio-specific guidance.
+
+### SegmentedButton vs. Select vs. RadioButton vs. Tab
+
+- **`SegmentedButton`** — 2–5 short options. Always visible inline. The choice changes the view immediately.
+- **`Select`** — 6+ options or limited horizontal space. Options hidden until the dropdown opens.
+- **`RadioButton`** — Form-style selection where state is applied on submit (not immediate).
+- **`Tab` (TabContainer)** — Tabs are for **content panels**, not for picking a value. If the choice swaps a content section, prefer Tab.
+
+If the choice has more than five reasonable options, switch to `Select` — wide segmented bars wrap awkwardly.
+
+### Selection mode — `selectionMode`
+
+- **`Single` (default)** — Exactly one item is selected at a time. View-mode toggles, time-range pickers.
+- **`Multiple`** — Several items can be selected at once. Status-tag filters (Open + In Review).
+
+Set `selected` on the appropriate child item(s) to reflect state. The parent component does not auto-select.
+
+### Items — text, icon, or both
+
+Pass `SegmentedButtonItem` children with either text content, an `icon`, or both:
+
+```tsx
+<SegmentedButton accessibleName="View mode">
+  <SegmentedButtonItem icon="list" selected>List</SegmentedButtonItem>
+  <SegmentedButtonItem icon="table-view">Table</SegmentedButtonItem>
+  <SegmentedButtonItem icon="menu2">Compact</SegmentedButtonItem>
+</SegmentedButton>
+```
+
+### Icon-only segments need accessible names
+
+When a segment has only an `icon` (no text), you **must** set `accessibleName` and `tooltip` on the item — without `accessibleName` screen readers cannot interpret it, without `tooltip` sighted users cannot discover the action. Same rule as icon-only `Button`.
+
+### Per-item `disabled`
+
+Disable individual items via `disabled` on the child. Use this for context-dependent options (e.g. "Year" view is disabled before enough data has accumulated) and pair with an explanation tooltip.
+
+### Accessibility
+
+Set `accessibleName` on the `SegmentedButton` itself to announce the group's purpose. UI5 already wires keyboard navigation (arrow keys) and roving tabindex — do not override `tabindex` on items.
+
+### See also
+
+- [SAP Fiori Segmented Button design guideline](https://experience.sap.com/fiori-design-web/segmented-button/) — semantic guidance and visual patterns
+- [UI5 SegmentedButton web component reference](https://ui5.github.io/webcomponents/components/SegmentedButton/) — full underlying API
+- [Select](?path=/docs/components-select--docs) — dropdown variant for longer option sets
+- [RadioButton](?path=/docs/components-radiobutton--docs) — form-style alternative
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+{/* __JSON_SCHEMA__
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "SegmentedButtonProps",
+	"x-component": "SegmentedButton",
+	"type": "object",
+	"properties": {
+		"accessibleDescription": {
+			"description": "Defines the accessible description of the component.\n\n**Note:** Available since [v2.15.0](https://github.com/UI5/webcomponents/releases/tag/v2.15.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleDescriptionRef": {
+			"description": "Defines the IDs of the HTML Elements that describe the component.\n\n**Note:** Available since [v2.15.0](https://github.com/UI5/webcomponents/releases/tag/v2.15.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.\n\n**Note:** Available since [v1.0.3](https://github.com/UI5/webcomponents/releases/tag/v1.0.3) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleNameRef": {
+			"description": "Defines the IDs of the HTML Elements that label the component.\n\n**Note:** Available since [v2.15.0](https://github.com/UI5/webcomponents/releases/tag/v2.15.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"children": {
+			"description": "Defines the items of `SegmentedButton`.\n\n**Note:** Multiple items are allowed.\n\n**Note:** Use the `SegmentedButtonItem` for the intended design.\n\n__Supported Node Type/s:__ `Array<ISegmentedButtonItem>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"itemsFitContent": {
+			"description": "Determines whether the segmented button items should be sized to fit their content.\n\nIf set to `true`, each item will be sized to fit its content, with any extra space distributed after the last item.\nIf set to `false` (the default), all items will be equally sized to fill the available space.\n\n**Note:** Available since [v2.16.0](https://github.com/UI5/webcomponents/releases/tag/v2.16.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"onSelectionChange": {
+			"description": "Fired when the selected item changes.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<SegmentedButtonDomRef, SegmentedButtonSelectionChangeEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<SegmentedButtonDomRef, SegmentedButtonSelectionChangeEventDetail>) => void"
+		},
+		"selectionMode": {
+			"description": "Defines the component selection mode.\n\n**Note:** Available since [v1.14.0](https://github.com/UI5/webcomponents/releases/tag/v1.14.0) of **@ui5/webcomponents**.",
+			"default": "Single",
+			"x-typescriptType": "'Single' | 'Multiple' | SegmentedButtonSelectionMode"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import { SegmentedButton } from "@ui5/webcomponents-react/SegmentedButton";
+import { SegmentedButtonItem } from "@ui5/webcomponents-react/SegmentedButtonItem";
+import { fn } from "storybook/test";
+import preview from "../../.storybook/preview";
+import "@ui5/webcomponents-icons/dist/list.js";
+import "@ui5/webcomponents-icons/dist/menu2.js";
+import "@ui5/webcomponents-icons/dist/table-view.js";
+
+const meta = preview.meta({
+	component: SegmentedButton,
+	parameters: {
+		layout: "centered",
+	},
+	args: {
+		accessibleName: "View mode",
+		onSelectionChange: fn(),
+	},
+});
+
+export default meta;
+
+export const Default = meta.story({
+	render: (args) => (
+		<SegmentedButton {...args}>
+			<SegmentedButtonItem selected>Day</SegmentedButtonItem>
+			<SegmentedButtonItem>Week</SegmentedButtonItem>
+			<SegmentedButtonItem>Month</SegmentedButtonItem>
+			<SegmentedButtonItem>Year</SegmentedButtonItem>
+		</SegmentedButton>
+	),
+});
+
+export const Multiple = meta.story({
+	args: {
+		selectionMode: "Multiple",
+	},
+	render: (args) => (
+		<SegmentedButton {...args}>
+			<SegmentedButtonItem selected>Open</SegmentedButtonItem>
+			<SegmentedButtonItem selected>In Review</SegmentedButtonItem>
+			<SegmentedButtonItem>Resolved</SegmentedButtonItem>
+			<SegmentedButtonItem>Archived</SegmentedButtonItem>
+		</SegmentedButton>
+	),
+});
+
+export const IconOnly = meta.story({
+	render: (args) => (
+		<SegmentedButton {...args}>
+			<SegmentedButtonItem
+				icon="list"
+				accessibleName="List view"
+				tooltip="List view"
+				selected
+			/>
+			<SegmentedButtonItem
+				icon="table-view"
+				accessibleName="Table view"
+				tooltip="Table view"
+			/>
+			<SegmentedButtonItem
+				icon="menu2"
+				accessibleName="Compact view"
+				tooltip="Compact view"
+			/>
+		</SegmentedButton>
+	),
+});
+
+export const IconWithText = meta.story({
+	render: (args) => (
+		<SegmentedButton {...args}>
+			<SegmentedButtonItem icon="list" selected>
+				List
+			</SegmentedButtonItem>
+			<SegmentedButtonItem icon="table-view">Table</SegmentedButtonItem>
+			<SegmentedButtonItem icon="menu2">Compact</SegmentedButtonItem>
+		</SegmentedButton>
+	),
+});
+
+export const Disabled = meta.story({
+	render: (args) => (
+		<SegmentedButton {...args}>
+			<SegmentedButtonItem selected>Day</SegmentedButtonItem>
+			<SegmentedButtonItem disabled>Week</SegmentedButtonItem>
+			<SegmentedButtonItem>Month</SegmentedButtonItem>
+		</SegmentedButton>
+	),
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

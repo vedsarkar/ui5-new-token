@@ -44,10 +44,8 @@ Without `opener`, the popover renders at the top-left corner of the viewport. Al
 
 ### Modal vs. non-modal
 
-| `modal` | Behavior | Use for |
-|---|---|---|
-| `false` (default) | A click anywhere outside the popover dismisses it. The page behind stays interactive. | Context menus, quick filter panels, ephemeral previews. |
-| `true` | Adds a backdrop, traps focus inside the popover, blocks interaction with the page behind. | Confirmation flows that need explicit acknowledgement, multi-step pickers (entity selection, advanced filter builder). |
+- **`false` (default)** — A click anywhere outside the popover dismisses it. The page behind stays interactive. Context menus, quick filter panels, ephemeral previews.
+- **`true`** — Adds a backdrop, traps focus inside the popover, blocks interaction with the page behind. Confirmation flows that need explicit acknowledgement, multi-step pickers (entity selection, advanced filter builder).
 
 For most popovers, leave `modal={false}` — modal popovers feel like dialogs and should usually be promoted to a real `Dialog` (not yet endorsed) instead.
 
@@ -123,7 +121,7 @@ Set `initialFocus` to the `id` of the element that should receive focus when the
 		"accessibleRole": {
 			"description": "Allows setting a custom role.\n\n**Note:** Available since [v1.10.0](https://github.com/UI5/webcomponents/releases/tag/v1.10.0) of **@ui5/webcomponents**.",
 			"default": "Dialog",
-			"x-typescriptType": "PopupAccessibleRole | 'None' | 'Dialog' | 'AlertDialog'"
+			"x-typescriptType": "'None' | PopupAccessibleRole | 'Dialog' | 'AlertDialog'"
 		},
 		"allowTargetOverlap": {
 			"description": "Determines if there is no enough space, the component can be placed\nover the target.",

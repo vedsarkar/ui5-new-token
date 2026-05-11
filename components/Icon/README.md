@@ -33,11 +33,9 @@ See the [Icon Library guide](?path=/docs/guides-icon-library--docs) for icon dis
 
 ### `mode` — pick the interaction model
 
-| `mode` | Behavior | Use case |
-|---|---|---|
-| `Decorative` (default) | Visible, not focusable, not announced by screen readers. | Inline accent next to a label, button decoration. |
-| `Image` | Visible, not focusable, announced via `accessibleName`. | Standalone status indicator (e.g. row state). |
-| `Interactive` | Focusable, clickable, announced as a button. Pair with `onClick` and `accessibleName`. | Icon-only action (replace with a `Button icon=…` if there's any chance of confusion). |
+- **`Decorative` (default)** — Visible, not focusable, not announced by screen readers. Inline accent next to a label, button decoration.
+- **`Image`** — Visible, not focusable, announced via `accessibleName`. Standalone status indicator (e.g. row state).
+- **`Interactive`** — Focusable, clickable, announced as a button. Pair with `onClick` and `accessibleName`. Icon-only action (replace with a `Button icon=…` if there's any chance of confusion).
 
 For most action triggers, prefer a `Button` with `icon` over an `Interactive` `Icon` — the button gives you better focus-ring, hover, disabled, and tooltip semantics for free.
 
@@ -45,15 +43,13 @@ For most action triggers, prefer a `Button` with `icon` over an `Interactive` `I
 
 Icons can carry semantic color through `design`:
 
-| `design` | Color | Use for |
-|---|---|---|
-| `Default` | Neutral | Generic decoration. |
-| `Negative` | Error red | Failure, validation error, destructive intent. |
-| `Critical` | Warning amber | Attention, pending review, suboptimal state. |
-| `Positive` | Success green | Success, completion, validated. |
-| `Information` | Info blue | Informational, neutral status. |
-| `Contrast` | Inverted | Use on dark surfaces only. |
-| `NonInteractive` | Muted | De-emphasized, disabled-like. |
+- **`Default`** — Neutral. Generic decoration.
+- **`Negative`** — Error red. Failure, validation error, destructive intent.
+- **`Critical`** — Warning amber. Attention, pending review, suboptimal state.
+- **`Positive`** — Success green. Success, completion, validated.
+- **`Information`** — Info blue. Informational, neutral status.
+- **`Contrast`** — Inverted. Use on dark surfaces only.
+- **`NonInteractive`** — Muted. De-emphasized, disabled-like.
 
 Semantic color is **stronger** than icon shape — pair both for clarity (`design="Negative" name="error"`).
 

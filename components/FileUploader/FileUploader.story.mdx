@@ -1,0 +1,321 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as FileUploaderStories from "./FileUploader.stories";
+import schema from "./FileUploader.schema.json";
+
+<Meta of={FileUploaderStories} />
+
+# FileUploader
+
+```tsx
+import { FileUploader } from "@reltio/design/components";
+```
+
+`FileUploader` is the SAP Fiori file-input control, re-exported from `@ui5/webcomponents-react/FileUploader` as the canonical Reltio entry point. Use it for one-off file pickers — CSV import for entity bulk-load, profile-photo upload, source-document attachment to a match — that fit inline in a form or toolbar.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/FileUploader`. The Reltio layer adds curation (this is the endorsed file-input surface), pinned versioning, and Reltio-specific guidance.
+
+### Anatomy — input + optional Button trigger
+
+By default the uploader renders a read-only text input (showing the picked filename) plus a Browse button. To replace the text input with a custom trigger, set `hideInput` and pass a `Button` (or any clickable element) as the slot child:
+
+```tsx
+<FileUploader hideInput onChange={onChange}>
+  <Button design="Emphasized">Upload entity records…</Button>
+</FileUploader>
+```
+
+The slot child handles both click-to-open and drag-and-drop visual styling.
+
+### `accept` — MIME types and extensions
+
+Restrict what the OS file picker shows. Accepts a comma-separated list of:
+
+- File extensions including the dot (`".csv,.tsv"`)
+- MIME types (`"image/png,image/jpeg"`)
+- Wildcards (`"image/*"`, `"text/*"`)
+
+```tsx
+<FileUploader accept=".csv,text/csv,application/vnd.ms-excel" />
+```
+
+`accept` is a **filter, not a guarantee** — the user can still drop a non-matching file via drag-and-drop, or change the picker filter to "All files". Always re-validate on the client and server after upload.
+
+### `multiple` — bulk selection
+
+Set `multiple` to let the user pick more than one file at a time. The `FileList` from `onChange` contains all selected files; the input text shows `<N> files selected`.
+
+### Reading the files — `event.detail.files`
+
+The `onChange` event exposes the selected files via the event detail:
+
+```tsx
+<FileUploader
+  onChange={(event) => {
+    const files = event.detail.files;
+    if (files && files.length > 0) {
+      uploadToReltioApi(files[0]);
+    }
+  }}
+/>
+```
+
+For server-side uploads, attach files to a `FormData` object and POST with `fetch`. The component does **not** perform the upload itself — it only collects the selection.
+
+### Form integration
+
+Set `name` so the file participates in a native `<form>` submission. The component's hidden `<input type="file">` is what the form serializer picks up. Pair with `required` for mandatory uploads.
+
+### Validation — `valueState`
+
+Use `valueState` to surface validation feedback inline: file-size limit exceeded, unsupported format, upload server error. Pair with `valueStateMessage` slot for the explanation.
+
+### Accessibility
+
+- Set `accessibleName` so the field's purpose is announced to screen readers (the placeholder is not a substitute).
+- When using a custom trigger (`hideInput`), the trigger label IS the accessible name — keep it explicit (`"Upload entity records"`, not just `"Browse"`).
+
+### See also
+
+- [SAP Fiori File Uploader design guideline](https://experience.sap.com/fiori-design-web/upload-collection/) — semantic guidance and visual patterns
+- [UI5 FileUploader web component reference](https://ui5.github.io/webcomponents/components/FileUploader/) — full underlying API
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+{/* __JSON_SCHEMA__
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "FileUploaderProps",
+	"x-component": "FileUploader",
+	"type": "object",
+	"properties": {
+		"accept": {
+			"description": "Comma-separated list of file types that the component should accept.\n\n**Note:** Please make sure you are adding the `.` in front on the file type, e.g. `.png` in case you want to accept png's only.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleDescription": {
+			"description": "Defines the accessible description of the component.\n\n**Note:** Available since [v2.14.0](https://github.com/UI5/webcomponents/releases/tag/v2.14.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleDescriptionRef": {
+			"description": "Receives id(or many ids) of the elements that describe the input.\n\n**Note:** Available since [v2.14.0](https://github.com/UI5/webcomponents/releases/tag/v2.14.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.\n\n**Note:** Available since [v2.13.0](https://github.com/UI5/webcomponents/releases/tag/v2.13.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleNameRef": {
+			"description": "Receives id(or many ids) of the elements that label the input.\n\n**Note:** Available since [v2.13.0](https://github.com/UI5/webcomponents/releases/tag/v2.13.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"children": {
+			"description": "This slot allows you to add custom content to the component, such as a button or any other interactive element to trigger the file selection dialog.\n\n**Note:** For best accessibility experience, set a `tabindex` of \"-1\" on your interactive element, or it will be set automatically.\nThis slot is intended for use cases where you want a button-only file uploader.\nIt is recommended to set `hideInput` property to \"true\" when using this slot.\nNot setting `hideInput` may negatively impact the screen reader users.\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"disabled": {
+			"description": "Defines whether the component is in disabled state.\n\n**Note:** A disabled component is completely noninteractive.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"hideInput": {
+			"description": "If set to \"true\", the input field of component will not be rendered. Only the default slot that is passed will be rendered.\n\n**Note:** Use this property in combination with the default slot to achieve a button-only file uploader design.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"maxFileSize": {
+			"description": "Defines the maximum file size in megabytes which prevents the upload if at least one file exceeds it.\n\n**Note:** Available since [v2.2.0](https://github.com/UI5/webcomponents/releases/tag/v2.2.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"multiple": {
+			"description": "Allows multiple files to be chosen.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"name": {
+			"description": "Determines the name by which the component will be identified upon submission in an HTML form.\n\n**Note:** This property is only applicable within the context of an HTML Form element.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onChange": {
+			"description": "Event is fired when the value of the file path has been changed.\n\n**Note:** Keep in mind that because of the HTML input element of type file, the event is also fired in Chrome browser when the Cancel button of the uploads window is pressed.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<FileUploaderDomRef, FileUploaderChangeEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<FileUploaderDomRef, FileUploaderChangeEventDetail>) => void"
+		},
+		"onFileSizeExceed": {
+			"description": "Event is fired when the size of a file is above the `maxFileSize` property value.\n\n**Note:** Available since [v2.2.0](https://github.com/UI5/webcomponents/releases/tag/v2.2.0) of **@ui5/webcomponents**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<FileUploaderDomRef, FileUploaderFileSizeExceedEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<FileUploaderDomRef, FileUploaderFileSizeExceedEventDetail>) => void"
+		},
+		"placeholder": {
+			"description": "Defines a short hint intended to aid the user with data entry when the component has no value.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"required": {
+			"description": "Defines whether the component is required.\n\n**Note:** Available since [v2.13.0](https://github.com/UI5/webcomponents/releases/tag/v2.13.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"value": {
+			"description": "Defines the name/names of the file/files to upload.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"valueState": {
+			"description": "Defines the value state of the component.",
+			"default": "None",
+			"x-typescriptType": "'Positive' | 'Negative' | ValueState | 'None' | 'Critical' | 'Information'"
+		},
+		"valueStateMessage": {
+			"description": "Defines the value state message that will be displayed as pop up under the component.\n\n**Note:** If not specified, a default text (in the respective language) will be displayed.\n\n**Note:** The `valueStateMessage` would be displayed,\nwhen the component is in `Information`, `Critical` or `Negative` value state.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"valueStateMessage\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import { Button } from "@ui5/webcomponents-react/Button";
+import { FileUploader } from "@ui5/webcomponents-react/FileUploader";
+import { fn } from "storybook/test";
+import preview from "../../.storybook/preview";
+
+const meta = preview.meta({
+	component: FileUploader,
+	parameters: {
+		layout: "centered",
+	},
+	args: {
+		onChange: fn(),
+	},
+	decorators: [
+		(Story) => (
+			<div style={{ width: "320px" }}>
+				<Story />
+			</div>
+		),
+	],
+});
+
+export default meta;
+
+export const Default = meta.story({
+	args: {
+		placeholder: "Choose entity import file",
+	},
+});
+
+export const WithButton = meta.story({
+	args: {
+		hideInput: true,
+	},
+	render: (args) => (
+		<FileUploader {...args}>
+			<Button design="Emphasized">Upload entity records…</Button>
+		</FileUploader>
+	),
+});
+
+export const RestrictedToCsv = meta.story({
+	args: {
+		accept: ".csv,text/csv",
+		placeholder: "CSV files only",
+	},
+});
+
+export const RestrictedToImages = meta.story({
+	args: {
+		accept: "image/png,image/jpeg",
+		placeholder: "PNG or JPEG profile photo",
+	},
+});
+
+export const MultipleFiles = meta.story({
+	args: {
+		multiple: true,
+		placeholder: "Attach multiple source documents",
+	},
+});
+
+export const Required = meta.story({
+	args: {
+		required: true,
+		placeholder: "Required upload",
+	},
+});
+
+export const Disabled = meta.story({
+	args: {
+		disabled: true,
+		placeholder: "Upload temporarily disabled",
+	},
+});
+
+export const ErrorState = meta.story({
+	args: {
+		valueState: "Negative",
+		placeholder: "Upload failed — try again",
+	},
+});
+
+export const InsideForm = meta.story({
+	args: {
+		name: "entityImport",
+		placeholder: "Pick entity import",
+	},
+	decorators: [
+		(Story) => (
+			<form
+				onSubmit={(event) => {
+					event.preventDefault();
+				}}
+				style={{ display: "flex", gap: "8px", alignItems: "center" }}
+			>
+				<Story />
+				<Button design="Emphasized" type="Submit">
+					Submit
+				</Button>
+			</form>
+		),
+	],
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

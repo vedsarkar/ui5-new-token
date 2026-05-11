@@ -41,6 +41,7 @@ export const AppSelector = ({
 		>
 			<Button
 				id={triggerId}
+				design="Transparent"
 				icon="grid"
 				accessibleName={accessibleName}
 				onClick={() => setOpen((value) => !value)}
