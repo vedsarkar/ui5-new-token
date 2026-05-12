@@ -2,7 +2,7 @@
 	"name": "@reltio/design",
 	"version": "1.0.0",
 	"description": "Reltio Design Platform",
-	"license": "UNLICENSED",
+	"license": "Apache-2.0",
 	"homepage": "https://reltio.design",
 	"bugs": {
 		"url": "https://bitbucket.org/reltio-ondemand/reltio-design/issues"
@@ -35,7 +35,7 @@
 	},
 	"scripts": {
 		"build": "tsc && tsc-alias",
-		"postbuild": "cp package.json dist/ && cp README.md dist/ && cp ../../public/variables.css dist/ && cp ../../public/fonts.css dist/"
+		"postbuild": "cp package.json dist/ && cp README.md dist/ && cp ../../LICENSE dist/ && cp ../../NOTICE dist/ && cp ../../public/variables.css dist/ && cp ../../public/fonts.css dist/"
 	},
 	"devDependencies": {
 		"tsc-alias": "^1.8.10",

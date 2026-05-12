@@ -24,7 +24,7 @@
 		"type": "git",
 		"url": "git+ssh://git@bitbucket.org/reltio-ondemand/reltio-design.git"
 	},
-	"license": "ISC",
+	"license": "Apache-2.0",
 	"author": "",
 	"scripts": {
 		"test": "vitest run",

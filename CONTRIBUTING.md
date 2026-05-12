@@ -52,7 +52,7 @@ reltio-design/
 └── bitbucket-pipelines.yml      # CI definitions
 ```
 
-> **Adding a new publishable package.** Create `packages/<name>/` with its own `package.json` (must declare `"publishConfig": { "access": "public" }`, must have a `dist/` build output and a `postbuild` step that copies the manifest into `dist/`). Add the package name to your changesets where appropriate. The `release` pipeline picks it up automatically — no further changes to `scripts/release.mjs` or `bitbucket-pipelines.yml` are required.
+> **Adding a new publishable package.** Create `packages/<name>/` with its own `package.json` (must declare `"license": "Apache-2.0"`, `"publishConfig": { "access": "public" }`, must have a `dist/` build output and a `postbuild` step that copies the manifest, `README.md`, and the root `LICENSE` + `NOTICE` into `dist/`). Add the package name to your changesets where appropriate. The `release` pipeline picks it up automatically — no further changes to `scripts/release.mjs` or `bitbucket-pipelines.yml` are required.
 
 ## Prerequisites
 

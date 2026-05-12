@@ -1,0 +1,29 @@
+Reltio Design Platform
+Copyright 2026 Reltio Inc.
+
+This product is licensed under the Apache License, Version 2.0
+(see LICENSE for the full text).
+
+This product redistributes and/or builds upon the following
+Apache License, Version 2.0 software developed by SAP SE:
+
+  - @ui5/webcomponents-react
+    https://github.com/SAP/ui5-webcomponents-react
+
+  - @ui5/webcomponents, @ui5/webcomponents-fiori, @ui5/webcomponents-icons
+    https://github.com/SAP/ui5-webcomponents
+
+  - @sap-theming/theming-base-content (SAP Horizon design tokens
+    and SAP 72 fonts shipped as static CSS in public/variables.css,
+    public/fonts.css, and public/fonts/*.woff2)
+    https://github.com/SAP/theming-base-content
+
+A copy of the Apache License, Version 2.0 can be found in the
+accompanying LICENSE file or at
+http://www.apache.org/licenses/LICENSE-2.0
+
+Other third-party dependencies are listed in package.json with
+their respective licenses recorded in package-lock.json. None of
+those licenses impose additional notice requirements beyond
+their own LICENSE files, which are shipped inside each package
+under node_modules/ when installed.

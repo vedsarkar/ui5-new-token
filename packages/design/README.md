@@ -153,4 +153,6 @@ For any questions about the process, contact the **UI Center of Excellence** tea
 
 ## License
 
-This library is distributed under Reltio's corporate license and is intended for internal use only.
+Licensed under the [Apache License, Version 2.0](./LICENSE). See [`NOTICE`](./NOTICE) for attribution of the upstream Apache 2.0 software this package redistributes — most notably `@ui5/webcomponents-react`, `@ui5/webcomponents`, `@ui5/webcomponents-fiori`, `@ui5/webcomponents-icons`, and the SAP Horizon design tokens from `@sap-theming/theming-base-content`.
+
+The library is built primarily for Reltio MDM teams, partners, and customers, but the Apache 2.0 grant means anyone can install, use, modify, and redistribute it within the terms of the License. Reltio's trademarks (including the Reltio name and logo) are not granted by this license — see Section 6 of the LICENSE for the trademark exclusion.

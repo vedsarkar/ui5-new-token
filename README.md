@@ -371,7 +371,7 @@ The published Reltio Design MCP is available at `https://reltio.design/mcp` for 
 
 ## License
 
-ISC
+Licensed under the [Apache License, Version 2.0](LICENSE). See [`NOTICE`](NOTICE) for attribution of the upstream Apache 2.0 software this platform redistributes — most notably `@ui5/webcomponents-react` and `@sap-theming/theming-base-content` from SAP SE.
 
 ## Contact
 
