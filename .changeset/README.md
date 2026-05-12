@@ -49,13 +49,13 @@ Skip changesets for:
 - CI / tooling / lint config changes that don't affect published code
 - Changes inside `.storybook/`, `guides/`, `scripts/`, top-level dev-only tooling
 
-Our CI runs `npm run changeset:status` on every PR. If the PR touches `packages/**` source but has no changeset, the check fails with a clear message. Add `--empty` to the changeset to record an intentional "no version bump for this PR":
+Adding a changeset for source changes is a convention today, not a CI-enforced gate (a previous guard had blind spots and was removed pending a redesign — see the Release Process guide for details). If you want to record an intentional "no version bump for this PR", add an empty changeset:
 
 ```bash
 npm run changeset -- --empty
 ```
 
-This still produces a `.changeset/*.md` file (containing only frontmatter), satisfying the check without bumping anything.
+This produces a `.changeset/*.md` file with only frontmatter — the next `version @reltio packages` run consumes and deletes it without bumping anything.
 
 ## Useful commands
 

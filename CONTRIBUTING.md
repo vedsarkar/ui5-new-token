@@ -5,7 +5,7 @@ This document is the **end-to-end guide** for working in the `reltio-design-plat
 > **TL;DR**
 > 1. Branch from `main`, commit your work in a feature PR.
 > 2. Run `npm run changeset` — describe the user-visible impact, pick a bump type.
-> 3. Open the PR. CI runs `npm run changeset:check`, tests, Chromatic, a11y.
+> 3. Open the PR. CI runs the tests, Chromatic, and a11y. Adding a changeset for source changes is convention today, not CI-enforced — a proper guard is on the backlog.
 > 4. After merge, a CoE maintainer triggers `version @reltio packages` to cut a version PR. Reviewing and merging that PR is the only manual gate — the `release-packages` step then publishes automatically on the next `main` pipeline.
 
 ---
@@ -86,7 +86,7 @@ The first run will also build the design-tokens CSS, the component documentation
 | **Title format** | `<type>: <imperative summary>` — `feat: add Chat composer`, `fix: align Avatar focus ring`, `docs: update token guide`. |
 | **Description** | Link the Jira ticket, explain the _why_, list any breaking changes prominently. |
 | **Squash-merge** | We squash on merge. The squash message becomes the commit on `main`. Keep it tidy. |
-| **Required checks** | All checks in the `pull-requests` pipeline must be green: `check-changeset`, `test`, `chromatic`. |
+| **Required checks** | All checks in the `pull-requests` pipeline must be green: `test`, `chromatic`. |
 
 > **About OpenSpec.** New Reltio business components and primitives go through the [spec-driven development workflow](https://reltio.design/?path=/docs/guides-spec-driven-development--docs) before code is written. Bug fixes, doc changes, and direct usage of UI5 components do not require a spec.
 
@@ -121,7 +121,7 @@ npm run format      # Biome format with auto-fix
 
 ## Adding a changeset
 
-Every PR that changes source code under `packages/*` **must** include a changeset. This is enforced in CI by `scripts/check-changeset.mjs`.
+Every PR that changes the source code of a published package **should** include a changeset. This is currently a convention rather than a CI-enforced gate — the previous guard only inspected `packages/*` and missed source changes that live under the root-level `components/`, `charts/`, `hooks/`, and `utils/` directories (they reach `@reltio/design` via the re-export layer in `packages/design/*.ts`). A new guard that traces those paths correctly is on the backlog. Until then, please add changesets by convention so the release notes stay accurate.
 
 ### What is a changeset?
 
@@ -184,7 +184,7 @@ You don't need a changeset when your PR only touches:
 - `.storybook/`, `scripts/`, `biome.json`, `tsconfig.json` at the root
 - `package.json` for dev dependencies that are not bundled
 
-If the CI guard fires but you're sure no version bump is needed, record an explicit no-op:
+If you want to record an intentional "no version bump for this PR" (typically when versioning infrastructure or other changes that affect a published package only metadata-wise), use:
 
 ```bash
 npm run changeset -- --empty

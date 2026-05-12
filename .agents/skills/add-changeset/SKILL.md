@@ -18,7 +18,6 @@ Trigger words and intents:
 - "Add a changeset" / "I need a changeset for this PR"
 - "What bump type is this change?"
 - "Prepare release notes for this branch"
-- "CI is failing on changeset:check — fix it"
 - The agent is about to open a PR and realises no changeset is present
 
 If the user is asking about how the release process works at a conceptual level, point them at `CONTRIBUTING.md` and the `Guides/Release Process` Storybook page instead — that is documentation, not a task this skill solves.
@@ -49,9 +48,9 @@ If the diff against `origin/main` is empty, tell the user there is nothing to ch
 
 ### 2. Determine whether a changeset is required
 
-Apply the same heuristic as `scripts/check-changeset.mjs`:
+CI no longer enforces the presence of a changeset — the previous guard had blind spots and was removed pending a redesign. Apply this heuristic by hand instead:
 
-- A changeset **is required** if any file under `packages/*/` changed, excluding:
+- A changeset **is required** if any file under `packages/*/` **or** the root-level source directories that feed `@reltio/design` (`components/`, `charts/`, `hooks/`, `utils/`) changed, excluding:
   - `package.json` (metadata)
   - `package-lock.json`
   - `tsconfig.json`
@@ -180,16 +179,16 @@ Do **not** run `git add` or commit — leave that to the user. They'll bundle it
 After writing, run:
 
 ```bash
-npm run changeset:check
+npx changeset status
 ```
 
-Show the output. If green, summarise:
+Show the output. If `@reltio/design` (or whichever package you targeted) appears under the expected bump tier, summarise:
 
 - Bump type chosen and why (one sentence)
 - Summary text in a quoted block
-- Reminder: "Commit `.changeset/<name>.md` and push. CI will pick it up."
+- Reminder: "Commit `.changeset/<name>.md` and push — it gets picked up by the next `version @reltio packages` run."
 
-If red, the diff likely changed underneath you — re-run from step 1.
+If the package does not appear, the frontmatter is malformed — open the file you just wrote, fix the YAML, and rerun.
 
 ## Edge cases
 
@@ -224,9 +223,9 @@ If the user insists there's no consumer impact:
 
 Don't push back too hard — empty changesets exist exactly for this case.
 
-### CI is failing on `changeset:check`
+### CI was already merged without a changeset
 
-This is the most common entry point for the skill. Run step 2 to confirm a changeset is required, then go through steps 3–5 to add one.
+There is no CI guard for missing changesets today, so a feature merge can slip through without one. If the user notices afterwards, run steps 1–5 on a fresh follow-up branch and merge that small changeset-only PR before the next `version @reltio packages` run.
 
 ## Guardrails
 

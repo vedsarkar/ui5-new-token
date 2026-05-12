@@ -3,14 +3,18 @@ image: node:22
 # How releases work in this repo
 # ──────────────────────────────────────────────────────────────────────────
 # 1. Developers add a `.changeset/*.md` file in each PR that affects
-#    `@reltio/*` packages (CI guards this in the `pull-requests` pipeline).
+#    `@reltio/*` packages. Authoring is conventional today — see
+#    CONTRIBUTING.md → Adding a changeset. A CI guard that catches missing
+#    changesets is on the backlog and will be re-introduced once it can
+#    correctly trace source changes across the `components/` / `charts/` /
+#    `hooks/` / `utils/` re-export layer into `packages/design/`.
 # 2. When the CoE is ready to cut a release, a maintainer triggers the
 #    custom pipeline `version @reltio packages` against `main`. It bumps
 #    versions and writes CHANGELOG entries, then opens a `release/version-*`
-#    branch for review.
-# 3. After that PR is merged into `main`, the custom pipeline
-#    `release @reltio packages` publishes the new versions to npm and
-#    creates annotated git tags.
+#    branch and PR for review.
+# 3. After that PR is merged into `main`, the `branches: main` pipeline
+#    runs `release-packages` in parallel with the other checks and
+#    publishes the new versions to npm + creates annotated git tags.
 # 4. For preview / per-PR builds, the custom pipeline `snapshot @reltio
 #    packages` publishes a one-off snapshot under a `pr-<id>` dist-tag.
 # ──────────────────────────────────────────────────────────────────────────
@@ -50,17 +54,6 @@ definitions:
           - vercel link --project=reltio-design --scope=reltio --token=${VERCEL_TOKEN} --yes
           - vercel build --scope=reltio --token=${VERCEL_TOKEN} --prod --yes
           - vercel deploy --scope=reltio --token=${VERCEL_TOKEN} --prod --prebuilt
-    - step: &check-changeset
-        name: Check changeset present
-        caches:
-          - npm
-          - node
-        script:
-          # Bitbucket Pipelines clones with --depth=50 by default; deepen
-          # enough so we can diff against origin/main reliably.
-          - git fetch --depth=200 origin main
-          - npm ci
-          - CHANGESET_BASE_REF=origin/main npm run changeset:check
     - step: &version-packages
         name: Open release/version PR
         caches:
@@ -142,7 +135,6 @@ pipelines:
   pull-requests:
     '**':
       - parallel:
-          - step: *check-changeset
           - step: *test
           - step: *chromatic
   custom:

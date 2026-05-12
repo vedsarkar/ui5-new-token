@@ -43,7 +43,6 @@
 		"format": "biome format . --write",
 		"changeset": "changeset",
 		"changeset:status": "changeset status --since=origin/main",
-		"changeset:check": "node scripts/check-changeset.mjs",
 		"version-packages": "changeset version",
 		"release": "node scripts/release.mjs",
 		"release:snapshot": "node scripts/release.mjs --snapshot"

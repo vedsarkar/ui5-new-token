@@ -16,7 +16,7 @@ export const flowNodes = [
 		icon: "🤖",
 		label: "PR checks",
 		content:
-			"- `check-changeset` — guards that source changes carry intent\n- Tests + coverage\n- Chromatic visual regression",
+			"- Tests + coverage\n- Chromatic visual regression\n\nA dedicated changeset guard is on the backlog; for now adding a changeset is a convention, not CI-enforced.",
 	},
 	{
 		id: "merge",
@@ -107,10 +107,6 @@ Three goals shaped the process:
 			<td>Publishes from each workspace's <code>dist/</code> and creates git tags. Idempotent — already-published versions are skipped.</td>
 		</tr>
 		<tr>
-			<td><code>scripts/check-changeset.mjs</code></td>
-			<td>PR guard. Fails if source under <code>packages/*</code> changed without a changeset.</td>
-		</tr>
-		<tr>
 			<td><code>scripts/open-version-pr.mjs</code></td>
 			<td>Calls the Bitbucket REST API to open the version PR from the pipeline. Skipped gracefully when the API token is not configured.</td>
 		</tr>
@@ -139,7 +135,7 @@ The publish itself is never triggered by hand on a normal release. The maintaine
 
 Each PR carries a `.changeset/*.md` file that describes the intended version bump and the consumer-visible impact. The file is the contributor's _release intent_ — a one-line declaration of "this PR should bump `@reltio/design` by X, and here's what to put in the next release notes". No version bump happens at this point; the file is queued up until a maintainer cuts the release.
 
-The CI step `check-changeset` runs on every PR and fails if `packages/*` source code changed but no new `.changeset/*.md` is committed. The check is heuristic — pure metadata changes (`package.json`, `tsconfig.json`, `README.md`) do not trigger it.
+Adding a changeset for source changes is a **convention** today, not CI-enforced. An earlier guard inspected only `packages/*` and missed source changes that live in the root-level `components/`, `charts/`, `hooks/`, and `utils/` directories and reach `@reltio/design` via the re-export layer (`packages/design/*.ts`). It has been removed, and a properly source-tracing replacement is on the backlog. Until then, please add changesets by hand so the release notes stay accurate.
 
 > **For the day-to-day mechanics** — CLI prompts, bump-type table, good/bad summary examples, when to use `--empty` — see [`CONTRIBUTING.md` → Adding a changeset](https://bitbucket.org/reltio-ondemand/reltio-design/src/main/CONTRIBUTING.md#adding-a-changeset).
 
@@ -291,10 +287,6 @@ We follow [semantic versioning](https://semver.org/) strictly for `@reltio/desig
 			<td>Publish + tag script. Idempotent.</td>
 		</tr>
 		<tr>
-			<td><code>scripts/check-changeset.mjs</code></td>
-			<td>PR guard.</td>
-		</tr>
-		<tr>
 			<td><code>scripts/open-version-pr.mjs</code></td>
 			<td>Auto-opens the version PR through the Bitbucket REST API. Degrades to a manual-fallback URL when the API token is missing.</td>
 		</tr>
@@ -353,24 +345,22 @@ The skill [`.agents/skills/add-changeset/SKILL.md`](https://bitbucket.org/reltio
 2. Classify the bump type using a clear rubric
 3. Draft a consumer-facing summary
 4. Write `.changeset/<name>.md`
-5. Run `npm run changeset:check` to verify
 
 **Trigger phrases that activate the skill:**
 
 - "Add a changeset for this PR"
 - "What bump type is this change?"
 - "Prepare release notes for this branch"
-- "CI is failing on changeset:check"
 
 The skill is configured to **never** commit or push on the user's behalf — it produces the file and lets the human decide when to add it to the PR.
 
 ## Troubleshooting
 
-### "CI is failing on `changeset:check`"
+### "I forgot to add a changeset before merging"
 
-Run `npm run changeset:check` locally. If it lists files under `packages/*` and there is no matching `.changeset/*.md`, add one with `npm run changeset` (or use the `add-changeset` AI skill).
+There is no CI guard for missing changesets today, so a feature merge can slip through without one. Recovery is easy: add the changeset in a follow-up PR before the next `version @reltio packages` run. The next version bump will include it.
 
-If the listed files are genuinely doc-only or test-only and you don't think a version bump is warranted, add an empty changeset:
+If you want to record an intentional no-bump for a PR that touches a published package only in metadata, add an empty changeset:
 
 ```bash
 npm run changeset -- --empty
