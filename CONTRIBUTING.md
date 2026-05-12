@@ -6,7 +6,7 @@ This document is the **end-to-end guide** for working in the `reltio-design-plat
 > 1. Branch from `main`, commit your work in a feature PR.
 > 2. Run `npm run changeset` — describe the user-visible impact, pick a bump type.
 > 3. Open the PR. CI runs `npm run changeset:check`, tests, Chromatic, a11y.
-> 4. After merge, a CoE maintainer cuts the next release through the `version @reltio packages` → review → `release @reltio packages` flow.
+> 4. After merge, a CoE maintainer triggers `version @reltio packages` to cut a version PR. Reviewing and merging that PR is the only manual gate — the `release-packages` step then publishes automatically on the next `main` pipeline.
 
 ---
 
@@ -209,9 +209,9 @@ The full mechanics — flow diagram, custom pipelines, semver policy, troublesho
 
 ### What you need to know
 
-1. **Releases are not automatic on merge to `main`.** Maintainers cut releases deliberately by triggering the `version @reltio packages` → review → `release @reltio packages` custom pipelines in Bitbucket.
+1. **Merging a feature PR never publishes anything.** A maintainer first triggers `version @reltio packages` to cut a version PR. Only merging that version PR triggers a publish — and the publish itself is automated by the `branches: main` pipeline.
 2. **Your changeset becomes a release-notes entry.** Whatever you write in the summary is what consumers will read in `CHANGELOG.md`.
-3. **The release PR is reviewed.** Running `version @reltio packages` pushes a `release/version-*` branch and automatically opens the corresponding pull request into `main`. Anyone — including you — can comment on the proposed CHANGELOG entries before publish.
+3. **The release PR is reviewed.** Running `version @reltio packages` pushes a `release/version-*` branch and automatically opens the corresponding pull request into `main`. Anyone — including you — can comment on the proposed CHANGELOG entries before merge.
 
 ### Sharing your in-progress PR with a consumer
 

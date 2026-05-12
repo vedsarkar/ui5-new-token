@@ -42,9 +42,9 @@ export const flowNodes = [
 	{
 		id: "release",
 		icon: "🚀",
-		label: "`release @reltio packages`",
+		label: "Auto-release on `main`",
 		content:
-			"Maintainer-triggered after merge:\n- Builds every workspace\n- `npm publish` from `packages/*/dist`\n- `git tag <name>@<version>`\n- Pushes tags",
+			"The `branches: main` pipeline runs on every commit. After `test` + `chromatic` + `vercel` go green, the `release-packages` step runs:\n- Builds every workspace\n- `npm publish` from `packages/*/dist` (skips already-published versions)\n- `git tag <name>@<version>` for new versions\n- Pushes tags\n\nManual back-up: `custom: release @reltio packages` for replays.",
 	},
 	{
 		id: "published",
@@ -68,7 +68,7 @@ export const flowEdges = [
 
 This guide explains **how a code change in `reltio-design-platform` reaches the npm registry** as a new version of `@reltio/design`. It is the canonical reference for reviewers, maintainers, and consumers who want to understand when a release will happen and what each release contains.
 
-> **🎯 Key Principle:** Every PR carries its own release intent — a Changesets file describing the user-visible impact. Releases are deliberate, human-reviewed aggregations of those intents, never an automatic side effect of merging to `main`.
+> **🎯 Key Principle:** Every PR carries its own release intent — a Changesets file describing the user-visible impact. Releases are deliberate, human-reviewed aggregations of those intents: the human review happens on the auto-generated **version PR**, not on the publish itself. Merging a feature PR to `main` never publishes anything; only merging a version PR does, and the publish that follows is fully automated.
 
 > **For contributors authoring changesets**, the step-by-step task workflow (CLI prompts, bump-type rubric, summary examples, when to use `--empty`) lives in [`CONTRIBUTING.md`](https://bitbucket.org/reltio-ondemand/reltio-design/src/main/CONTRIBUTING.md). This guide focuses on what happens after a PR is opened — the conceptual flow, semver policy, and operational details.
 
@@ -127,7 +127,13 @@ Three goals shaped the process:
 	<Diagram nodes={flowNodes} edges={flowEdges} layout="top-to-bottom" />
 </div>
 
-The diagram has three "actors": the **developer** (one step), the automated **CI** (one step), and a CoE **maintainer** (three steps including the human review of the version PR). Everything below `merge to main` happens deliberately — there is no scheduled or auto-triggered publish.
+The diagram has three "actors":
+
+- **Developer** — one step (author the change + changeset).
+- **CI** — three steps (run PR checks, cut the version PR via `version @reltio packages`, publish via the auto-release on `main`).
+- **CoE maintainer** — two steps (trigger `version @reltio packages` when a release is due, review and merge the version PR).
+
+The publish itself is never triggered by hand on a normal release. The maintainer's gate is the **version-PR review** — once that PR merges, the next `branches: main` pipeline picks up the bumped versions and publishes them.
 
 ### 1. Author phase (developer)
 
@@ -157,19 +163,33 @@ The auto-generated PR carries a structured description with the list of bumped p
 - Does any `major` change have a migration note linked?
 - Are any consumer apps blocked on this release?
 
-### 3. Publish phase (maintainer)
+### 3. Publish phase (automated)
 
-After the version PR is merged, the maintainer triggers the custom pipeline **`release @reltio packages`** against `main`. It:
+After the version PR is merged into `main`, the **`branches: main`** pipeline fires like it does after any other merge: first the parallel group (`test`, `chromatic`, `vercel`), then the **`release-packages`** step. The maintainer does **not** need to trigger anything manually.
+
+The `release-packages` step:
 
 1. Installs and builds every workspace.
-2. Runs `node scripts/release.mjs`, which iterates every non-private package, checks the npm registry for each version, and publishes the ones not yet on the registry from their `dist/` directory.
+2. Runs `node scripts/release.mjs`, which iterates every non-private package, asks the npm registry whether each `<name>@<version>` is already published, and publishes the ones that are not from their `dist/` directory.
 3. Creates an annotated git tag `<package>@<version>` for each newly published version and pushes the tags.
+
+Because the script asks the registry up-front, the step is **safe to run on every main commit** — it is a ~30-second no-op on regular feature merges (no version bump → nothing to publish) and a real publish on version-PR merges. This keeps the release "live" without the maintainer having to remember a follow-up trigger.
 
 A release is considered complete when:
 
 - All affected packages are visible on the npm registry under the `latest` dist-tag.
 - The corresponding git tags exist on `origin/main`.
 - `packages/*/CHANGELOG.md` on `main` shows the new section at the top.
+
+#### When the auto-release fails
+
+If the parallel group (`test` / `chromatic` / `vercel`) fails on the version-PR merge, `release-packages` does **not** run. Investigate the failure on `main`, push a fix, and the next successful main pipeline will publish.
+
+If `release-packages` itself fails (npm registry outage, transient build flake, …), re-trigger it manually:
+
+- **Run pipeline → `custom: release @reltio packages`** against `main`.
+
+The script is idempotent — versions already on npm are skipped, only the failing ones are retried.
 
 ## Snapshot releases
 

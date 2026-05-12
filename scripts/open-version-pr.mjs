@@ -95,7 +95,9 @@ const description = [
 	"",
 	"### After merge",
 	"",
-	"Trigger **Run pipeline → `custom: release @reltio packages`** against `main` to publish the new versions to npm and create git tags.",
+	"The `branches: main` pipeline runs automatically after merge. It executes `test`, `chromatic`, `vercel`, then `release-packages` — which publishes the bumped versions to npm and creates git tags. No further manual triggers are needed.",
+	"",
+	"If the auto-release fails (npm outage, build flake, …), re-trigger it from **Run pipeline → `custom: release @reltio packages`** against `main`. The script is idempotent — already-published versions are skipped.",
 ].join("\n");
 
 const apiUrl = `https://api.bitbucket.org/2.0/repositories/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/pullrequests`;

@@ -129,6 +129,11 @@ pipelines:
           - step: *test
           - step: *chromatic
           - step: *vercel
+      # Runs on every main commit but is idempotent: `scripts/release.mjs`
+      # asks the npm registry whether each `<name>@<version>` is already
+      # published and skips it if so. On feature merges this is a ~30 s
+      # no-op; on version-PR merges it actually publishes and tags.
+      - step: *release-packages
   pull-requests:
     '**':
       - parallel:
@@ -138,12 +143,14 @@ pipelines:
   custom:
     version @reltio packages:
       # Maintainer-triggered. Run against `main`. Produces a `release/version-*`
-      # branch with version bumps + CHANGELOG entries, ready for review.
+      # branch with version bumps + CHANGELOG entries, and opens the PR
+      # automatically via the Bitbucket REST API.
       - step: *version-packages
     release @reltio packages:
-      # Maintainer-triggered. Run against `main` AFTER the `release/version-*`
-      # PR is merged. Publishes unpublished workspace versions and pushes git
-      # tags. Idempotent — already-published versions are skipped.
+      # Manual back-up of the auto-release that runs on every `main` commit.
+      # Useful when the main pipeline failed mid-publish, the npm registry
+      # was down, or you want to retry an out-of-band fix. Idempotent —
+      # already-published versions are skipped.
       - step: *release-packages
     snapshot @reltio packages:
       # Developer-triggered from any branch. Publishes a snapshot under the
