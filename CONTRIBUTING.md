@@ -211,7 +211,7 @@ The full mechanics — flow diagram, custom pipelines, semver policy, troublesho
 
 1. **Releases are not automatic on merge to `main`.** Maintainers cut releases deliberately by triggering the `version @reltio packages` → review → `release @reltio packages` custom pipelines in Bitbucket.
 2. **Your changeset becomes a release-notes entry.** Whatever you write in the summary is what consumers will read in `CHANGELOG.md`.
-3. **The release PR is reviewed.** When the maintainer runs `version @reltio packages`, it opens a `release/version-*` branch. Anyone — including you — can comment on the proposed CHANGELOG entries before publish.
+3. **The release PR is reviewed.** Running `version @reltio packages` pushes a `release/version-*` branch and automatically opens the corresponding pull request into `main`. Anyone — including you — can comment on the proposed CHANGELOG entries before publish.
 
 ### Sharing your in-progress PR with a consumer
 

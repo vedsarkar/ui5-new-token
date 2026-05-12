@@ -62,13 +62,14 @@ definitions:
           - npm ci
           - CHANGESET_BASE_REF=origin/main npm run changeset:check
     - step: &version-packages
-        name: Open release/version branch
+        name: Open release/version PR
         caches:
           - npm
           - node
         script:
-          # Maintainer-only. Consumes all pending changesets, bumps versions
-          # and writes CHANGELOG.md. Opens a branch + PR for human review.
+          # Maintainer-only. Consumes all pending changesets, bumps versions,
+          # writes CHANGELOG.md, pushes release/version-* branch, and opens
+          # the PR via Bitbucket REST API for human review.
           - git fetch --depth=200 origin main
           - git checkout main
           - git config user.name "reltio-design-bot"
@@ -85,7 +86,11 @@ definitions:
           - 'git checkout -b "$BRANCH"'
           - 'git commit -m "chore: version packages"'
           - 'git push -u origin "$BRANCH"'
-          - 'echo "Versioning branch pushed — open a PR from $BRANCH into main."'
+          - 'echo "Versioning branch $BRANCH pushed to origin."'
+          # Opens the version PR via Bitbucket REST API when $BITBUCKET_PR_TOKEN
+          # is set; otherwise prints a fallback URL and exits 0. See
+          # `guides/release-process.story.mdx` → "Maintainer setup".
+          - 'VERSION_BRANCH="$BRANCH" node scripts/open-version-pr.mjs'
     - step: &release-packages
         name: Publish @reltio packages to npm
         caches:

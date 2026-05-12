@@ -30,14 +30,14 @@ export const flowNodes = [
 		icon: "🏷️",
 		label: "`version @reltio packages`",
 		content:
-			"Maintainer-triggered custom pipeline:\n- Consumes pending changesets\n- Bumps each `packages/*/package.json`\n- Writes `CHANGELOG.md` sections\n- Opens branch `release/version-<timestamp>`",
+			"Maintainer-triggered custom pipeline:\n- Consumes pending changesets\n- Bumps each `packages/*/package.json`\n- Writes `CHANGELOG.md` sections\n- Pushes branch `release/version-<timestamp>`\n- **Opens the version PR via Bitbucket REST API**",
 	},
 	{
 		id: "version-pr",
 		icon: "👀",
 		label: "Version PR review",
 		content:
-			"The diff shows the proposed version bumps and CHANGELOG entries side by side. CoE reviews, edits summaries if needed, then merges.",
+			"PR is opened automatically by the pipeline with a list of bumped packages and post-merge instructions.\nCoE reviews the proposed bumps and CHANGELOG entries, edits summaries if needed, then merges.",
 	},
 	{
 		id: "release",
@@ -59,7 +59,7 @@ export const flowEdges = [
 	{ source: "author", target: "pr-checks", label: "PR opened" },
 	{ source: "pr-checks", target: "merge", label: "all green" },
 	{ source: "merge", target: "version", label: "maintainer cuts release" },
-	{ source: "version", target: "version-pr" },
+	{ source: "version", target: "version-pr", label: "PR auto-opened" },
 	{ source: "version-pr", target: "release", label: "PR merged" },
 	{ source: "release", target: "published" },
 ];
@@ -111,6 +111,10 @@ Three goals shaped the process:
 			<td>PR guard. Fails if source under <code>packages/*</code> changed without a changeset.</td>
 		</tr>
 		<tr>
+			<td><code>scripts/open-version-pr.mjs</code></td>
+			<td>Calls the Bitbucket REST API to open the version PR from the pipeline. Skipped gracefully when the API token is not configured.</td>
+		</tr>
+		<tr>
 			<td>Bitbucket Pipelines</td>
 			<td>Three custom pipelines: <code>version @reltio packages</code>, <code>release @reltio packages</code>, <code>snapshot @reltio packages</code></td>
 		</tr>
@@ -144,9 +148,9 @@ The pipeline runs `changeset version`, which:
 - Updates `packages/*/CHANGELOG.md` with sections grouped by bump type.
 - Deletes the consumed `.changeset/*.md` files.
 
-It then commits the result onto a new branch `release/version-<timestamp>` and pushes it.
+It then commits the result onto a new branch `release/version-<timestamp>`, pushes it to origin, and **automatically opens a pull request into `main`** through the Bitbucket REST API. This last step requires a one-time token setup — see [Maintainer setup](#maintainer-setup). Without the token the pipeline still pushes the branch and prints a fallback URL, so a maintainer can open the PR by hand without breaking the workflow.
 
-The maintainer opens a PR from that branch into `main`. **This is the release review.** Reviewers look at the diff and ask:
+The auto-generated PR carries a structured description with the list of bumped packages (parsed from the diff against `main`) and post-merge instructions. **This PR is the release review.** Reviewers look at the diff and ask:
 
 - Is the version bump correct? (Sometimes an entry is mis-classified; this is the moment to fix it.)
 - Do the CHANGELOG entries read as good release notes?
@@ -255,11 +259,55 @@ We follow [semantic versioning](https://semver.org/) strictly for `@reltio/desig
 			<td>PR guard.</td>
 		</tr>
 		<tr>
+			<td><code>scripts/open-version-pr.mjs</code></td>
+			<td>Auto-opens the version PR through the Bitbucket REST API. Degrades to a manual-fallback URL when the API token is missing.</td>
+		</tr>
+		<tr>
 			<td><code>bitbucket-pipelines.yml</code></td>
 			<td>Three release-related custom pipelines: <code>version @reltio packages</code>, <code>release @reltio packages</code>, <code>snapshot @reltio packages</code>.</td>
 		</tr>
 	</tbody>
 </table>
+
+## Maintainer setup
+
+The auto-PR step in `version @reltio packages` calls the Bitbucket REST API, which requires a **Repository Access Token** stored as a secured repository variable. This is a one-time per-repo setup — you only do it once when the platform is first wired up (or when you rotate the token).
+
+### Creating the token
+
+1. Open **Bitbucket → Repository settings → Access tokens → Create Repository Access Token.**
+2. Name: `Pipelines - Auto PR` (or any descriptive name).
+3. Scope: `pullrequest:write`. No other scopes are required — the token cannot push code, only open PRs.
+4. Copy the token. It is shown only once.
+
+### Wiring it into Pipelines
+
+1. Open **Bitbucket → Repository settings → Repository variables → Add variable.**
+2. Name: `BITBUCKET_PR_TOKEN`
+3. Value: the token from the previous step.
+4. **Tick the "Secured" checkbox.** The token is sensitive and must not appear in pipeline logs.
+
+That's it. The next run of `version @reltio packages` will detect the variable and call the REST API instead of printing a fallback URL.
+
+### Graceful degradation
+
+`scripts/open-version-pr.mjs` is intentionally non-fatal:
+
+- If `$BITBUCKET_PR_TOKEN` is unset, the script logs a fallback URL and exits 0 — the pipeline still pushes the branch and finishes green.
+- If the API responds with "pull request already exists", the script logs a link to the existing PR and exits 0.
+- If the API fails for any other reason (token revoked, Bitbucket outage, …), the script logs the error and the fallback URL, then exits 1 so the failure is visible.
+
+This means the workflow never gets stuck on auto-PR — the worst case is a maintainer opens the PR manually, which is exactly the pre-automation workflow.
+
+### Rotating the token
+
+Repository Access Tokens do not expire automatically. Rotate the token when:
+
+- The CoE maintainer who created it leaves the team.
+- Bitbucket flags the token as compromised.
+- Your team's secrets-rotation policy says it's time.
+
+To rotate: create a new token, update the value of the `BITBUCKET_PR_TOKEN` variable, then revoke the old token in the Access tokens UI.
 
 ## AI-assisted authoring
 
