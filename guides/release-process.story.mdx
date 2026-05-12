@@ -1,0 +1,352 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { Diagram } from "@/charts/Diagram";
+
+<Meta title="Guides/Release Process" />
+
+export const flowNodes = [
+	{
+		id: "author",
+		icon: "👤",
+		label: "Author the change",
+		content:
+			"Developer commits code, runs `npm run changeset` (or uses the `add-changeset` AI skill), and opens a PR.",
+	},
+	{
+		id: "pr-checks",
+		icon: "🤖",
+		label: "PR checks",
+		content:
+			"- `check-changeset` — guards that source changes carry intent\n- Tests + coverage\n- Chromatic visual regression",
+	},
+	{
+		id: "merge",
+		icon: "📥",
+		label: "Merge to `main`",
+		content:
+			"Changeset stays queued in `.changeset/`.\n**No publish happens here** — `main` only accumulates intents.",
+	},
+	{
+		id: "version",
+		icon: "🏷️",
+		label: "`version @reltio packages`",
+		content:
+			"Maintainer-triggered custom pipeline:\n- Consumes pending changesets\n- Bumps each `packages/*/package.json`\n- Writes `CHANGELOG.md` sections\n- Opens branch `release/version-<timestamp>`",
+	},
+	{
+		id: "version-pr",
+		icon: "👀",
+		label: "Version PR review",
+		content:
+			"The diff shows the proposed version bumps and CHANGELOG entries side by side. CoE reviews, edits summaries if needed, then merges.",
+	},
+	{
+		id: "release",
+		icon: "🚀",
+		label: "`release @reltio packages`",
+		content:
+			"Maintainer-triggered after merge:\n- Builds every workspace\n- `npm publish` from `packages/*/dist`\n- `git tag <name>@<version>`\n- Pushes tags",
+	},
+	{
+		id: "published",
+		icon: "📦",
+		label: "Available on npm",
+		content:
+			"`@reltio/design@x.y.z` under the `latest` dist-tag.\nGit tag visible on `origin/main`.\nConsumer apps can `npm update`.",
+	},
+];
+
+export const flowEdges = [
+	{ source: "author", target: "pr-checks", label: "PR opened" },
+	{ source: "pr-checks", target: "merge", label: "all green" },
+	{ source: "merge", target: "version", label: "maintainer cuts release" },
+	{ source: "version", target: "version-pr" },
+	{ source: "version-pr", target: "release", label: "PR merged" },
+	{ source: "release", target: "published" },
+];
+
+# Release Process
+
+This guide explains **how a code change in `reltio-design-platform` reaches the npm registry** as a new version of `@reltio/design`. It is the canonical reference for reviewers, maintainers, and consumers who want to understand when a release will happen and what each release contains.
+
+> **🎯 Key Principle:** Every PR carries its own release intent — a Changesets file describing the user-visible impact. Releases are deliberate, human-reviewed aggregations of those intents, never an automatic side effect of merging to `main`.
+
+> **For contributors authoring changesets**, the step-by-step task workflow (CLI prompts, bump-type rubric, summary examples, when to use `--empty`) lives in [`CONTRIBUTING.md`](https://bitbucket.org/reltio-ondemand/reltio-design/src/main/CONTRIBUTING.md). This guide focuses on what happens after a PR is opened — the conceptual flow, semver policy, and operational details.
+
+## Why this design
+
+Three goals shaped the process:
+
+1. **Consumers can see what changed.** Every release ships with a `CHANGELOG.md` entry per affected package, generated automatically from per-PR changesets.
+2. **Maintainers control the release cadence.** Versioning happens on-demand through a custom pipeline, not on every merge — which lets the CoE batch related changes, write proper migration notes, and time releases against consumer schedules.
+3. **AI agents and humans use the same workflow.** The `.agents/skills/add-changeset/SKILL.md` skill lets Cursor / Claude Code / Copilot CLI author changesets the same way humans do — through the same Changesets CLI, the same markdown frontmatter, the same review gates.
+
+## Tooling
+
+<table>
+	<thead>
+		<tr>
+			<th>Tool</th>
+			<th>Role</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><a href="https://github.com/changesets/changesets"><code>@changesets/cli</code></a></td>
+			<td>Records release intents, bumps versions, generates <code>CHANGELOG.md</code></td>
+		</tr>
+		<tr>
+			<td><a href="https://github.com/changesets/changesets/tree/main/packages/changelog-git"><code>@changesets/changelog-git</code></a></td>
+			<td>Changelog formatter that uses commit-level metadata (works on Bitbucket; the GitHub-only formatter would require GitHub API access)</td>
+		</tr>
+		<tr>
+			<td><code>npm workspaces</code></td>
+			<td>Single root lockfile, one <code>npm install</code> for the whole monorepo</td>
+		</tr>
+		<tr>
+			<td><code>scripts/release.mjs</code></td>
+			<td>Publishes from each workspace's <code>dist/</code> and creates git tags. Idempotent — already-published versions are skipped.</td>
+		</tr>
+		<tr>
+			<td><code>scripts/check-changeset.mjs</code></td>
+			<td>PR guard. Fails if source under <code>packages/*</code> changed without a changeset.</td>
+		</tr>
+		<tr>
+			<td>Bitbucket Pipelines</td>
+			<td>Three custom pipelines: <code>version @reltio packages</code>, <code>release @reltio packages</code>, <code>snapshot @reltio packages</code></td>
+		</tr>
+	</tbody>
+</table>
+
+## End-to-end flow
+
+<div style={{ height: 760 }}>
+	<Diagram nodes={flowNodes} edges={flowEdges} layout="top-to-bottom" />
+</div>
+
+The diagram has three "actors": the **developer** (one step), the automated **CI** (one step), and a CoE **maintainer** (three steps including the human review of the version PR). Everything below `merge to main` happens deliberately — there is no scheduled or auto-triggered publish.
+
+### 1. Author phase (developer)
+
+Each PR carries a `.changeset/*.md` file that describes the intended version bump and the consumer-visible impact. The file is the contributor's _release intent_ — a one-line declaration of "this PR should bump `@reltio/design` by X, and here's what to put in the next release notes". No version bump happens at this point; the file is queued up until a maintainer cuts the release.
+
+The CI step `check-changeset` runs on every PR and fails if `packages/*` source code changed but no new `.changeset/*.md` is committed. The check is heuristic — pure metadata changes (`package.json`, `tsconfig.json`, `README.md`) do not trigger it.
+
+> **For the day-to-day mechanics** — CLI prompts, bump-type table, good/bad summary examples, when to use `--empty` — see [`CONTRIBUTING.md` → Adding a changeset](https://bitbucket.org/reltio-ondemand/reltio-design/src/main/CONTRIBUTING.md#adding-a-changeset).
+
+### 2. Version phase (maintainer)
+
+When the CoE decides to release — typically when there's enough new content, when a consumer is blocked on a fix, or on a regular cadence — a maintainer triggers the custom pipeline **`version @reltio packages`** in Bitbucket against `main`.
+
+The pipeline runs `changeset version`, which:
+
+- Reads every `.changeset/*.md`.
+- Bumps `packages/*/package.json` versions according to the highest bump type per package.
+- Updates `packages/*/CHANGELOG.md` with sections grouped by bump type.
+- Deletes the consumed `.changeset/*.md` files.
+
+It then commits the result onto a new branch `release/version-<timestamp>` and pushes it.
+
+The maintainer opens a PR from that branch into `main`. **This is the release review.** Reviewers look at the diff and ask:
+
+- Is the version bump correct? (Sometimes an entry is mis-classified; this is the moment to fix it.)
+- Do the CHANGELOG entries read as good release notes?
+- Does any `major` change have a migration note linked?
+- Are any consumer apps blocked on this release?
+
+### 3. Publish phase (maintainer)
+
+After the version PR is merged, the maintainer triggers the custom pipeline **`release @reltio packages`** against `main`. It:
+
+1. Installs and builds every workspace.
+2. Runs `node scripts/release.mjs`, which iterates every non-private package, checks the npm registry for each version, and publishes the ones not yet on the registry from their `dist/` directory.
+3. Creates an annotated git tag `<package>@<version>` for each newly published version and pushes the tags.
+
+A release is considered complete when:
+
+- All affected packages are visible on the npm registry under the `latest` dist-tag.
+- The corresponding git tags exist on `origin/main`.
+- `packages/*/CHANGELOG.md` on `main` shows the new section at the top.
+
+## Snapshot releases
+
+Sometimes you need to share a build with a consumer **without bumping `latest`** — to verify a fix end-to-end, to demo a candidate API, or to unblock another team mid-PR.
+
+The custom pipeline **`snapshot @reltio packages`** does this. Triggered from any branch, it:
+
+- Generates a snapshot version like `0.0.0-pr-123-20260512-abcd123` using `changeset version --snapshot`.
+- Publishes each affected workspace under the dist-tag `pr-<BITBUCKET_PR_ID>` (override via the `SNAPSHOT_TAG` variable).
+- **Does not** consume changeset files, **does not** update `CHANGELOG.md`, **does not** create git tags.
+
+Consumers install snapshots with:
+
+```bash
+npm install @reltio/design@pr-123
+# or pin the exact snapshot:
+npm install @reltio/design@0.0.0-pr-123-20260512-abcd123
+```
+
+> **💡 Tip:** Production apps should always track `latest` (or a pinned semver range). Use snapshots only for transient testing — they are not deleted from npm, but they accumulate and clutter the registry. Prefer one snapshot per active testing scenario rather than dozens.
+
+## Versioning policy
+
+We follow [semantic versioning](https://semver.org/) strictly for `@reltio/design`. The mapping from changeset bump to semver:
+
+<table>
+	<thead>
+		<tr>
+			<th>Changeset bump</th>
+			<th>Examples</th>
+			<th>Effect</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>patch</code></td>
+			<td>Bug fix, perf improvement, internal refactor, doc update inside a published file</td>
+			<td><code>0.5.0 → 0.5.1</code></td>
+		</tr>
+		<tr>
+			<td><code>minor</code></td>
+			<td>New component, new prop, new variant, new export</td>
+			<td><code>0.5.1 → 0.6.0</code></td>
+		</tr>
+		<tr>
+			<td><code>major</code></td>
+			<td>Removed export, renamed prop, behaviour change, required prop, peer-dep major bump</td>
+			<td><code>0.6.0 → 1.0.0</code></td>
+		</tr>
+	</tbody>
+</table>
+
+> **⚠️ Pre-1.0 caveat.** While the package is on `0.x`, semver allows minors to contain breaking changes. In practice we still bump `major` on every breaking change (so `0.5.x → 0.6.x` if breaking) to keep the signal clear. Consumers who pin with `^` should still review release notes carefully until we ship `1.0.0`.
+
+## What lives where
+
+<table>
+	<thead>
+		<tr>
+			<th>Location</th>
+			<th>Contains</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>.changeset/*.md</code></td>
+			<td>Pending release intents. Empty between releases — full while changes accumulate.</td>
+		</tr>
+		<tr>
+			<td><code>.changeset/config.json</code></td>
+			<td>Changesets configuration. Uses <code>@changesets/changelog-git</code> for Bitbucket compatibility.</td>
+		</tr>
+		<tr>
+			<td><code>packages/*/package.json</code></td>
+			<td>Source of truth for each package's <strong>current</strong> version.</td>
+		</tr>
+		<tr>
+			<td><code>packages/*/CHANGELOG.md</code></td>
+			<td>Source of truth for each package's release history. Generated; never edit by hand.</td>
+		</tr>
+		<tr>
+			<td><code>scripts/release.mjs</code></td>
+			<td>Publish + tag script. Idempotent.</td>
+		</tr>
+		<tr>
+			<td><code>scripts/check-changeset.mjs</code></td>
+			<td>PR guard.</td>
+		</tr>
+		<tr>
+			<td><code>bitbucket-pipelines.yml</code></td>
+			<td>Three release-related custom pipelines: <code>version @reltio packages</code>, <code>release @reltio packages</code>, <code>snapshot @reltio packages</code>.</td>
+		</tr>
+	</tbody>
+</table>
+
+## AI-assisted authoring
+
+The skill [`.agents/skills/add-changeset/SKILL.md`](https://bitbucket.org/reltio-ondemand/reltio-design/src/main/.agents/skills/add-changeset/SKILL.md) tells AI agents (Cursor, Claude Code, Copilot CLI, …) how to produce a high-quality changeset for the current PR. It runs the same logic a human would:
+
+1. `git diff` against `origin/main` to see what changed
+2. Classify the bump type using a clear rubric
+3. Draft a consumer-facing summary
+4. Write `.changeset/<name>.md`
+5. Run `npm run changeset:check` to verify
+
+**Trigger phrases that activate the skill:**
+
+- "Add a changeset for this PR"
+- "What bump type is this change?"
+- "Prepare release notes for this branch"
+- "CI is failing on changeset:check"
+
+The skill is configured to **never** commit or push on the user's behalf — it produces the file and lets the human decide when to add it to the PR.
+
+## Troubleshooting
+
+### "CI is failing on `changeset:check`"
+
+Run `npm run changeset:check` locally. If it lists files under `packages/*` and there is no matching `.changeset/*.md`, add one with `npm run changeset` (or use the `add-changeset` AI skill).
+
+If the listed files are genuinely doc-only or test-only and you don't think a version bump is warranted, add an empty changeset:
+
+```bash
+npm run changeset -- --empty
+```
+
+### "I made a typo in a published CHANGELOG entry"
+
+After a release, `CHANGELOG.md` is committed history. Open a follow-up PR that edits the line in place. Don't try to revert — the version is already on npm and consumers may be reading the wrong entry.
+
+### "I published the wrong version"
+
+`scripts/release.mjs` checks the registry before publishing, so re-running the pipeline is safe. To pull a bad release:
+
+1. `npm deprecate '@reltio/design@<bad-version>' "Use <good-version> instead"` — sends a warning when consumers install the bad version. **Never unpublish.** Unpublishing breaks anyone who already installed it.
+2. Cut a fix release with a fresh patch/minor bump that supersedes the bad one.
+3. Document the issue in the release-history guide (when we add Phase 3).
+
+### "Snapshot version doesn't install"
+
+Snapshots are published under a dist-tag, not `latest`. Use the explicit dist-tag:
+
+```bash
+npm install @reltio/design@pr-123
+```
+
+If the install resolves to `latest` instead, the dist-tag may have been overwritten by a later snapshot — pin to the exact version:
+
+```bash
+npm install @reltio/design@0.0.0-pr-123-20260512-abcd123
+```
+
+## Best practices
+
+### For PR authors
+
+1. **Write the changeset before opening the PR.** It forces you to articulate the impact while the context is fresh.
+2. **Write for the consumer.** Imagine they will read your summary in a release-notes Slack message at 9 AM. Will they understand what to do?
+3. **Default to `major` when unsure between `minor` and `major`.** Better to over-warn than to ship a hidden breaking change.
+4. **Include a migration block for every `major`.** A `major` changeset without `**Migration:**` slows down every consumer.
+
+### For maintainers
+
+1. **Don't let `.changeset/` accumulate forever.** Cut a release at least every 2 weeks while there are pending changesets, even if it's only a `patch`.
+2. **Read the version PR like a release note.** That's exactly what it is. Edit summaries on the version branch before merging if anything reads poorly.
+3. **Hold `major` releases for a planned moment.** Pair them with an MDX migration guide under `guides/migrations/` and announce in `#reltio-design` before publishing.
+4. **Keep the publish pipeline boring.** If `release @reltio packages` ever needs manual fixes, that's a bug in `scripts/release.mjs` — fix the script, don't normalise workarounds.
+
+### For consumers
+
+1. **Pin with `^` while on 0.x, with the exact version while pinning a `major`.** Read every release's changelog before upgrading.
+2. **Use `overrides` only as a break-glass.** The README of `@reltio/design` explains the supported escape hatch — don't make it your default.
+3. **Subscribe to release notifications.** (Phase 3 will add a Slack webhook posting to `#reltio-design-releases`.)
+
+## Sources and References
+
+This process is informed by industry practice in modern multi-package release management:
+
+- [Changesets — official docs](https://github.com/changesets/changesets) — versioning + changelog tool used by Astro, Remix, Chakra UI, Apollo Client, SvelteKit, Biome
+- [Astro's release process write-up](https://astro.build/blog/how-we-publish-astro/) — concrete example of Changesets in production
+- [Vercel — Releasing in monorepos](https://vercel.com/docs/git/git-integration#monorepos) — patterns for npm + workspaces
+- [Bitbucket Pipelines — custom pipelines](https://support.atlassian.com/bitbucket-cloud/docs/run-pipelines-manually/) — the trigger mechanism backing `version @reltio packages` etc.
+- [Semantic Versioning 2.0.0](https://semver.org/) — the contract we honour for every published package
+- [npm — dist-tags](https://docs.npmjs.com/adding-dist-tags-to-packages) — semantics behind `latest`, `pr-<id>`, and `next`

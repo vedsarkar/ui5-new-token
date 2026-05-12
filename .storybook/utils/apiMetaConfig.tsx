@@ -150,6 +150,9 @@ export const apiMetaConfig = ({ spec, responses }: ApiMetaOptions) => {
 			// and just doubles the height of every preview. Opt every story
 			// produced by `apiMetaConfig` out of the dual-theme decorator.
 			dualTheme: false,
+			// API stories are runtime request/response panels, not visual UI —
+			// skip Chromatic visual snapshots for the entire openApi/ catalog.
+			chromatic: { disableSnapshot: true },
 			docs: {
 				source: {
 					language: "bash",

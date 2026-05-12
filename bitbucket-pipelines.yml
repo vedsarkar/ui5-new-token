@@ -1,5 +1,20 @@
 image: node:22
 
+# How releases work in this repo
+# ──────────────────────────────────────────────────────────────────────────
+# 1. Developers add a `.changeset/*.md` file in each PR that affects
+#    `@reltio/*` packages (CI guards this in the `pull-requests` pipeline).
+# 2. When the CoE is ready to cut a release, a maintainer triggers the
+#    custom pipeline `version @reltio packages` against `main`. It bumps
+#    versions and writes CHANGELOG entries, then opens a `release/version-*`
+#    branch for review.
+# 3. After that PR is merged into `main`, the custom pipeline
+#    `release @reltio packages` publishes the new versions to npm and
+#    creates annotated git tags.
+# 4. For preview / per-PR builds, the custom pipeline `snapshot @reltio
+#    packages` publishes a one-off snapshot under a `pr-<id>` dist-tag.
+# ──────────────────────────────────────────────────────────────────────────
+
 definitions:
   caches:
     node: node_modules
@@ -35,19 +50,72 @@ definitions:
           - vercel link --project=reltio-design --scope=reltio --token=${VERCEL_TOKEN} --yes
           - vercel build --scope=reltio --token=${VERCEL_TOKEN} --prod --yes
           - vercel deploy --scope=reltio --token=${VERCEL_TOKEN} --prod --prebuilt
-    - step: &publish-reltio-design
-        name: Publish @reltio/design package to NPM
+    - step: &check-changeset
+        name: Check changeset present
+        caches:
+          - npm
+          - node
+        script:
+          # Bitbucket Pipelines clones with --depth=50 by default; deepen
+          # enough so we can diff against origin/main reliably.
+          - git fetch --depth=200 origin main
+          - npm ci
+          - CHANGESET_BASE_REF=origin/main npm run changeset:check
+    - step: &version-packages
+        name: Open release/version branch
+        caches:
+          - npm
+          - node
+        script:
+          # Maintainer-only. Consumes all pending changesets, bumps versions
+          # and writes CHANGELOG.md. Opens a branch + PR for human review.
+          - git fetch --depth=200 origin main
+          - git checkout main
+          - git config user.name "reltio-design-bot"
+          - git config user.email "ui.coe@reltio.com"
+          - npm ci
+          - npm run version-packages
+          - git add -A
+          - |
+            if git diff --cached --quiet; then
+              echo "No pending changesets — nothing to version."
+              exit 0
+            fi
+          - BRANCH="release/version-$(date +%Y%m%d-%H%M%S)"
+          - git checkout -b "$BRANCH"
+          - git commit -m "chore: version packages"
+          - git push -u origin "$BRANCH"
+          - echo "Versioning branch pushed — open a PR from $BRANCH into main."
+    - step: &release-packages
+        name: Publish @reltio packages to npm
+        caches:
+          - npm
+          - node
         script:
           - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          - git config user.name "reltio-design-bot"
+          - git config user.email "ui.coe@reltio.com"
           - npm ci
           - npm run build-css
-          - cd packages/design
+          - npm run build --workspace=@reltio/design
+          - npm run release
+    - step: &snapshot-packages
+        name: Publish snapshot for current branch
+        caches:
+          - npm
+          - node
+        script:
+          # Snapshot releases use `changeset version --snapshot` to produce
+          # versions like 0.0.0-pr-123-20260512-abcd123, published under a
+          # dist-tag rather than `latest`. No git tag, no commit.
+          - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
           - npm ci
-          - npm run build
-          - cd dist
-          - if [ "${BITBUCKET_BRANCH}" != "main" ]; then npm version 0.0.0-${BITBUCKET_BUILD_NUMBER}; fi
-          - if [ "${BITBUCKET_BRANCH}" != "main" ]; then npm publish --access public --tag ${BITBUCKET_BRANCH}; fi
-          - if [ "${BITBUCKET_BRANCH}" == "main" ]; then npm publish --access public; fi
+          - 'SNAPSHOT_TAG="${SNAPSHOT_TAG:-pr-${BITBUCKET_PR_ID:-${BITBUCKET_BUILD_NUMBER}}}"'
+          - 'echo "Using snapshot dist-tag: $SNAPSHOT_TAG"'
+          - npx changeset version --snapshot "$SNAPSHOT_TAG"
+          - npm run build-css
+          - npm run build --workspace=@reltio/design
+          - npm run release:snapshot -- --tag "$SNAPSHOT_TAG"
 
 pipelines:
   branches:
@@ -59,8 +127,24 @@ pipelines:
   pull-requests:
     '**':
       - parallel:
+          - step: *check-changeset
           - step: *test
           - step: *chromatic
   custom:
-    publish @reltio/design:
-      - step: *publish-reltio-design
+    version @reltio packages:
+      # Maintainer-triggered. Run against `main`. Produces a `release/version-*`
+      # branch with version bumps + CHANGELOG entries, ready for review.
+      - step: *version-packages
+    release @reltio packages:
+      # Maintainer-triggered. Run against `main` AFTER the `release/version-*`
+      # PR is merged. Publishes unpublished workspace versions and pushes git
+      # tags. Idempotent — already-published versions are skipped.
+      - step: *release-packages
+    snapshot @reltio packages:
+      # Developer-triggered from any branch. Publishes a snapshot under the
+      # dist-tag `pr-${BITBUCKET_PR_ID}` (or build number) by default.
+      # Override by passing the SNAPSHOT_TAG variable when running.
+      - variables:
+          - name: SNAPSHOT_TAG
+            default: ""
+      - step: *snapshot-packages

@@ -6,6 +6,8 @@ export default defineMain({
 
 	stories: [
 		"../Welcome.story.mdx",
+		"../guides/**/*.story.mdx",
+		"../openApi/**/*.story.mdx",
 		"../**/*.story.mdx",
 		"../**/*.stories.@(ts|tsx)",
 	],

@@ -84,6 +84,9 @@ const meta = preview.meta({
 		// Hook stories demonstrate runtime behaviour (events, state, network),
 		// not visual UI, so the dual-theme decorator adds no value here.
 		dualTheme: false,
+		// Hooks have no visual surface — skip Chromatic snapshots for every
+		// story produced from this meta.
+		chromatic: { disableSnapshot: true },
 		docs: {
 			description: {
 				component: readme,
