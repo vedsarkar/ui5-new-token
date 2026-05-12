@@ -81,11 +81,11 @@ definitions:
               echo "No pending changesets — nothing to version."
               exit 0
             fi
-          - BRANCH="release/version-$(date +%Y%m%d-%H%M%S)"
-          - git checkout -b "$BRANCH"
-          - git commit -m "chore: version packages"
-          - git push -u origin "$BRANCH"
-          - echo "Versioning branch pushed — open a PR from $BRANCH into main."
+          - 'BRANCH="release/version-$(date +%Y%m%d-%H%M%S)"'
+          - 'git checkout -b "$BRANCH"'
+          - 'git commit -m "chore: version packages"'
+          - 'git push -u origin "$BRANCH"'
+          - 'echo "Versioning branch pushed — open a PR from $BRANCH into main."'
     - step: &release-packages
         name: Publish @reltio packages to npm
         caches:
