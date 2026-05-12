@@ -125,15 +125,20 @@ definitions:
 pipelines:
   branches:
     main:
+      # All four steps run in parallel. `release-packages` is safe to
+      # fire-and-forget alongside the rest because `scripts/release.mjs`
+      # asks the npm registry whether each `<name>@<version>` is already
+      # published and skips it if so: feature-merge commits do not bump
+      # any version, so the script is a ~30 s no-op; version-PR merges
+      # contain only JSON + markdown changes, so the parallel `test` /
+      # `chromatic` / `vercel` steps cannot detect a regression that the
+      # PR pipeline missed. Decoupling them also means a Chromatic or
+      # npm-registry blip does not block the others.
       - parallel:
           - step: *test
           - step: *chromatic
           - step: *vercel
-      # Runs on every main commit but is idempotent: `scripts/release.mjs`
-      # asks the npm registry whether each `<name>@<version>` is already
-      # published and skips it if so. On feature merges this is a ~30 s
-      # no-op; on version-PR merges it actually publishes and tags.
-      - step: *release-packages
+          - step: *release-packages
   pull-requests:
     '**':
       - parallel:

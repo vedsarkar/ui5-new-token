@@ -44,7 +44,7 @@ export const flowNodes = [
 		icon: "🚀",
 		label: "Auto-release on `main`",
 		content:
-			"The `branches: main` pipeline runs on every commit. After `test` + `chromatic` + `vercel` go green, the `release-packages` step runs:\n- Builds every workspace\n- `npm publish` from `packages/*/dist` (skips already-published versions)\n- `git tag <name>@<version>` for new versions\n- Pushes tags\n\nManual back-up: `custom: release @reltio packages` for replays.",
+			"The `branches: main` pipeline runs on every commit. Four steps fire in parallel: `test`, `chromatic`, `vercel`, and `release-packages`:\n- Builds every workspace\n- `npm publish` from `packages/*/dist` (skips already-published versions)\n- `git tag <name>@<version>` for new versions\n- Pushes tags\n\nManual back-up: `custom: release @reltio packages` for replays.",
 	},
 	{
 		id: "published",
@@ -165,7 +165,14 @@ The auto-generated PR carries a structured description with the list of bumped p
 
 ### 3. Publish phase (automated)
 
-After the version PR is merged into `main`, the **`branches: main`** pipeline fires like it does after any other merge: first the parallel group (`test`, `chromatic`, `vercel`), then the **`release-packages`** step. The maintainer does **not** need to trigger anything manually.
+After the version PR is merged into `main`, the **`branches: main`** pipeline fires like it does after any other merge. Four steps run **in parallel**:
+
+- `test` — Vitest + Playwright + interaction tests
+- `chromatic` — visual regression
+- `vercel` — deploys the Storybook docs site
+- `release-packages` — publishes new `@reltio/*` versions to npm and pushes git tags
+
+The maintainer does **not** need to trigger anything manually.
 
 The `release-packages` step:
 
@@ -173,9 +180,20 @@ The `release-packages` step:
 2. Runs `node scripts/release.mjs`, which iterates every non-private package, asks the npm registry whether each `<name>@<version>` is already published, and publishes the ones that are not from their `dist/` directory.
 3. Creates an annotated git tag `<package>@<version>` for each newly published version and pushes the tags.
 
-Because the script asks the registry up-front, the step is **safe to run on every main commit** — it is a ~30-second no-op on regular feature merges (no version bump → nothing to publish) and a real publish on version-PR merges. This keeps the release "live" without the maintainer having to remember a follow-up trigger.
+Because the script asks the registry up-front, it is **safe to run on every main commit** — a ~30-second no-op on regular feature merges (no version bump → nothing to publish) and a real publish on version-PR merges.
 
-A release is considered complete when:
+#### Why publish in parallel with tests
+
+Version-PR merges change only `packages/*/package.json` versions, `packages/*/CHANGELOG.md`, and consumed `.changeset/*.md` files. **No source code, no tests, no build config**. So a regression that the PR pipeline missed cannot suddenly appear when the version PR is merged — `test` / `chromatic` on `main` would see the same source code they saw on the PR.
+
+Running `release-packages` alongside the other three (rather than gating it on them) buys two things:
+
+- **Faster publishes.** Version-PR merges go live in roughly the time of the longest of the parallel steps, not the sum.
+- **Failure isolation.** A Chromatic flake or a Vercel outage no longer blocks `npm publish`, and vice versa — these are independent concerns.
+
+Feature-PR merges are also safe: the version on disk matches what is already on npm → `release-packages` skips publish → exits green regardless of test state.
+
+#### A release is complete when
 
 - All affected packages are visible on the npm registry under the `latest` dist-tag.
 - The corresponding git tags exist on `origin/main`.
@@ -183,13 +201,11 @@ A release is considered complete when:
 
 #### When the auto-release fails
 
-If the parallel group (`test` / `chromatic` / `vercel`) fails on the version-PR merge, `release-packages` does **not** run. Investigate the failure on `main`, push a fix, and the next successful main pipeline will publish.
-
-If `release-packages` itself fails (npm registry outage, transient build flake, …), re-trigger it manually:
+If `release-packages` itself fails (npm registry outage, transient build flake, expired token, …), re-trigger it manually:
 
 - **Run pipeline → `custom: release @reltio packages`** against `main`.
 
-The script is idempotent — versions already on npm are skipped, only the failing ones are retried.
+The script is idempotent — versions already on npm are skipped, only the failing ones are retried. The other parallel steps (`test` / `chromatic` / `vercel`) are independent — if one of them is also failing, fix it separately; it does not block publishing.
 
 ## Snapshot releases
 

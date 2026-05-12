@@ -95,7 +95,7 @@ const description = [
 	"",
 	"### After merge",
 	"",
-	"The `branches: main` pipeline runs automatically after merge. It executes `test`, `chromatic`, `vercel`, then `release-packages` — which publishes the bumped versions to npm and creates git tags. No further manual triggers are needed.",
+	"The `branches: main` pipeline runs automatically. It launches `test`, `chromatic`, `vercel`, and `release-packages` in parallel — `release-packages` publishes the bumped versions to npm and creates git tags. No further manual triggers are needed.",
 	"",
 	"If the auto-release fails (npm outage, build flake, …), re-trigger it from **Run pipeline → `custom: release @reltio packages`** against `main`. The script is idempotent — already-published versions are skipped.",
 ].join("\n");
