@@ -66,7 +66,7 @@ import {
 
 Apps install one package, follow one import convention, and always run on the UI5 version that the UI Center of Excellence (CoE) has signed off.
 
-> **Always include the `/components` subpath.** The package exposes only subpath entries — `@reltio/design/components`, `@reltio/design/charts`, `@reltio/design/utils`. A bare `import { X } from "@reltio/design"` has no `main`/`exports` target and will fail at install time. AI agents reading from the Reltio Design MCP receive the correct subpath in every snippet — match it.
+> **Always include the `/components` subpath.** The package exposes only subpath entries — `@reltio/design/components`, `@reltio/design/charts`, `@reltio/design/hooks`, `@reltio/design/utils`. A bare `import { X } from "@reltio/design"` has no `main`/`exports` target and will fail at install time. AI agents reading from the Reltio Design MCP receive the correct subpath in every snippet — match it.
 
 ## Why a single entry point
 

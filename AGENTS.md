@@ -107,11 +107,12 @@ The platform exposes a **single distribution package** to apps — `@reltio/desi
 |---|---|---|
 | Reltio app code (consumer) | **`@reltio/design/components`** — always include the subpath, never bare `@reltio/design` | `import { Button } from "@reltio/design/components"` |
 | Reltio app code, charts | `@reltio/design/charts` | `import { LineChart } from "@reltio/design/charts"` |
+| Reltio app code, hooks | `@reltio/design/hooks` | `import { useTextStream } from "@reltio/design/hooks"` |
 | Reltio app code, utilities | `@reltio/design/utils` | `import { classNames } from "@reltio/design/utils"` |
 | Reltio component author (this repo, building wrappers) | Direct UI5 imports allowed inside `components/` to wrap UI5 with MDM logic | `import { Button } from "@ui5/webcomponents-react/Button"` (only inside `components/SaveEntityButton/SaveEntityButton.tsx` etc.) |
 | Stories / docs (READMEs, MDX, snippets) | `@reltio/design/components` (MCP rewrites snippets to this path automatically) | `import { Button } from "@reltio/design/components"` |
 
-> **Why the `/components` subpath is mandatory.** The published `packages/design/package.json` exposes only subpath entries (`./components`, `./charts`, `./utils`) — there is no `main`/`exports` target for the bare package name. A `import { X } from "@reltio/design"` resolves to nothing and breaks at install time. Storybook MCP and the Manifest Debugger automatically rewrite generated snippets to the subpath via `.storybook/reltioManifestPreset.ts`, so AI agents always see the correct path.
+> **Why the `/components` subpath is mandatory.** The published `packages/design/package.json` exposes only subpath entries (`./components`, `./charts`, `./hooks`, `./utils`) — there is no `main`/`exports` target for the bare package name. A `import { X } from "@reltio/design"` resolves to nothing and breaks at install time. Storybook MCP and the Manifest Debugger automatically rewrite generated snippets to the subpath via `.storybook/reltioManifestPreset.ts`, so AI agents always see the correct path.
 
 ### When to use an endorsed UI5 component vs. build a Reltio component
 

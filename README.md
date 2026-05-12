@@ -121,7 +121,7 @@ function SaveBar() {
 }
 ```
 
-> **Always include the `/components` subpath.** The published package exposes only subpath entries (`/components`, `/charts`, `/utils`) — a bare `from "@reltio/design"` has no `main`/`exports` target and breaks at install time.
+> **Always include the `/components` subpath.** The published package exposes only subpath entries (`/components`, `/charts`, `/hooks`, `/utils`) — a bare `from "@reltio/design"` has no `main`/`exports` target and breaks at install time.
 
 If a UI5 component you need is not yet re-exported from `@reltio/design/components`, open an issue with the CoE so it can be added — do not work around the contract by installing `@ui5/webcomponents-react` directly. Read why in the [UI Architecture guide](/?path=/docs/guides-ui-architecture--docs).
 

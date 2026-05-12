@@ -34,12 +34,13 @@ function App() {
 export default App;
 ```
 
-> **Always use a subpath.** This package exposes only `/components`, `/charts`, and `/utils` entries — there is no `main`/`exports` target for the bare package name. A `import { X } from "@reltio/design"` resolves to nothing and breaks at install time.
+> **Always use a subpath.** This package exposes only `/components`, `/charts`, `/hooks`, and `/utils` entries — there is no `main`/`exports` target for the bare package name. A `import { X } from "@reltio/design"` resolves to nothing and breaks at install time.
 
 | Subpath | What's in it |
 |---|---|
 | `@reltio/design/components` | All UI components — Reltio MDM (Chat, AppSelector, Markdown, …) and endorsed UI5 (Button, Dialog, MessageStrip, …). 95% of imports go here. |
 | `@reltio/design/charts` | ECharts-based visualizations (BarChart, LineChart, GeoChart, …). |
+| `@reltio/design/hooks` | Shared React hooks (`useTextStream`, …). |
 | `@reltio/design/utils` | Shared utilities (`classNames`, `HtmlProps`, …). |
 
 ### Why a single entry point
