@@ -101,14 +101,14 @@ const description = [
 ].join("\n");
 
 const apiUrl = `https://api.bitbucket.org/2.0/repositories/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/pullrequests`;
-const auth = Buffer.from(`x-token-auth:${BITBUCKET_PR_TOKEN}`).toString(
-	"base64",
-);
 
 const response = await fetch(apiUrl, {
 	method: "POST",
 	headers: {
-		Authorization: `Basic ${auth}`,
+		// Repository Access Tokens authenticate via `Bearer <token>` on the
+		// Bitbucket REST API. `Basic x-token-auth:<token>` works for git
+		// over HTTPS but is rejected (401) by the REST API.
+		Authorization: `Bearer ${BITBUCKET_PR_TOKEN}`,
 		"Content-Type": "application/json",
 	},
 	body: JSON.stringify({
@@ -133,6 +133,18 @@ if (response.status === 400 && /already exists/i.test(errorText)) {
 	console.log(`↷ A pull request already exists for ${VERSION_BRANCH}.`);
 	console.log(`  Find it here: ${listUrl}`);
 	process.exit(0);
+}
+
+if (response.status === 401 || response.status === 403) {
+	console.error(`✗ Auth rejected by Bitbucket API (${response.status}).`);
+	console.error("  Likely causes:");
+	console.error(
+		"  - $BITBUCKET_PR_TOKEN is not a Repository Access Token (App Passwords need a different scheme).",
+	);
+	console.error("  - Token is missing the `pullrequest:write` scope.");
+	console.error("  - Token was revoked or expired.");
+	console.error(`  Open the PR manually: ${fallbackUrl}`);
+	process.exit(1);
 }
 
 let summary = `${response.status} ${response.statusText}`;
