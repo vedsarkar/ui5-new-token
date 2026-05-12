@@ -133,7 +133,13 @@ for (const { dir, manifest } of publishableWorkspaces) {
 }
 
 if (tagsPushed.length > 0) {
-	run("git push --follow-tags");
+	// `git push --follow-tags` also tries to update the branch ref, which
+	// Bitbucket rejects on protected `main` (PR-only merges). Push the tag
+	// refs explicitly instead — they live in `refs/tags/*` and are not
+	// covered by branch restrictions by default. Combining them into a
+	// single command keeps the push atomic and saves a round-trip.
+	const tagArgs = tagsPushed.map((tag) => `"${tag}"`).join(" ");
+	run(`git push origin ${tagArgs}`);
 	console.log(`\n✓ Published and tagged: ${tagsPushed.join(", ")}`);
 } else if (isSnapshot) {
 	console.log(`\n✓ Snapshot publish complete (dist-tag: ${distTag}).`);
