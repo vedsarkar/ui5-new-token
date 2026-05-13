@@ -6,6 +6,16 @@ This document provides instructions for AI agents and developers on creating and
 
 Guides in this directory help developers, designers, and stakeholders understand workflows, patterns, and best practices in the Reltio Design Platform. Each guide should be practical, actionable, and focused on a specific topic.
 
+## Product Positioning
+
+Reltio Design Platform supports Reltio product experiences across **Context Intelligence and Unified Data**. Guides must not frame Reltio as only an MDM platform unless the specific topic is explicitly MDM-specific.
+
+When writing guide titles, introductions, business-value sections, examples, or summaries:
+
+- Prefer broad language such as **Reltio applications**, **Reltio product experiences**, **Reltio business components**, **data stewardship**, **Context Intelligence**, and **Unified Data**
+- Use **MDM** only for truly domain-specific concepts such as match groups, survivorship, entity merge/unmerge, and source priority
+- Make Reltio Design MCP visible when relevant as the remote delivery channel that brings current guidance, components, examples, and API contracts into product teams' AI-agent workflows
+
 ## File Format Requirements
 
 ### File Naming

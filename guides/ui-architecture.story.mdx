@@ -4,7 +4,7 @@ import { Diagram } from "@/charts/Diagram";
 export const stackNodes = [
 	{
 		id: "apps",
-		label: "Reltio MDM apps & partners",
+		label: "Reltio apps & partners",
 		icon: "🎯",
 		content: "The consumers — products built on top of this stack",
 	},
@@ -13,7 +13,7 @@ export const stackNodes = [
 		label: "@reltio/design (this repo)",
 		icon: "🧩",
 		content:
-			"- Single endpoint for everything an app needs\n- Imported via subpaths: `/components`, `/charts`, `/utils`\n- MDM business components (Chat, AppSelector, Details, …)\n- Curated, endorsed UI5 components (Button, Dialog, MessageStrip, …) re-exported from the pinned UI5 version\n- Charts (ECharts)\n- Hooks & Reltio API utilities",
+			"- Single endpoint for everything an app needs\n- Imported via subpaths: `/components`, `/charts`, `/utils`\n- Reltio business components (Chat, AppSelector, Details, …)\n- Curated, endorsed UI5 components (Button, Dialog, MessageStrip, …) re-exported from the pinned UI5 version\n- Charts (ECharts)\n- Hooks & Reltio API utilities",
 	},
 	{
 		id: "ui5",
@@ -44,7 +44,7 @@ export const stackEdges = [
 
 This guide explains how the UI layer of the Reltio Design Platform is structured, where each kind of code belongs, and — most importantly — **why every Reltio application should depend on `@reltio/design` only, never on `@ui5/*` packages directly**. Read this first when joining the project; every other component and customization guide assumes the model described here.
 
-> **🎯 Key Principle:** `@reltio/design` is the single endorsed entry point for every UI surface in a Reltio app. It re-exports a curated set of SAP Fiori (UI5) components, MDM business components, and Reltio primitives — all pinned to the exact versions the UI Center of Excellence has tested.
+> **🎯 Key Principle:** `@reltio/design` is the single endorsed entry point for every UI surface in a Reltio app. It re-exports a curated set of SAP Fiori (UI5) components, Reltio business components, and Reltio primitives — all pinned to the exact versions the UI Center of Excellence has tested.
 
 > **💡 Terminology — Fiori vs. Horizon:** This platform builds on **SAP Fiori** — SAP's design system for business applications (UX principles, patterns, floorplans, components). Visually, we use **SAP Horizon**, the current Fiori theme that ships the `--sap*` design tokens, the `horizon-light` / `horizon-dark` themes, and the SAP 72 typeface. When this documentation says "Fiori" it means the design system; when it says "Horizon" it means the visual layer (tokens, theme, fonts).
 
@@ -59,7 +59,7 @@ Every UI surface a Reltio app renders comes from one place — the `@reltio/desi
 ```tsx
 import {
 	Button,                  // ← endorsed UI5 component (Avatar, Dialog, MessageStrip, …)
-	Chat, AppSelector,       // ← Reltio MDM business components
+	Chat, AppSelector,       // ← Reltio business components
 	Markdown, Skeleton,      // ← Reltio primitives that fill UI5 gaps
 } from "@reltio/design/components";
 ```
@@ -89,7 +89,7 @@ When the convention is _"import only from `@reltio/design/components`"_, every c
 
 ### 3. Curation = "if it's in `@reltio/design`, it's endorsed"
 
-UI5 ships ~163 React components plus another ~28 React-only complex blocks (`AnalyticalTable`, `ObjectPage`, `MessageBox`, `FilterBar`, …). Not all are appropriate for the Reltio MDM context. The CoE picks what's right, documents Reltio-specific edge cases stories that SAP did not cover, and writes the right-time-to-use guidance (e.g., when to use `design="Emphasized"` vs `design="Positive"` for an MDM workflow). The endorsed surface is — by definition — the surface re-exported from `@reltio/design`. Anything not re-exported is not endorsed for Reltio use.
+UI5 ships ~163 React components plus another ~28 React-only complex blocks (`AnalyticalTable`, `ObjectPage`, `MessageBox`, `FilterBar`, …). Not all are appropriate for every Reltio product context. The CoE picks what's right, documents Reltio-specific edge cases stories that SAP did not cover, and writes the right-time-to-use guidance (e.g., when to use `design="Emphasized"` vs `design="Positive"` for a product workflow). The endorsed surface is — by definition — the surface re-exported from `@reltio/design`. Anything not re-exported is not endorsed for Reltio use.
 
 If an app needs a UI5 component that isn't yet endorsed, the path is to file an issue against this repo — CoE either adds proper Reltio docs + tests for it (and re-exports), or explains why it's not appropriate for Reltio and suggests an alternative. **Do not bypass by installing UI5 directly.**
 
@@ -111,7 +111,7 @@ But every override pauses the protections this model provides — the overridden
 |---|---|
 | You need a button | `import { Button } from "@reltio/design/components"`. Same component, same props, same SAP Fiori docs apply. |
 | You need a UI5 component that's not in `@reltio/design` yet | Open an issue / Slack the CoE. Don't `npm install @ui5/webcomponents-react` as a workaround. |
-| You need to compose UI5 with Reltio MDM business logic | Build a Reltio business component under `components/` (see [Component Typing](?path=/docs/guides-component-typing--docs)). |
+| You need to compose UI5 with Reltio product logic | Build a Reltio business component under `components/` (see [Component Typing](?path=/docs/guides-component-typing--docs)). |
 | You need a primitive that UI5 doesn't ship at all | Build a Reltio primitive under `components/` (see [Chat](/?path=/docs/components-chat--docs) as an example). |
 | You want to restyle a UI5 component | Use `--sap*` design tokens or CSS Parts (see [Component Customization](?path=/docs/guides-component-customization--docs)). Do **not** wrap to restyle. |
 | You hit a UI5 breaking change in a new release | Don't worry about it until CoE ships a new `@reltio/design` with the migration. |
@@ -133,7 +133,7 @@ UI5 React already covers the vast majority of generic UI needs. This repo focuse
 	<tbody>
 		<tr>
 			<td><code>components/</code></td>
-			<td>MDM business components (compose UI5 + business logic) and Reltio primitives (only when UI5 has a gap)</td>
+			<td>Reltio business components (compose UI5 + product logic) and Reltio primitives (only when UI5 has a gap)</td>
 			<td><code>Chat</code>, <code>AppSelector</code>, <code>Markdown</code>, <code>Details</code>, <code>TextArea</code>, <code>Skeleton</code>, <code>ErrorBoundary</code></td>
 		</tr>
 		<tr>
@@ -191,8 +191,8 @@ Walk through this before adding anything new:
 			<td>If endorsed (re-exported from <code>@reltio/design</code>): import directly. If not endorsed yet: open an issue with the CoE so a documentation-only directory + endorsement is added. See <a href="#1-endorsed-ui5-component--no-reltio-component-needed">Example 1</a>.</td>
 		</tr>
 		<tr>
-			<td>You need to compose several UI5 components with Reltio MDM business logic (entity profile, match group, source priority, MDM workflow, …)</td>
-			<td>Build a Reltio <strong>business component</strong> under <code>components/</code>. See <a href="#2-reltio-business-component--composes-ui5-with-mdm-logic">Example 2</a>.</td>
+			<td>You need to compose several UI5 components with Reltio product logic (entity profile, relationship view, source priority, domain workflow, context intelligence experience, …)</td>
+			<td>Build a Reltio <strong>business component</strong> under <code>components/</code>. See <a href="#2-reltio-business-component--composes-ui5-with-reltio-product-logic">Example 2</a>.</td>
 		</tr>
 		<tr>
 			<td>You need a product-agnostic primitive that UI5 simply does not provide (chat scrollback, markdown renderer, …)</td>
@@ -249,9 +249,9 @@ import "@ui5/webcomponents-icons/dist/save.js";
 
 No spec, no wrapper, no CSS module. Anything beyond this is over-engineering.
 
-### 2. Reltio business component — composes UI5 with MDM logic
+### 2. Reltio business component — composes UI5 with Reltio product logic
 
-A button that knows how to save a Reltio entity by ID. The MDM logic justifies the wrapper:
+A button that knows how to save a Reltio entity by ID. The Reltio product logic justifies the wrapper:
 
 ```tsx
 // components/SaveEntityButton/SaveEntityButton.tsx

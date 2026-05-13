@@ -51,7 +51,7 @@ export { Switch } from "@ui5/webcomponents-react/Switch";
 export { TimePicker } from "@ui5/webcomponents-react/TimePicker";
 export { Token } from "@ui5/webcomponents-react/Token";
 
-// Reltio MDM components & primitives.
+// Reltio business components & primitives.
 export * from "./AppSelector";
 export * from "./Chat";
 export * from "./Details";

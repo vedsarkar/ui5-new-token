@@ -1,6 +1,6 @@
 # Reltio Design Platform
 
-Reltio Design Platform is the UI development, testing, and documentation ecosystem for the Reltio MDM product suite. It builds on the SAP Fiori design system (Horizon visual theme) and is delivered to apps as a single npm package — **`@reltio/design`** — which re-exports a curated set of [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/) components alongside Reltio MDM business components, charts, hooks, and utilities. UI5 itself is a transitive, pinned dependency: apps install `@reltio/design` and never touch `@ui5/*` directly.
+Reltio Design Platform is the UI development, testing, and documentation ecosystem for Reltio product experiences across Context Intelligence and Unified Data. It builds on the SAP Fiori design system (Horizon visual theme) and is delivered to apps as a single npm package — **`@reltio/design`** — which re-exports a curated set of [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/) components alongside Reltio business components, charts, hooks, and utilities. UI5 itself is a transitive, pinned dependency: apps install `@reltio/design` and never touch `@ui5/*` directly.
 
 ## 📋 Table of Contents
 
@@ -22,26 +22,26 @@ Reltio Design Platform is the UI development, testing, and documentation ecosyst
 
 Reltio Design Platform provides:
 
-- 📦 **Single distribution package** — `@reltio/design` is the only thing apps install. Re-exports endorsed UI5 components (Button, Avatar, Dialog, MessageStrip, Popover, ...) plus all Reltio MDM components.
+- 📦 **Single distribution package** — `@reltio/design` is the only thing apps install. Re-exports endorsed UI5 components (Button, Avatar, Dialog, MessageStrip, Popover, ...) plus all Reltio components.
 - 🔒 **Pinned UI5 version** — `@ui5/webcomponents-react` is a transitive dependency at an exact version the UI Center of Excellence has run through Chromatic visual regression, accessibility, and interaction tests. Apps inherit the tested version automatically.
-- 🎯 **MDM business components** — Reltio-specific compositions on top of UI5 (Chat, AppSelector, Markdown, Details, ...)
+- 🎯 **Reltio business components** — Reltio-specific compositions on top of UI5 (Chat, AppSelector, Markdown, Details, ...)
 - 📊 **Charts** — ECharts-based visualizations under `charts/`
 - 🎨 **SAP Horizon design tokens** — generated into static `public/variables.css`, `public/fonts.css`, `public/fonts/*.woff2`; consumed via the `data-theme` attribute
 - 📚 **Storybook documentation** — stories double as visual tests, accessibility checks, and live API references
-- 🔌 **MCP-ready** — every component, story, and design token is discoverable by AI agents through the Reltio Design MCP server
+- 🔌 **MCP-ready** — every component, story, design token, guide, and API contract is discoverable by AI agents through the Reltio Design MCP server
 
 ## Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│  Reltio MDM apps & partners                                  │
+│  Reltio apps & partners                                      │
 │   import { Button, Chat, MessageStrip, ... }                 │
 │     from "@reltio/design/components";                        │
 └──────────────────────────────────────────────────────────────┘
                               ▲
 ┌─────────────────────────────┴────────────────────────────────┐
 │  @reltio/design — single endorsed entry point                │
-│   • Reltio MDM components (Chat, AppSelector, Details, ...)  │
+│   • Reltio components (Chat, AppSelector, Details, ...)      │
 │   • Reltio primitives (Markdown, Skeleton, ErrorBoundary)    │
 │   • Charts (ECharts)                                         │
 │   • Hooks & Reltio API utilities                             │
@@ -62,7 +62,7 @@ Reltio Design Platform provides:
 └──────────────────────────────────────────────────────────────┘
 ```
 
-> **Compose, don't reinvent.** If `@reltio/design` already re-exports a UI5 component that fits, use it directly. Build a Reltio component only when there is real MDM business value to add. See the [UI Architecture guide](/?path=/docs/guides-ui-architecture--docs) for the full rationale on why everything goes through a single entry point.
+> **Compose, don't reinvent.** If `@reltio/design` already re-exports a UI5 component that fits, use it directly. Build a Reltio component only when there is real Reltio product value to add. See the [UI Architecture guide](/?path=/docs/guides-ui-architecture--docs) for the full rationale on why everything goes through a single entry point.
 
 ## Getting Started
 
@@ -125,7 +125,7 @@ function SaveBar() {
 
 If a UI5 component you need is not yet re-exported from `@reltio/design/components`, open an issue with the CoE so it can be added — do not work around the contract by installing `@ui5/webcomponents-react` directly. Read why in the [UI Architecture guide](/?path=/docs/guides-ui-architecture--docs).
 
-### Using Reltio MDM components
+### Using Reltio components
 
 Reltio components live behind the same subpath — same import:
 
@@ -159,7 +159,7 @@ import { Chat, type ChatProps } from "@reltio/design/components";
 When designing for Reltio:
 
 1. Use the official [SAP Fiori UI Kit](https://www.sap.com/design-system/fiori-design-web/resources/libraries/) for base components
-2. Reuse Reltio business components (Storybook → Components) for MDM patterns
+2. Reuse Reltio business components (Storybook → Components) for product patterns
 3. Reference colors only through SAP Figma variables — they map 1:1 to `--sap*` CSS tokens at build time
 4. Verify the design under both themes before handoff
 
@@ -185,7 +185,7 @@ reltio-design/
 
 ### Creating a new Reltio component
 
-> **Step 0 — check `@reltio/design` first.** Before creating anything here, check whether the package already re-exports a UI5 component that fits the design (browse Storybook → Components, or use the [Reltio Design MCP](/?path=/docs/guides-reltio-design-mcp--docs)). If yes, just import it. If a UI5 component you need is not yet re-exported, open an issue with the CoE so it gets endorsed. Wrap only when there is real MDM/business value to add (entity profile, match group, source priority, MDM workflow, …).
+> **Step 0 — check `@reltio/design` first.** Before creating anything here, check whether the package already re-exports a UI5 component that fits the design (browse Storybook → Components, or use the [Reltio Design MCP](/?path=/docs/guides-reltio-design-mcp--docs)). If yes, just import it. If a UI5 component you need is not yet re-exported, open an issue with the CoE so it gets endorsed. Wrap only when there is real Reltio product value to add (domain workflow, entity profile, relationship view, source priority, context intelligence experience, …).
 
 1. **Create the component directory:**
 
@@ -201,7 +201,7 @@ mkdir -p components/MyComponent
 - `MyComponent.stories.tsx` — Storybook stories
 - `index.ts` — public API
 
-3. **Example — wrapping a UI5 Button with MDM logic:**
+3. **Example — wrapping a UI5 Button with Reltio product logic:**
 
 `MyComponent.types.ts`:
 ```ts
@@ -324,7 +324,7 @@ npm run deploy
 
 ### Pre-PR Checklist
 
-- [ ] UI5 components used directly when possible; Reltio wrappers only for real MDM/business value
+- [ ] UI5 components used directly when possible; Reltio wrappers only for real Reltio product value
 - [ ] Code follows project structure (`.tsx` + `.types.ts` + `.module.css` + `.stories.tsx` + `index.ts`)
 - [ ] Stories added/updated in Storybook (one variant per story)
 - [ ] Component verified under both `horizon-light` and `horizon-dark`
@@ -340,7 +340,7 @@ This project is equipped with MCP (Model Context Protocol) servers for AI-assist
 
 | Server | URL | Purpose |
 |--------|-----|---------|
-| **Reltio Design MCP** | `http://localhost:6006/mcp` | Component docs, stories, API references (powered by Storybook MCP) |
+| **Reltio Design MCP** | `http://localhost:6006/mcp` | Component docs, stories, guides, API contracts, and design-system guidance (powered by Storybook MCP) |
 | **Atlassian MCP** | `https://mcp.atlassian.com/v1/mcp/authv2` | Jira and Confluence access |
 | **Figma MCP** | `https://mcp.figma.com/mcp` | Design context from Reltio Design System |
 
@@ -354,7 +354,7 @@ This project is equipped with MCP (Model Context Protocol) servers for AI-assist
 
 ### Remote MCP (for external consumers)
 
-The published Reltio Design MCP is available at `https://reltio.design/mcp` for use in downstream application repositories and third-party AI agents.
+The published Reltio Design MCP is available at `https://reltio.design/mcp` for use in downstream application repositories and third-party AI agents. Connect it once in a product repository so AI-assisted workflows can consume the latest Reltio Design guidance, components, examples, and API contracts as the platform evolves.
 
 ## Useful Links
 

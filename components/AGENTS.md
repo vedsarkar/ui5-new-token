@@ -1,10 +1,12 @@
 # Component Development Guidelines
 
-This directory contains **Reltio-specific** components — MDM business components and primitives built on top of [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/). It is not a duplicate of UI5: every component here either composes several UI5 parts with MDM business logic, or fills a primitive gap that UI5 does not cover.
+This directory contains **Reltio-specific** components — business components and primitives built on top of [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/). It is not a duplicate of UI5: every component here either composes several UI5 parts with Reltio product logic, or fills a primitive gap that UI5 does not cover.
+
+Reltio is broader than a traditional MDM platform. When naming, documenting, or designing components, frame reusable work around **Context Intelligence and Unified Data** unless the component is explicitly tied to an MDM-only concept. Use MDM language only for domain-specific cases such as match groups, survivorship, entity merge/unmerge, source priority, or similar workflows.
 
 This is also where the **endorsed UI5 surface** lives as documentation-only directories (e.g. `components/Button/`) — README + types re-export + stories + auto-generated `schema.json`, no runtime code. Those directories are what `@reltio/design` re-exports for app teams.
 
-> **Compose, don't reinvent.** If UI5 already ships a component that fits the design, surface it as an endorsed re-export from `@reltio/design`. Wrap with custom code only when there is real Reltio-specific value to add (MDM business logic or filling a UI5 primitive gap).
+> **Compose, don't reinvent.** If UI5 already ships a component that fits the design, surface it as an endorsed re-export from `@reltio/design`. Wrap with custom code only when there is real Reltio-specific value to add (Reltio product logic or filling a UI5 primitive gap).
 
 > **Two import contexts, two conventions.** Inside this repo (Reltio component authors), we import UI5 directly from `@ui5/webcomponents-react/X` — we are the wrappers. In app code (consumers) and every public-facing example (README, stories, MDX), the convention is `import { X } from "@reltio/design/components"` — so apps inherit the pinned, CoE-tested UI5 version transitively. See the [UI Architecture guide](/?path=/docs/guides-ui-architecture--docs) for the rationale.
 
@@ -26,8 +28,8 @@ Does @ui5/webcomponents-react already ship a component that fits the design?
 │                   to packages/design/components.ts and
 │                   components/index.ts. The component is now endorsed.
 │
-└── No → Do you need to compose several UI5 components with Reltio business logic
-         (entity profile, match group, source priority, MDM workflow ...)?
+└── No → Do you need to compose several UI5 components with Reltio product logic
+         (entity profile, relationship view, source priority, context intelligence workflow ...)?
          ├── Yes → Build a Reltio business component here.
          │
          └── No → Is it a product-agnostic primitive that UI5 simply does not provide?

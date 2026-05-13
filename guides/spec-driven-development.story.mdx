@@ -6,7 +6,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 Welcome to the Reltio Design Platform's spec-driven development workflow. This guide explains how we use **OpenSpec (OPSX)** with **Claude Skills** to ensure predictable, high-quality development of Reltio components. The skills work across both **Cursor IDE** and **Claude Code**, giving every AI agent the same workflow capabilities.
 
-> **Compose, don't reinvent.** Reltio Design builds on `@ui5/webcomponents-react`. Most spec-driven changes here describe **MDM business components** and **primitives** that compose UI5 components with Reltio-specific data, behavior, and semantics — not from-scratch reimplementations of base controls. See the [UI Architecture guide](?path=/docs/guides-ui-architecture--docs) for the layering rationale.
+> **Compose, don't reinvent.** Reltio Design builds on `@ui5/webcomponents-react`. Most spec-driven changes here describe **Reltio business components** and **primitives** that compose UI5 components with Reltio-specific data, behavior, and semantics — not from-scratch reimplementations of base controls. See the [UI Architecture guide](?path=/docs/guides-ui-architecture--docs) for the layering rationale.
 
 ## What is Spec-Driven Development?
 
@@ -132,7 +132,7 @@ This makes OpenSpec suitable for any project — not just this design platform. 
 			<td>Direct usage of a UI5 component without wrapping</td>
 		</tr>
 		<tr>
-			<td>MDM-specific compositions on top of UI5</td>
+			<td>Reltio-specific compositions on top of UI5</td>
 			<td>Visual restyling of UI5 via tokens / <code>::part()</code></td>
 		</tr>
 	</tbody>
@@ -197,7 +197,7 @@ One of the most important principles in spec-driven development is **decompositi
 
 ### Real Example: Building a Match Group Resolution Page
 
-> Imagine an MDM screen that lets a steward review duplicate entity candidates, compare attributes side-by-side, pick a survivor, and merge.
+> Imagine a data stewardship screen that lets a user review duplicate entity candidates, compare attributes side-by-side, pick a survivor, and merge.
 
 **❌ Don't:** Create one massive change
 
@@ -252,7 +252,7 @@ Then create changes in order, from specific to general:
 - Reviewed in minutes
 - Tested independently
 - Deployed incrementally
-- Reused in other MDM screens
+- Reused in other data stewardship screens
 
 ### Benefits for Developers
 

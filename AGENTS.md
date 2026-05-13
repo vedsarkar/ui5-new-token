@@ -4,7 +4,18 @@ This file provides guidance to AI agents (Claude Code, Cursor, Copilot, etc.) wh
 
 ## Project Overview
 
-**Reltio Design Platform** is a comprehensive UI development, testing, and documentation ecosystem for the Reltio product suite. It serves as a unified platform enabling multiple teams to build, test, document, and distribute MDM-specific UI components and applications while maintaining consistency, quality, and embeddability across the SAP ecosystem.
+**Reltio Design Platform** is a comprehensive UI development, testing, and documentation ecosystem for the Reltio product suite. It serves as a unified platform enabling multiple teams to build, test, document, and distribute Reltio product experiences while maintaining consistency, quality, and embeddability across the SAP ecosystem.
+
+### Product Positioning
+
+Reltio is broader than a traditional MDM platform. The current product direction should be described as **Context Intelligence and Unified Data**. MDM remains an important domain and source of examples, but agents must not frame Reltio Design Platform as MDM-only unless the specific component, API, or workflow is explicitly MDM-specific.
+
+When writing documentation, technical guides, component READMEs, examples, Storybook copy, specs, or release notes:
+
+- Prefer broad language such as **Reltio applications**, **Reltio product experiences**, **Reltio business components**, **data stewardship**, **Context Intelligence**, and **Unified Data**
+- Use **MDM** only when the exact feature or domain concept is actually MDM-specific (for example match groups, survivorship, entity merge/unmerge, source priority)
+- Avoid headlines, taglines, and overview copy that imply the platform is only for MDM apps
+- Treat Reltio Design Platform as a cross-product foundation for SAP-aligned UI, API-first product contracts, and AI-native delivery through Reltio Design MCP
 
 ### Mission
 
@@ -19,7 +30,7 @@ Eliminate UI fragmentation across products while accelerating development of new
 
 ### What You'll Find Here
 
-- **Reltio MDM Components** — business components and primitives built on top of UI5
+- **Reltio Business Components** — product-specific components and primitives built on top of UI5
 - **Charts** — ECharts-based visualizations
 - **Design Tokens & Fonts** — SAP Horizon tokens and SAP 72 fonts shipped as static CSS
 - **Storybook Stories** — documentation + tests + demos + specifications in one artifact
@@ -35,7 +46,7 @@ Eliminate UI fragmentation across products while accelerating development of new
 ## Tech Stack
 
 - **Framework**: React 18+
-- **Single distribution package**: [`@reltio/design`](packages/design/) — the only thing a Reltio app installs. Re-exports an endorsed subset of SAP Fiori (UI5) components plus all Reltio MDM components, charts, hooks, and utilities. Pinned to an exact UI5 version that the UI Center of Excellence has tested.
+- **Single distribution package**: [`@reltio/design`](packages/design/) — the only thing a Reltio app installs. Re-exports an endorsed subset of SAP Fiori (UI5) components plus all Reltio business components, charts, hooks, and utilities. Pinned to an exact UI5 version that the UI Center of Excellence has tested.
 - **UI foundation (transitive, pinned)**: [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/) — bundled with `@reltio/design` at an exact version (currently `2.21.3`). Apps never install it directly.
 - **Icons**: [`@ui5/webcomponents-icons`](https://sap.github.io/ui5-webcomponents/) — SAP Fiori icon set. Apps load icons as side-effect imports (`import "@ui5/webcomponents-icons/dist/save.js"`); the package itself comes transitively via `@reltio/design`.
 - **Design tokens & fonts**: [`@sap-theming/theming-base-content`](https://github.com/SAP/theming-base-content) — generated into static `public/variables.css`, `public/fonts.css`, `public/fonts/*.woff2`
@@ -69,18 +80,18 @@ npm run coverage          # Run tests with coverage
 
 ## UI Architecture
 
-The platform exposes a **single distribution package** to apps — `@reltio/design` — that bundles every UI surface they need: Reltio MDM components, Reltio primitives, charts, hooks, and a curated set of endorsed SAP Fiori (UI5) components. UI5 React itself is a transitive dependency at a pinned version.
+The platform exposes a **single distribution package** to apps — `@reltio/design` — that bundles every UI surface they need: Reltio business components, Reltio primitives, charts, hooks, and a curated set of endorsed SAP Fiori (UI5) components. UI5 React itself is a transitive dependency at a pinned version.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│  Reltio MDM apps & partners                                  │
+│  Reltio apps & partners                                      │
 │   import { Button, Chat, MessageStrip, ... }                 │
 │     from "@reltio/design/components";                        │
 └──────────────────────────────────────────────────────────────┘
                               ▲
 ┌─────────────────────────────┴────────────────────────────────┐
 │  @reltio/design (this repo) — the single endorsed entry point│
-│   • Reltio MDM components (Chat, AppSelector, Details, ...)  │
+│   • Reltio business components (Chat, AppSelector, Details)  │
 │   • Reltio primitives (Markdown, Skeleton, ErrorBoundary)    │
 │   • Charts (ECharts)                                         │
 │   • Hooks & Reltio API utilities                             │
@@ -109,7 +120,7 @@ The platform exposes a **single distribution package** to apps — `@reltio/desi
 | Reltio app code, charts | `@reltio/design/charts` | `import { LineChart } from "@reltio/design/charts"` |
 | Reltio app code, hooks | `@reltio/design/hooks` | `import { useTextStream } from "@reltio/design/hooks"` |
 | Reltio app code, utilities | `@reltio/design/utils` | `import { classNames } from "@reltio/design/utils"` |
-| Reltio component author (this repo, building wrappers) | Direct UI5 imports allowed inside `components/` to wrap UI5 with MDM logic | `import { Button } from "@ui5/webcomponents-react/Button"` (only inside `components/SaveEntityButton/SaveEntityButton.tsx` etc.) |
+| Reltio component author (this repo, building wrappers) | Direct UI5 imports allowed inside `components/` to wrap UI5 with Reltio product logic | `import { Button } from "@ui5/webcomponents-react/Button"` (only inside `components/SaveEntityButton/SaveEntityButton.tsx` etc.) |
 | Stories / docs (READMEs, MDX, snippets) | `@reltio/design/components` (MCP rewrites snippets to this path automatically) | `import { Button } from "@reltio/design/components"` |
 
 > **Why the `/components` subpath is mandatory.** The published `packages/design/package.json` exposes only subpath entries (`./components`, `./charts`, `./hooks`, `./utils`) — there is no `main`/`exports` target for the bare package name. A `import { X } from "@reltio/design"` resolves to nothing and breaks at install time. Storybook MCP and the Manifest Debugger automatically rewrite generated snippets to the subpath via `.storybook/reltioManifestPreset.ts`, so AI agents always see the correct path.
@@ -120,7 +131,7 @@ The platform exposes a **single distribution package** to apps — `@reltio/desi
 |-----------|-----------|
 | `@reltio/design` re-exports a UI5 component that fits the design as-is | Import from `@reltio/design`. Do not wrap. |
 | You need a UI5 component that's not yet re-exported | Open an issue with the CoE so a documentation-only directory + endorsement is added. Do **not** install `@ui5/webcomponents-react` directly. |
-| You need to compose several UI5 components with MDM business logic (entity profile, match group, source priority, ...) | Build a Reltio **business component** under `components/`. |
+| You need to compose several UI5 components with Reltio product logic (entity profile, relationship view, source priority, context intelligence workflow, ...) | Build a Reltio **business component** under `components/`. |
 | You need a primitive that UI5 does not provide and that is product-agnostic | Build a Reltio **primitive** under `components/`. |
 | You need to restyle a UI5 component | Use `--sap*` tokens (preferred) or UI5's CSS Parts (`::part()`). Do not wrap just for styling. |
 
@@ -330,7 +341,7 @@ npx skills remove <name>        # Remove a skill
 
 ## Pre-Commit Checklist
 
-- UI5 components used directly when possible; Reltio wrappers only for real MDM/business value
+- UI5 components used directly when possible; Reltio wrappers only for real Reltio product value
 - Types in `.types.ts` file using `type` keyword
 - All className attributes use `classNames()` utility
 - Colors use SAP Horizon `--sap*` tokens, no hardcoded hex values
