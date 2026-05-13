@@ -16,12 +16,11 @@
 		"access": "public"
 	},
 	"peerDependencies": {
-		"react": ">=17 <20",
-		"react-dom": ">=17 <20"
+		"react": "^18 || ^19",
+		"react-dom": "^18 || ^19"
 	},
 	"dependencies": {
 		"@dagrejs/dagre": "^3.0.0",
-		"@storybook/mcp": "^0.6.1",
 		"@ui5/webcomponents": "2.21.1",
 		"@ui5/webcomponents-fiori": "2.21.1",
 		"@ui5/webcomponents-icons": "2.21.1",
@@ -30,7 +29,6 @@
 		"d3-scale": "^4.0.2",
 		"echarts": "^6.0.0",
 		"markdown-to-jsx": "^9.7.3",
-		"rc-tree": "^5.13.1",
 		"style-inject": "^0.3.0"
 	},
 	"scripts": {
