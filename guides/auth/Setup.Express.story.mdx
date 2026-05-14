@@ -1,0 +1,240 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/Auth/Setup Express" />
+
+# Setup — Express
+
+This guide walks through wiring `@reltio/auth/express` into an Express application from scratch. Use it when your BFF runs on Express directly, or in hybrid setups where a Next.js application runs behind a custom Express server (like `admin-tools`).
+
+For pure Next.js App Router applications, follow the [Setup → Next.js App Router](?path=/docs/guides-auth-setup-next-js-app-router--docs) guide instead.
+
+## 1. Install
+
+```bash
+npm install @reltio/auth express
+```
+
+`express` is an **optional peer dependency** of `@reltio/auth` — install it because your application uses it directly, not because `@reltio/auth` requires it.
+
+## 2. Configure environment variables
+
+`@reltio/auth` accepts four required configuration values. The recommended source is environment variables (or the [`config`](https://www.npmjs.com/package/config) package reading from per-environment YAML/JSON files).
+
+```bash
+# .env.local
+OAUTH_PATH=https://auth-stg.reltio.com/oauth
+LOGIN_PATH=https://login-stg.reltio.com
+CLIENT_ID=your-client-id
+CLIENT_SECRET=your-client-secret
+```
+
+Validate these values at the boundary of your application. `@reltio/auth` does not perform runtime null/empty-string validation — TypeScript enforces presence at compile time, and consumers handle untyped sources themselves.
+
+## 3. Mount the router
+
+```ts
+// server/auth.ts
+import { createExpressAuth } from "@reltio/auth/express";
+
+export const authRouter = createExpressAuth({
+	oauthPath: process.env.OAUTH_PATH!,
+	loginPath: process.env.LOGIN_PATH!,
+	clientId: process.env.CLIENT_ID!,
+	clientSecret: process.env.CLIENT_SECRET!,
+	secure: process.env.NODE_ENV === "production",
+});
+```
+
+```ts
+// server/app.ts
+import express from "express";
+import { authRouter } from "./auth";
+
+const app = express();
+app.use("/auth", authRouter);
+```
+
+The router is mount-point agnostic — `/auth`, `/api/auth`, or any other path works. The five endpoints (`/login`, `/logout`, `/callback`, `/refreshToken`, `/checkToken`) are now live underneath your mount point.
+
+## 4. Configure the OAuth callback URL
+
+The Reltio Login Page redirects to a callback URL that you registered when provisioning your OAuth client. The callback path is `<mount>/callback` — for example, if you mounted under `/auth`, the registered redirect URI must be `https://your-app.example.com/auth/callback`.
+
+`@reltio/auth` discovers the callback URL automatically from the request — there is no separate `callbackUrl` config to set on the package side.
+
+## 5. (Optional) Customise the post-login redirect
+
+After a successful authorization-code exchange, the router redirects the browser to the `redirectUrl` query parameter (or `/` when absent). To customise this — for example, to inject a tenant query parameter into the final URL — provide an `ssoRedirect` callback. It uses the same Web-API signature in Express and Next.js:
+
+```ts
+import type { SsoRedirect } from "@reltio/auth/types";
+
+const ssoRedirect: SsoRedirect = ({ redirectUrl, request }) => {
+	const url = new URL(redirectUrl);
+	const tenant = new URL(request.url).searchParams.get("tenant");
+	if (tenant) {
+		url.searchParams.set("tenant", tenant);
+	}
+	return Response.redirect(url.href, 302);
+};
+
+export const authRouter = createExpressAuth({
+	// ...config...
+	ssoRedirect,
+});
+```
+
+The callback receives a `SsoRedirectContext` (`{ request, accessToken, refreshToken, redirectUrl, state }`) and must return a Web `Response`. **It MUST NOT mutate** the `request` argument — read everything you need via the standard Web API (`new URL(context.request.url).searchParams.get(...)`).
+
+## 6. (Optional) Mount an error handler
+
+`@reltio/auth/express` errors during request conversion or unexpected failures are forwarded to Express's `next(err)`. To surface them as JSON to your client (or log them), mount an error middleware after the auth router:
+
+```ts
+import type { ErrorRequestHandler } from "express";
+
+const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
+	console.error("[/auth] unexpected error", err);
+	res.status(500).json({ error: "internal" });
+};
+
+app.use("/auth", authRouter);
+app.use("/auth", errorHandler);
+```
+
+This is optional — without it Express's default error handler returns 500 with no body. Note that documented authentication failures (state mismatch, missing token, upstream OAuth rejection) are handled **inside** the router and produce 4xx/5xx responses directly. The error handler only sees genuinely unexpected exceptions.
+
+## 7. Read the access token in your own BFF endpoints
+
+When you need to proxy a request to the Reltio API, read the access token explicitly:
+
+```ts
+import express from "express";
+import { getAccessToken } from "@reltio/auth/utils";
+
+const apiRouter = express.Router();
+
+apiRouter.get("/profile", async (req, res, next) => {
+	const token = getAccessToken(req);
+	if (!token) {
+		res.sendStatus(401);
+		return;
+	}
+	try {
+		const upstream = await fetch(`${process.env.RELTIO_API}/profile`, {
+			headers: { Authorization: `Bearer ${token}` },
+		});
+		res.status(upstream.status).json(await upstream.json());
+	} catch (e) {
+		next(e);
+	}
+});
+
+app.use("/api", apiRouter);
+```
+
+`getAccessToken(req)` reads from the `Authorization: Bearer` header first, then from the `access_token` cookie. **The function does not mutate `req`** — you set the outgoing header on your own outbound `fetch` call.
+
+## 8. (Optional) Set the access token as a Bearer header on outgoing requests via http-proxy-middleware
+
+If you proxy with `http-proxy-middleware`, attach the token in `onProxyReq`:
+
+```ts
+import { createProxyMiddleware } from "http-proxy-middleware";
+import { getAccessToken } from "@reltio/auth/utils";
+
+const proxy = createProxyMiddleware({
+	target: process.env.RELTIO_API,
+	changeOrigin: true,
+	onProxyReq(proxyReq, req) {
+		const token = getAccessToken(req);
+		if (token) {
+			proxyReq.setHeader("Authorization", `Bearer ${token}`);
+		}
+	},
+});
+
+app.use("/api/reltio", proxy);
+```
+
+## Full minimal example
+
+```ts
+import express from "express";
+import { createExpressAuth } from "@reltio/auth/express";
+import { getAccessToken } from "@reltio/auth/utils";
+
+const app = express();
+
+app.use(
+	"/auth",
+	createExpressAuth({
+		oauthPath: process.env.OAUTH_PATH!,
+		loginPath: process.env.LOGIN_PATH!,
+		clientId: process.env.CLIENT_ID!,
+		clientSecret: process.env.CLIENT_SECRET!,
+		secure: process.env.NODE_ENV === "production",
+	}),
+);
+
+app.get("/api/profile", async (req, res, next) => {
+	const token = getAccessToken(req);
+	if (!token) {
+		res.sendStatus(401);
+		return;
+	}
+	try {
+		const upstream = await fetch(`${process.env.RELTIO_API}/profile`, {
+			headers: { Authorization: `Bearer ${token}` },
+		});
+		res.status(upstream.status).json(await upstream.json());
+	} catch (e) {
+		next(e);
+	}
+});
+
+app.listen(3000);
+```
+
+## Behaviour reference
+
+<table>
+	<thead>
+		<tr>
+			<th>Endpoint</th>
+			<th>Method</th>
+			<th>Behaviour</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>{`<mount>/login`}</code></td>
+			<td>GET</td>
+			<td>Generates a CSRF state token, sets the <code>state</code> cookie, redirects to the Reltio Login Page.</td>
+		</tr>
+		<tr>
+			<td><code>{`<mount>/logout`}</code></td>
+			<td>GET</td>
+			<td>Clears <code>access_token</code>, <code>refresh_token</code>, <code>state</code> cookies and redirects through the Login Page logout URL.</td>
+		</tr>
+		<tr>
+			<td><code>{`<mount>/callback`}</code></td>
+			<td>GET</td>
+			<td>Exchanges the authorization code for tokens, sets cookies, invokes <code>ssoRedirect</code> (or defaults to redirecting to <code>redirectUrl</code>).</td>
+		</tr>
+		<tr>
+			<td><code>{`<mount>/refreshToken`}</code></td>
+			<td>POST</td>
+			<td>Refreshes the access token using the <code>refresh_token</code> cookie. Returns 201 on success, 401 if rejected, 502 on upstream failure.</td>
+		</tr>
+		<tr>
+			<td><code>{`<mount>/checkToken`}</code></td>
+			<td>POST</td>
+			<td>Calls Reltio <code>/oauth/checkToken</code> with the access token, returns the upstream JSON. Optional <code>serviceId</code> and <code>tenantId</code> query parameters are forwarded.</td>
+		</tr>
+	</tbody>
+</table>
+
+## Migrating from `auth-middleware`
+
+See [Migration → From auth-middleware](?path=/docs/guides-auth-migration-from-auth-middleware--docs) for the complete diff: import-path mapping, three breaking changes, and full before/after code samples for the four files admin-tools touched during migration.

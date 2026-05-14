@@ -1,0 +1,76 @@
+{
+	"name": "@reltio/auth",
+	"version": "0.0.0",
+	"description": "Reltio Auth — BFF authentication and OAuth orchestration for Reltio applications. Express and Next.js App Router adapters over a framework-agnostic Web Fetch API core.",
+	"license": "Apache-2.0",
+	"homepage": "https://reltio.design",
+	"bugs": {
+		"url": "https://bitbucket.org/reltio-ondemand/reltio-design/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@bitbucket.org/reltio-ondemand/reltio-design.git",
+		"directory": "packages/auth"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"type": "module",
+	"engines": {
+		"node": ">=20"
+	},
+	"exports": {
+		"./types": {
+			"types": "./dist/esm/types/index.d.ts",
+			"import": "./dist/esm/types/index.js",
+			"require": "./dist/cjs/types/index.js"
+		},
+		"./express": {
+			"types": "./dist/esm/express/index.d.ts",
+			"import": "./dist/esm/express/index.js",
+			"require": "./dist/cjs/express/index.js"
+		},
+		"./next": {
+			"types": "./dist/esm/next/index.d.ts",
+			"import": "./dist/esm/next/index.js",
+			"require": "./dist/cjs/next/index.js"
+		},
+		"./utils": {
+			"types": "./dist/esm/utils/index.d.ts",
+			"import": "./dist/esm/utils/index.js",
+			"require": "./dist/cjs/utils/index.js"
+		}
+	},
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE",
+		"NOTICE"
+	],
+	"peerDependencies": {
+		"express": "^4 || ^5",
+		"next": ">=13"
+	},
+	"peerDependenciesMeta": {
+		"express": {
+			"optional": true
+		},
+		"next": {
+			"optional": true
+		}
+	},
+	"scripts": {
+		"build": "node scripts/build.mjs",
+		"postbuild": "cp README.md dist/ && cp ../../LICENSE dist/ && cp ../../NOTICE dist/",
+		"test": "vitest run --project=auth",
+		"test:watch": "vitest --project=auth",
+		"test:coverage": "vitest run --project=auth --coverage"
+	},
+	"devDependencies": {
+		"@types/express": "^5.0.6",
+		"@types/supertest": "^7.2.0",
+		"express": "^5.2.1",
+		"supertest": "^7.2.2",
+		"typescript": "^5.7.2"
+	}
+}

@@ -3,6 +3,12 @@ import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
+// Absolute path to this config file's directory. Used to make the storybook
+// plugin's `.storybook` resolution and the auth-project aliases independent
+// of the process CWD — so `npm test --workspace=@reltio/auth` works whether
+// it's invoked from the repository root or from inside `packages/auth/`.
+const ROOT_DIR = fileURLToPath(new URL(".", import.meta.url));
+
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
 	test: {
@@ -12,7 +18,7 @@ export default defineConfig({
 				plugins: [
 					// The plugin will run tests for the stories defined in your Storybook config
 					// See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
-					storybookTest(),
+					storybookTest({ configDir: `${ROOT_DIR}.storybook` }),
 				],
 				test: {
 					name: "storybook",
@@ -35,6 +41,10 @@ export default defineConfig({
 					include: ["react/jsx-dev-runtime"],
 				},
 			},
+			// Auth package — Node-mode tests. The actual configuration lives in
+			// the package itself (packages/auth/vitest.config.ts) so it can also
+			// be used by `npm test --workspace=@reltio/auth`.
+			"./packages/auth/vitest.config.ts",
 		],
 		coverage: {
 			exclude: [

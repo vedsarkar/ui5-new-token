@@ -123,7 +123,7 @@ The platform exposes a **single distribution package** to apps — `@reltio/desi
 | Reltio component author (this repo, building wrappers) | Direct UI5 imports allowed inside `components/` to wrap UI5 with Reltio product logic | `import { Button } from "@ui5/webcomponents-react/Button"` (only inside `components/SaveEntityButton/SaveEntityButton.tsx` etc.) |
 | Stories / docs (READMEs, MDX, snippets) | `@reltio/design/components` (MCP rewrites snippets to this path automatically) | `import { Button } from "@reltio/design/components"` |
 
-> **Why the `/components` subpath is mandatory.** The published `packages/design/package.json` exposes only subpath entries (`./components`, `./charts`, `./hooks`, `./utils`) — there is no `main`/`exports` target for the bare package name. A `import { X } from "@reltio/design"` resolves to nothing and breaks at install time. Storybook MCP and the Manifest Debugger automatically rewrite generated snippets to the subpath via `.storybook/reltioManifestPreset.ts`, so AI agents always see the correct path.
+> **Why the `/components` subpath is mandatory.** The published `packages/design/package.json` exposes only subpath entries (`./components`, `./charts`, `./hooks`, `./utils`) — there is no `main`/`exports` target for the bare package name. A `import { X } from "@reltio/design"` resolves to nothing and breaks at install time. Storybook MCP and the Manifest Debugger automatically rewrite generated snippets to the subpath via `.storybook/reltioManifestPreset.ts`, so AI agents always see the correct path. This is a platform-wide rule — see [Module Conventions](#module-conventions-mandatory-for-packages-code) below; every `@reltio/*` package follows it.
 
 ### When to use an endorsed UI5 component vs. build a Reltio component
 
@@ -164,6 +164,60 @@ components/ComponentName/
 A directory under `components/` may contain **only** a `*.stories.tsx` file (no `.tsx`, `.types.ts`, `.module.css`, or `index.ts`) when its sole purpose is to document the recommended way to consume a native UI5 component directly — without authoring any Reltio code. In this case the stories file imports the component straight from `@ui5/webcomponents-react`, and the directory name simply provides a stable Storybook navigation path.
 
 Use this exception only for documentation. As soon as any custom logic, types, or styles are introduced, the directory must follow the full structure above.
+
+## Module Conventions (MANDATORY for `packages/*` code)
+
+Rules for TypeScript code inside any `packages/*` workspace and the repository-root code folders (`charts/`, `hooks/`, `utils/`, `openApi/`) that ship through them. React component layout is covered separately in the [Component Structure](#component-structure-mandatory-for-reltio-components) section above; everything else follows this section.
+
+### File naming
+
+File names predict their contents. Two patterns are allowed:
+
+| Pattern | When to use | Example |
+|---|---|---|
+| `<exportName>.ts` (camelCase, or PascalCase matching a class) | The file exports exactly one function, class, or value (plus tightly bound type guards) | `getBasicToken.ts` exports `getBasicToken` · `createNextAuth.ts` exports `createNextAuth` |
+| `<topic>.ts` (camelCase) | The file exports several related items forming a coherent topic | `cookies.ts` exports `parseCookies`, `serializeCookie`, `STATE_COOKIE`, ... · `state.ts` exports `generateState` and `validateState` |
+
+**Anti-pattern:** a file whose name does not match its primary export. `oauth.ts` exporting a single `createOAuthClient` is misleading and must be renamed to `createOAuthClient.ts`.
+
+### Barrel pattern (MANDATORY)
+
+Every module that contributes to a workspace's public surface has its own `index.ts` that **curates** what is publicly visible:
+
+```ts
+// packages/auth/src/utils/index.ts
+export * from "./getAccessToken";
+export * from "./getBasicToken";
+export * from "./getRefreshToken";
+// cookies.ts, state.ts, readHeader.ts, validateRedirectUrl.ts are
+// intentionally absent — they are internal and unreachable from the
+// package's public surface.
+```
+
+Subpath entry files at the workspace root (e.g. `packages/design/components.ts`, `packages/auth/src/<sub>/index.ts`) are thin `export *` pass-throughs:
+
+```ts
+// packages/design/components.ts
+export * from "@/components";
+```
+
+Files NOT listed in any `index.ts` along the chain to a public subpath are internal by construction. This is how `@reltio/auth` hides `createOAuthClient` from the public API even though it ships in the same bundle — no other mechanism is needed.
+
+### Subpath-only package exports (MANDATORY)
+
+Every workspace in `packages/*` declares its `package.json` `exports` field with **named subpaths only**. There is no `.` (bare) entry. Consumers always import from a named subpath:
+
+```ts
+// correct
+import { Button } from "@reltio/design/components";
+import { createNextAuth } from "@reltio/auth/next";
+
+// resolves to ERR_PACKAGE_PATH_NOT_EXPORTED
+import { Button } from "@reltio/design";
+import { createNextAuth } from "@reltio/auth";
+```
+
+Why: the subpath signals intent at the import line (`@reltio/auth/next` clearly means "Next.js adapter"), avoids confusion between equivalent paths to the same exports, and makes the package surface uniform across all platform packages. The `exports` map also enforces module isolation — consumers cannot reach into internal paths like `@reltio/<pkg>/src/...`.
 
 ## Architectural Requirements
 
@@ -269,6 +323,27 @@ When implementing designs from Figma (via Figma MCP, URLs, or screenshots), thes
 - Each story MUST show only ONE variant (no "All Variants" stories)
 - Stories use "autodocs" tag for auto-documentation
 - **Free-form props** (accepting arbitrary strings, numbers, CSS values) need only ONE story demonstrating usage — do NOT create multiple stories for different values of the same prop (e.g. one `CustomSize` story, not separate `Small` / `Medium` / `Large`). Multiple stories are for **enum-like variants** where each value produces a visually distinct state worth snapshot-testing
+
+### MDX in `*.story.mdx` files (MANDATORY)
+- **Tables MUST use HTML, not Markdown.** Storybook's MDX renderer does not reliably parse Markdown table syntax (`| col1 | col2 |`) — pipe-separated tables render as raw text in production builds. Always write `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>` directly.
+
+```mdx
+{/* BAD — pipe-separated Markdown table renders as plain text */}
+| Endpoint | Method |
+|---|---|
+| /login | GET |
+
+{/* GOOD — HTML table renders correctly */}
+<table>
+  <thead><tr><th>Endpoint</th><th>Method</th></tr></thead>
+  <tbody>
+    <tr><td><code>/login</code></td><td>GET</td></tr>
+  </tbody>
+</table>
+```
+
+- Wrap content that contains JSX-conflicting characters (`<`, `>`, `{`, `}`) in either `<code>{` `}</code>` template literals or escape them. The `{` `}` form is preferred for any inline code that contains generic-looking syntax (`<mount>/login`, `Response<T>`, JSX examples).
+- Use the same HTML approach for any other content where Markdown might be ambiguous in MDX context (nested lists with code blocks, complex blockquotes).
 
 ### Code Style (Biome)
 - Tabs for indentation

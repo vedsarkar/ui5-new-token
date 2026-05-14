@@ -1,0 +1,268 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/Auth/Migration from auth-middleware" />
+
+# Migration — from `auth-middleware` to `@reltio/auth`
+
+This guide migrates a Reltio application from the legacy `auth-middleware` git-installed package to the published `@reltio/auth` npm package. The wire-level contract (URL paths, cookie names, response shapes) is preserved by default — most of the work is an import-path swap. Three behavioural changes are breaking and require small code edits, documented in detail below.
+
+For setup of a fresh application, see [Setup → Express](?path=/docs/guides-auth-setup-express--docs) or [Setup → Next.js App Router](?path=/docs/guides-auth-setup-next-js-app-router--docs) instead.
+
+## TL;DR
+
+1. Replace the `auth-middleware` git dependency with `@reltio/auth@^1.0.0` in `package.json`.
+2. Update import paths (see [Import path mapping](#import-path-mapping)).
+3. Rewrite the `ssoRedirect` callback to the new Web-API signature (see [Breaking change 1](#breaking-change-1-ssoredirect-signature)).
+4. Remove any use of `signingHandler` — replace with explicit `getAccessToken` + outgoing-header set (see [Breaking change 2](#breaking-change-2-removed-signinghandler)).
+5. Apps that imported `node-oauth-provider` directly: no migration target in v1, rework through the BFF router (see [Breaking change 3](#breaking-change-3-direct-node-oauth-provider-consumers)).
+
+Cookie names, URL paths, config keys, and runtime behaviour are preserved — your existing fixtures, end-to-end tests, and registered OAuth callback URLs continue to work unchanged.
+
+## 1. Replace the dependency
+
+```jsonc
+// package.json — BEFORE
+{
+	"dependencies": {
+		"auth-middleware": "bitbucket:reltio-ondemand/auth-middleware#v3.3.0"
+	}
+}
+```
+
+```jsonc
+// package.json — AFTER
+{
+	"dependencies": {
+		"@reltio/auth": "^1.0.0"
+	}
+}
+```
+
+Run `npm install` and the git-protocol install URL is gone.
+
+## Import path mapping
+
+<table>
+	<thead>
+		<tr>
+			<th>Legacy import</th>
+			<th>New import</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>{`import auth from "auth-middleware"`}</code></td>
+			<td><code>{`import { createExpressAuth } from "@reltio/auth/express"`}</code></td>
+		</tr>
+		<tr>
+			<td><code>{`import getAccessToken from "auth-middleware/src/utils/getAccessToken"`}</code></td>
+			<td><code>{`import { getAccessToken } from "@reltio/auth/utils"`}</code></td>
+		</tr>
+		<tr>
+			<td><code>{`import getBasicToken from "auth-middleware/src/utils/getBasicToken"`}</code></td>
+			<td><code>{`import { getBasicToken } from "@reltio/auth/utils"`}</code></td>
+		</tr>
+		<tr>
+			<td><code>{`import getRefreshToken from "auth-middleware/src/utils/getRefreshToken"`}</code></td>
+			<td><code>{`import { getRefreshToken } from "@reltio/auth/utils"`}</code></td>
+		</tr>
+		<tr>
+			<td><code>{`import signingHandler from "auth-middleware/signingHandler"`}</code></td>
+			<td><strong>Removed</strong> — see <a href="#breaking-change-2-removed-signinghandler">Breaking change 2</a>.</td>
+		</tr>
+		<tr>
+			<td><code>{`import oauthProvider from "node-oauth-provider"`}</code></td>
+			<td><strong>No migration target</strong> — see <a href="#breaking-change-3-direct-node-oauth-provider-consumers">Breaking change 3</a>.</td>
+		</tr>
+	</tbody>
+</table>
+
+Note: the legacy code exposed helpers under undocumented internal paths (`auth-middleware/src/utils/...`). `@reltio/auth` exposes the same helpers under the canonical `@reltio/auth/utils` subpath — no more reaching into `src/`.
+
+## Config keys
+
+`oauthPath`, `loginPath`, `clientId`, `clientSecret`, `secure`, `notenant` keep their names and semantics verbatim. Your existing config objects (read from environment variables, YAML files, etc.) continue to work without changes.
+
+```ts
+// Same config in both legacy and new
+createExpressAuth({
+	oauthPath: config.get("paths.oauth"),
+	loginPath: config.get("paths.login"),
+	clientId: config.get("secrets.clientId"),
+	clientSecret: config.get("secrets.clientSecret"),
+	secure: process.env.NODE_ENV === "production",
+});
+```
+
+## Breaking change 1 — `ssoRedirect` signature
+
+The `ssoRedirect` callback moves from the legacy Express `(req, res, next) => void` signature to a Web-API `(ctx) => Response | Promise<Response>` signature. The new signature works identically in Express, Next.js App Router, and any other Web Fetch runtime. The callback no longer mutates the request — it reads everything from a `SsoRedirectContext` argument and returns a Web `Response`.
+
+### Mapping cheatsheet
+
+<table>
+	<thead>
+		<tr>
+			<th>Old (legacy Express)</th>
+			<th>New (Web API)</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>req.query.X</code></td>
+			<td><code>{`new URL(ctx.request.url).searchParams.get("X")`}</code></td>
+		</tr>
+		<tr>
+			<td><code>req.accessToken</code></td>
+			<td><code>ctx.accessToken</code></td>
+		</tr>
+		<tr>
+			<td><code>{`req.headers.get("...")`}</code></td>
+			<td><code>{`ctx.request.headers.get("...")`}</code></td>
+		</tr>
+		<tr>
+			<td><code>res.redirect(url)</code></td>
+			<td><code>Response.redirect(url, 302)</code></td>
+		</tr>
+		<tr>
+			<td><code>res.redirect(status, url)</code></td>
+			<td><code>Response.redirect(url, status)</code></td>
+		</tr>
+		<tr>
+			<td><code>res.json(data)</code></td>
+			<td><code>Response.json(data)</code></td>
+		</tr>
+		<tr>
+			<td><code>{`res.status(n).send(body)`}</code></td>
+			<td><code>{`new Response(body, { status: n })`}</code></td>
+		</tr>
+	</tbody>
+</table>
+
+### Before / after example (admin-tools tenant injection)
+
+```ts
+// admin-tools/api/auth.ts — BEFORE
+import type { Request, Response } from "express";
+
+export const ssoRedirect = (req: Request, res: Response): void => {
+	const redirectUrl = new URL(String(req.query.redirectUrl));
+	if (req.query.tenant) {
+		redirectUrl.searchParams.set("tenant", String(req.query.tenant));
+	}
+	return res.redirect(redirectUrl.href);
+};
+```
+
+```ts
+// admin-tools/api/auth.ts — AFTER
+import type { SsoRedirect } from "@reltio/auth/types";
+
+export const ssoRedirect: SsoRedirect = ({ redirectUrl, request }) => {
+	const url = new URL(redirectUrl);
+	const tenant = new URL(request.url).searchParams.get("tenant");
+	if (tenant) {
+		url.searchParams.set("tenant", tenant);
+	}
+	return Response.redirect(url.href, 302);
+};
+```
+
+Diff: ~6 lines per consumer. The migration is mechanical and codemod-able if needed.
+
+## Breaking change 2 — Removed `signingHandler`
+
+The legacy library shipped a `signingHandler` Express middleware that mutated the incoming request's `Authorization` header. This is an anti-pattern (side-effecting on a function argument) and the documented import path (`require("auth-middleware/signingHandler")`) never actually resolved due to the missing `exports` field in the legacy `package.json`. `@reltio/auth` does not ship a replacement.
+
+Consumers that need to forward the access token to an upstream Reltio API read it explicitly and set the header on their own outgoing request:
+
+```ts
+// BEFORE — mutates incoming req
+import signingHandler from "auth-middleware/signingHandler";
+
+app.post("/api/resource", signingHandler, async (req, res) => {
+	const upstream = await fetch("https://reltio.com/api/...", {
+		headers: req.headers,
+	});
+	res.json(await upstream.json());
+});
+```
+
+```ts
+// AFTER — explicit token + outgoing header
+import { getAccessToken } from "@reltio/auth/utils";
+
+app.post("/api/resource", async (req, res, next) => {
+	const token = getAccessToken(req);
+	if (!token) {
+		res.sendStatus(401);
+		return;
+	}
+	try {
+		const upstream = await fetch("https://reltio.com/api/...", {
+			headers: { Authorization: `Bearer ${token}` },
+		});
+		res.json(await upstream.json());
+	} catch (e) {
+		next(e);
+	}
+});
+```
+
+`getAccessToken(req)` reads from `Authorization: Bearer` first, then from the `access_token` cookie. **It does not mutate `req`.**
+
+## Breaking change 3 — Direct `node-oauth-provider` consumers
+
+Some applications imported `node-oauth-provider` directly (separately from `auth-middleware`) for ad-hoc OAuth API calls — for example, calling `oauth.checkToken(accessToken)` from outside the BFF router. **`@reltio/auth` v1 does not provide a migration target for this pattern.** The platform direction is to consolidate all OAuth interactions under the BFF router; direct programmatic OAuth API access is explicitly out of scope for v1.
+
+Options for applications in this situation:
+
+1. **Recommended.** Rework the integration to go through the BFF router (`@reltio/auth/express` or `@reltio/auth/next`). For server-side token validation, hit `/auth/checkToken` instead of calling the OAuth API directly.
+2. **Temporary.** Keep installing `node-oauth-provider` from its Bitbucket git URL. The legacy package is unmaintained but installable; this works until the application can rework the integration.
+3. **Not supported.** Reimplementing OAuth API client logic locally per-app. This duplicates code that the platform intentionally centralises.
+
+If your application uses `node-oauth-provider` for the OAuth password grant or client credentials grant, those flows are NOT exposed in v1 of `@reltio/auth` even internally — they are not part of any of the five BFF router endpoints. Coordinate with the Reltio Design Platform team if you need first-class support for these flows in a future v1.x release.
+
+## What stays the same
+
+- **URL paths** — `/auth/login`, `/auth/logout`, `/auth/callback`, `/auth/refreshToken`, `/auth/checkToken` relative to your mount point.
+- **Cookie names** — `access_token`, `refresh_token`, `state`.
+- **Cookie attributes** — `HttpOnly`, `Secure` (when `secure: true`), `SameSite=Lax`, `Path=/`.
+- **Config keys** — `oauthPath`, `loginPath`, `clientId`, `clientSecret`, `secure`, `notenant`.
+- **Login flow** — referer-derived callback URL, CSRF state cookie, redirect through Reltio Login Page.
+- **Response shapes** — `/checkToken` returns the upstream Reltio user/permissions JSON verbatim.
+
+So your existing end-to-end fixtures that mock `/api/auth/checkToken` at the HTTP layer continue to work without modification. Likewise, the OAuth callback URL registered with the Reltio OAuth server does not need re-registration.
+
+## What's better than before
+
+The new package fixes ten latent issues in the legacy library without changing any contract:
+
+- Native `globalThis.fetch` instead of `node-fetch@2`.
+- Web Crypto API (`crypto.randomUUID()`, `btoa`) instead of `node:crypto` / `Buffer`.
+- Full TypeScript types and `.d.ts` shipped (legacy was untyped, consumers used `// @ts-ignore`).
+- `package.json` `exports` field — consumers can no longer accidentally reach into `src/`.
+- Same cookie options used at set and clear time (legacy `clearCookie` calls didn't preserve `Secure`, leading to logout-doesn't-fully-clear bugs).
+- `redirectUrl` validated by full origin (legacy compared only hostname, allowing `http://app.com` vs `https://app.com` mismatches).
+- `state` cookie now `Secure` + `SameSite=Lax` when `secure: true` (legacy was only `HttpOnly`).
+- Upstream OAuth server 5xx errors propagate as `502` instead of being masked as `401` (legacy collapsed everything to 401, making real outages indistinguishable from session expiration).
+- No `console.log` side effect on every request (legacy `getAccessToken` logged every BFF request with an Authorization header).
+- Dual ESM + CJS build, Node `>=20` engine requirement.
+
+## Verification checklist
+
+After the migration is complete, verify the cutover with these checks:
+
+- [ ] `package.json` no longer references `auth-middleware` (or `node-oauth-provider`, if applicable).
+- [ ] All imports from `auth-middleware/...` are replaced with `@reltio/auth/...`.
+- [ ] The `ssoRedirect` callback (if any) uses the new Web-API signature and returns a Web `Response`.
+- [ ] No code imports or references `signingHandler` from anywhere.
+- [ ] Application starts without runtime errors against staging.
+- [ ] Login flow completes end-to-end (click "Sign in" → reach the Reltio Login Page → return to the app authenticated).
+- [ ] `/api/auth/checkToken` returns user/permission data as before.
+- [ ] Logout clears cookies and redirects through the Login Page.
+- [ ] End-to-end tests pass without fixture changes.
+
+## Need help?
+
+Contact the **UI Center of Excellence** team at [ui.coe@reltio.com](mailto:ui.coe@reltio.com).

@@ -1,0 +1,227 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/Auth/Setup Next.js App Router" />
+
+# Setup — Next.js App Router
+
+This guide walks through wiring `@reltio/auth/next` into a Next.js App Router application. Use it for any greenfield Next.js project at Reltio — the App Router is the canonical Reltio stack for new applications.
+
+For Express-backed setups (legacy or Next.js with a custom Express server), see [Setup → Express](?path=/docs/guides-auth-setup-express--docs).
+
+## 1. Install
+
+```bash
+npm install @reltio/auth next
+```
+
+`next` is an **optional peer dependency** of `@reltio/auth` — install it because your application uses it directly, not because `@reltio/auth` requires it. Minimum supported version is `next@13`.
+
+## 2. Configure environment variables
+
+```bash
+# .env.local
+OAUTH_PATH=https://auth-stg.reltio.com/oauth
+LOGIN_PATH=https://login-stg.reltio.com
+CLIENT_ID=your-client-id
+CLIENT_SECRET=your-client-secret
+```
+
+These are read on the server during the auth flow. They MUST NOT be exposed to the browser — keep them in `.env.local` (server-only) and never prefix them with `NEXT_PUBLIC_`.
+
+## 3. Create the catch-all auth route
+
+Create a single dynamic route file that catches every request under `/auth/*`:
+
+```ts
+// app/auth/[...auth]/route.ts
+import { createNextAuth } from "@reltio/auth/next";
+
+export const { GET, POST } = createNextAuth({
+	oauthPath: process.env.OAUTH_PATH!,
+	loginPath: process.env.LOGIN_PATH!,
+	clientId: process.env.CLIENT_ID!,
+	clientSecret: process.env.CLIENT_SECRET!,
+}).handlers;
+```
+
+That single file is all you need. The five endpoints (`/auth/login`, `/auth/logout`, `/auth/callback`, `/auth/refreshToken`, `/auth/checkToken`) are now live.
+
+> **The `[...auth]` segment name is arbitrary.** Next.js requires a catch-all parameter name (`[...something]`) on the route folder, but `@reltio/auth` never reads the resulting `params` object — the router dispatches purely by the last URL segment of `request.url`. Name it `[...auth]`, `[...slug]`, `[...path]`, or whatever your team prefers. The only requirement is that the LAST segment of incoming URLs matches one of the five reserved names (`login`, `logout`, `callback`, `refreshToken`, `checkToken`).
+
+The folder path before the catch-all is equally free. Mount at `app/auth/[...x]/route.ts`, `app/api/auth/[...x]/route.ts`, or `app/anywhere/you/want/[...x]/route.ts` — the dispatcher only inspects the final URL segment, so every mount path works identically.
+
+## 4. Configure the OAuth callback URL
+
+The Reltio Login Page redirects to the callback URL you registered when provisioning your OAuth client. With the file at `app/auth/[...auth]/route.ts`, the registered redirect URI must be `https://your-app.example.com/auth/callback`.
+
+`@reltio/auth` discovers the callback URL automatically from the incoming request — there is no separate `callbackUrl` config to set on the package side.
+
+## 5. (Optional) Customise the post-login redirect
+
+The optional `ssoRedirect` callback runs at the end of a successful `/callback` exchange. Same Web-API signature as in Express:
+
+```ts
+// app/auth/[...auth]/route.ts
+import { createNextAuth } from "@reltio/auth/next";
+import type { SsoRedirect } from "@reltio/auth/types";
+
+const ssoRedirect: SsoRedirect = ({ redirectUrl, request }) => {
+	const url = new URL(redirectUrl);
+	const tenant = new URL(request.url).searchParams.get("tenant");
+	if (tenant) {
+		url.searchParams.set("tenant", tenant);
+	}
+	return Response.redirect(url.href, 302);
+};
+
+export const { GET, POST } = createNextAuth({
+	oauthPath: process.env.OAUTH_PATH!,
+	loginPath: process.env.LOGIN_PATH!,
+	clientId: process.env.CLIENT_ID!,
+	clientSecret: process.env.CLIENT_SECRET!,
+	ssoRedirect,
+}).handlers;
+```
+
+The callback receives a `SsoRedirectContext` (`{ request, accessToken, refreshToken, redirectUrl, state }`) and must return a Web `Response`. **It MUST NOT mutate** the `request` argument — read everything you need via the standard Web API.
+
+## 6. Read the access token in your own route handlers
+
+For server-side route handlers that proxy to the Reltio API, read the access token explicitly with `getAccessToken` — it accepts the `Request` object directly:
+
+```ts
+// app/api/profile/route.ts
+import { getAccessToken } from "@reltio/auth/utils";
+
+export async function GET(request: Request): Promise<Response> {
+	const token = getAccessToken(request);
+	if (!token) {
+		return new Response(null, { status: 401 });
+	}
+
+	const upstream = await fetch(`${process.env.RELTIO_API}/profile`, {
+		headers: { Authorization: `Bearer ${token}` },
+	});
+	return new Response(upstream.body, {
+		status: upstream.status,
+		headers: { "Content-Type": "application/json" },
+	});
+}
+```
+
+`getAccessToken(request)` reads from the `Authorization: Bearer` header first, then from the `access_token` cookie. **The function does not mutate the request.**
+
+## 7. (Optional) Read tokens in Server Components
+
+Server Components can call `getAccessToken` against the request, but the request object isn't directly available — use `cookies()` from `next/headers` instead and pass a synthetic `Request` if you need the helper's logic:
+
+```ts
+// app/dashboard/page.tsx
+import { cookies } from "next/headers";
+
+export default async function DashboardPage() {
+	const cookieStore = await cookies();
+	const accessToken = cookieStore.get("access_token")?.value;
+	if (!accessToken) {
+		// redirect to login or show a logged-out state
+		return null;
+	}
+	// fetch profile data with the token...
+	const upstream = await fetch(`${process.env.RELTIO_API}/profile`, {
+		headers: { Authorization: `Bearer ${accessToken}` },
+	});
+	const profile = await upstream.json();
+	return <pre>{JSON.stringify(profile, null, 2)}</pre>;
+}
+```
+
+For consistency across the application, you can still wrap the cookie read in a helper that uses the same constant cookie name (`access_token`).
+
+## Full minimal example
+
+```ts
+// app/auth/[...auth]/route.ts
+import { createNextAuth } from "@reltio/auth/next";
+
+export const { GET, POST } = createNextAuth({
+	oauthPath: process.env.OAUTH_PATH!,
+	loginPath: process.env.LOGIN_PATH!,
+	clientId: process.env.CLIENT_ID!,
+	clientSecret: process.env.CLIENT_SECRET!,
+}).handlers;
+```
+
+```tsx
+// app/page.tsx (login button on the landing page)
+export default function HomePage() {
+	return (
+		<main>
+			<a href="/auth/login">Sign in</a>
+		</main>
+	);
+}
+```
+
+```ts
+// app/api/profile/route.ts (proxy with the access token)
+import { getAccessToken } from "@reltio/auth/utils";
+
+export async function GET(request: Request): Promise<Response> {
+	const token = getAccessToken(request);
+	if (!token) return new Response(null, { status: 401 });
+	const upstream = await fetch(`${process.env.RELTIO_API}/profile`, {
+		headers: { Authorization: `Bearer ${token}` },
+	});
+	return new Response(upstream.body, {
+		status: upstream.status,
+		headers: { "Content-Type": "application/json" },
+	});
+}
+```
+
+## Behaviour reference
+
+<table>
+	<thead>
+		<tr>
+			<th>Endpoint</th>
+			<th>Method</th>
+			<th>Behaviour</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>/auth/login</code></td>
+			<td>GET</td>
+			<td>Generates a CSRF state token, sets the <code>state</code> cookie, redirects to the Reltio Login Page.</td>
+		</tr>
+		<tr>
+			<td><code>/auth/logout</code></td>
+			<td>GET</td>
+			<td>Clears auth cookies and redirects through the Login Page logout URL.</td>
+		</tr>
+		<tr>
+			<td><code>/auth/callback</code></td>
+			<td>GET</td>
+			<td>Exchanges the authorization code for tokens, sets cookies, invokes <code>ssoRedirect</code> (or defaults to redirecting to <code>redirectUrl</code>).</td>
+		</tr>
+		<tr>
+			<td><code>/auth/refreshToken</code></td>
+			<td>POST</td>
+			<td>Refreshes the access token using the <code>refresh_token</code> cookie. 201 on success, 401 if rejected, 502 on upstream failure.</td>
+		</tr>
+		<tr>
+			<td><code>/auth/checkToken</code></td>
+			<td>POST</td>
+			<td>Calls Reltio <code>/oauth/checkToken</code>, returns the upstream JSON. Optional <code>serviceId</code> and <code>tenantId</code> query parameters are forwarded.</td>
+		</tr>
+	</tbody>
+</table>
+
+## Pages Router
+
+The Next.js Pages Router is **intentionally not supported** by a dedicated adapter in v1. If your application is still on the Pages Router and has a custom Express server, integrate via [Setup → Express](?path=/docs/guides-auth-setup-express--docs) — that is how `admin-tools` does it. Migrating to the App Router is also recommended where feasible.
+
+## Migrating from `auth-middleware`
+
+See [Migration → From auth-middleware](?path=/docs/guides-auth-migration-from-auth-middleware--docs) for the complete migration guide: import-path mapping, the three breaking changes, and detailed before/after code samples.
