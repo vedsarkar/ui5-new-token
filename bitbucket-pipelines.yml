@@ -96,6 +96,7 @@ definitions:
           - npm ci
           - npm run build-css
           - npm run build --workspace=@reltio/design
+          - npm run build --workspace=@reltio/auth
           - npm run release
     - step: &snapshot-packages
         name: Publish snapshot for current branch
@@ -113,6 +114,7 @@ definitions:
           - npx changeset version --snapshot "$SNAPSHOT_TAG"
           - npm run build-css
           - npm run build --workspace=@reltio/design
+          - npm run build --workspace=@reltio/auth
           - npm run release:snapshot -- --tag "$SNAPSHOT_TAG"
 
 pipelines:
