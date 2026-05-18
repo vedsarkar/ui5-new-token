@@ -1,6 +1,48 @@
-[submodule "apps/reltio-react-ui"]
-	path = apps/reltio-react-ui
+[submodule "apps/reltio-react-ui/src"]
+	path = apps/reltio-react-ui/src
 	url = git@bitbucket.org:reltio-ondemand/reltio-react-ui.git
-[submodule "apps/admin-tools"]
-	path = apps/admin-tools
+[submodule "apps/admin-tools/src"]
+	path = apps/admin-tools/src
 	url = git@bitbucket.org:reltio-ondemand/admin-tools.git
+[submodule "apps/rdm-react/src"]
+	path = apps/rdm-react/src
+	url = git@bitbucket.org:reltio-ondemand/rdm-react.git
+[submodule "apps/workflow-ui/src"]
+	path = apps/workflow-ui/src
+	url = git@bitbucket.org:reltio-ondemand/workflow-ui.git
+[submodule "apps/ui-config-tool/src"]
+	path = apps/ui-config-tool/src
+	url = git@bitbucket.org:reltio-ondemand/ui-config-tool.git
+[submodule "apps/data-modeller/src"]
+	path = apps/data-modeller/src
+	url = git@bitbucket.org:reltio-ondemand/data-modeller.git
+[submodule "apps/bpmn-modeler/src"]
+	path = apps/bpmn-modeler/src
+	url = git@bitbucket.org:reltio-ondemand/bpmn-modeler.git
+[submodule "apps/data-out/src"]
+	path = apps/data-out/src
+	url = git@bitbucket.org:reltio-ondemand/data-out.git
+[submodule "apps/env-management/src"]
+	path = apps/env-management/src
+	url = git@bitbucket.org:reltio-ondemand/env-management.git
+[submodule "apps/dataloader-ui/src"]
+	path = apps/dataloader-ui/src
+	url = git@bitbucket.org:reltio-ondemand/dataloader-ui.git
+[submodule "apps/ui-export/src"]
+	path = apps/ui-export/src
+	url = git@bitbucket.org:reltio-ondemand/ui-export.git
+[submodule "apps/external-match-ui/src"]
+	path = apps/external-match-ui/src
+	url = git@bitbucket.org:reltio-ondemand/external-match-ui.git
+[submodule "apps/usage-reporting-ui/src"]
+	path = apps/usage-reporting-ui/src
+	url = git@bitbucket.org:reltio-ondemand/usage-reporting-ui.git
+[submodule "apps/user-management-ui/src"]
+	path = apps/user-management-ui/src
+	url = git@bitbucket.org:reltio-ondemand/user-management-ui.git
+[submodule "apps/login-page/src"]
+	path = apps/login-page/src
+	url = git@bitbucket.org:reltio-ondemand/login-page.git
+[submodule "apps/agent-flow-ui/src"]
+	path = apps/agent-flow-ui/src
+	url = git@bitbucket.org:reltio-ondemand/agent-flow-ui.git

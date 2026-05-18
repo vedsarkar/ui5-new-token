@@ -45,25 +45,36 @@ Eliminate UI fragmentation across products while accelerating development of new
 
 ## Application Context (`apps/`)
 
-The `apps/` directory contains read-only git submodules of Reltio product applications. These are **not part of the platform build** — they exist solely to give AI agents full source-code context when performing cross-application analysis or coordinated migrations (e.g. MUI to SAP UI5, adoption of `@reltio/auth`).
+The `apps/` directory provides AI agents and platform developers with full source-code context of Reltio product applications. Each app directory contains a **read-only git submodule** (`src/`) with the application code and **platform-owned context files** (documentation, migration status, review checklists) managed by the UI CoE.
 
-| Submodule | Repository | Description |
-|-----------|-----------|-------------|
-| `apps/reltio-react-ui` | `reltio-ondemand/reltio-react-ui` | Main Reltio product UI monorepo |
-| `apps/admin-tools` | `reltio-ondemand/admin-tools` | Administration tools monorepo |
+```
+apps/<app-name>/
+├── CLAUDE.md              # Platform-owned context for AI agents
+├── migration-status.md    # Migration tracking (MUI→UI5, auth, etc.)
+├── ...                    # Any other platform-owned documentation
+└── src/                   # Git submodule — application source code (READ-ONLY)
+```
+
+These are **not part of the platform build** — they exist for cross-application analysis and coordinated migrations (e.g. MUI to SAP UI5, adoption of `@reltio/auth`).
+
+To discover available apps, list the `apps/` directory. Each subdirectory follows the structure above.
 
 ### Working with apps/
 
-- **Read-only context** — never commit changes inside `apps/*` from this repo. Each application is developed independently by its own team in its own repository.
-- **Cloning** — `git clone --recurse-submodules` fetches all apps. Existing clones: `git submodule update --init --recursive`.
-- **Updating to latest** — `git submodule update --remote` pulls the latest `main` (or default branch) for each app.
+- **Cloning** — `git clone --recurse-submodules` fetches all apps. Existing clones: `npm run apps:init`.
+- **Updating to latest** — `npm run apps:update` pulls the latest default branch for each app.
 - **Optional** — `apps/` is not required for platform development. A plain `git clone` (without `--recurse-submodules`) works as before — submodules stay empty until explicitly initialized.
+- **Reviewing feature branches** — AI agents can `git fetch` and `git checkout` any branch inside `apps/<name>/src/` to review pending changes.
+
+### Read-only contract
+
+All changes to application repositories are made through the standard git workflow in their own separate repositories. The `src/` submodules are strictly read-only mirrors — never commit or push changes through them. Files outside `src/` (CLAUDE.md, migration docs, etc.) are owned by the reltio-design repo and maintained by the UI CoE.
 
 ### How AI agents should use apps/
 
-When asked to analyze, compare, or plan migrations across applications:
-1. Read application source code directly from `apps/<name>/`
-2. Identify patterns, dependencies, and architecture differences
+When asked to analyze, compare, review, or plan migrations across applications:
+1. Read platform-owned context from `apps/<name>/` (CLAUDE.md, migration status, etc.)
+2. Read application source code from `apps/<name>/src/`
 3. Reference Reltio Design Platform standards (this CLAUDE.md) as the target state
 4. Propose changes that respect each application's existing architecture and conventions
 
