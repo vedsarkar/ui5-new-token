@@ -43,6 +43,32 @@ Eliminate UI fragmentation across products while accelerating development of new
 **Partners & Customers** — integrate and embed Reltio UI components
 **AI Agents** — interact via MDX, MCP-UI and A2UI protocols
 
+## Application Context (`apps/`)
+
+The `apps/` directory contains read-only git submodules of Reltio product applications. These are **not part of the platform build** — they exist solely to give AI agents full source-code context when performing cross-application analysis or coordinated migrations (e.g. MUI to SAP UI5, adoption of `@reltio/auth`).
+
+| Submodule | Repository | Description |
+|-----------|-----------|-------------|
+| `apps/reltio-react-ui` | `reltio-ondemand/reltio-react-ui` | Main Reltio product UI monorepo |
+| `apps/admin-tools` | `reltio-ondemand/admin-tools` | Administration tools monorepo |
+
+### Working with apps/
+
+- **Read-only context** — never commit changes inside `apps/*` from this repo. Each application is developed independently by its own team in its own repository.
+- **Cloning** — `git clone --recurse-submodules` fetches all apps. Existing clones: `git submodule update --init --recursive`.
+- **Updating to latest** — `git submodule update --remote` pulls the latest `main` (or default branch) for each app.
+- **Optional** — `apps/` is not required for platform development. A plain `git clone` (without `--recurse-submodules`) works as before — submodules stay empty until explicitly initialized.
+
+### How AI agents should use apps/
+
+When asked to analyze, compare, or plan migrations across applications:
+1. Read application source code directly from `apps/<name>/`
+2. Identify patterns, dependencies, and architecture differences
+3. Reference Reltio Design Platform standards (this CLAUDE.md) as the target state
+4. Propose changes that respect each application's existing architecture and conventions
+
+Do NOT apply Reltio Design Platform conventions (Biome, CSS Modules, `type` keyword, etc.) when analyzing or suggesting changes to application code — each app has its own standards. Platform conventions apply only to code inside this repository.
+
 ## Tech Stack
 
 - **Framework**: React 18+
@@ -76,6 +102,8 @@ npm run format            # Format code with Biome (auto-fix)
 npm run deploy            # Deploy to Chromatic for visual testing
 npm run test              # Run Vitest tests
 npm run coverage          # Run tests with coverage
+npm run apps:init         # Initialize app submodules (fetch source code into apps/)
+npm run apps:update       # Update app submodules to latest remote commits
 ```
 
 ## UI Architecture

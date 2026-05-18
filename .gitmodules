@@ -1,0 +1,6 @@
+[submodule "apps/reltio-react-ui"]
+	path = apps/reltio-react-ui
+	url = git@bitbucket.org:reltio-ondemand/reltio-react-ui.git
+[submodule "apps/admin-tools"]
+	path = apps/admin-tools
+	url = git@bitbucket.org:reltio-ondemand/admin-tools.git
