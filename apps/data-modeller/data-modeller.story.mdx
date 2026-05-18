@@ -1,0 +1,56 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/Data Modeller" />
+
+# Data Modeller
+
+> **Repository:** `reltio-ondemand/data-modeller`
+
+Data Modeller is a React-based single-page application for managing tenant data model configurations in Reltio. It provides tooling to view and edit entity types, relationship types, sources, grouping rules, match rules, validation functions, and cleanse configurations per tenant and environment. The application is served by a Node.js/Express backend that handles authentication, proxying, and configuration loading.
+
+## Tech Stack
+
+- **Framework:** React 16 (class components), React Router 5
+- **UI Library:** Material UI v4 (`@material-ui/core`) with MUI v5 devDependency, `@reltio/components`, `@reltio-lab/react-components`
+- **State Management:** Redux with redux-thunk
+- **Styling:** Less (compiled to `app.min.css`), Material UI `withStyles`/`ThemeProvider`
+- **Language:** JavaScript (ESLint, Babel)
+- **Server:** Node.js / Express with `auth-middleware`, `config-service-lib`, `node-oauth-provider`
+- **Build Tool:** CRACO (Create React App Configuration Override)
+- **Testing:** Jest, Enzyme, React Testing Library
+
+## Application Structure
+
+The client source lives under `src/src/` and is organised as follows:
+
+- `components/` — all React components, each in its own directory with an `index.js` entry. Top-level routing and layout are handled by `App.js` and `main/Main.js`. The `datamodeller/DataModeller.js` component owns the primary route tree.
+- `actions/` — Redux action creators (`Actions.js`, `ImportActions.js`) and action type constants.
+- `reducers/` — Redux reducers covering app state, component state, import/config state, session, and tenant data.
+- `services/` — API service modules for data fetching (`Data_services`) and authentication (`Auth_services`, `auth`).
+- `utils/` — Shared utilities (URL parameters, common helpers, app/feature fetchers).
+- `assets/` — LESS stylesheets and static images/SVGs.
+- `server/` — Express server entry point, proxy setup, OAuth/auth middleware integration, and server-side service modules (match rules, DVF, grouping, configuration testing).
+- `config/` — Environment property files consumed by the `config` npm package.
+
+### Primary routes
+
+<table>
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th>View</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>/entities</code></td><td>Entity type list and detail editor</td></tr>
+    <tr><td><code>/relationships</code></td><td>Relationship type list and detail editor</td></tr>
+    <tr><td><code>/sources</code></td><td>Source priority configuration</td></tr>
+    <tr><td><code>/grouping</code></td><td>Grouping rules configuration</td></tr>
+    <tr><td><code>/entityDetails/:uri</code></td><td>Attribute-level entity type editor</td></tr>
+    <tr><td><code>/relationshipDetails/:uri</code></td><td>Attribute-level relationship type editor</td></tr>
+  </tbody>
+</table>
+
+### Server endpoints
+
+The Express server (`server/server.js`) exposes health checks, a config service integration, OAuth-based authentication via `auth-middleware`, and an API proxy that forwards browser requests to the Reltio backend. Server-side services (match rule management, DVF, hidden match groups, sub-optimal rules, configuration testing) are implemented under `server/services/`.

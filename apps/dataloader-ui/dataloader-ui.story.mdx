@@ -1,0 +1,205 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/Dataloader UI" />
+
+# Dataloader UI
+
+> **Repository:** `reltio-ondemand/dataloader-ui`
+
+Dataloader UI is a React web application that lets Reltio users upload and manage batch data ingestion jobs for a selected tenant. Users configure load projects with field mapping rules, submit jobs from multiple storage sources, and track job history — all through a guided wizard and dashboard interface.
+
+## Tech Stack
+
+<table>
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Technology</th>
+      <th>Version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>UI framework</td>
+      <td>React</td>
+      <td>17.0.2</td>
+    </tr>
+    <tr>
+      <td>State management</td>
+      <td>Redux + redux-thunk + redux-promise-middleware</td>
+      <td>3.x / 2.x / 5.x</td>
+    </tr>
+    <tr>
+      <td>Routing</td>
+      <td>react-router-dom</td>
+      <td>4.x</td>
+    </tr>
+    <tr>
+      <td>Component library</td>
+      <td>MUI (Material UI v5) + @reltio-lab/react-components + react-components (internal)</td>
+      <td>5.x</td>
+    </tr>
+    <tr>
+      <td>Styling</td>
+      <td>Less (CSS preprocessor)</td>
+      <td>3.x</td>
+    </tr>
+    <tr>
+      <td>Drag and drop</td>
+      <td>react-dnd</td>
+      <td>9.x</td>
+    </tr>
+    <tr>
+      <td>Date handling</td>
+      <td>date-fns + @mui/x-date-pickers</td>
+      <td>4.x / 7.x</td>
+    </tr>
+    <tr>
+      <td>Internationalisation</td>
+      <td>ui-i18n (internal)</td>
+      <td>1.5.0</td>
+    </tr>
+    <tr>
+      <td>Server</td>
+      <td>Node.js + Express</td>
+      <td>4.x</td>
+    </tr>
+    <tr>
+      <td>Auth</td>
+      <td>auth-middleware (internal)</td>
+      <td>3.3.2</td>
+    </tr>
+    <tr>
+      <td>Bundler</td>
+      <td>Webpack</td>
+      <td>5.x</td>
+    </tr>
+    <tr>
+      <td>Unit tests</td>
+      <td>Jest + Enzyme</td>
+      <td>29.x / 3.x</td>
+    </tr>
+    <tr>
+      <td>E2E tests</td>
+      <td>Playwright</td>
+      <td>1.x</td>
+    </tr>
+    <tr>
+      <td>Error tracking</td>
+      <td>Sentry</td>
+      <td>7.x</td>
+    </tr>
+  </tbody>
+</table>
+
+## Application Structure
+
+```
+apps/dataloader-ui/src/
+├── client/
+│   ├── App.js                     # Root component — routing, header, tenant selector
+│   ├── actions/                   # Redux action creators
+│   ├── components/                # Shared UI components
+│   ├── pages/                     # Route-level pages
+│   │   ├── ProjectsPage/          # Project list and project detail views
+│   │   ├── ProjectWizard/         # Multi-step wizard for creating/editing projects
+│   │   │   └── steps/
+│   │   │       ├── DefineProject/ # Step 1 — project name, entity type, load mode
+│   │   │       ├── UploadData/    # Step 2 — data source selection and upload
+│   │   │       ├── Mapping/       # Step 3 — drag-and-drop attribute mapping
+│   │   │       └── Review/        # Step 4 — configuration summary before submit
+│   │   ├── JobsPage/              # Active and historical job list
+│   │   ├── SettingsPage/          # Storage credential configuration
+│   │   ├── ErrorPage/             # API/auth error display
+│   │   └── CrashPage/             # Unhandled exception fallback
+│   ├── reducers/                  # Redux reducers (projects, jobs, mappings, tenant, user, storage, UI)
+│   ├── services/                  # API and configuration service layer
+│   └── utils/                     # Shared utilities and constants
+├── server/                        # Express server (auth proxy, config serving)
+├── config/                        # Environment-specific JSON configs
+└── api-json/                      # Static JSON fixtures used in local development
+```
+
+## Key Features
+
+### Projects
+
+The **Projects** page (`/projects`) lists all saved load configurations. Each project stores:
+
+- target entity type or relation type
+- load mode (insert, update, full update)
+- field mapping from source columns to Reltio attributes
+- selected data source and credential reference
+
+Projects are created and edited through the **Project Wizard**, a four-step flow:
+
+1. **Define Project** — set name, entity/relation type, and load mode
+2. **Upload Data** — choose a data source (local file, Amazon S3, Azure Blob, Google Cloud Storage, SFTP, or device upload) and provide credentials
+3. **Mapping** — drag source columns onto target Reltio attributes; supports simple, nested, multiple-nested attributes, crosswalks, and relation member objects
+4. **Review** — verify configuration and submit the load job
+
+### Jobs
+
+The **Jobs** page (`/jobs`) shows all submitted jobs with status, duration, and record counts. Clicking a completed job opens a detailed review with processing statistics and error analysis.
+
+### Settings
+
+The **Settings** page (`/settings`) manages reusable storage credentials for Amazon S3, Azure Blob Storage, Google Cloud Storage, and SFTP — referenced by projects at upload time.
+
+## Configuration
+
+The server reads environment-specific JSON files from `config/`. The active config is selected via the `NODE_ENV` environment variable. Key configuration fields:
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>port</code></td>
+      <td>HTTP server port (default <code>8080</code>)</td>
+    </tr>
+    <tr>
+      <td><code>paths.oauth</code></td>
+      <td>OAuth provider URL</td>
+    </tr>
+    <tr>
+      <td><code>paths.login</code></td>
+      <td>Reltio login service URL</td>
+    </tr>
+    <tr>
+      <td><code>paths.dataloaderApi</code></td>
+      <td>Backend Data Loader API base URL</td>
+    </tr>
+    <tr>
+      <td><code>paths.consoleToolsConfig</code></td>
+      <td>CDN URL for console cross-app navigation config</td>
+    </tr>
+    <tr>
+      <td><code>urlPrefix</code></td>
+      <td>Base path prefix for all routes (default <code>/dataloader</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+## Running Locally
+
+```bash
+# Install dependencies
+npm install --legacy-peer-deps
+
+# Start development server (with hot reload)
+npm run start-dev
+
+# Build for production
+npm run build
+
+# Run unit tests
+npm test
+
+# Run E2E tests (requires a running app instance)
+npx playwright test
+```

@@ -1,0 +1,65 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/Agent Flow UI" />
+
+# Agent Flow UI
+
+> **Repository:** `reltio-ondemand/agent-flow-ui`
+
+Agent Flow UI is a Next.js 15 chat interface for interacting with Reltio AI agents. It implements a real-time streaming conversation system using Server-Sent Events (SSE), with OAuth-based authentication and multi-tenant support. Users can discover available agents, start and resume conversations, and configure agents via the built-in Agent Builder.
+
+## Tech Stack
+
+- **Framework:** Next.js 15 (App Router), React 19
+- **UI Library:** `@reltio/design` (SAP Fiori / UI5 Web Components React)
+- **Data Fetching:** SWR (`useSWRImmutable`) with automatic token refresh
+- **State Management:** Immer (`useImmutableState` hook)
+- **Styling:** CSS Modules
+- **Visualization:** visx (axis, curve, grid, shape, tooltip)
+- **Observability:** OpenTelemetry (traces + metrics via OTLP HTTP)
+- **Language:** TypeScript (strict mode)
+- **Testing:** Playwright (co-located `.spec.ts` files)
+- **Linting / Formatting:** Biome
+
+## Application Structure
+
+The app uses the Next.js App Router. All routes live under `app/`:
+
+<table>
+  <thead>
+    <tr>
+      <th>Route</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>app/agent-flow/</code></td>
+      <td>Main chat interface for starting and continuing agent conversations</td>
+    </tr>
+    <tr>
+      <td><code>app/agent-flow/agent-builder/</code></td>
+      <td>Agent Builder — list, create, and edit AI agent definitions (basics, prompt, tools, test tabs)</td>
+    </tr>
+    <tr>
+      <td><code>app/login/</code></td>
+      <td>OAuth login pages and callback handlers</td>
+    </tr>
+    <tr>
+      <td><code>app/status/</code></td>
+      <td>Health check endpoints</td>
+    </tr>
+  </tbody>
+</table>
+
+Shared React components live in `components/`, utilities and custom hooks in `utils/`, and TypeScript type definitions in `types/`. Environment-specific configuration (develop, hotfix, production) is loaded from `environments/` via the `APP_ENV` variable. A Next.js middleware at `middleware.ts` proxies authenticated requests to `.reltio.com` APIs by injecting Bearer tokens from HTTP-only cookies.
+
+## Key Patterns
+
+**Streaming conversations** — All chat turns use SSE with `?streaming=true`. The `processStreamingResponse` utility parses incremental `delta` chunks typed as `StreamingMessageChunk | StreamingDoneChunk`.
+
+**Authentication** — OAuth flow via `/login`; tokens stored as HTTP-only cookies; `useApi` refreshes tokens automatically on 401.
+
+**Agent Builder** — A tabbed editor (`Basics`, `Prompt`, `Tools`, `Test`) backed by conflict detection and publish/review dialogs.
+
+**Redirect URI security** — Strict server-side and client-side validation guards against open redirect vulnerabilities (CWE-601); only same-origin paths in an explicit allowlist are accepted.

@@ -1,0 +1,247 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/RDM" />
+
+# RDM
+
+> **Repository:** `reltio-ondemand/rdm-react`
+
+RDM React is the Reference Data Management UI application for the Reltio platform. It provides a browser-based interface for managing lookup types, lookup values, source mappings, code generators, and autopilot monitoring. The application is served by a Node.js/Express backend that handles OAuth authentication, API proxying, configuration delivery, and activity logging.
+
+## Tech Stack
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Technology</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>UI framework</td>
+      <td>React 17, Redux 4, react-router 3</td>
+    </tr>
+    <tr>
+      <td>Component library</td>
+      <td>MUI v5 (Material UI) with custom RDM theme</td>
+    </tr>
+    <tr>
+      <td>State management</td>
+      <td>Redux with RxJS 5 epics, reselect selectors</td>
+    </tr>
+    <tr>
+      <td>Charts</td>
+      <td>Recharts</td>
+    </tr>
+    <tr>
+      <td>Server</td>
+      <td>Express 4, Node.js, Eta templating</td>
+    </tr>
+    <tr>
+      <td>Build</td>
+      <td>Webpack 5, Babel, TypeScript 5 (strict)</td>
+    </tr>
+    <tr>
+      <td>Testing</td>
+      <td>Jest 29, Testing Library, Enzyme 3</td>
+    </tr>
+    <tr>
+      <td>Monitoring</td>
+      <td>Sentry, Google BigQuery activity logging, LogDNA</td>
+    </tr>
+    <tr>
+      <td>Deployment</td>
+      <td>Docker, Kubernetes (Helm chart <code>rdm-ui</code>), Istio virtual service</td>
+    </tr>
+  </tbody>
+</table>
+
+## Application Structure
+
+```
+apps/rdm-react/src/
+├── src/                        # Client-side React application
+│   ├── app.tsx                 # Entry point — renders <Main /> into #rdm-app
+│   ├── Main.tsx                # Root providers: Redux, MUI theme, feature flags
+│   ├── AppComponent.tsx        # React Router configuration and top-level routes
+│   ├── pages/                  # Page-level components (see Pages below)
+│   ├── components/             # Shared UI components (AppBar, dialogs, tables, etc.)
+│   ├── redux/                  # Actions, reducers, selectors, store, middlewares
+│   ├── rdm-sdk/                # API client and domain model for the RDM service
+│   ├── core/                   # Auth, utilities, Sentry initialisation
+│   ├── configs/                # Runtime config loading and feature flag streams
+│   └── themes/                 # MUI theme definition for RDM
+└── server/                     # Node.js/Express server
+    ├── app.ts                  # Express app: auth, static serving, proxies
+    ├── middlewares/            # CSP, OAuth proxy, workflow, RDM API proxy, versioning
+    ├── controllers/            # Config, translations, download endpoints
+    └── utils/                  # Config manager, Vault integration, logging helpers
+```
+
+## Pages
+
+<table>
+  <thead>
+    <tr>
+      <th>Route</th>
+      <th>Page component</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/:tenantId/sources</code></td>
+      <td><code>SourcesListPage</code></td>
+      <td>Lists all data sources configured for the tenant</td>
+    </tr>
+    <tr>
+      <td><code>/:tenantId/types</code></td>
+      <td><code>TypesPage</code></td>
+      <td>Lists reference data lookup types</td>
+    </tr>
+    <tr>
+      <td><code>/:tenantId/types/:type/:tab</code></td>
+      <td><code>ValuesPageContainer</code></td>
+      <td>Lookup values and source mappings for a specific type; supports workflow tasks and inline comments</td>
+    </tr>
+    <tr>
+      <td><code>/:tenantId/generators</code></td>
+      <td><code>GeneratorsPage</code></td>
+      <td>Code generator management (requires <code>generatorsEdit</code> policy)</td>
+    </tr>
+    <tr>
+      <td><code>/:tenantId/autopilot</code></td>
+      <td><code>AutopilotMonitorPage</code></td>
+      <td>Autopilot job monitoring (requires <code>AUTOPILOT</code> feature flag)</td>
+    </tr>
+  </tbody>
+</table>
+
+## Server Endpoints
+
+<table>
+  <thead>
+    <tr>
+      <th>Endpoint</th>
+      <th>Method</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/configs</code></td>
+      <td>GET</td>
+      <td>Delivers runtime client configuration</td>
+    </tr>
+    <tr>
+      <td><code>/translations/:locale</code></td>
+      <td>GET</td>
+      <td>Returns i18n message bundles</td>
+    </tr>
+    <tr>
+      <td><code>/download</code>, <code>/download_callback</code></td>
+      <td>GET</td>
+      <td>Handles file export downloads with OAuth token exchange</td>
+    </tr>
+    <tr>
+      <td><code>/log</code></td>
+      <td>POST</td>
+      <td>Writes user activity events to Google BigQuery</td>
+    </tr>
+    <tr>
+      <td><code>/users/:tenant</code></td>
+      <td>GET</td>
+      <td>Proxies user list from the OAuth service</td>
+    </tr>
+    <tr>
+      <td><code>/rdm/*</code></td>
+      <td>ALL</td>
+      <td>Reverse proxy to the RDM backend API</td>
+    </tr>
+    <tr>
+      <td><code>/collaboration/*</code></td>
+      <td>ALL</td>
+      <td>Reverse proxy to the collaboration service</td>
+    </tr>
+    <tr>
+      <td><code>/workflow/*</code></td>
+      <td>ALL</td>
+      <td>Reverse proxy to the workflow service (with tenant validation)</td>
+    </tr>
+    <tr>
+      <td><code>/activityLog/*</code></td>
+      <td>ALL</td>
+      <td>Reverse proxy to the activity log service</td>
+    </tr>
+  </tbody>
+</table>
+
+## Redux State Domains
+
+The Redux store is organised into the following named slices:
+
+<table>
+  <thead>
+    <tr>
+      <th>Slice</th>
+      <th>Responsibility</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>main</code></td>
+      <td>Lookup types, values, sources, filters, sorting, search, export, hierarchy</td>
+    </tr>
+    <tr>
+      <td><code>draftMode</code></td>
+      <td>Tracks unsaved changes; triggers browser unload guard</td>
+    </tr>
+    <tr>
+      <td><code>collaboration</code></td>
+      <td>Comments and discussion threads on values and mappings</td>
+    </tr>
+    <tr>
+      <td><code>workflow</code></td>
+      <td>Workflow task state and assignment</td>
+    </tr>
+    <tr>
+      <td><code>autopilot</code></td>
+      <td>Autopilot job status and settings</td>
+    </tr>
+    <tr>
+      <td><code>activityLog</code></td>
+      <td>In-app activity log feed</td>
+    </tr>
+    <tr>
+      <td><code>generators</code></td>
+      <td>Code generator definitions and type associations</td>
+    </tr>
+    <tr>
+      <td><code>ui</code></td>
+      <td>Panel visibility, modal state, loading indicators</td>
+    </tr>
+  </tbody>
+</table>
+
+## Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start the Webpack Dev Server (client only, proxies to a QA backend)
+npm run qa      # sets NODE_CONFIG_DIR=./transitionConfig and NODE_ENV=qa
+npm run wds     # starts Webpack Dev Server on http://localhost:3000
+
+# Run tests
+npm test
+
+# Lint
+npm run lint
+
+# Production build
+npm run build   # builds client bundle + server TypeScript + git-info
+```
+
+The server requires `clientSecret` in `transitionConfig/qa.json` and, optionally, `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery activity logging.

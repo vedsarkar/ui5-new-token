@@ -1,0 +1,198 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/External Match UI" />
+
+# External Match UI
+
+> **Repository:** `reltio-ondemand/external-match-ui`
+
+External Match UI is a Next.js web application that allows data stewards to run external match jobs against Reltio tenants by uploading CSV files or pointing to cloud storage locations (AWS S3, GCP, SFTP). It provides a wizard-driven workflow for defining jobs, mapping source columns to entity type attributes and match groups, and monitoring job execution status.
+
+## Tech Stack
+
+- **Framework:** Next.js 15 (React 18)
+- **UI Library:** MUI (Material UI) v5 with Emotion
+- **State Management:** Custom context-based app state using Immutable.js
+- **Styling:** MUI Emotion-based styling (`withStyles`, `makeStyles`)
+- **Language:** JavaScript (ES2017+)
+- **Testing:** Jest + Enzyme
+- **Server:** Express with custom OAuth middleware (`auth-middleware`, `node-oauth-provider`)
+- **Error Monitoring:** Sentry (`@sentry/browser`)
+
+## Application Structure
+
+The app uses a **Next.js pages-based routing** structure with a clear client/server split. The Express server handles authentication, proxying to the Reltio External Match API, and operational endpoints. The Next.js frontend serves the job management UI.
+
+### Pages
+
+<table>
+  <thead>
+    <tr>
+      <th>Route</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/</code> (index)</td>
+      <td>Job definitions list with a split-panel layout. Selecting a definition opens a right-side panel showing definition details, mapping summary, storage details, and job run history.</td>
+    </tr>
+    <tr>
+      <td><code>/jobDefinition/step1</code></td>
+      <td>Step 1 of the job definition wizard: select entity type and configure the data source (file upload, AWS S3, GCP, or SFTP).</td>
+    </tr>
+    <tr>
+      <td><code>/jobDefinition/step2</code></td>
+      <td>Step 2: map source file columns to entity type attributes, crosswalks, references, and match groups.</td>
+    </tr>
+    <tr>
+      <td><code>/jobDefinition/step3</code></td>
+      <td>Step 3: review the full job definition configuration before saving and submitting the job.</td>
+    </tr>
+    <tr>
+      <td><code>/jobStatus</code></td>
+      <td>List of all submitted jobs grouped by status (In Progress / Completed) with sorting and filtering controls.</td>
+    </tr>
+    <tr>
+      <td><code>/jobDetails</code></td>
+      <td>Detailed view of a single job run including status, matched/unmatched record counts, and attribute-level results.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Server Endpoints
+
+<table>
+  <thead>
+    <tr>
+      <th>Endpoint</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>GET /externalMatch/healthcheck</code></td>
+      <td>Returns <code>{`{"status":"OK"}`}</code>. No authentication required.</td>
+    </tr>
+    <tr>
+      <td><code>GET /externalMatch/status</code></td>
+      <td>Returns process memory, Node.js version, and runtime config. Requires authentication.</td>
+    </tr>
+    <tr>
+      <td><code>GET /externalMatch/version</code></td>
+      <td>Returns current git hash, branch, and commit time. Requires authentication.</td>
+    </tr>
+    <tr>
+      <td><code>/externalMatch/services/*</code></td>
+      <td>Authenticated proxy layer forwarding requests to the Reltio External Match API (<code>paths.externalMatchApi</code>), the core Reltio API, admin tools config, auth, and tenant services.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Key Client Components
+
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>DataLoader</code></td>
+      <td>Upload type selector and form switcher supporting local file (CSV), AWS S3, GCP, and SFTP data sources.</td>
+    </tr>
+    <tr>
+      <td><code>EntityTypeMapping</code></td>
+      <td>Column-to-attribute mapping interface including match group assignment, crosswalk configuration, and create-new-mapping dialog.</td>
+    </tr>
+    <tr>
+      <td><code>JobDefinitionStepper</code></td>
+      <td>Step indicator for the three-step job definition wizard showing completed and current steps.</td>
+    </tr>
+    <tr>
+      <td><code>JobDefinitionList</code></td>
+      <td>Paginated list of saved job definitions with actions (edit, duplicate, delete, run).</td>
+    </tr>
+    <tr>
+      <td><code>JobDefinitionDetails</code></td>
+      <td>Side panel displaying definition metadata, mapping summary, storage details, and execution history.</td>
+    </tr>
+    <tr>
+      <td><code>JobStatus</code></td>
+      <td>Status badge and progress indicator for a single job run.</td>
+    </tr>
+    <tr>
+      <td><code>DetailsReview</code></td>
+      <td>Read-only review panel for the full job definition shown on wizard step 3.</td>
+    </tr>
+    <tr>
+      <td><code>AttributeList</code></td>
+      <td>Renders flat and nested entity attributes for display in job details and mapping review panels.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Configuration
+
+The app uses the Node.js `config` module. Configuration files live in `src/config/`. Key properties:
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>clientId</code></td>
+      <td>OAuth client ID for basic authorization.</td>
+    </tr>
+    <tr>
+      <td><code>clientSecret</code></td>
+      <td>OAuth client secret used for authorization and data encryption.</td>
+    </tr>
+    <tr>
+      <td><code>urlPrefix</code></td>
+      <td>URL path prefix prepended to all routes (default: <code>/externalMatch</code>).</td>
+    </tr>
+    <tr>
+      <td><code>port</code></td>
+      <td>HTTP server port (default: <code>8080</code>).</td>
+    </tr>
+    <tr>
+      <td><code>paths.externalMatchApi</code></td>
+      <td>Base URL of the Reltio External Match API that the server proxies to.</td>
+    </tr>
+    <tr>
+      <td><code>paths.api</code></td>
+      <td>Reltio platform API path. The <code>{`{environment}`}</code> variable is resolved from the admin tools config.</td>
+    </tr>
+    <tr>
+      <td><code>paths.oauth</code></td>
+      <td>Reltio OAuth service path.</td>
+    </tr>
+    <tr>
+      <td><code>paths.adminToolsConfig</code></td>
+      <td>Path to the admin tools configuration file used to resolve available environments.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Local Development
+
+```bash
+npm install
+npm run dev     # Starts the app at http://localhost:8080/externalMatch
+```
+
+To run tests:
+
+```bash
+npm test                # All tests
+npm run test:client     # Client-side tests only
+npm run test:server     # Server-side tests only
+npm run test:coverage   # With coverage report
+```

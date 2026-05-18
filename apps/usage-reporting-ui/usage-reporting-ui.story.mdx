@@ -1,0 +1,207 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/Usage Reporting UI" />
+
+# Usage Reporting UI
+
+> **Repository:** `reltio-ondemand/usage-reporting-ui`
+
+Usage Reporting UI is an internal Reltio application that provides visibility into platform consumption metrics across tenants. It exposes dashboards for API usage, consolidated profile counts, storage, entitlements, SLA scorecards, and custom reports — all scoped by customer, environment, and tenant via URL query parameters.
+
+## Tech Stack
+
+<table>
+  <thead>
+    <tr>
+      <th>Concern</th>
+      <th>Technology</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Framework</td>
+      <td>Next.js 15 with custom Express server</td>
+    </tr>
+    <tr>
+      <td>Language</td>
+      <td>TypeScript 5.1 (strict)</td>
+    </tr>
+    <tr>
+      <td>UI Library</td>
+      <td>MUI v5 (primary); MUI v4 legacy (do not introduce new v4 usage)</td>
+    </tr>
+    <tr>
+      <td>Data Grid</td>
+      <td>MUI X Data Grid v6</td>
+    </tr>
+    <tr>
+      <td>Charts</td>
+      <td>Recharts</td>
+    </tr>
+    <tr>
+      <td>State Management</td>
+      <td>Redux + redux-saga + MobX (per feature)</td>
+    </tr>
+    <tr>
+      <td>Data Fetching</td>
+      <td>SWR v1 via custom <code>useApi</code> hook</td>
+    </tr>
+    <tr>
+      <td>Styling</td>
+      <td>CSS Modules</td>
+    </tr>
+    <tr>
+      <td>Testing</td>
+      <td>Jest + React Testing Library + MSW</td>
+    </tr>
+    <tr>
+      <td>Server Data</td>
+      <td>Google BigQuery (SLA and reporting routes)</td>
+    </tr>
+    <tr>
+      <td>Auth</td>
+      <td><code>auth-middleware</code> + <code>node-oauth-provider</code> (Bitbucket private packages)</td>
+    </tr>
+    <tr>
+      <td>Runtime config</td>
+      <td><code>config/default.properties</code> + Vault secrets</td>
+    </tr>
+  </tbody>
+</table>
+
+## Application Structure
+
+```
+pages/                     → Next.js file-based routing — thin re-exports only
+src/apps/
+  summary/                 → Usage summary dashboard (landing view)
+  entitlement/             → Entitlement tracking (API, CP, RSU, base package)
+  report/                  → Custom SLA and usage reports
+  scorecard/               → SLA scorecard view
+  storage/                 → Storage usage view
+  api/                     → API call volume and trend analysis
+  consolidated-profiles/   → Consolidated profile count tracking
+src/components/            → Shared UI (Page shell, Header, FilterDialog, etc.)
+src/contexts/              → React Contexts (FeaturesContext — feature flags)
+api/                       → Express route handlers (proxy, auth, tenants, statistics, etc.)
+server/                    → Express server setup and API router registration
+utils/                     → Shared hooks, fetch helpers, BigQuery service, logger
+types/                     → Global TypeScript type definitions
+config/                    → Runtime configuration
+test-utils/                → MSW mocks and render helpers
+```
+
+## Routing
+
+All routes are served under the `/usageReporting` base path (configured in `next.config.js`). Pages in `pages/` are thin wrappers that re-export from the corresponding `src/apps/` feature module — no business logic lives in page files.
+
+<table>
+  <thead>
+    <tr>
+      <th>Route</th>
+      <th>Feature Module</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/</code></td>
+      <td><code>src/apps/summary</code></td>
+      <td>Redirects to <code>/summary</code></td>
+    </tr>
+    <tr>
+      <td><code>/summary</code></td>
+      <td><code>src/apps/summary</code></td>
+      <td>High-level usage summary across tenants</td>
+    </tr>
+    <tr>
+      <td><code>/entitlement</code></td>
+      <td><code>src/apps/entitlement</code></td>
+      <td>Entitlement consumption vs. contracted limits</td>
+    </tr>
+    <tr>
+      <td><code>/report</code></td>
+      <td><code>src/apps/report</code></td>
+      <td>Custom SLA and usage reports with date range selection</td>
+    </tr>
+    <tr>
+      <td><code>/scorecard</code></td>
+      <td><code>src/apps/scorecard</code></td>
+      <td>SLA scorecard per tenant</td>
+    </tr>
+    <tr>
+      <td><code>/storage</code></td>
+      <td><code>src/apps/storage</code></td>
+      <td>Storage consumption metrics</td>
+    </tr>
+    <tr>
+      <td><code>/apiusage</code></td>
+      <td><code>src/apps/api</code></td>
+      <td>API call volume by date, endpoint, and tenant</td>
+    </tr>
+  </tbody>
+</table>
+
+### URL Query Parameters
+
+Page state is driven entirely by URL query parameters — no server-side session state:
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>customerId</code></td>
+      <td>Selected customer — drives all data fetching</td>
+    </tr>
+    <tr>
+      <td><code>env</code></td>
+      <td>Environment identifier (e.g. prod, staging)</td>
+    </tr>
+    <tr>
+      <td><code>tenant</code></td>
+      <td>Tenant identifier within the selected environment</td>
+    </tr>
+  </tbody>
+</table>
+
+## Server Architecture
+
+The application uses a custom Express server rather than Next.js API routes. Route handlers in `api/` are registered through `server/apiRouter.ts`. Key server-side integrations:
+
+- **Proxy** (`api/proxy/`) — forwards authenticated requests to downstream Reltio services, forwarding the `Authorization` header
+- **Statistics Reporting** (`api/statisticsReporting.ts`) — aggregates usage statistics
+- **Tenants** (`api/tenants.ts`) — tenant list and resolution
+- **BigQuery** (`utils/GBQService.ts`) — parameterized queries for SLA and reporting data
+- **Auth** (`api/auth.ts`) — OAuth flow via `node-oauth-provider`
+- **Config** (`api/config.ts`, `api/nodeConfig.ts`) — runtime configuration surface exposed to the client
+- **Health** (`api/healthcheck.ts`) — liveness probe endpoint
+
+Secrets and service URLs are never hardcoded — they are loaded from `config/default.properties` and fetched from Vault via `utils/fetchVaultConfig.ts`.
+
+## Feature Flags
+
+`FeaturesContext` provides runtime feature flags (e.g. `enableSlaReports`) to all feature modules. Permission checks are enforced at the top-level `App` component before any feature module renders.
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server (Next.js + Express, port driven by config)
+npm run dev
+
+# Run tests
+npm test
+
+# Run tests with coverage
+npm run coverage
+
+# Lint
+npm run lint
+```

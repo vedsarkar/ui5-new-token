@@ -1,0 +1,109 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/Admin Tools" />
+
+# Admin Tools
+
+> **Repository:** `reltio-ondemand/admin-tools`
+
+Admin Tools is a Next.js web application that provides Reltio platform administrators with a centralized interface for managing tenants, users, configurations, integrations, and data pipelines. It runs as a full-stack app with an Express server layer handling proxying and authentication middleware, and a Next.js frontend serving the admin UI.
+
+## Tech Stack
+
+- **Framework:** Next.js 15 (React 18)
+- **UI Library:** MUI (Material UI) v5 with Emotion
+- **State Management:** MobX (mobx-react-lite)
+- **Styling:** CSS Modules + MUI Emotion-based styling
+- **Charts:** Recharts
+- **Language:** TypeScript
+- **Testing:** Playwright (integration), with nyc coverage
+- **Server:** Express (custom SSR/proxy server, compiled separately via `tsc`)
+
+## Application Structure
+
+The app follows a **Next.js pages-based routing** structure with a parallel `apps/` directory containing feature-specific sub-apps that each bundle their own components, pages, and utilities. The top-level `pages/` directory wires Next.js routes to these sub-app implementations.
+
+### Main modules and pages
+
+<table>
+  <thead>
+    <tr>
+      <th>Route / Module</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>account-settings</code></td>
+      <td>User account settings including MFA setup (TOTP authenticator and email-based OTP)</td>
+    </tr>
+    <tr>
+      <td><code>app-management</code></td>
+      <td>Management of Reltio applications and application groups</td>
+    </tr>
+    <tr>
+      <td><code>client-credentials</code></td>
+      <td>OAuth client credentials management (create, view, rotate secrets)</td>
+    </tr>
+    <tr>
+      <td><code>configuration</code></td>
+      <td>Tenant configuration editor with tree navigation, JSON editing, and revision history</td>
+    </tr>
+    <tr>
+      <td><code>data-modeler</code></td>
+      <td>Data model editing: entity types, relation types, attributes, cleanse rules, survivorship strategies, graph types, hierarchy types, interaction types, and validation</td>
+    </tr>
+    <tr>
+      <td><code>data-out / data-pipelines</code></td>
+      <td>Data pipeline management with connectors for Snowflake, BigQuery, AWS, Azure, and GCP</td>
+    </tr>
+    <tr>
+      <td><code>data-out / data-share</code></td>
+      <td>Data share configuration and provisioning</td>
+    </tr>
+    <tr>
+      <td><code>data-out / snowflake</code></td>
+      <td>Snowflake OAuth integration and connection management</td>
+    </tr>
+    <tr>
+      <td><code>integration</code></td>
+      <td>Integration configuration (catch-all dynamic route)</td>
+    </tr>
+    <tr>
+      <td><code>monitoring</code></td>
+      <td>Platform monitoring: index, authentication stats, latency, and usage metrics</td>
+    </tr>
+    <tr>
+      <td><code>notification-management</code></td>
+      <td>Notification type management and configuration</td>
+    </tr>
+    <tr>
+      <td><code>reporting-analytics</code></td>
+      <td>Analytics dashboards and reporting connections</td>
+    </tr>
+    <tr>
+      <td><code>salesforce-monitoring</code></td>
+      <td>Salesforce integration monitoring</td>
+    </tr>
+    <tr>
+      <td><code>sso</code></td>
+      <td>Single sign-on configuration for OIDC and SAML providers</td>
+    </tr>
+    <tr>
+      <td><code>tenant-reports</code></td>
+      <td>Tenant-level reports with dynamic slug routing</td>
+    </tr>
+    <tr>
+      <td><code>tenantManagement / tenantConfigurations</code></td>
+      <td>Tenant management and physical/node configuration</td>
+    </tr>
+    <tr>
+      <td><code>shieldEncryption</code></td>
+      <td>Shield encryption settings management</td>
+    </tr>
+    <tr>
+      <td><code>notifications</code></td>
+      <td>In-app notification viewing and management</td>
+    </tr>
+  </tbody>
+</table>

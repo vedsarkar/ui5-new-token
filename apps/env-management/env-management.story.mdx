@@ -1,0 +1,180 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/Tenant Management" />
+
+# Tenant Management
+
+> **Repository:** `reltio-ondemand/env-management`
+
+Env Management is a tenant-scoped operations console that lets administrators schedule, monitor, and control periodic background tasks running against a Reltio environment. It also surfaces internal queue depths, external event-stream integrations, match analysis results, and lifecycle actions — providing a single UI for day-to-day operational tasks across a tenant.
+
+## Tech Stack
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Technology</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Frontend framework</td>
+      <td>React 17, Redux + redux-thunk, React Router v4</td>
+    </tr>
+    <tr>
+      <td>UI components</td>
+      <td><code>@material-ui/core</code> v4, <code>@reltio-lab/react-components</code>, <code>react-components</code> (internal)</td>
+    </tr>
+    <tr>
+      <td>Charts</td>
+      <td>Recharts (area charts, distribution graphs), custom SVG D3-based area chart</td>
+    </tr>
+    <tr>
+      <td>Server</td>
+      <td>Node.js + Express — BFF proxy, OAuth middleware, Vault config, request signing</td>
+    </tr>
+    <tr>
+      <td>Build</td>
+      <td>Webpack 4, Babel 7, Less for styles</td>
+    </tr>
+    <tr>
+      <td>Testing</td>
+      <td>Jest 28, Enzyme, Supertest</td>
+    </tr>
+    <tr>
+      <td>i18n</td>
+      <td><code>ui-i18n</code> (internal)</td>
+    </tr>
+    <tr>
+      <td>External queue integrations</td>
+      <td>Amazon SQS/SNS (AWS SDK), Google Pub/Sub (<code>@google-cloud/bigquery</code>), Confluent Kafka, Microsoft Azure</td>
+    </tr>
+  </tbody>
+</table>
+
+## Application Structure
+
+```
+apps/env-management/src/
+├── client/
+│   ├── App.js                  # Root component — auth, tenant selection, app shell
+│   ├── MainContent.js          # Router — maps URL paths to page components
+│   ├── actions/                # Redux action creators
+│   ├── reducers/               # Redux reducers (tasks, queues, user, UI, notifications, entity types, external queues)
+│   ├── components/             # Shared UI components (charts, dialogs, tooltips, empty states)
+│   ├── pages/                  # Feature pages (see Routes below)
+│   └── services/               # Client-side service helpers (configuration, history, logout)
+└── server/
+    ├── app.js                  # Express app setup, middleware chain
+    ├── middlewares/            # Auth, config service, queue proxy, headers, IRS, request signing
+    └── services/
+        ├── public/             # Health check, error, status endpoints
+        └── secured/            # Proxied API routes: config, queues, external queues, IRS, statistics
+```
+
+## Routes
+
+<table>
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th>Page</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/jobs/pending</code></td>
+      <td>PendingPage</td>
+      <td>Lists tasks currently queued or in progress; allows creating new tasks via a wizard</td>
+    </tr>
+    <tr>
+      <td><code>/jobs/completed</code></td>
+      <td>CompletedPage</td>
+      <td>History of completed and failed tasks with detail panels</td>
+    </tr>
+    <tr>
+      <td><code>/jobs/new</code></td>
+      <td>WizardPage</td>
+      <td>Step-by-step task creation wizard (requires <code>tasks.execute</code> permission)</td>
+    </tr>
+    <tr>
+      <td><code>/queues</code></td>
+      <td>QueuesPage</td>
+      <td>Internal queue depth monitoring; supports cleanup operations</td>
+    </tr>
+    <tr>
+      <td><code>/match-analysis</code></td>
+      <td>MatchAnalysisPage</td>
+      <td>Match rule analysis — precision scores, distribution graphs, correlation matrix, run results</td>
+    </tr>
+    <tr>
+      <td><code>/external_queues</code></td>
+      <td>ExternalQueuesContent</td>
+      <td>CRUD management of external event-stream integrations (AWS SQS/SNS, Google Pub/Sub, Confluent Kafka, Azure)</td>
+    </tr>
+    <tr>
+      <td><code>/lifecycle-actions</code></td>
+      <td>LifecycleActionsPage</td>
+      <td>Lifecycle action (LCA) management — create, authorize, validate, connect AWS role; feature-flagged</td>
+    </tr>
+  </tbody>
+</table>
+
+## Server-Side Architecture
+
+The server is a Node.js/Express BFF (Backend for Frontend) that:
+
+- Authenticates users via OAuth (`auth-middleware`, `node-oauth-provider`); reads secrets from HashiCorp Vault.
+- Proxies all secured API calls to the Reltio backend, injecting signed credentials and the correct tenant API path (`setApiPath` middleware).
+- Fetches internal queue data via `getQueues` (AWS SDK) and Google Cloud credentials.
+- Exposes external queue CRUD routes, wrapping provider-specific SDKs behind a unified interface.
+- Serves the React SPA via EJS templates with runtime `appSettings` injected into the page.
+
+## State Management
+
+Redux store slices:
+
+<table>
+  <thead>
+    <tr>
+      <th>Slice</th>
+      <th>Responsibility</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>tasks</code></td>
+      <td>Pending/completed task lists, task detail, cleanup task running flag</td>
+    </tr>
+    <tr>
+      <td><code>queues</code></td>
+      <td>Internal queue availability and depth data</td>
+    </tr>
+    <tr>
+      <td><code>externalQueues</code></td>
+      <td>External queue list and editor state</td>
+    </tr>
+    <tr>
+      <td><code>user</code></td>
+      <td>Authenticated user profile and permission flags (<code>tasks.execute</code>, <code>tasks.update</code>, <code>queues.clean</code>)</td>
+    </tr>
+    <tr>
+      <td><code>entityTypes</code></td>
+      <td>Tenant entity type metadata used by task wizard and match analysis</td>
+    </tr>
+    <tr>
+      <td><code>notification</code></td>
+      <td>Snackbar notifications</td>
+    </tr>
+    <tr>
+      <td><code>ui</code></td>
+      <td>Global loading state</td>
+    </tr>
+  </tbody>
+</table>
+
+## Configuration
+
+Runtime configuration is loaded from `/config/default.properties` (and environment-specific overrides). Local development requires a `local.properties` file with `clientSecret`. The active environment is selected via `NODE_CONFIG_ENV`. Google Cloud credentials for queue access are provided through `GOOGLE_APPLICATION_CREDENTIALS`.

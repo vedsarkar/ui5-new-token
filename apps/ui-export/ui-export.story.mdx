@@ -1,0 +1,179 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/Export UI" />
+
+# Export UI
+
+> **Repository:** `reltio-ondemand/ui-export`
+
+UI Export is a standalone Reltio application that lets users create, monitor, and download bulk data export jobs for entities, relationships, graph exports, and segments. It exposes a multi-step wizard for configuring export tasks and a task management view for tracking pending and completed jobs.
+
+## Tech Stack
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Technology</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Frontend framework</td>
+      <td>React 16 (class components), Redux, React Router 4</td>
+    </tr>
+    <tr>
+      <td>UI library</td>
+      <td>Material UI v4 (<code>@material-ui/core</code>)</td>
+    </tr>
+    <tr>
+      <td>Server</td>
+      <td>Node.js / Express 4 with OAuth via <code>auth-middleware</code></td>
+    </tr>
+    <tr>
+      <td>HTTP client</td>
+      <td>axios (frontend + server), node-fetch (server utilities)</td>
+    </tr>
+    <tr>
+      <td>Internal libraries</td>
+      <td><code>@reltio/mdm-sdk</code>, <code>@reltio-lab/react-components</code>, <code>react-components</code>, <code>ui-i18n</code></td>
+    </tr>
+    <tr>
+      <td>State management</td>
+      <td>Redux (reducers: <code>SessionReducer</code>, <code>TenantReducer</code>)</td>
+    </tr>
+    <tr>
+      <td>Testing</td>
+      <td>Jest, Enzyme, Supertest</td>
+    </tr>
+    <tr>
+      <td>Containerisation</td>
+      <td>Docker + Helm (Kubernetes / Istio)</td>
+    </tr>
+  </tbody>
+</table>
+
+## Application Structure
+
+```
+apps/ui-export/src/
+├── server/                  # Express server — OAuth proxy, download endpoints, config
+│   ├── server.js            # Route definitions and middleware wiring
+│   ├── downloadFile.js      # Streams export files to the browser
+│   ├── getDownloadUrl.js    # Resolves signed download URLs
+│   ├── decryptUrl.js        # Decrypts encrypted download URLs
+│   └── utils/               # Logger, error types, config parser, Vault integration
+├── middlewares/             # Express middleware (auth, config service, headers, Sentry, shared preferences)
+├── src/                     # React application
+│   ├── components/
+│   │   ├── export/          # Core export UI
+│   │   │   ├── Export.js            # Landing page: pending / completed task list
+│   │   │   ├── TaskPage.js          # Renders task cards
+│   │   │   ├── EntityExport.js      # Entity-level export detail view
+│   │   │   ├── RelationshipExport.js
+│   │   │   ├── ExportDetails.js
+│   │   │   ├── newTask/             # Multi-step export wizard
+│   │   │   │   ├── NewTask.js       # Stepper container (Selection → Filters → Job Details)
+│   │   │   │   ├── selection/       # Entity / relationship / attribute selection panels
+│   │   │   │   ├── filter/          # Filter configuration step
+│   │   │   │   └── jobDetails/      # Output format (CSV Flattened, CSV Exploded, JSON) and job naming
+│   │   │   └── downloadPage/        # Completed-job download table with file management
+│   │   ├── FloatingButton/
+│   │   └── StatusIcon/
+│   ├── actions/             # Redux action creators and action types
+│   ├── services/            # Data service layer (Reltio API calls)
+│   ├── constants/           # Common constants and filter type enums
+│   └── utils/               # URL parameter helpers, attribute utilities, export utilities
+└── config/                  # Server configuration properties
+```
+
+## Key Workflows
+
+### Creating an Export Job
+
+The new-task wizard (`NewTask.js`) walks the user through three steps:
+
+1. **Selection** — choose entity types, relationship types, and individual attributes to include. Supports entities, relations, graph exports, and segment-based exports.
+2. **Filters** — apply search filters to scope the export to a subset of records.
+3. **Job Details** — name the job and select the output format.
+
+Supported output formats:
+
+<table>
+  <thead>
+    <tr>
+      <th>Format</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>CSV Flattened</td>
+      <td>One row per profile; multi-value attributes expand into columns</td>
+    </tr>
+    <tr>
+      <td>CSV Exploded</td>
+      <td>Multi-value attributes expand into additional rows</td>
+    </tr>
+    <tr>
+      <td>JSON</td>
+      <td>Full profile export in JSON format</td>
+    </tr>
+  </tbody>
+</table>
+
+### Task Management
+
+The landing page (`Export.js`) shows two tabs — **Pending** and **Completed** — backed by the server-side `/tasks` and `/tasksHistory` endpoints. Completed jobs support infinite scroll with paginated fetching. Users can download output files directly from the **Download** page (`downloadPage/`), which resolves signed or encrypted URLs via the Node proxy before streaming files to the browser.
+
+### Server-Side Proxy
+
+The Express server acts as a secure proxy between the React frontend and the Reltio API:
+
+- Authentication is handled by `auth-middleware` (OAuth 2.0 with Vault-sourced secrets).
+- API calls for configuration, tasks, entities, segments, and graph counts are forwarded through dedicated GET/POST routes.
+- File downloads are streamed via `downloadFile.js` to avoid buffering large exports in memory.
+- Config is injected at startup into `window.REACT_APP_CONFIG` via a generated `config.js` static file.
+
+### Filter Types
+
+<table>
+  <thead>
+    <tr>
+      <th>Filter type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>entities</code></td>
+      <td>Export based on an entity search query</td>
+    </tr>
+    <tr>
+      <td><code>relations</code></td>
+      <td>Export relationship records</td>
+    </tr>
+    <tr>
+      <td><code>graph</code></td>
+      <td>Export a graph search result identified by an <code>exportId</code> parameter</td>
+    </tr>
+    <tr>
+      <td><code>segments</code></td>
+      <td>Export all entities belonging to a saved segment</td>
+    </tr>
+  </tbody>
+</table>
+
+## Local Development
+
+Start both servers in parallel (React dev server on port 3000, Node proxy on port 8080):
+
+```bash
+npm install
+npm run start-dev          # Terminal 1 — React dev server
+npm run start-dev-server   # Terminal 2 — Node API proxy
+```
+
+Open the app at `http://localhost:3000/export`.
+
+Required before running: set `clientSecret` in `config/default.properties` and ensure Bitbucket access to all private library dependencies (see `README.md`).

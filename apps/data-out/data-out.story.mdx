@@ -1,0 +1,255 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/Data Out" />
+
+# Data Out
+
+> **Repository:** `reltio-ondemand/data-out`
+
+Data Out is a Next.js 15 application that manages Reltio Data Share — the outbound adapter configuration UI for exporting Reltio data to Snowflake, Databricks, and Microsoft Fabric. It is extracted from `admin-tools` and runs as a Next.js multi-zone target behind it: admin-tools owns the surrounding shell and shared APIs, while this app serves all pages under the `/data-out` URL prefix.
+
+## Tech Stack
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Technology</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Framework</td>
+      <td>Next.js 15 (Pages Router)</td>
+      <td>No Express; native fetch proxy helper</td>
+    </tr>
+    <tr>
+      <td>UI library</td>
+      <td>MUI 5 + Emotion</td>
+      <td>Pre-SAP Horizon; not yet migrated to Reltio Design</td>
+    </tr>
+    <tr>
+      <td>State</td>
+      <td>SWR 1.2 + MobX 6.6</td>
+      <td>SWR for server state; MobX scoped to delete-confirmation dialog</td>
+    </tr>
+    <tr>
+      <td>Styling</td>
+      <td>CSS Modules</td>
+      <td>Co-located <code>.module.css</code> per component</td>
+    </tr>
+    <tr>
+      <td>Testing</td>
+      <td>Playwright 1.55</td>
+      <td>Chromium only; <code>data-test-id</code> selectors</td>
+    </tr>
+    <tr>
+      <td>Runtime</td>
+      <td>Node 22</td>
+      <td>Managed via <code>.nvmrc</code></td>
+    </tr>
+    <tr>
+      <td>Language</td>
+      <td>TypeScript 4.9</td>
+      <td>Strict mode</td>
+    </tr>
+  </tbody>
+</table>
+
+## Application Structure
+
+<table>
+  <thead>
+    <tr>
+      <th>Directory</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pages/data-out/data-share/</code></td>
+      <td>Data Share list page and creation wizard</td>
+    </tr>
+    <tr>
+      <td><code>pages/data-out/snowflake/</code></td>
+      <td>Snowflake OAuth callback page</td>
+    </tr>
+    <tr>
+      <td><code>pages/api/</code></td>
+      <td>API proxy routes — DIS, DataPipeline, Snowflake OAuth/keypair, interaction mapping, healthcheck</td>
+    </tr>
+    <tr>
+      <td><code>components/</code></td>
+      <td>Data Share-specific UI components (wizard, table, toolbar, info panels, zero-copy)</td>
+    </tr>
+    <tr>
+      <td><code>components/shared/</code></td>
+      <td>Shared components forked from admin-tools (header, app selector, forms, error boundary)</td>
+    </tr>
+    <tr>
+      <td><code>utils/</code></td>
+      <td>Data Share hooks and utilities</td>
+    </tr>
+    <tr>
+      <td><code>utils/shared/</code></td>
+      <td>Shared utilities forked from admin-tools</td>
+    </tr>
+    <tr>
+      <td><code>context/</code></td>
+      <td>React context for Data Share state (<code>dataShareContext</code>)</td>
+    </tr>
+    <tr>
+      <td><code>lib/apiProxy.ts</code></td>
+      <td>Fetch-based proxy helper used by all <code>pages/api/</code> routes</td>
+    </tr>
+    <tr>
+      <td><code>types/</code></td>
+      <td>Shared TypeScript types (<code>DataOut.types.ts</code>)</td>
+    </tr>
+    <tr>
+      <td><code>tests/</code></td>
+      <td>Playwright E2E specs and fixtures</td>
+    </tr>
+    <tr>
+      <td><code>api-json/</code></td>
+      <td>Test API response fixtures</td>
+    </tr>
+    <tr>
+      <td><code>devops/</code></td>
+      <td>Dockerfile, Helm chart, and Vault deploy assets for Etalon (on-prem)</td>
+    </tr>
+    <tr>
+      <td><code>config/</code></td>
+      <td>Node-config properties with Vault overlay at startup (<code>instrumentation.ts</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+## API Proxy Routes
+
+All proxy routes require a bearer token from the `Authorization` header or `access_token` cookie and validate that the upstream host is on the `.reltio.com` domain.
+
+<table>
+  <thead>
+    <tr>
+      <th>Route</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/api/dis/[...path]</code></td>
+      <td>Proxies DIS API (warehouse schema, interaction mapping metadata)</td>
+    </tr>
+    <tr>
+      <td><code>/api/dataPipeline/[...path]</code></td>
+      <td>Proxies DataPipeline API (adapters, share links, tenant status)</td>
+    </tr>
+    <tr>
+      <td><code>/api/data-out/connection-data/[connectionName]</code></td>
+      <td>DELETE connection configuration</td>
+    </tr>
+    <tr>
+      <td><code>/api/data-out/snowflake/oauth/*</code></td>
+      <td>Snowflake OAuth credentials, authorize, and code exchange</td>
+    </tr>
+    <tr>
+      <td><code>/api/data-out/snowflake/keypair/*</code></td>
+      <td>Snowflake keypair credentials, generation, and connection test</td>
+    </tr>
+    <tr>
+      <td><code>/api/data-out/snowflake/interaction-mapping</code></td>
+      <td>Interaction mapping list and metadata</td>
+    </tr>
+    <tr>
+      <td><code>/api/healthcheck</code></td>
+      <td>Liveness probe</td>
+    </tr>
+  </tbody>
+</table>
+
+## Multi-Zone Integration
+
+Data Out runs as a Next.js [multi-zone](https://nextjs.org/docs/app/building-your-application/deploying/multi-zones) child alongside admin-tools:
+
+- **URL prefix**: pages live under `pages/data-out/...` so all routes already start with `/data-out`; no Next.js `basePath` is set.
+- **Asset prefix**: `/data-out-static` keeps static chunk URLs distinct from admin-tools'.
+- **admin-tools rewrites** (post RP-180412 merge): two rewrites forward `/data-out-static/_next/*` (static assets) and `/data-out/*` (pages) to this app via the `DATA_OUT_URL` env var (default `http://localhost:3001`).
+- **Shared APIs** (`/api/auth/*`, `/api/tenants`, `/api/adminToolsConfig`, `/api/nodeConfig`, `/api/config/*`, `/api/physicalConfig/*`, `/api/core/*`, `/api/proxy/*`) and the `/data-out/data-pipelines` route remain in admin-tools and are not served by this app.
+
+## Configuration
+
+Server-side secrets are fetched from Vault at startup by `instrumentation.ts`. Required environment variables:
+
+<table>
+  <thead>
+    <tr>
+      <th>Variable</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>VAULT_URL</code></td>
+      <td>Vault server URL</td>
+    </tr>
+    <tr>
+      <td><code>VAULT_TOKEN</code></td>
+      <td>Vault access token</td>
+    </tr>
+    <tr>
+      <td><code>VAULT_NAMESPACE</code></td>
+      <td>Vault namespace</td>
+    </tr>
+  </tbody>
+</table>
+
+For local development without Vault, create `config/local.json` with `secrets.clientId` and `secrets.clientSecret`.
+
+## Development
+
+```bash
+nvm use          # Node v22.22.0
+npm ci
+npm run dev      # http://localhost:3001/data-out/data-share
+```
+
+Run alongside admin-tools (port 8080) for end-to-end flows that need shared APIs or the `/data-out/data-pipelines` page. Hitting port 3001 directly is sufficient for Data Share UI rendering and Playwright tests.
+
+## Testing
+
+```bash
+npx playwright install --with-deps   # First time only
+npm run test                         # Headless Chromium
+npm run test:ui                      # Interactive Playwright UI
+```
+
+Test files live in `tests/`, use the `data-test-id` attribute, and rely on mock fixtures in `api-json/`.
+
+## Deployment
+
+<table>
+  <thead>
+    <tr>
+      <th>Target</th>
+      <th>Mechanism</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Cloud (Vercel)</td>
+      <td><code>bitbucket-pipelines.yml</code> — preview on every branch, production on <code>main</code></td>
+    </tr>
+    <tr>
+      <td>On-prem (Etalon)</td>
+      <td><code>Jenkinsfile</code> + <code>devops/Dockerfile</code> + <code>devops/helm/</code> — Docker image deployed via Helm; Vault secrets mounted by chart</td>
+    </tr>
+  </tbody>
+</table>
+
+## Related Jira
+
+- [RP-177104](https://reltio.jira.com/browse/RP-177104) — Parent epic
+- [RP-180412](https://reltio.jira.com/browse/RP-180412) — Data Out extraction to standalone repo
+- [RP-182258](https://reltio.jira.com/browse/RP-182258) — Etalon deployment and Node 22 upgrade

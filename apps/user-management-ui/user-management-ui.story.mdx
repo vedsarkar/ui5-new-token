@@ -1,0 +1,269 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/User Management UI" />
+
+# User Management UI
+
+> **Repository:** `reltio-ondemand/user-management-ui`
+
+User Management UI is a Reltio administration console that enables tenant administrators to manage users, roles, groups, and multi-factor authentication settings across Reltio environments. It is a full-stack application combining a React single-page app with a Node.js/Express BFF (backend-for-frontend) that handles OAuth authentication, tenant resolution, and proxying to Reltio APIs.
+
+## Tech Stack
+
+<table>
+	<thead>
+		<tr>
+			<th>Layer</th>
+			<th>Technology</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Frontend framework</td>
+			<td>React 17, React Router 5, Redux + Redux Thunk</td>
+		</tr>
+		<tr>
+			<td>UI components</td>
+			<td>MUI v5 (Material UI), <code>@reltio-lab/react-components</code></td>
+		</tr>
+		<tr>
+			<td>Styling</td>
+			<td>Less (CSS preprocessor), JSS, <code>classnames</code></td>
+		</tr>
+		<tr>
+			<td>Server</td>
+			<td>Node.js, Express 4, <code>auth-middleware</code> (OAuth 2.0), Helmet (CSP)</td>
+		</tr>
+		<tr>
+			<td>Authentication</td>
+			<td>OAuth 2.0 via <code>auth-middleware</code> and <code>node-oauth-provider</code></td>
+		</tr>
+		<tr>
+			<td>Configuration</td>
+			<td><code>node-config</code> with <code>.properties</code> files; secrets from Vault</td>
+		</tr>
+		<tr>
+			<td>Logging</td>
+			<td>Winston + LogDNA integration</td>
+		</tr>
+		<tr>
+			<td>Error monitoring</td>
+			<td>Sentry (<code>@sentry/browser</code>)</td>
+		</tr>
+		<tr>
+			<td>Bundler</td>
+			<td>Webpack 4</td>
+		</tr>
+		<tr>
+			<td>Testing</td>
+			<td>Jest 29, Enzyme (React 17 adapter)</td>
+		</tr>
+		<tr>
+			<td>Language</td>
+			<td>JavaScript (ES2015+) with TypeScript for newer modules</td>
+		</tr>
+		<tr>
+			<td>Deployment</td>
+			<td>Docker, Kubernetes (Helm charts), Istio virtual service</td>
+		</tr>
+	</tbody>
+</table>
+
+## Application Structure
+
+The repository follows a split client/server layout under `src/`:
+
+```
+src/
+├── server/              # Express BFF
+│   ├── app/             # Express app factory, CSP, routing
+│   ├── authProxy/       # Proxies authenticated requests to Reltio APIs
+│   ├── configService/   # Fetches runtime config from the Reltio Config Service
+│   ├── permissions/     # OAuth token introspection and permission checks
+│   ├── tenants/         # Tenant list resolution and middleware
+│   ├── version/         # Version endpoint
+│   ├── reportViolation/ # CSP violation reporting endpoint
+│   └── winston/         # Logging setup (Winston + LogDNA)
+└── src/                 # React SPA
+    ├── actions/         # Redux action creators (auth, UI)
+    ├── api/             # Web Workers for async API calls (users, roles, groups, tenants)
+    ├── components/      # Reusable UI components
+    ├── pages/           # Route-level page components
+    ├── reducers/        # Redux reducers
+    └── utils/           # Shared utilities
+```
+
+## Pages and Routes
+
+The SPA mounts under the `urlPrefix` configured at runtime (default: `userManagement`) and exposes four main routes:
+
+<table>
+	<thead>
+		<tr>
+			<th>Route</th>
+			<th>Page component</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>/users</code></td>
+			<td><code>UsersPage</code></td>
+			<td>User list with search, filter, status indicators, and inline actions (create, edit, delete, reset password)</td>
+		</tr>
+		<tr>
+			<td><code>/roles</code></td>
+			<td><code>RolesPage</code></td>
+			<td>Role list with per-role service permission editing via a hierarchical services table</td>
+		</tr>
+		<tr>
+			<td><code>/groups</code></td>
+			<td><code>GroupsPage</code></td>
+			<td>Group management — create, edit, and delete groups; assign users to groups</td>
+		</tr>
+		<tr>
+			<td><code>/mfaSettings</code></td>
+			<td><code>MfaPage</code></td>
+			<td>Multi-factor authentication policy configuration for the tenant</td>
+		</tr>
+	</tbody>
+</table>
+
+All routes are protected by `AccessControl`, which enforces OAuth-based permission checks before rendering the page content.
+
+## Key Components
+
+<table>
+	<thead>
+		<tr>
+			<th>Component</th>
+			<th>Purpose</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>ConsoleHeader</code></td>
+			<td>Top application bar showing the logged-in user and customer context</td>
+		</tr>
+		<tr>
+			<td><code>ActionsMenu</code></td>
+			<td>Left navigation sidebar with icon links to Users, Roles, Groups, MFA Settings, Audit, SSO Configuration, and Password Policy</td>
+		</tr>
+		<tr>
+			<td><code>CustomerSelector</code></td>
+			<td>Dialog for switching between Reltio tenants/environments</td>
+		</tr>
+		<tr>
+			<td><code>UserTable</code></td>
+			<td>Virtualised, paginated user list with hover menus and status indicators</td>
+		</tr>
+		<tr>
+			<td><code>RolesTable</code> / <code>ServicesTable</code></td>
+			<td>Role listing and an expandable tree table for editing per-service permissions per role</td>
+		</tr>
+		<tr>
+			<td><code>GroupsTable</code></td>
+			<td>Group listing with inline hover actions</td>
+		</tr>
+		<tr>
+			<td><code>UserDialog</code> / <code>GroupDialog</code> / <code>RolesListDialog</code></td>
+			<td>Modal dialogs for creating and editing users, groups, and role assignments</td>
+		</tr>
+		<tr>
+			<td><code>SearchNavigator</code> / <code>MenuWithFilter</code></td>
+			<td>Search input and filtered navigation for large lists</td>
+		</tr>
+		<tr>
+			<td><code>RequestableHOC</code></td>
+			<td>Higher-order component that wraps async data-fetching with loading, error, and notification states</td>
+		</tr>
+	</tbody>
+</table>
+
+## Server (BFF) Responsibilities
+
+The Express server acts as a secure intermediary between the browser and Reltio backend services:
+
+- **Authentication** — OAuth 2.0 login flow via `auth-middleware`; session cookies; SSO redirect handling with automatic `tenant` and `env` parameter injection
+- **Auth proxy** — forwards authenticated API requests from the SPA to Reltio APIs, attaching OAuth tokens and cleaning sensitive headers
+- **Tenant resolution** — resolves the list of accessible tenants for the authenticated user
+- **Config service** — fetches runtime configuration from the Reltio Config Service and exposes it to the SPA
+- **Security** — Content Security Policy via Helmet; CSP violation reporting endpoint
+- **Logging** — structured Winston logging with optional LogDNA streaming
+
+## Configuration
+
+Runtime configuration is managed via `node-config` using `.properties` files in the `config/` directory. The key settings are:
+
+<table>
+	<thead>
+		<tr>
+			<th>Key</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>port</code></td>
+			<td>HTTP server port (default: <code>8080</code>)</td>
+		</tr>
+		<tr>
+			<td><code>loginPath</code></td>
+			<td>Reltio login service URL</td>
+		</tr>
+		<tr>
+			<td><code>oauthPath</code></td>
+			<td>Reltio OAuth token endpoint</td>
+		</tr>
+		<tr>
+			<td><code>clientId</code> / <code>clientSecret</code></td>
+			<td>OAuth client credentials (secret injected at deploy time from Vault)</td>
+		</tr>
+		<tr>
+			<td><code>urlPrefix</code></td>
+			<td>URL mount path for the app (default: <code>userManagement</code>)</td>
+		</tr>
+		<tr>
+			<td><code>configService.url</code></td>
+			<td>Reltio Config Service base URL</td>
+		</tr>
+		<tr>
+			<td><code>enableLogDNA</code></td>
+			<td>Enable streaming logs to LogDNA</td>
+		</tr>
+	</tbody>
+</table>
+
+Production secrets (client secret, RUM access token) are injected via Kubernetes secrets sourced from Vault. Environment-specific overrides are applied using the `NODE_CONFIG` environment variable or `NODE_CONFIG_ENV`.
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start in development mode (webpack-dev-server + Express)
+npm start
+
+# Production build (lint + webpack + git-info)
+npm run build
+
+# Run tests with coverage
+npm run test
+
+# Lint (TypeScript check + ESLint)
+npm run lint
+```
+
+The development server runs the React SPA on webpack-dev-server and the Express BFF concurrently. The `clientSecret` value in the `development` script must be set to a valid secret before starting (consult the team for the correct value).
+
+## Deployment
+
+The application is containerised using Docker and deployed to Kubernetes via Helm charts located in `devops/helm/user-management-ui/`. The Helm chart configures a `Deployment`, `Service`, `HorizontalPodAutoscaler`, `PodDisruptionBudget`, and an Istio `VirtualService`.
+
+```bash
+# Build and run in a container
+npm run build
+docker image build . -f devops/Dockerfile -t user-management-ui
+docker run -e NODE_CONFIG='{"clientSecret":"..."}' user-management-ui npm run production-container
+```

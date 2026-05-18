@@ -1,0 +1,177 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/UI Modeler" />
+
+# UI Modeler
+
+> **Repository:** `reltio-ondemand/ui-config-tool`
+
+UI Config Tool (branded as **UI Modeler**) is a full-stack web application for managing and publishing Reltio tenant UI configurations. It provides a visual authoring environment where administrators can edit profile layouts, dashboard widgets, and inline-editing settings per tenant and environment, then publish the resulting JSON configuration to a backing repository.
+
+## Tech Stack
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Technology</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Frontend framework</td>
+      <td>React 17, Redux, React Router 5</td>
+    </tr>
+    <tr>
+      <td>UI components</td>
+      <td><code>@reltio/components</code>, <code>@reltio-lab/react-components</code>, <code>react-components</code> (internal)</td>
+    </tr>
+    <tr>
+      <td>Drag-and-drop</td>
+      <td>react-dnd + HTML5 backend</td>
+    </tr>
+    <tr>
+      <td>Code editor</td>
+      <td>Monaco Editor (<code>@monaco-editor/react</code>)</td>
+    </tr>
+    <tr>
+      <td>Styling</td>
+      <td>LESS + MUI v5 (Emotion)</td>
+    </tr>
+    <tr>
+      <td>State management</td>
+      <td>Redux + redux-thunk + redux-logger</td>
+    </tr>
+    <tr>
+      <td>Server</td>
+      <td>Node.js + Express, served behind OAuth (<code>auth-middleware</code>)</td>
+    </tr>
+    <tr>
+      <td>Build</td>
+      <td>Webpack 5</td>
+    </tr>
+    <tr>
+      <td>Testing</td>
+      <td>Jest + React Testing Library + Enzyme (unit); Mocha (server)</td>
+    </tr>
+    <tr>
+      <td>Error tracking</td>
+      <td>Sentry (<code>@sentry/browser</code>)</td>
+    </tr>
+    <tr>
+      <td>Language</td>
+      <td>TypeScript (strict) + JavaScript (mixed codebase)</td>
+    </tr>
+    <tr>
+      <td>Deployment</td>
+      <td>Docker + Kubernetes (Helm chart: <code>ui-modeler</code>), CI via Jenkins</td>
+    </tr>
+  </tbody>
+</table>
+
+## Application Structure
+
+```
+apps/ui-config-tool/src/
+├── src/                        # React client application
+│   ├── app.js                  # Root component: routing, Redux connect, app shell
+│   ├── actions/                # Redux action creators (auth, configuration, editors, metadata, ui)
+│   ├── components/             # UI components
+│   │   ├── AppHeader/          # Toolbar with Publish button and status indicators
+│   │   ├── AuthoringLayout/    # Layout wrapper for config authoring views
+│   │   ├── DashboardLayout/    # Dashboard widget grid layout
+│   │   ├── ImportExportUIConfigTable/  # Configuration file list with import/export
+│   │   ├── ImportWizard/       # Multi-step wizard for importing config (diff viewer, review)
+│   │   ├── ProfileTabs/        # Tabs for profile configuration sections
+│   │   └── pageWrappers/       # Route-level wrappers: Profile, Dashboard, Config/InlineEditing
+│   ├── selectors/              # Redux selectors
+│   ├── services/               # Client-side business logic (validation, permissions)
+│   └── utils/                  # Auth helpers, routing constants, general utilities
+├── server/                     # Node.js / Express server
+│   ├── app/                    # Express app setup: auth middleware, CSP, routing
+│   ├── repo/                   # Repository abstraction layer
+│   │   └── repoService/        # Pluggable providers: Git and Config Service
+│   ├── configService/          # Config Service REST client
+│   ├── permissions/            # Server-side permission checks via OAuth
+│   ├── apiProxy/               # Proxy to Reltio backend APIs
+│   ├── authProxy/              # OAuth token proxy
+│   ├── environment/            # Tenant/environment discovery
+│   └── securityDefinition/     # Resource-level security definition endpoint
+└── config/
+    └── default.properties      # Runtime configuration (repoType, Git/Config Service credentials, features)
+```
+
+## Routes
+
+<table>
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th>Page</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/:env/:tenant/profile</code></td>
+      <td>Profile</td>
+      <td>Visual authoring of entity profile layout and attribute display configuration</td>
+    </tr>
+    <tr>
+      <td><code>/:env/:tenant/dashboard</code></td>
+      <td>Dashboard</td>
+      <td>Drag-and-drop layout editor for the dashboard widget grid</td>
+    </tr>
+    <tr>
+      <td><code>/:env/:tenant/config</code></td>
+      <td>Config / Inline Editing</td>
+      <td>Raw JSON configuration editor and import/export table; inline-editing mode toggled by feature flag</td>
+    </tr>
+  </tbody>
+</table>
+
+## Repository Providers
+
+The server stores UI configuration through a pluggable repository layer. The active provider is set via `repoType` in `config/default.properties`.
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Description</th>
+      <th>Required credentials</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>git</code> (default)</td>
+      <td>Reads and writes configuration files to a Git repository using libgit2 via <code>@figma/nodegit</code></td>
+      <td><code>gitUrl</code>, <code>gitUser</code>, <code>gitPublicKey</code>, <code>gitPrivateKey</code></td>
+    </tr>
+    <tr>
+      <td><code>configService</code></td>
+      <td>Uses the centralized Reltio Config Service as the backing store; maps a single JSON document to the internal file-map contract</td>
+      <td><code>configService.url</code>, <code>configService.clientId</code>, <code>configService.clientSecret</code></td>
+    </tr>
+  </tbody>
+</table>
+
+## Key Features
+
+- **Publish workflow** — edits are validated client-side before being written back to the configured repository; the Publish button is gated by the `canUpdateConfig` permission check.
+- **Import wizard** — multi-step flow that lets administrators upload a configuration file, review a virtualized diff against the current version, and confirm the replacement.
+- **Tenant switcher** — the `TenantSelector` shell component allows switching between tenants and environments without leaving the tool.
+- **Feature flags** — a `FeatureProvider` context wraps the entire app; individual features (e.g. `inlineEditing`, `dashboard`, `newProfile`) are toggled via server-side config.
+- **Config migration alerts** — surfaces in-app alerts with progress dialogs when a configuration schema migration is required.
+
+## Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start client (Webpack dev server) and server (Node.js) concurrently
+npm start
+```
+
+Configure `gitPublicKey`, `gitPrivateKey`, and `configService.*` credentials in `config/default.properties` before starting. See the [README](apps/ui-config-tool/src/README.md) for full prerequisites (including WSL2 setup on Windows).

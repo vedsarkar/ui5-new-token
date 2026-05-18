@@ -10,6 +10,7 @@ export default defineMain({
 		"../openApi/**/*.story.mdx",
 		"../**/*.story.mdx",
 		"../**/*.stories.@(ts|tsx)",
+		"!../apps/*/src/**",
 	],
 
 	addons: [

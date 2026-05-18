@@ -1,0 +1,289 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/HUB UI" />
+
+# HUB UI
+
+> **Repository:** `reltio-ondemand/reltio-react-ui`
+
+Reltio React UI is the main Reltio web application — a full-stack, tenant-aware React SPA backed by an Express.js server. It serves as the primary product interface for data stewardship, search, entity management, and AI-assisted workflows across all Reltio tenants.
+
+## Tech Stack
+
+<table>
+	<thead>
+		<tr>
+			<th>Layer</th>
+			<th>Technology</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Client framework</td>
+			<td>React 17, React Router v6, Redux (redux-dynamic-modules + sagas + thunk)</td>
+		</tr>
+		<tr>
+			<td>UI components</td>
+			<td>
+				<code>@reltio/components</code>, <code>@reltio/design</code>, MUI v5
+			</td>
+		</tr>
+		<tr>
+			<td>Reltio modules</td>
+			<td>
+				<code>@reltio/mdm-module</code>, <code>@reltio/mdm-sdk</code>, <code>@reltio/remotes</code>
+			</td>
+		</tr>
+		<tr>
+			<td>Server</td>
+			<td>Express.js (Node.js), TypeScript, Eta templating</td>
+		</tr>
+		<tr>
+			<td>Build</td>
+			<td>Webpack 5 (client), <code>tsc</code> (server)</td>
+		</tr>
+		<tr>
+			<td>Language</td>
+			<td>TypeScript (strict)</td>
+		</tr>
+		<tr>
+			<td>Testing</td>
+			<td>Jest + React Testing Library (unit), Playwright (E2E)</td>
+		</tr>
+		<tr>
+			<td>Observability</td>
+			<td>Sentry, OpenTelemetry metrics, Winston logging, LogDNA</td>
+		</tr>
+	</tbody>
+</table>
+
+## Application Structure
+
+```
+apps/reltio-react-ui/src/
+├── src/                        # React client application
+│   ├── app.tsx                 # Entry point — Redux store, providers, router bootstrap
+│   ├── components/             # Shell components (App, AppHeader, Main, LeftSidePanel, ...)
+│   │   ├── App/                # Root routing logic, perspective layout, tenant loading
+│   │   ├── AppHeader/          # Global header with search, user menu, apps menu
+│   │   ├── LeftSidePanel/      # Side navigation panel
+│   │   ├── Main/               # Main content area shell
+│   │   ├── perspectives/       # One component per routed perspective (view)
+│   │   └── ai/                 # AI assistant client components
+│   ├── contexts/               # React contexts (AI assistant, config-service data, RDM tenants, MDM module)
+│   ├── hooks/                  # Data-loading and lifecycle hooks
+│   ├── types/                  # Shared TypeScript types
+│   └── utils/                  # Network, URL, store utilities
+└── server/                     # Express.js server
+    ├── app/                    # App factory — middleware chain, route registration
+    ├── auth/                   # OAuth token handling
+    ├── ai/                     # AI orchestration layer (intents, ML providers, conversation history)
+    ├── uiConfiguration/        # UI config loading (local / git / configService providers)
+    ├── configService/          # Config-service proxy and cache
+    ├── permissions/            # Role-based access control
+    ├── proxy/                  # Reverse proxy to Reltio API and platform services
+    ├── history/                # AI conversation history (in-memory + BigQuery)
+    ├── conversationsService/   # Chat conversation management
+    ├── exportDQ/               # Data quality export
+    └── maps/                   # Google Maps service integration
+```
+
+## Perspectives (Routed Views)
+
+Each perspective is a lazily-loaded module federated through `@reltio/remotes`. The active set is driven by the tenant's UI configuration.
+
+<table>
+	<thead>
+		<tr>
+			<th>Perspective</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Search</td>
+			<td>Keyword and filtered entity search across the active tenant</td>
+		</tr>
+		<tr>
+			<td>Profile</td>
+			<td>Entity profile view (attributes, sources, survivorship)</td>
+		</tr>
+		<tr>
+			<td>Relationships</td>
+			<td>Entity relationship graph and list</td>
+		</tr>
+		<tr>
+			<td>Hierarchy</td>
+			<td>Hierarchical entity navigation</td>
+		</tr>
+		<tr>
+			<td>Graph</td>
+			<td>Visual relationship graph explorer</td>
+		</tr>
+		<tr>
+			<td>Dashboard</td>
+			<td>Configurable analytics dashboard</td>
+		</tr>
+		<tr>
+			<td>Data Quality Dashboard</td>
+			<td>Data quality metrics and scores</td>
+		</tr>
+		<tr>
+			<td>Potential Matches</td>
+			<td>Match candidate review and resolution</td>
+		</tr>
+		<tr>
+			<td>Bulk Match</td>
+			<td>Batch match operations</td>
+		</tr>
+		<tr>
+			<td>Authoring</td>
+			<td>Record authoring and DCR review</td>
+		</tr>
+		<tr>
+			<td>Segmentation</td>
+			<td>Audience and segment management</td>
+		</tr>
+		<tr>
+			<td>Pivoting</td>
+			<td>Cross-entity pivoting and analysis</td>
+		</tr>
+		<tr>
+			<td>Data Model</td>
+			<td>Tenant data model browser</td>
+		</tr>
+		<tr>
+			<td>Sources</td>
+			<td>Source system management</td>
+		</tr>
+		<tr>
+			<td>Tags</td>
+			<td>Entity tagging and classification</td>
+		</tr>
+		<tr>
+			<td>Members</td>
+			<td>Tenant user and member management</td>
+		</tr>
+		<tr>
+			<td>Interactions</td>
+			<td>Interaction record management</td>
+		</tr>
+		<tr>
+			<td>Agent Flow (RIA)</td>
+			<td>AI agent workflow execution (replaces the legacy RIA view)</td>
+		</tr>
+	</tbody>
+</table>
+
+## Server Architecture
+
+The Express server sits in front of both the React SPA and all Reltio platform APIs. It handles:
+
+- **Authentication** — OAuth token validation and cookie-based session management via `auth-middleware`
+- **Reverse proxy** — Routes <code>/reltioAPI</code>, <code>/export</code>, <code>/workflow</code>, <code>/collaboration</code>, <code>/agentFlow</code>, and other paths to their respective backend services
+- **UI configuration** — Serves tenant-specific UI configuration from one of three providers: `local` (filesystem), `git` (repository clone), or `configService` (config-service API)
+- **AI orchestration** — <code>/services/ai</code> endpoint that routes natural-language input to an intent classifier (NLP search, chart generation, export, profile summary, proxy), each backed by an OpenAI or Azure OpenAI provider
+- **Client config** — <code>/clientConfig</code> endpoint that injects runtime paths and keys into the SPA at startup
+- **Security** — Content Security Policy (CSP) headers computed per-tenant from the active UI config
+
+## UI Configuration Providers
+
+<table>
+	<thead>
+		<tr>
+			<th>Type</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>local</code></td>
+			<td>Reads configuration from a local directory (<code>uiConfig.path</code>)</td>
+		</tr>
+		<tr>
+			<td><code>git</code></td>
+			<td>Clones or pulls configuration from a Git repository (<code>uiConfig.path</code>)</td>
+		</tr>
+		<tr>
+			<td><code>configService</code></td>
+			<td>
+				Reads configuration from config-service using <code>configService.url</code> and Reltio OAuth client credentials.
+				Requires a default configuration (<code>environment=default</code>, <code>tenant=default</code>) in the configured namespace.
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start both server and client in development mode
+npm start
+
+# Build for production
+npm run build
+
+# Run unit tests
+npm test
+
+# Run E2E healthcheck tests
+npx playwright test health.spec.ts
+
+# Run UI config dry-run E2E tests
+npx playwright test dryRun.spec.ts
+
+# Download environment properties
+npm run get-env-properties <environment>
+```
+
+## Key Dependencies
+
+<table>
+	<thead>
+		<tr>
+			<th>Package</th>
+			<th>Purpose</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>@reltio/remotes</code></td>
+			<td>Module federation host — loads perspective micro-frontends at runtime</td>
+		</tr>
+		<tr>
+			<td><code>@reltio/mdm-module</code></td>
+			<td>Redux module for MDM state (entities, metadata, UI config, localization)</td>
+		</tr>
+		<tr>
+			<td><code>@reltio/mdm-sdk</code></td>
+			<td>API client utilities, type definitions, and request provider abstraction</td>
+		</tr>
+		<tr>
+			<td><code>@reltio/components</code></td>
+			<td>Legacy Reltio UI component library (MUI-based)</td>
+		</tr>
+		<tr>
+			<td><code>@reltio/design</code></td>
+			<td>Reltio Design component library (SAP Fiori / UI5-based)</td>
+		</tr>
+		<tr>
+			<td><code>openai</code></td>
+			<td>OpenAI SDK used by server-side AI intent handlers</td>
+		</tr>
+		<tr>
+			<td><code>config-service-lib</code></td>
+			<td>Client library for the Reltio config-service</td>
+		</tr>
+		<tr>
+			<td><code>auth-middleware</code></td>
+			<td>Reltio OAuth middleware for Express</td>
+		</tr>
+		<tr>
+			<td><code>@google-cloud/bigquery</code></td>
+			<td>BigQuery integration for AI conversation history and cookie analytics</td>
+		</tr>
+	</tbody>
+</table>

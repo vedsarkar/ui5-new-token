@@ -1,0 +1,290 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/Login Page" />
+
+# Login Page
+
+> **Repository:** `reltio-ondemand/login-page`
+
+The Login Page is the central SSO gateway for all Reltio products. It handles username/password authentication, SSO provider discovery, multi-factor authentication (TOTP), password reset, and tenant selection. It runs as a full-stack Next.js application backed by an Express server that proxies authentication requests to the Reltio OAuth service.
+
+## Tech Stack
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Technology</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Frontend</td>
+      <td>React 18, Next.js 14 (Pages Router)</td>
+    </tr>
+    <tr>
+      <td>UI Components</td>
+      <td>MUI v5 (Material UI) with Emotion</td>
+    </tr>
+    <tr>
+      <td>Backend</td>
+      <td>Express 4, TypeScript (Node.js)</td>
+    </tr>
+    <tr>
+      <td>Authentication</td>
+      <td>Reltio OAuth (<code>paths.oauth</code>), JOSE (JWT), login codes</td>
+    </tr>
+    <tr>
+      <td>CAPTCHA</td>
+      <td>hCaptcha (<code>@hcaptcha/react-hcaptcha</code>)</td>
+    </tr>
+    <tr>
+      <td>i18n</td>
+      <td><code>ui-i18n</code> (Reltio internal)</td>
+    </tr>
+    <tr>
+      <td>Testing</td>
+      <td>Jest + Enzyme (unit), Playwright (E2E)</td>
+    </tr>
+    <tr>
+      <td>Security</td>
+      <td>Helmet (CSP, HSTS), nonce-based inline styles, redirect URL allowlist</td>
+    </tr>
+    <tr>
+      <td>Deployment</td>
+      <td>Docker, Kubernetes (Helm), Istio virtual service</td>
+    </tr>
+  </tbody>
+</table>
+
+## Application Structure
+
+```
+apps/login-page/src/
+├── client/                     # Next.js frontend
+│   ├── pages/                  # Page routes
+│   │   ├── index.js            # Login page (username + password)
+│   │   ├── tenant.js           # Tenant selection
+│   │   ├── forgotPassword.js   # Forgot password flow
+│   │   ├── resetPassword.js    # Reset password flow
+│   │   ├── mfa/index.tsx       # MFA verification step
+│   │   ├── success.js          # Post-login success redirect
+│   │   └── error.js            # Error display
+│   ├── components/
+│   │   ├── Form/               # LoginForm, TenantForm, ForgotPasswordForm, ResetPasswordForm, MFAForm
+│   │   ├── Button/             # Button, BackToLoginButton, SelectAnotherTenantButton
+│   │   ├── Link/               # Link, BackToLoginLink, SelectAnotherTenantLink
+│   │   ├── Page/               # Page layout wrapper
+│   │   ├── Captcha/            # hCaptcha integration
+│   │   └── Picture/            # Responsive image
+│   └── utils/                  # fetchSsoProviders, login, resetPassword, createTheme, i18n, ...
+├── server/                     # Express backend (TypeScript)
+│   ├── services/               # Route handlers: login, token, logout, resetPassword, ssoProviders, theme, ...
+│   ├── middlewares/            # validateParams, validateRedirectUrl, validateTenant, validateToken, validateSSO, ...
+│   └── utils/                  # getAccessToken, loginCode, state, sso, basicToken, ...
+├── config/
+│   └── default.properties      # Port, OAuth path, redirect URL allowlist, Zendesk paths
+└── devops/
+    ├── Dockerfile
+    └── helm/login-page/        # Kubernetes Helm chart
+```
+
+## Authentication Flows
+
+<table>
+  <thead>
+    <tr>
+      <th>Flow</th>
+      <th>Entry point</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Username / Password</td>
+      <td><code>GET /</code></td>
+      <td>Credentials are validated server-side via <code>/services/login</code>, which proxies to the Reltio OAuth service. On success a short-lived login code is returned and the user is redirected to the configured <code>redirect_uri</code>.</td>
+    </tr>
+    <tr>
+      <td>SSO (corporate login)</td>
+      <td><code>GET /</code> with <code>skipReltioLogin=false</code></td>
+      <td><code>/services/ssoProviders</code> resolves the SSO provider URL for the tenant. The user is redirected to the identity provider directly.</td>
+    </tr>
+    <tr>
+      <td>Tenant selection</td>
+      <td><code>/tenant</code></td>
+      <td>Presented when no tenant is pre-selected in the query string. The tenant is appended to the redirect once chosen.</td>
+    </tr>
+    <tr>
+      <td>MFA (TOTP)</td>
+      <td><code>/mfa</code></td>
+      <td>Triggered after password login when the user has MFA enrolled. A verification code is sent via <code>/services/sendVerificationCode</code> and validated before the final redirect.</td>
+    </tr>
+    <tr>
+      <td>MFA enrolment redirect</td>
+      <td>post-login</td>
+      <td>When the account requires MFA but has not yet enrolled, the user is redirected to <code>setupMfaHost/setup-mfa</code> with the original OAuth parameters preserved.</td>
+    </tr>
+    <tr>
+      <td>Forgot / Reset password</td>
+      <td><code>/forgotPassword</code>, <code>/resetPassword</code></td>
+      <td>Two-step flow: an email is dispatched via <code>/services/resetPassword</code>, then the user follows a tokenised link to set a new password.</td>
+    </tr>
+    <tr>
+      <td>Zendesk SSO</td>
+      <td><code>GET /</code> with <code>client_id=zendesk</code></td>
+      <td>After successful login the server issues a Zendesk JWT and redirects to the Zendesk return URL.</td>
+    </tr>
+    <tr>
+      <td>Token exchange</td>
+      <td><code>/token</code>, <code>/services/token</code></td>
+      <td>Standard OAuth token endpoint proxy; exchanges a login code for an access token.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Server Endpoints
+
+<table>
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th>Method</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/services/login</code></td>
+      <td>POST</td>
+      <td>Authenticate with username and password</td>
+    </tr>
+    <tr>
+      <td><code>/services/token</code></td>
+      <td>POST</td>
+      <td>Exchange login code for OAuth token</td>
+    </tr>
+    <tr>
+      <td><code>/services/ssoProviders</code></td>
+      <td>GET</td>
+      <td>Resolve SSO provider URL for a tenant</td>
+    </tr>
+    <tr>
+      <td><code>/services/sendVerificationCode</code></td>
+      <td>POST</td>
+      <td>Send MFA verification code</td>
+    </tr>
+    <tr>
+      <td><code>/services/authorizeByCode</code></td>
+      <td>POST</td>
+      <td>Complete authorisation from a login code</td>
+    </tr>
+    <tr>
+      <td><code>/services/resetPassword</code></td>
+      <td>POST</td>
+      <td>Initiate and complete password reset</td>
+    </tr>
+    <tr>
+      <td><code>/services/captchaKey</code></td>
+      <td>GET</td>
+      <td>Return the public hCaptcha site key</td>
+    </tr>
+    <tr>
+      <td><code>/services/theme</code></td>
+      <td>GET</td>
+      <td>Return white-labelling / theme configuration for the tenant</td>
+    </tr>
+    <tr>
+      <td><code>/logout</code></td>
+      <td>GET/POST</td>
+      <td>Revoke the current session</td>
+    </tr>
+    <tr>
+      <td><code>/userInfo</code></td>
+      <td>GET</td>
+      <td>Return claims for the authenticated user</td>
+    </tr>
+    <tr>
+      <td><code>/healthcheck</code></td>
+      <td>GET</td>
+      <td>Liveness probe</td>
+    </tr>
+    <tr>
+      <td><code>/status</code></td>
+      <td>GET</td>
+      <td>Readiness / status probe</td>
+    </tr>
+    <tr>
+      <td><code>/zendeskChatAuth</code></td>
+      <td>GET</td>
+      <td>Issue a Zendesk Chat JWT for authenticated users</td>
+    </tr>
+  </tbody>
+</table>
+
+## Configuration
+
+The application reads configuration from `config/default.properties` (overridden by environment-specific files and Vault secrets injected at runtime):
+
+<table>
+  <thead>
+    <tr>
+      <th>Key</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>port</code></td>
+      <td>HTTP listen port (default <code>8080</code>)</td>
+    </tr>
+    <tr>
+      <td><code>clientId</code></td>
+      <td>OAuth client ID used for token requests (<code>reltio_ui</code>)</td>
+    </tr>
+    <tr>
+      <td><code>clientSecret</code></td>
+      <td>OAuth client secret (injected from Vault)</td>
+    </tr>
+    <tr>
+      <td><code>paths.oauth</code></td>
+      <td>Base URL of the Reltio OAuth service</td>
+    </tr>
+    <tr>
+      <td><code>redirectUrlList</code></td>
+      <td>Comma-separated allowlist of valid <code>redirect_uri</code> values</td>
+    </tr>
+    <tr>
+      <td><code>paths.setupMfaHost</code></td>
+      <td>Host to redirect users who must enrol in MFA</td>
+    </tr>
+    <tr>
+      <td><code>zendeskPath</code></td>
+      <td>Zendesk instance base URL</td>
+    </tr>
+    <tr>
+      <td><code>cryptoKey</code></td>
+      <td>Key used for login-code encryption (injected from Vault)</td>
+    </tr>
+    <tr>
+      <td><code>sentry.dsn</code></td>
+      <td>Sentry DSN for error reporting</td>
+    </tr>
+    <tr>
+      <td><code>reltioCapthcaKey</code></td>
+      <td>hCaptcha site key</td>
+    </tr>
+  </tbody>
+</table>
+
+## White-labelling
+
+The app fetches tenant-specific theme configuration from `/services/theme` on startup. When a theme is present the MUI `ThemeProvider` is re-initialised with custom palette values and the Reltio favicon is hidden. This enables partners and customers to brand the login experience without a separate deployment.
+
+## Security Hardening
+
+- **Helmet** enforces HSTS (preload, 1-year max-age) and a strict Content Security Policy with per-request nonces for inline styles.
+- **Redirect URL allowlist** — the `validateRedirectUrl` middleware rejects any `redirect_uri` not present in `redirectUrlList`.
+- **State token** — an opaque state parameter is issued and validated across the OAuth round-trip to prevent CSRF.
+- **CAPTCHA** — hCaptcha can be enabled per tenant to protect the login endpoint from credential-stuffing attacks.
+- **JWT validation** — `jose` is used server-side to verify and decode tokens; raw token strings are never forwarded to the client.
