@@ -44,7 +44,7 @@ The frontend was migrated from Create React App to **Next.js 15 (Pages Router)**
     <tr>
       <td>Auth</td>
       <td><code>auth-middleware</code> (Bitbucket git dep)</td>
-      <td>OAuth SSO under <code>/auth/*</code>; Bearer injection on <code>/api/*</code> proxy; product gate via AFU OAuth service id</td>
+      <td>OAuth SSO under <code>{`/auth/*`}</code>; Bearer injection on <code>{`/api/*`}</code> proxy; product gate via AFU OAuth service id</td>
     </tr>
     <tr>
       <td>Config</td>
@@ -127,11 +127,11 @@ The landing dashboard (`/dashboard`) presents three products. **Document AI** is
 - **Pipeline configs** (`/pipelineconfigs`, `/createnewpipeline`) — Define published pipelines tied to templates; cron scheduling and source binding.
 - **Pipeline executions** (`/pipelineexecutions`, `/pipelineexecutions/[id]`) — Monitor batch runs, search/filter by pipeline, poll execution documents.
 - **Sources** (`/sources`) — Configure document ingestion (cloud storage connectors; E2E covers GCS and related config).
-- **Backend contract** — REST under <code>/document-ai/*</code> and batch APIs (e.g. <code>/v2/batch-runs/pipelines/{`{id}`}/start</code>); session artifacts stored server-side for resumable wizard state.
+- **Backend contract** — REST under <code>{`/document-ai/*`}</code> and batch APIs (e.g. <code>/v2/batch-runs/pipelines/{`{id}`}/start</code>); session artifacts stored server-side for resumable wizard state.
 
 ### Knowledge AI (Context AI) — in progress
 
-- Routes under <code>/dashboard/context-ai/*</code>: RAG config, search indexes, conversations (feature modules in <code>src/features/context-ai/</code>).
+- Routes under <code>{`/dashboard/context-ai/*`}</code>: RAG config, search indexes, conversations (feature modules in <code>src/features/context-ai/</code>).
 - **RAG demo** (`/rag-demo`) — Upload → index configuration → indexing progress → grounded chat with citations.
 
 ## Application structure
@@ -179,7 +179,7 @@ Pages live under <code>src/pages/</code> (Pages Router). Shared UI is in <code>s
       <td>Source / destination configuration</td>
     </tr>
     <tr>
-      <td><code>/dashboard/context-ai/*</code></td>
+      <td><code>{`/dashboard/context-ai/*`}</code></td>
       <td>Knowledge AI shell (RAG config, indexes, conversations)</td>
     </tr>
     <tr>
@@ -195,7 +195,7 @@ Pages live under <code>src/pages/</code> (Pages Router). Shared UI is in <code>s
 
 ## Key patterns
 
-**Express + Next hybrid** — <code>npm run dev</code> runs <code>server/index.ts</code>, which prepares Next.js and mounts SSO, health (<code>GET /health</code>), version metadata, PDF.js worker static assets, and a reverse proxy from <code>/api/*</code> to the Java backend.
+**Express + Next hybrid** — <code>npm run dev</code> runs <code>server/index.ts</code>, which prepares Next.js and mounts SSO, health (<code>GET /health</code>), version metadata, PDF.js worker static assets, and a reverse proxy from <code>{`/api/*`}</code> to the Java backend.
 
 **Authentication** — <code>auth-middleware</code> on <code>/auth</code> (login, callback, logout, status, present). Access tokens in HTTP-only cookies; failed product authorization shows an inline “access denied” gate in <code>Layout</code>.
 
