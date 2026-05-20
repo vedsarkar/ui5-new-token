@@ -1,8 +1,12 @@
 {
 	"mcpServers": {
-		"reltio-design": {
+		"reltio-design-local": {
 			"type": "http",
 			"url": "http://localhost:6006/mcp"
+		},
+		"reltio-design-remote": {
+			"type": "http",
+			"url": "https://reltio.design/mcp"
 		},
 		"atlassian": {
 			"type": "http",

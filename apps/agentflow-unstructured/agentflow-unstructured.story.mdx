@@ -1,0 +1,210 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/AgentFlow Unstructured" />
+
+# AgentFlow Unstructured
+
+> **Repository:** `reltio-ondemand/agentflow-unstructured-frontend`
+
+**AgentFlow Unstructured** (also referred to as **Unstructured Data Studio** in deployment and architecture docs) is the web UI for Reltio’s unstructured-data platform. It helps teams turn documents and enterprise content into structured, AI-ready insights: configure extraction pipelines, run batch document processing, and (in progress) build RAG-style knowledge workflows. The app is the customer-facing shell for **Document AI** today, with **Knowledge AI** (Context AI) and **Multimodal AI** on the product roadmap.
+
+The frontend was migrated from Create React App to **Next.js 15 (Pages Router)** with a **custom Express server** that handles SSO, API proxying, and production hosting. It talks to a separate **Spring Boot** backend (`API_BASE_URL`, default `http://localhost:8080/api` in dev).
+
+## Tech Stack
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Technology</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Framework</td>
+      <td>Next.js 15 (Pages Router), React 19</td>
+      <td>Custom Express bootstraps Next in dev and production</td>
+    </tr>
+    <tr>
+      <td>UI</td>
+      <td>MUI 7 + Emotion</td>
+      <td>Custom <strong>RDS3</strong> token/CSS layer — not yet on <code>@reltio/design</code> / SAP Horizon</td>
+    </tr>
+    <tr>
+      <td>Server</td>
+      <td>Express 4, TypeScript</td>
+      <td><code>auth-middleware</code>, <code>http-proxy-middleware</code>, Vault secrets at startup, rate limiting, Helmet</td>
+    </tr>
+    <tr>
+      <td>Data fetching</td>
+      <td>TanStack React Query 5, Axios</td>
+      <td><code>axios-cache-interceptor</code> for cached GETs</td>
+    </tr>
+    <tr>
+      <td>Auth</td>
+      <td><code>auth-middleware</code> (Bitbucket git dep)</td>
+      <td>OAuth SSO under <code>/auth/*</code>; Bearer injection on <code>/api/*</code> proxy; product gate via AFU OAuth service id</td>
+    </tr>
+    <tr>
+      <td>Config</td>
+      <td><code>node-config</code></td>
+      <td><code>config/default.json</code> + env overrides</td>
+    </tr>
+    <tr>
+      <td>Document UX</td>
+      <td><code>react-pdf</code>, <code>react-dropzone</code>, <code>react-json-view-lite</code></td>
+      <td>PDF preview and JSON inspection in extraction flows</td>
+    </tr>
+    <tr>
+      <td>Workflows</td>
+      <td><code>reactflow</code>, <code>lottie-react</code>, <code>jsoneditor</code></td>
+      <td>Visual pipeline/design surfaces and onboarding animations</td>
+    </tr>
+    <tr>
+      <td>Scheduling</td>
+      <td><code>cron-expression-input</code>, <code>cronstrue</code></td>
+      <td>Pipeline schedule configuration</td>
+    </tr>
+    <tr>
+      <td>Language</td>
+      <td>TypeScript 5 (strict)</td>
+      <td>ESLint 9 + <code>eslint-config-next</code></td>
+    </tr>
+    <tr>
+      <td>Testing</td>
+      <td>Playwright (E2E), Vitest + Storybook 9 (in-repo)</td>
+      <td>E2E covers sources, pipeline configs, GCS, server actions</td>
+    </tr>
+    <tr>
+      <td>Deploy</td>
+      <td>Docker, Helm (<code>unstructured-data-studio-ui</code>)</td>
+      <td>Jenkins pipeline; Grafana dashboards under “Unstructured Data Studio”</td>
+    </tr>
+  </tbody>
+</table>
+
+## Product areas
+
+The landing dashboard (`/dashboard`) presents three products. **Document AI** is fully navigable; **Knowledge AI** and **Multimodal AI** are marked “Coming Soon” on the hub but Knowledge AI routes and components already exist in the codebase.
+
+<table>
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>UI label</th>
+      <th>Status</th>
+      <th>What it does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Document AI</td>
+      <td>Document AI</td>
+      <td>Active</td>
+      <td>Phase-based document pipelines: template wizard, source connectors, pipeline config, batch executions, entity/relation extraction aligned with Reltio L3 schema</td>
+    </tr>
+    <tr>
+      <td>Context AI</td>
+      <td>Knowledge AI</td>
+      <td>Partial / hub “Coming Soon”</td>
+      <td>RAG-oriented flows: index configuration, search indexes, conversations; includes a standalone <code>/rag-demo</code> MVP</td>
+    </tr>
+    <tr>
+      <td>Multimodal AI</td>
+      <td>Multimodal AI</td>
+      <td>Coming Soon</td>
+      <td>Planned audio/video/image processing (nav stub only)</td>
+    </tr>
+  </tbody>
+</table>
+
+### Document AI — main features
+
+- **Onboarding hub** — Guided three-step path: create template → configure sources → set up pipeline (`WelcomeScreen` with localStorage progress flags).
+- **Template creation wizard** (`/createtemplate`) — Session-based flow: select document and target schema, **review extraction** (LLM output + PDF viewer), **verify mappings** (entities and field mappings), optional AI chat panel during review.
+- **Template configs** (`/templates`) — List and resume draft templates; opens the creation wizard with an existing session.
+- **Pipeline configs** (`/pipelineconfigs`, `/createnewpipeline`) — Define published pipelines tied to templates; cron scheduling and source binding.
+- **Pipeline executions** (`/pipelineexecutions`, `/pipelineexecutions/[id]`) — Monitor batch runs, search/filter by pipeline, poll execution documents.
+- **Sources** (`/sources`) — Configure document ingestion (cloud storage connectors; E2E covers GCS and related config).
+- **Backend contract** — REST under <code>/document-ai/*</code> and batch APIs (e.g. <code>/v2/batch-runs/pipelines/{`{id}`}/start</code>); session artifacts stored server-side for resumable wizard state.
+
+### Knowledge AI (Context AI) — in progress
+
+- Routes under <code>/dashboard/context-ai/*</code>: RAG config, search indexes, conversations (feature modules in <code>src/features/context-ai/</code>).
+- **RAG demo** (`/rag-demo`) — Upload → index configuration → indexing progress → grounded chat with citations.
+
+## Application structure
+
+Pages live under <code>src/pages/</code> (Pages Router). Shared UI is in <code>src/components/</code>; product-specific modules in <code>src/features/context-ai/</code> and <code>src/components/document-ai/</code>. API clients and hooks are in <code>src/services/</code> and <code>src/hooks/</code>.
+
+<table>
+  <thead>
+    <tr>
+      <th>Route</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/</code></td>
+      <td>Redirects to <code>/dashboard</code></td>
+    </tr>
+    <tr>
+      <td><code>/dashboard</code></td>
+      <td>Product picker — AgentFlow Unstructured hub</td>
+    </tr>
+    <tr>
+      <td><code>/dashboard/document-ai</code></td>
+      <td>Document AI home and onboarding</td>
+    </tr>
+    <tr>
+      <td><code>/createtemplate</code></td>
+      <td>Multi-step template / extraction wizard</td>
+    </tr>
+    <tr>
+      <td><code>/templates</code></td>
+      <td>Template config list</td>
+    </tr>
+    <tr>
+      <td><code>/pipelineconfigs</code>, <code>/createnewpipeline</code></td>
+      <td>Pipeline definitions</td>
+    </tr>
+    <tr>
+      <td><code>/pipelineexecutions</code></td>
+      <td>Batch run list and detail</td>
+    </tr>
+    <tr>
+      <td><code>/sources</code></td>
+      <td>Source / destination configuration</td>
+    </tr>
+    <tr>
+      <td><code>/dashboard/context-ai/*</code></td>
+      <td>Knowledge AI shell (RAG config, indexes, conversations)</td>
+    </tr>
+    <tr>
+      <td><code>/rag-demo</code></td>
+      <td>End-to-end RAG playground</td>
+    </tr>
+    <tr>
+      <td><code>/login</code>, <code>/profile</code>, <code>/settings</code></td>
+      <td>Auth and user settings</td>
+    </tr>
+  </tbody>
+</table>
+
+## Key patterns
+
+**Express + Next hybrid** — <code>npm run dev</code> runs <code>server/index.ts</code>, which prepares Next.js and mounts SSO, health (<code>GET /health</code>), version metadata, PDF.js worker static assets, and a reverse proxy from <code>/api/*</code> to the Java backend.
+
+**Authentication** — <code>auth-middleware</code> on <code>/auth</code> (login, callback, logout, status, present). Access tokens in HTTP-only cookies; failed product authorization shows an inline “access denied” gate in <code>Layout</code>.
+
+**Session-based Document AI wizard** — Template creation uses server-side <code>pipeline_sessions</code> (create/resume/abandon via API); the UI stores <code>createtemplate_sessionId</code> in <code>sessionStorage</code> across steps.
+
+**Permission gates** — <code>useCapabilities</code> / <code>PermissionGate</code> hide or disable nav sections based on OAuth capabilities for the AFU service.
+
+**Design system** — RDS3 primitives and theme CSS (<code>src/RDS3/</code>) plus MUI theming (<code>ThemeContext</code>); AgentFlow branding components. This app is a **migration candidate** for SAP Fiori via <code>@reltio/design</code> but does not consume it today.
+
+## Relation to the platform
+
+Use this submodule for cross-app analysis of unstructured-data UX, Document AI pipeline flows, and future SAP Fiori migration planning. Application changes belong in the **agentflow-unstructured-frontend** Bitbucket repository; only platform-owned files (this story, future <code>CLAUDE.md</code> / migration notes) live in <code>apps/agentflow-unstructured/</code> outside <code>src/</code>.

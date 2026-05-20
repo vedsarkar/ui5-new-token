@@ -10,9 +10,11 @@ storybookAreas:
   - Components
   - Guides
 metrics:
-  - Apps migrated
-  - Apps in progress
-  - Components in @reltio/design
+  - Endorsed SAP Fiori components in @reltio/design
+  - Apps migrated to @reltio/design
+successMeasures:
+  - "@reltio/design exposes the full SAP Fiori component surface"
+  - "All Reltio apps use @reltio/design v1 as their sole UI library"
 ---
 
 # Migrate Reltio UI apps to the SAP Fiori Design System
@@ -58,7 +60,7 @@ Reltio products are part of the SAP ecosystem. A unified design system eliminate
 
 Each application migrates through `@reltio/design`, which pins UI5 Web Components React at a tested version (currently 2.21.3) and provides:
 
-- **40+ endorsed SAP Fiori components** — Button, Input, Dialog, Table, ComboBox, and more
+- **Endorsed SAP Fiori (UI5) components** — curated re-exports from the pinned UI5 version; progress tracked on the “full SAP Fiori component surface” success measure (see `success-measures/endorsed-ui5-components/`)
 - **Reltio business components** — Chat, AppSelector, Details, Markdown, Skeleton, ErrorBoundary
 - **Charts** — 9 ECharts-powered visualizations replacing Recharts
 - **Hooks and utilities** — useTextStream, classNames, HtmlProps

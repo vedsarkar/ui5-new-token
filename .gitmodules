@@ -62,3 +62,7 @@
 	path = apps/agent-flow-ui/src
 	url = git@bitbucket.org:reltio-ondemand/agent-flow-ui.git
 	ignore = dirty
+[submodule "apps/agentflow-unstructured/src"]
+	path = apps/agentflow-unstructured/src
+	url = git@bitbucket.org:reltio-ondemand/agentflow-unstructured-frontend.git
+	ignore = dirty
