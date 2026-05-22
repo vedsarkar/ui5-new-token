@@ -1,0 +1,140 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Apps/Ontology Builder" />
+
+# Ontology Builder
+
+> **Repository:** `reltio-ondemand/move-to-reltio-ui`
+> **Backend repository:** `reltio-ondemand/move-to-reltio`
+
+**Ontology Builder** (internally known as **Move to Reltio**) is the customer-facing UI for Reltio's AI-powered legacy MDM migration tool. It helps prospects and customers turn an existing legacy data model — Informatica XML, JSON, CSV, or a manually entered schema — into a Reltio L3 configuration with minimal manual effort. The app classifies the uploaded ontology, suggests a matching **Reltio Velocity Pack**, and produces an editable AI-generated entity/attribute mapping with confidence scores. The end deliverable is a Reltio L3 JSON configuration plus a human-readable PDF summary.
+
+The frontend is a **Next.js 16 App Router** application that talks to a separate **Java backend** (`BACKEND_URL`, default `http://localhost:8080`) via a Next.js API route proxy. Session state is held in HTTP-only cookies (`__Host-sessionId`, `__Host-sessionToken`).
+
+## Tech Stack
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Technology</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Framework</td>
+      <td>Next.js 16 (App Router), React 19</td>
+      <td>Standalone output for containerized deploys</td>
+    </tr>
+    <tr>
+      <td>UI</td>
+      <td>MUI 7 + Emotion</td>
+      <td>Custom theme (<code>theme-v2.ts</code>); not yet on <code>@reltio/design</code> / SAP Horizon — migration candidate</td>
+    </tr>
+    <tr>
+      <td>Visualization</td>
+      <td><code>@xyflow/react</code> 12 + <code>elkjs</code></td>
+      <td>Velocity Pack diagram view with automatic graph layout</td>
+    </tr>
+    <tr>
+      <td>Data fetching</td>
+      <td><code>fetch</code> + a thin <code>api</code> client in <code>src/lib/api.ts</code></td>
+      <td>All client traffic is proxied through <code>{`/api/*`}</code></td>
+    </tr>
+    <tr>
+      <td>Auth / session</td>
+      <td>Session-cookie based</td>
+      <td><code>__Host-sessionId</code> / <code>__Host-sessionToken</code> HTTP-only cookies; <code>401</code> redirects the user to <code>/session-expired</code></td>
+    </tr>
+    <tr>
+      <td>Language</td>
+      <td>TypeScript 5</td>
+      <td>ESLint 9 + <code>eslint-config-next</code></td>
+    </tr>
+    <tr>
+      <td>Testing</td>
+      <td>Vitest 4 + Storybook 10 (in-repo, Vite runner)</td>
+      <td>Co-located <code>*.test.ts</code> for proxy and API client</td>
+    </tr>
+    <tr>
+      <td>Deploy</td>
+      <td>Docker, Helm (<code>move-to-reltio-ui</code>)</td>
+      <td>Jenkins pipeline; <code>BACKEND_URL</code> / <code>SESSION_EXPIRED_REDIRECT_URL</code> set per environment</td>
+    </tr>
+  </tbody>
+</table>
+
+## Application Structure
+
+Routes live under `src/app/`. The active product experience is grouped under the `(v2)` route group (no URL segment); a legacy `v1` flow is kept for compatibility and toggled via the `NEXT_PUBLIC_UI_VERSION` env var.
+
+<table>
+  <thead>
+    <tr>
+      <th>Route</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/</code></td>
+      <td>Redirects to <code>/explore</code></td>
+    </tr>
+    <tr>
+      <td><code>/welcome</code></td>
+      <td>Landing card with "Upload schema" and "Explore Velocity Packs" entry points</td>
+    </tr>
+    <tr>
+      <td><code>/upload</code></td>
+      <td>Schema upload screen — accepts Informatica XML, JSON, CSV, or manual input</td>
+    </tr>
+    <tr>
+      <td><code>/explore</code></td>
+      <td>Main workspace — Velocity Pack picker, dashboard stats, entity/relationship list and diagram, detail panel, download dialog</td>
+    </tr>
+    <tr>
+      <td><code>/session-expired</code></td>
+      <td>Inline session-expired screen with auto-redirect to <code>SESSION_EXPIRED_REDIRECT_URL</code> (default <code>https://reltio.com/ontology-builder</code>)</td>
+    </tr>
+    <tr>
+      <td><code>{`/api/[...path]`}</code></td>
+      <td>Catch-all proxy that forwards browser requests to <code>BACKEND_URL</code>, injecting <code>X-Session-Id</code> / <code>X-Session-Token</code> from cookies and following pre-signed S3 download URLs</td>
+    </tr>
+    <tr>
+      <td><code>/auth/callback</code></td>
+      <td>Session-cookie callback landing</td>
+    </tr>
+    <tr>
+      <td><code>/health</code>, <code>/api/health</code>, <code>/api/runtime-config</code></td>
+      <td>Health checks and runtime config exposure for the deployment</td>
+    </tr>
+  </tbody>
+</table>
+
+Shared UI lives in `src/components/v2/` (`AppHeader`, `VelocityPackSelector`, `VelocityPackDiagram`, `EntityList`, `DetailPanel`, `SchemaUpload`, `WaveBackground`, `WelcomeCard`, etc.). The API client and type definitions are in `src/lib/api.ts`; routing helpers in `src/hooks/useAppRouter.ts`. Theme tokens live in `src/theme.ts` (v1) and `src/theme-v2.ts` (v2).
+
+## User Journey
+
+1. **Welcome** — Pick "Upload schema" or "Explore Velocity Packs"
+2. **Upload schema** — Submit an Informatica XML, JSON, CSV, or manually entered schema
+3. **Classify** — Backend runs AI classification and suggests one or more Reltio Velocity Packs with confidence scores and reasoning
+4. **Review mapping** — Edit AI-generated entity, attribute, relationship, and lookup-type mappings (`MappingStatus`, confidence chips, source chips)
+5. **Generate** — Produce a Reltio L3 JSON configuration and PDF summary
+6. **Download** — Download the L3 JSON, PDF, mapping details, and the original input
+
+## Key Patterns
+
+**App Router with a single route group** — All current screens live under `(v2)/` so they share the MUI 7 theme provider (`(v2)/layout.tsx`) without nesting URL segments. The root `/` page server-redirects to `/explore`.
+
+**Backend proxy in a catch-all API route** — `src/app/api/[...path]/route.ts` forwards every browser request to the Java backend, rewriting `sessions/current/...` to `sessions/<sessionId>/...` using the session cookie. Pre-signed S3 download URLs returned by the backend are auto-followed and streamed to the client.
+
+**Public vs. authenticated routes** — `src/proxy.ts` (Next.js middleware) gates routes by version: in v2 the public set is `/`, `/welcome`, `/upload`, `/explore`, `/session-expired`; everything else requires the `__Host-sessionId` cookie.
+
+**Session ID alias** — The client-side `getSessionId()` always returns the string `"current"`; the server-side proxy substitutes the real session ID from the cookie before forwarding to the backend. This keeps the session ID out of client-side JavaScript.
+
+**Frame embedding for reltio.com** — `next.config.ts` sets `Content-Security-Policy: frame-ancestors 'self' *.reltio.com`, allowing the tool to be embedded under the `reltio.com` marketing surface.
+
+## Relation to the platform
+
+Use this submodule for cross-app analysis of the legacy-MDM → Reltio migration UX, Velocity Pack visualization, and future SAP Fiori migration planning. Ontology Builder currently consumes **MUI 7**, not `@reltio/design`, so it is a strong candidate for the upcoming UI5 / SAP Horizon migration. Application changes belong in the **move-to-reltio-ui** Bitbucket repository; only platform-owned files (this story, future `CLAUDE.md` / migration notes) live in `apps/ontology-builder/` outside `src/`.
