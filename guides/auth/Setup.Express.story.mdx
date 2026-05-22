@@ -235,6 +235,44 @@ app.listen(3000);
 	</tbody>
 </table>
 
+## Path-based tenant routing
+
+By default, `GET <mount>/login` and `GET <mount>/logout` resolve the tenant and the post-login return URL from the browser's `Referer` header. This works for applications that encode the tenant in a query string (e.g. `?tenant=acme`), but not for applications that encode the tenant in the **URL path** (e.g. `/app/acme/dashboard`).
+
+For path-based routing, pass the tenant and the return URL as explicit query parameters on the login link:
+
+```html
+<!-- Before: relied on Referer → breaks when Referer is stripped or tenant is in the path -->
+<a href="/login">Sign in</a>
+
+<!-- After: explicit query parameters → works regardless of Referer -->
+<!-- Replace /login with whatever path you mounted the auth router at -->
+<a href="/login?tenant=acme&returnTo=/app/acme/dashboard">Sign in</a>
+```
+
+In an Express route handler that reads the tenant from the URL path:
+
+```ts
+app.get("/app/:tenant", (req, res) => {
+	const { tenant } = req.params;
+	const returnTo = `${process.env.APP_ORIGIN}/app/${tenant}/dashboard`;
+	// Replace /login with your actual auth mount path (e.g. /auth/login)
+	const loginUrl = new URL("/login", process.env.APP_ORIGIN);
+	loginUrl.searchParams.set("tenant", tenant);
+	loginUrl.searchParams.set("returnTo", returnTo);
+	res.redirect(loginUrl.href);
+});
+```
+
+**How it works:**
+
+- `?tenant=acme` takes precedence over any tenant in the `Referer` header.
+- `?returnTo=<absolute-url>` takes precedence over the `Referer` href as the post-login destination.
+- When both `?returnTo=` and `Referer` are present, the BFF asserts they share the same origin and returns `400` on mismatch — this catches misconfigured environments early.
+- When only `?returnTo=` is supplied (no `Referer`), no BFF-side same-origin check is performed — the Reltio OAuth server's `redirect_uri` allowlist is the authoritative protection in that path.
+
+No configuration changes are needed. The `Referer`-based path continues to work for all existing consumers.
+
 ## Migrating from `auth-middleware`
 
 See [Migration → From auth-middleware](?path=/docs/guides-auth-migration-from-auth-middleware--docs) for the complete diff: import-path mapping, three breaking changes, and full before/after code samples for the four files admin-tools touched during migration.

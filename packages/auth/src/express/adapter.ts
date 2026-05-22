@@ -16,14 +16,13 @@ import type {
 /**
  * Builds a Web `Request` from an Express `Request`.
  *
- * URL is reconstructed from `req.protocol`, `req.get('host')`, and
- * `req.originalUrl`. Body is not forwarded — none of the five auth
- * endpoints reads a request body.
+ * URL is assembled with the IANA-reserved placeholder origin (`http://internal.invalid`)
+ * so that `new URL(request.url)` always succeeds. Handlers must only read `.pathname`
+ * and `.searchParams` from `request.url` — the origin is not meaningful.
+ * Body is not forwarded — none of the five auth endpoints reads a request body.
  */
 export function expressToWebRequest(req: ExpressRequest): Request {
-	const protocol = req.protocol || "http";
-	const host = req.get("host") || "localhost";
-	const url = `${protocol}://${host}${req.originalUrl}`;
+	const url = `http://internal.invalid${req.originalUrl}`;
 
 	const headers = new Headers();
 	for (const [key, value] of Object.entries(req.headers)) {

@@ -218,6 +218,57 @@ export async function GET(request: Request): Promise<Response> {
 	</tbody>
 </table>
 
+## Path-based tenant routing
+
+By default, `GET <mount>/login` and `GET <mount>/logout` resolve the tenant and the post-login return URL from the browser's `Referer` header. This works for applications that encode the tenant in a query string (e.g. `?tenant=acme`), but not for applications that encode the tenant in the **URL path** (e.g. `/app/acme/dashboard`).
+
+For path-based routing, pass the tenant and return URL as explicit query parameters on the login link:
+
+```tsx
+// app/app/[tenant]/page.tsx
+export default function TenantPage({ params }: { params: { tenant: string } }) {
+	const { tenant } = params;
+	const returnTo = `/app/${tenant}/dashboard`;
+	const loginHref = `/auth/login?tenant=${tenant}&returnTo=${encodeURIComponent(returnTo)}`;
+	return (
+		<main>
+			<a href={loginHref}>Sign in</a>
+		</main>
+	);
+}
+```
+
+From a Next.js middleware, construct the login URL before redirecting. Use a server-side env var for the origin — `request.nextUrl.origin` is unreliable behind reverse proxies:
+
+```ts
+// middleware.ts
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function middleware(request: NextRequest) {
+	const { pathname } = request.nextUrl;
+	const tenantMatch = pathname.match(/^\/app\/([^/]+)/);
+	if (!tenantMatch) return NextResponse.next();
+
+	const tenant = tenantMatch[1];
+	const appOrigin = process.env.APP_ORIGIN!;
+	const returnTo = `${appOrigin}/app/${tenant}/dashboard`;
+	const loginUrl = new URL("/auth/login", appOrigin);
+	loginUrl.searchParams.set("tenant", tenant);
+	loginUrl.searchParams.set("returnTo", returnTo);
+	return NextResponse.redirect(loginUrl);
+}
+```
+
+**How it works:**
+
+- `?tenant=acme` takes precedence over any tenant in the `Referer` header.
+- `?returnTo=<absolute-url>` takes precedence over the `Referer` href as the post-login destination.
+- When both `?returnTo=` and `Referer` are present, the BFF asserts they share the same origin and returns `400` on mismatch — this catches misconfigured environments early.
+- When only `?returnTo=` is supplied (no `Referer`), no BFF-side same-origin check is performed — the Reltio OAuth server's `redirect_uri` allowlist is the authoritative protection in that path.
+
+No configuration changes are needed. The `Referer`-based path continues to work for all existing consumers.
+
 ## Pages Router
 
 The Next.js Pages Router is **intentionally not supported** by a dedicated adapter in v1. If your application is still on the Pages Router and has a custom Express server, integrate via [Setup → Express](?path=/docs/guides-auth-setup-express--docs) — that is how `admin-tools` does it. Migrating to the App Router is also recommended where feasible.

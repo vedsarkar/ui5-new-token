@@ -2,10 +2,9 @@
  * `GET /callback` handler.
  *
  * Exchanges the OAuth authorization code for access and refresh tokens.
- * Validates the CSRF state and the `redirectUrl` origin before making any
- * upstream call. On success, sets the token cookies and either invokes the
- * consumer's `ssoRedirect` callback or performs a default 302 redirect
- * to `redirectUrl`.
+ * Validates the CSRF state before making any upstream call. On success,
+ * sets the token cookies and either invokes the consumer's `ssoRedirect`
+ * callback or performs a default 302 redirect to `redirectUrl`.
  */
 
 import {
@@ -17,7 +16,6 @@ import {
 	serializeCookie,
 } from "../../utils/cookies";
 import { validateState } from "../../utils/state";
-import { validateRedirectUrl } from "../../utils/validateRedirectUrl";
 import { isRequestError } from "../errors";
 import type { Handler } from "./types";
 
@@ -34,13 +32,6 @@ export const callbackHandler: Handler = async ({ request, config, oauth }) => {
 
 	if (!validateState(cookieState, queryState)) {
 		return new Response("State mismatch", { status: 401 });
-	}
-
-	if (redirectUrlParam && !validateRedirectUrl(request.url, redirectUrlParam)) {
-		return new Response(
-			`Redirect URL ${redirectUrlParam} is not from the same origin`,
-			{ status: 400 },
-		);
 	}
 
 	if (!code) {

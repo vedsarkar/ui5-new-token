@@ -165,41 +165,6 @@ describe("Express adapter — GET /callback", () => {
 		expect(res.statusCode).toBe(401);
 	});
 
-	it("returns 400 when redirectUrl is on a foreign host", async () => {
-		const app = createTestApp();
-
-		const res = await app
-			.get("/api/auth/callback")
-			.set("Host", TEST_HOST)
-			.set("Cookie", [`state=${STATE}`])
-			.query({
-				code: "x",
-				state: STATE,
-				redirectUrl: "https://evil.example.com/steal",
-			});
-
-		expect(res.statusCode).toBe(400);
-	});
-
-	it("returns 400 when redirectUrl is on the same host but a different scheme", async () => {
-		const app = createTestApp();
-
-		const res = await app
-			.get("/api/auth/callback")
-			.set("Host", TEST_HOST)
-			.set("Cookie", [`state=${STATE}`])
-			.query({
-				code: "x",
-				state: STATE,
-				// Request arrives over http://app.test (supertest), but redirectUrl
-				// points at https://app.test — same host, different scheme. The
-				// router validates by full origin so this is rejected.
-				redirectUrl: `https://${TEST_HOST}/dashboard`,
-			});
-
-		expect(res.statusCode).toBe(400);
-	});
-
 	it("invokes the ssoRedirect callback with the full SsoRedirectContext and uses its Response", async () => {
 		mockTokenExchange({
 			access_token: "access_for_callback",

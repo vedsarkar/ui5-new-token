@@ -19,35 +19,27 @@ import {
 	serializeCookie,
 } from "../../utils/cookies";
 import { generateState } from "../../utils/state";
+import { resolveRedirectParams, upgradeToHttps } from "../../utils/resolveRedirectParams";
 import type { Handler } from "./types";
 
 export const logoutHandler: Handler = async (ctx) => {
 	const { request, config } = ctx;
 	const secure = config.secure !== false;
 
-	const refererHeader = request.headers.get("referer");
-	if (!refererHeader) {
-		return new Response("Missing Referer header", { status: 400 });
+	const redirectParams = resolveRedirectParams(request);
+	if (!redirectParams.ok) {
+		return redirectParams.error;
 	}
 
-	let refererUrl: URL;
-	try {
-		refererUrl = new URL(refererHeader);
-	} catch {
-		return new Response("Malformed Referer header", { status: 400 });
-	}
+	const { tenant, returnTo } = redirectParams;
 
-	if (secure) {
-		refererUrl.protocol = "https:";
-	}
+	const returnToUrl = upgradeToHttps(returnTo, secure);
 
 	const state = generateState();
-	const tenant = refererUrl.searchParams.get("tenant");
-
 	const requestUrl = new URL(request.url);
-	const authCallbackUrl = new URL(refererUrl.origin);
+	const authCallbackUrl = new URL(returnToUrl.origin);
 	authCallbackUrl.pathname = requestUrl.pathname.replace(/logout$/, "callback");
-	authCallbackUrl.searchParams.set("redirectUrl", refererUrl.href);
+	authCallbackUrl.searchParams.set("redirectUrl", returnToUrl.href);
 	authCallbackUrl.searchParams.set("state", state);
 
 	const loginUrl = new URL(config.loginPath);

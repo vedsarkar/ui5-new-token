@@ -223,6 +223,34 @@ Options for applications in this situation:
 
 If your application uses `node-oauth-provider` for the OAuth password grant or client credentials grant, those flows are NOT exposed in v1 of `@reltio/auth` even internally — they are not part of any of the five BFF router endpoints. Coordinate with the Reltio Design Platform team if you need first-class support for these flows in a future v1.x release.
 
+## Path-based tenant routing
+
+Applications whose tenant lives in the URL path (e.g. `/ui/{tenant}/dashboard`) typically bypassed the BFF's `/login` endpoint entirely. Because `auth-middleware` derived the tenant only from `Referer`, client-side code had to build the full OAuth redirect itself and go straight to the Reltio Login Page:
+
+```ts
+// client/login.ts — BEFORE: bypasses BFF /login, builds OAuth URL client-side
+const tenant = location.pathname.split("/")[2]; // read tenant from /ui/{tenant}/...
+location.assign(
+	`${loginPageUrl}?client_id=${clientId}&tenant=${tenant}` +
+		`&redirect_uri=${location.origin}/callback?redirectUrl=${encodeURIComponent(location.href)}`,
+);
+```
+
+This worked, but it bypassed the CSRF state cookie that the BFF's `/login` sets, and it required each app to assemble the Login Page URL format manually.
+
+`@reltio/auth` accepts `?tenant=` and `?returnTo=` as explicit query parameters on `/login` that take precedence over `Referer`. The frontend can now route through the BFF instead:
+
+```ts
+// client/login.ts — AFTER: routes through BFF /login with explicit parameters
+const tenant = location.pathname.split("/")[2]; // same extraction, unchanged
+// Replace /login with whatever path you mounted the auth router at
+location.assign(`/login?tenant=${tenant}&returnTo=${encodeURIComponent(location.href)}`);
+```
+
+The BFF handles state-cookie generation, the Login Page URL format, and the redirect — the client no longer assembles any of it.
+
+This is **non-breaking** for all existing consumers. Apps that do not supply `?tenant=` or `?returnTo=` continue to resolve both values from `Referer` exactly as before.
+
 ## What stays the same
 
 - **URL paths** — `/auth/login`, `/auth/logout`, `/auth/callback`, `/auth/refreshToken`, `/auth/checkToken` relative to your mount point.

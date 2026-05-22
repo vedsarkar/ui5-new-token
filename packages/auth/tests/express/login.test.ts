@@ -140,7 +140,7 @@ describe("Express adapter — GET /login", () => {
 		expect(attributes).toContain("SameSite=Lax");
 	});
 
-	it("returns 400 when the Referer header is missing", async () => {
+	it("returns 400 when neither ?returnTo= nor Referer supplies a return URL", async () => {
 		const app = createTestApp();
 
 		const res = await app.get("/api/auth/login").set("Host", TEST_HOST);
@@ -160,6 +160,97 @@ describe("Express adapter — GET /login", () => {
 		expect(res.headers["cache-control"]).toContain("no-cache");
 		expect(res.headers["cache-control"]).toContain("private");
 		expect(res.headers.pragma).toBe("no-cache");
+	});
+
+	it("uses explicit ?returnTo= and ?tenant= when Referer is absent", async () => {
+		const app = createTestApp();
+		const returnTo = `${TEST_APP_ORIGIN}/hub/acme/dashboard`;
+
+		const res = await app
+			.get(
+				`/api/auth/login?tenant=acme&returnTo=${encodeURIComponent(returnTo)}`,
+			)
+			.set("Host", TEST_HOST);
+
+		expect(res.statusCode).toBe(302);
+		const location = new URL(res.headers.location);
+		expect(location.searchParams.get("tenant")).toBe("acme");
+		const callbackUrl = new URL(
+			location.searchParams.get("redirect_uri") as string,
+		);
+		expect(callbackUrl.origin).toBe(TEST_APP_ORIGIN);
+		expect(callbackUrl.pathname).toBe("/api/auth/callback");
+		expect(callbackUrl.searchParams.get("redirectUrl")).toBe(returnTo);
+	});
+
+	it("explicit ?tenant= overrides the tenant from Referer query string", async () => {
+		const app = createTestApp();
+
+		const res = await app
+			.get("/api/auth/login?tenant=acme")
+			.set("Host", TEST_HOST)
+			.set("Referer", `${TEST_APP_ORIGIN}/dashboard?tenant=other`);
+
+		const location = new URL(res.headers.location);
+		expect(location.searchParams.get("tenant")).toBe("acme");
+	});
+
+	it("empty ?tenant= falls back to the tenant from Referer query string", async () => {
+		const app = createTestApp();
+
+		const res = await app
+			.get("/api/auth/login?tenant=")
+			.set("Host", TEST_HOST)
+			.set("Referer", `${TEST_APP_ORIGIN}/dashboard?tenant=acme`);
+
+		const location = new URL(res.headers.location);
+		expect(location.searchParams.get("tenant")).toBe("acme");
+	});
+
+	it("explicit ?returnTo= with malformed Referer succeeds (soft-fail)", async () => {
+		const app = createTestApp();
+		const returnTo = `${TEST_APP_ORIGIN}/dashboard`;
+
+		const res = await app
+			.get(
+				`/api/auth/login?returnTo=${encodeURIComponent(returnTo)}&tenant=acme`,
+			)
+			.set("Host", TEST_HOST)
+			.set("Referer", "not a valid url");
+
+		expect(res.statusCode).toBe(302);
+	});
+
+	it("explicit ?returnTo= and same-origin Referer both present → 302 (HUB UI path-based tenant pattern)", async () => {
+		const app = createTestApp({ mountPath: "" });
+		const returnTo = `${TEST_APP_ORIGIN}/ui/acme/dashboard`;
+
+		const res = await app
+			.get(`/login?tenant=acme&returnTo=${encodeURIComponent(returnTo)}`)
+			.set("Host", TEST_HOST)
+			.set("Referer", `${TEST_APP_ORIGIN}/ui/acme/dashboard`);
+
+		expect(res.statusCode).toBe(302);
+		const location = new URL(res.headers.location);
+		expect(location.searchParams.get("tenant")).toBe("acme");
+		const callbackUrl = new URL(
+			location.searchParams.get("redirect_uri") as string,
+		);
+		expect(callbackUrl.searchParams.get("redirectUrl")).toBe(returnTo);
+	});
+
+	it("returns 400 when explicit ?returnTo= origin differs from Referer origin", async () => {
+		const app = createTestApp();
+
+		const res = await app
+			.get(
+				`/api/auth/login?returnTo=${encodeURIComponent("https://evil.example.com/")}`,
+			)
+			.set("Host", TEST_HOST)
+			.set("Referer", `${TEST_APP_ORIGIN}/dashboard`);
+
+		expect(res.statusCode).toBe(400);
+		expect(res.text).toContain("returnTo origin does not match Referer origin");
 	});
 
 	it("dispatches the login handler regardless of mount path", async () => {

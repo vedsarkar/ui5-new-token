@@ -56,6 +56,20 @@ app.use(
 
 The router is mount-point agnostic — `/auth`, `/api/auth`, or any other path works the same.
 
+## Path-based tenant routing
+
+`GET /login` and `GET /logout` (or `/auth/login` / `/api/auth/login` depending on your mount path) accept two optional query parameters — `?tenant=` and `?returnTo=` — that take precedence over the `Referer` header. This lets consumers whose tenant lives in the URL path (e.g. `/ui/<tenant>/...`) drive the auth flow without relying on the browser's `Referer`:
+
+```tsx
+// HUB UI pattern — tenant in the URL path, mounted at /
+const returnTo = `${window.location.origin}/ui/${tenant}/dashboard`;
+const href = `/login?tenant=${tenant}&returnTo=${encodeURIComponent(returnTo)}`;
+
+<a href={href}>Sign in</a>
+```
+
+See the [Setup → Express](?path=/docs/guides-auth-setup-express--docs) or [Setup → Next.js App Router](?path=/docs/guides-auth-setup-next-js-app-router--docs) guide for a full worked example using HUB UI's path shape.
+
 ## Subpath exports
 
 `@reltio/auth` has no bare entry point — every import goes through a named subpath. This matches the platform convention enforced by `@reltio/design`.

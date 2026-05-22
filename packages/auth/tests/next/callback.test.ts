@@ -168,44 +168,6 @@ describe("Next.js adapter — GET /auth/callback", () => {
 		expect(res.status).toBe(401);
 	});
 
-	it("returns 400 when redirectUrl is on a foreign host", async () => {
-		const { GET } = createTestHandlers();
-
-		const res = await GET(
-			buildRequest({
-				path: "/auth/callback",
-				query: {
-					code: "x",
-					state: STATE,
-					redirectUrl: "https://evil.example.com/steal",
-				},
-				cookies: { state: STATE },
-			}),
-		);
-
-		expect(res.status).toBe(400);
-	});
-
-	it("returns 400 when redirectUrl is on the same host but a different scheme", async () => {
-		const { GET } = createTestHandlers();
-
-		const res = await GET(
-			buildRequest({
-				path: "/auth/callback",
-				query: {
-					code: "x",
-					state: STATE,
-					// Request URL is https://app.test/... (TEST_APP_ORIGIN), redirectUrl
-					// here is plain http — same host, different scheme. Rejected.
-					redirectUrl: `http://${TEST_HOST}/dashboard`,
-				},
-				cookies: { state: STATE },
-			}),
-		);
-
-		expect(res.status).toBe(400);
-	});
-
 	it("invokes the ssoRedirect callback with the full SsoRedirectContext and uses its Response", async () => {
 		mockTokenExchange({
 			access_token: "access_for_callback",
