@@ -1,6 +1,6 @@
 {
 	"name": "@reltio/auth",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Reltio Auth — BFF authentication and OAuth orchestration for Reltio applications. Express and Next.js App Router adapters over a framework-agnostic Web Fetch API core.",
 	"license": "Apache-2.0",
 	"homepage": "https://reltio.design",
