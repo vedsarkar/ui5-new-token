@@ -1,0 +1,292 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as TableStories from "./Table.stories";
+import schema from "./Table.schema.json";
+
+<Meta of={TableStories} />
+
+# Table
+
+```tsx
+import { Table } from "@reltio/design/components";
+```
+
+`Table` is the SAP Fiori grid for tabular data, re-exported from `@ui5/webcomponents-react/Table` as the canonical Reltio entry point. Use it for any list of structured records that the user reads in columns: entities, relationships, jobs, audit log entries, downloads, exports.
+
+There is no Reltio wrapping around the underlying UI5 component: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Table`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### Composing the family
+
+A `Table` is built from four child components, all re-exported from `@reltio/design/components`:
+
+- `TableHeaderRow` — the column header strip (one per Table, goes in the `headerRow` slot)
+- `TableHeaderCell` — a single column header inside `TableHeaderRow`
+- `TableRow` — a data row
+- `TableCell` — a single cell inside `TableRow`
+
+```tsx
+<Table>
+  <TableHeaderRow slot="headerRow">
+    <TableHeaderCell><span>Entity</span></TableHeaderCell>
+    <TableHeaderCell><span>Status</span></TableHeaderCell>
+  </TableHeaderRow>
+  {records.map((r) => (
+    <TableRow key={r.id} rowKey={r.id}>
+      <TableCell>{r.name}</TableCell>
+      <TableCell>{r.status}</TableCell>
+    </TableRow>
+  ))}
+</Table>
+```
+
+### Row keys are mandatory
+
+UI5 `Table` uses `rowKey` (not React's `key`) to track row identity for selection, virtualization, and `onRowClick`. Always set `rowKey` to a stable, unique identifier per row — typically the entity ID, not an array index.
+
+### Empty state
+
+When there is no data, set the `noDataText` prop on `<Table>` and render only the `<TableHeaderRow>`. The table will display the empty message instead of an empty grid.
+
+### Selection, growing, virtualization
+
+The Table family ships several additional sub-parts in `@ui5/webcomponents-react` (not yet re-exported from `@reltio/design`): `TableSelectionSingle`, `TableSelectionMulti`, `TableGrowing`, `TableVirtualizer`, `TableRowAction`. Open an issue with the UI CoE when one of these becomes needed in a product app.
+
+### See also
+
+- [SAP Fiori Table guideline](https://experience.sap.com/fiori-design-web/table/)
+- [UI5 Table reference](https://ui5.github.io/webcomponents/components/main/Table/)
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+{/* __JSON_SCHEMA__
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "TableProps",
+	"x-component": "Table",
+	"type": "object",
+	"properties": {
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleNameRef": {
+			"description": "Identifies the element (or elements) that labels the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"alternateRowColors": {
+			"description": "Determines whether the table rows are displayed with alternating background colors.\n\n**Note:** Available since [v2.17](https://github.com/UI5/webcomponents/releases/tag/v2.17) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"children": {
+			"description": "Defines the rows of the component.\n\n**Note:** Use `TableRow` for the intended design.\n\n__Supported Node Type/s:__ `Array<TableRow>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"features": {
+			"description": "Defines the features of the component.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"features\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<ITableFeature>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"headerRow": {
+			"description": "Defines the header row of the component.\n\n**Note:** Use `TableHeaderRow` for the intended design.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"headerRow\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<TableHeaderRow>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"loading": {
+			"description": "Defines if the loading indicator should be shown.\n\n**Note:** When the component is loading, it is not interactive.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"loadingDelay": {
+			"description": "Defines the delay in milliseconds, after which the loading indicator will show up for this component.",
+			"default": 1000,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"noData": {
+			"description": "Defines the custom visualization if there is no data available.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"noData\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"noDataText": {
+			"description": "Defines the text to be displayed when there are no rows in the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onMove": {
+			"description": "Fired when a movable list item is dropped onto a drop target.\n\n**Notes:**\n\nThe `move` event is fired only if there was a preceding `move-over` with prevented default action.\n\nIf the dragging operation is a cross-browser operation or files are moved to a potential drop target,\nthe `source` parameter will be `null`.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TableDomRef, TableMoveEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TableDomRef, TableMoveEventDetail>) => void"
+		},
+		"onMoveOver": {
+			"description": "Fired when a movable item is moved over a potential drop target during a dragging operation.\n\nIf the new position is valid, prevent the default action of the event using `preventDefault()`.\n\n**Note:** If the dragging operation is a cross-browser operation or files are moved to a potential drop target,\nthe `source` parameter will be `null`.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TableDomRef, TableMoveEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TableDomRef, TableMoveEventDetail>) => void"
+		},
+		"onRowActionClick": {
+			"description": "Fired when a row action is clicked.\n\n**Note:** Available since [v2.6.0](https://github.com/UI5/webcomponents/releases/tag/v2.6.0) of **@ui5/webcomponents**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TableDomRef, TableRowActionClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TableDomRef, TableRowActionClickEventDetail>) => void"
+		},
+		"onRowClick": {
+			"description": "Fired when an interactive row is clicked.\n\n**Note:** This event is not fired if the `behavior` property of the selection component is set to `RowOnly`.\nIn that case, use the `change` event of the selection component instead.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TableDomRef, TableRowClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TableDomRef, TableRowClickEventDetail>) => void"
+		},
+		"overflowMode": {
+			"description": "Defines the mode of the <code>ui5-table</code> overflow behavior.\n\nAvailable options are:\n\n<code>Scroll</code> - Columns are shown as regular columns and horizontal scrolling is enabled.\n<code>Popin</code> - Columns are shown as pop-ins instead of regular columns.",
+			"default": "Scroll",
+			"x-typescriptType": "TableOverflowMode | 'Scroll' | 'Popin'"
+		},
+		"rowActionCount": {
+			"description": "Defines the maximum number of row actions that is displayed, which determines the width of the row action column.\n\n**Note:** It is recommended to use a maximum of 3 row actions, as exceeding this limit may take up too much space on smaller screens.\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents**.",
+			"default": 0,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import { Table } from "@ui5/webcomponents-react/Table";
+import { TableCell } from "@ui5/webcomponents-react/TableCell";
+import { TableHeaderCell } from "@ui5/webcomponents-react/TableHeaderCell";
+import { TableHeaderRow } from "@ui5/webcomponents-react/TableHeaderRow";
+import { TableRow } from "@ui5/webcomponents-react/TableRow";
+import { fn } from "storybook/test";
+import preview from "../../.storybook/preview";
+
+const meta = preview.meta({
+	component: Table,
+	parameters: { layout: "padded" },
+	args: {
+		onRowClick: fn(),
+	},
+});
+
+export default meta;
+
+const rows = [
+	{ id: "ent-001", name: "Acme Corp", status: "Active", records: 1234 },
+	{ id: "ent-002", name: "Globex", status: "Pending", records: 56 },
+	{ id: "ent-003", name: "Initech", status: "Archived", records: 9821 },
+	{ id: "ent-004", name: "Hooli", status: "Active", records: 412 },
+];
+
+export const Default = meta.story({
+	render: (args) => (
+		<Table {...args}>
+			<TableHeaderRow slot="headerRow">
+				<TableHeaderCell>
+					<span>Entity</span>
+				</TableHeaderCell>
+				<TableHeaderCell>
+					<span>Status</span>
+				</TableHeaderCell>
+				<TableHeaderCell>
+					<span>Records</span>
+				</TableHeaderCell>
+			</TableHeaderRow>
+			{rows.map((r) => (
+				<TableRow key={r.id} rowKey={r.id}>
+					<TableCell>{r.name}</TableCell>
+					<TableCell>{r.status}</TableCell>
+					<TableCell>{r.records.toLocaleString()}</TableCell>
+				</TableRow>
+			))}
+		</Table>
+	),
+});
+
+export const Empty = meta.story({
+	render: (args) => (
+		<Table {...args} noDataText="No records to display">
+			<TableHeaderRow slot="headerRow">
+				<TableHeaderCell>
+					<span>Entity</span>
+				</TableHeaderCell>
+				<TableHeaderCell>
+					<span>Status</span>
+				</TableHeaderCell>
+			</TableHeaderRow>
+		</Table>
+	),
+});
+
+export const SingleColumn = meta.story({
+	render: (args) => (
+		<Table {...args}>
+			<TableHeaderRow slot="headerRow">
+				<TableHeaderCell>
+					<span>Entity</span>
+				</TableHeaderCell>
+			</TableHeaderRow>
+			{rows.map((r) => (
+				<TableRow key={r.id} rowKey={r.id}>
+					<TableCell>{r.name}</TableCell>
+				</TableRow>
+			))}
+		</Table>
+	),
+});
+
+export const ManyRows = meta.story({
+	render: (args) => {
+		const many = Array.from({ length: 50 }, (_, i) => ({
+			id: `row-${i}`,
+			name: `Entity ${i + 1}`,
+			status: i % 3 === 0 ? "Active" : "Pending",
+		}));
+		return (
+			<div style={{ height: 400 }}>
+				<Table {...args}>
+					<TableHeaderRow slot="headerRow">
+						<TableHeaderCell>
+							<span>Entity</span>
+						</TableHeaderCell>
+						<TableHeaderCell>
+							<span>Status</span>
+						</TableHeaderCell>
+					</TableHeaderRow>
+					{many.map((r) => (
+						<TableRow key={r.id} rowKey={r.id}>
+							<TableCell>{r.name}</TableCell>
+							<TableCell>{r.status}</TableCell>
+						</TableRow>
+					))}
+				</Table>
+			</div>
+		);
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

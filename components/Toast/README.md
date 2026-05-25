@@ -1,0 +1,60 @@
+# Toast
+
+`Toast` is the SAP Fiori transient overlay notification, re-exported from `@ui5/webcomponents-react/Toast` as the canonical Reltio entry point. Use it for short status messages that confirm an outcome or surface a non-blocking error: "Changes saved", "Failed to load", "Settings updated".
+
+There is no Reltio wrapping around the underlying UI5 component: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Toast`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### Controlled open
+
+UI5 Toast is shown by toggling its `open` prop from `false` to `true`. The component auto-closes after `duration` ms (default `3000`) and fires `onClose` — reset your state from that callback.
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<Button onClick={() => setOpen(true)}>Save</Button>
+<Toast open={open} duration={3000} onClose={() => setOpen(false)}>
+  Changes saved
+</Toast>
+```
+
+### Semantic variants — via `--sap*` tokens, not props
+
+UI5 Toast does not ship a `variant` / `valueState` / `design` prop. To color a toast by severity (info / success / error), override the SAP semantic background token on a parent class — UI5 reads the token through Shadow DOM automatically. No Reltio wrapper is needed.
+
+```css
+/* App-level CSS module */
+.successToast {
+  --sapToast_Background: var(--sapPositiveColor);
+  --sapToast_TextColor: var(--sapButton_Emphasized_TextColor);
+}
+
+.errorToast {
+  --sapToast_Background: var(--sapNegativeColor);
+  --sapToast_TextColor: var(--sapButton_Emphasized_TextColor);
+}
+```
+
+```tsx
+<Toast className={styles.errorToast} open={open} onClose={close}>
+  Failed to load — retry
+</Toast>
+```
+
+If a future SAP Fiori release ships a typed semantic state for Toast, switch to that prop and delete the helper class.
+
+### Accessibility for error states
+
+Color alone is not enough to communicate severity. **Always pair an error toast with descriptive copy** (e.g. "Failed to save — check your VPN connection") so screen readers, color-blind users, and high-contrast modes all convey the meaning.
+
+### When to use Toast vs MessageStrip vs Dialog
+
+- **Toast** — transient, auto-dismissing, no buttons. Good for completion confirmations and recoverable errors.
+- **MessageStrip** — persistent inline banner inside a page section. Stays visible until the user dismisses.
+- **Dialog** — modal that requires acknowledgement. Use when the user MUST decide.
+
+### See also
+
+- [SAP Fiori Toast guideline](https://experience.sap.com/fiori-design-web/toast/)
+- [UI5 Toast reference](https://ui5.github.io/webcomponents/components/main/Toast/)
+- [`MessageStrip`](../MessageStrip/README.md) — persistent inline notifications
+- [`Dialog`](../Dialog/README.md) — blocking modals

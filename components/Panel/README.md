@@ -1,0 +1,26 @@
+# Panel
+
+`Panel` is the SAP Fiori collapsible section, re-exported from `@ui5/webcomponents-react/Panel` as the canonical Reltio entry point. It is the SAP equivalent of an "accordion item": a labelled, expandable region of content. Stack multiple `<Panel>` siblings to compose an accordion-like layout where each section opens or collapses independently.
+
+There is no Reltio wrapping around the underlying UI5 component: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Panel`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### Why `Panel` instead of `Accordion`
+
+The SAP Fiori system does not ship a standalone `Accordion` component. An accordion is composed by stacking `<Panel>` instances — each panel controls its own collapsed state. This gives you full flexibility: panels can open independently (no exclusive selection), can be nested inside other panels, and can mix with non-panel content.
+
+If your design requires single-selection accordion behavior (only one open at a time), wire the `onToggle` callbacks to your own state so opening one panel collapses the others.
+
+### Collapsing behavior
+
+- `collapsed={true}` — section starts closed.
+- `fixed={true}` — header is rendered but not interactive; content is always visible. Use for grouping that should not collapse.
+- Omit both to get the default expanded-and-toggleable panel.
+
+### Accessibility
+
+`accessibleRole` maps the Panel to a semantic ARIA landmark (`Region`, `Form`, `Complementary`). Use `Region` for navigational sections, `Form` when the panel wraps a form, `Complementary` for sidebar-like supplementary content. Without an appropriate role, screen-reader users see the panel as a generic group.
+
+### See also
+
+- [SAP Fiori Panel guideline](https://experience.sap.com/fiori-design-web/panel/)
+- [UI5 Panel reference](https://ui5.github.io/webcomponents/components/main/Panel/)

@@ -1,0 +1,25 @@
+.root {
+	width: 100%;
+}
+
+.logo {
+	display: inline-flex;
+	align-items: center;
+	margin-right: 12px;
+}
+
+.lightLogo {
+	display: block;
+}
+
+.darkLogo {
+	display: none;
+}
+
+:global([data-theme="horizon-dark"]) .lightLogo {
+	display: none;
+}
+
+:global([data-theme="horizon-dark"]) .darkLogo {
+	display: block;
+}

@@ -1,0 +1,153 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "ShellBarProps",
+	"x-component": "ShellBar",
+	"type": "object",
+	"properties": {
+		"accessibilityAttributes": {
+			"description": "Defines additional accessibility attributes on different areas of the component.\n\nThe accessibilityAttributes object has the following fields,\nwhere each field is an object supporting one or more accessibility attributes:\n\n- **logo** - `logo.role` and `logo.name`.\n- **notifications** - `notifications.expanded` and `notifications.hasPopup`.\n- **profile** - `profile.expanded`, `profile.hasPopup` and `profile.name`.\n- **product** - `product.expanded` and `product.hasPopup`.\n- **search** - `search.hasPopup`.\n- **overflow** - `overflow.expanded` and `overflow.hasPopup`.\n- **branding** - `branding.name`.\n\nThe accessibility attributes support the following values:\n\n- **role**: Defines the accessible ARIA role of the logo area.\nAccepts the following string values: `button` or `link`.\n\n- **expanded**: Indicates whether the button, or another grouping element it controls,\nis currently expanded or collapsed.\nAccepts the following string values: `true` or `false`.\n\n- **hasPopup**: Indicates the availability and type of interactive popup element,\nsuch as menu or dialog, that can be triggered by the button.\n\nAccepts the following string values: `dialog`, `grid`, `listbox`, `menu` or `tree`.\n- **name**: Defines the accessible ARIA name of the area.\nAccepts any string.\n\n**Note:** Available since [v1.10.0](https://github.com/UI5/webcomponents/releases/tag/v1.10.0) of **@ui5/webcomponents-fiori**.",
+			"default": {},
+			"x-typescriptType": "ShellBarAccessibilityAttributes"
+		},
+		"assistant": {
+			"description": "Defines the assistant slot.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"assistant\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents-fiori**.\n\n__Supported Node Type/s:__ `Array<IButton>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"branding": {
+			"description": "Override the default Reltio branding (left brand mark + optional title).\nMust be a `<ShellBarBranding>` element (or any React element that UI5\nrecognises as the `branding` slot child). Primitive types (string, null)\nare silently discarded by UI5's slot validation — pass an element only.",
+			"x-typescriptType": "ReactElement<any, string | JSXElementConstructor<any>>"
+		},
+		"children": {
+			"description": "Defines the `ShellBar` additional items.\n\n**Note:**\nYou can use the `<ShellBarItem></ShellBarItem>`.\n\n__Supported Node Type/s:__ `Array<ShellBarItem>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"content": {
+			"description": "Define the items displayed in the content area.\n\nUse the `data-hide-order` attribute with numeric value to specify the order of the items to be hidden when the space is not enough.\nLower values will be hidden first.\n\n**Note:** The `content` slot is in an experimental state and is a subject to change.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"content\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents-fiori**.\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"disableSearchCollapse": {
+			"description": "Disables the automatic search field expansion/collapse when the available space is not enough.\n\n**Note:** The `disableSearchCollapse` property is in an experimental state and is a subject to change.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"hideSearchButton": {
+			"description": "Defines the visibility state of the search button.\n\n**Note:** The `hideSearchButton` property is in an experimental state and is a subject to change.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"logo": {
+			"description": "Defines the logo of the `ShellBar`.\nFor example, you can use `ui5-avatar` or `img` elements as logo.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"logo\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"menuItems": {
+			"description": "Defines the items displayed in menu after a click on a start button.\n\n**Note:** You can use the  `<ui5-li></ui5-li>` and its ancestors.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"menuItems\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<ListItemBase>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"notificationsCount": {
+			"description": "Defines the `notificationsCount`,\ndisplayed in the notification icon top-right corner.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onContentItemVisibilityChange": {
+			"description": "Fired, when an item from the content slot is hidden or shown.\n**Note:** The `content-item-visibility-change` event is in an experimental state and is a subject to change.\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents-fiori**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarContentItemVisibilityChangeEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarContentItemVisibilityChangeEventDetail>) => void"
+		},
+		"onLogoClick": {
+			"description": "Fired, when the logo is activated.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarLogoClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarLogoClickEventDetail>) => void"
+		},
+		"onMenuItemClick": {
+			"description": "Fired, when a menu item is activated\n\n**Note:** You can prevent closing of overflow popover by calling `event.preventDefault()`.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarMenuItemClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarMenuItemClickEventDetail>) => void"
+		},
+		"onNotificationsClick": {
+			"description": "Fired, when the notification icon is activated.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarNotificationsClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarNotificationsClickEventDetail>) => void"
+		},
+		"onProductSwitchClick": {
+			"description": "Fired, when the product switch icon is activated.\n\n**Note:** You can prevent closing of overflow popover by calling `event.preventDefault()`.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarProductSwitchClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarProductSwitchClickEventDetail>) => void"
+		},
+		"onProfileClick": {
+			"description": "Fired, when the profile slot is present.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarProfileClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarProfileClickEventDetail>) => void"
+		},
+		"onSearchButtonClick": {
+			"description": "Fired, when the search button is activated.\n\n**Note:** You can prevent expanding/collapsing of the search field by calling `event.preventDefault()`.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarSearchButtonEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarSearchButtonEventDetail>) => void"
+		},
+		"onSearchFieldClear": {
+			"description": "Fired, when the search cancel button is activated.\n\n**Note:** You can prevent the default behavior (clearing the search field value) by calling `event.preventDefault()`. The search will still be closed.\n**Note:** The `search-field-clear` event is in an experimental state and is a subject to change.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n**Note:** Available since [v2.14.0](https://github.com/UI5/webcomponents/releases/tag/v2.14.0) of **@ui5/webcomponents-fiori**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarSearchFieldClearEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarSearchFieldClearEventDetail>) => void"
+		},
+		"onSearchFieldToggle": {
+			"description": "Fired, when the search field is expanded or collapsed.\n\n**Note:** Available since [v2.10.0](https://github.com/UI5/webcomponents/releases/tag/v2.10.0) of **@ui5/webcomponents-fiori**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarSearchFieldToggleEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarDomRef, ShellBarSearchFieldToggleEventDetail>) => void"
+		},
+		"primaryTitle": {
+			"description": "Defines the `primaryTitle`.\n\n**Note:** The `primaryTitle` would be hidden on S screen size (less than approx. 700px).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"profile": {
+			"description": "You can pass `ui5-avatar` to set the profile image/icon.\nIf no profile slot is set - profile will be excluded from actions.\n\n**Note:** We recommend not using the `size` attribute of `ui5-avatar` because\nit should have specific size by design in the context of `ShellBar` profile.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"profile\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"searchField": {
+			"description": "Defines the `ui5-input`, that will be used as a search field.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"searchField\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<IShellBarSearchField>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"secondaryTitle": {
+			"description": "Defines the `secondaryTitle`.\n\n**Note:** The `secondaryTitle` would be hidden on S and M screen sizes (less than approx. 1300px).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"showNotifications": {
+			"description": "Defines, if the notification icon would be displayed.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"showProductSwitch": {
+			"description": "Defines, if the product switch icon would be displayed.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"showSearchField": {
+			"description": "Defines, if the Search Field would be displayed when there is a valid `searchField` slot.\n\n**Note:** By default the Search Field is not displayed.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"startButton": {
+			"description": "Defines a `ui5-button` in the bar that will be placed in the beginning.\nWe encourage this slot to be used for a menu button.\nIt gets overstyled to match ShellBar's styling.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"startButton\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<IButton>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

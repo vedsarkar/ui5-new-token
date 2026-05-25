@@ -1,0 +1,191 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as ProgressIndicatorStories from "./ProgressIndicator.stories";
+import schema from "./ProgressIndicator.schema.json";
+
+<Meta of={ProgressIndicatorStories} />
+
+# ProgressIndicator
+
+```tsx
+import { ProgressIndicator } from "@reltio/design/components";
+```
+
+`ProgressIndicator` is the SAP Fiori horizontal progress bar, re-exported from `@ui5/webcomponents-react/ProgressIndicator` as the canonical Reltio entry point. Use it for any long-running operation where the consumer needs to communicate determinate progress: data imports, exports, multi-step submissions, batch jobs, file uploads.
+
+There is no Reltio wrapping around the underlying UI5 component: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/ProgressIndicator`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### When to use ProgressIndicator vs BusyIndicator
+
+- **ProgressIndicator** — determinate progress (you know how far through the operation you are: 47%, 6/10 records, etc.). Show numeric or text feedback in the bar.
+- **BusyIndicator** — indeterminate progress (operation is running, you cannot estimate completion). Use the spinner instead.
+
+### value state colors
+
+`valueState` maps the bar fill to a SAP semantic token so the same component communicates context without a separate icon:
+
+- `None` (default) — neutral, in-progress
+- `Information` — informational milestone (`--sapInformativeColor`)
+- `Positive` — successfully completed (`--sapPositiveColor`)
+- `Critical` — approaching limit or quota (`--sapCriticalColor`)
+- `Negative` — operation failed (`--sapNegativeColor`)
+
+Always pair `Critical` and `Negative` states with `displayValue` text — the color carries semantic meaning but is not sufficient by itself for color-blind users or screen readers.
+
+### Inside layouts
+
+ProgressIndicator stretches to the full width of its container. Place it inside a box with a defined `width` (cards, panels, status rows). For a fixed-width bar, wrap it in a sized container — do not pass `width` as a prop.
+
+### See also
+
+- [SAP Fiori ProgressIndicator guideline](https://experience.sap.com/fiori-design-web/progress-indicator/)
+- [UI5 ProgressIndicator reference](https://ui5.github.io/webcomponents/components/main/ProgressIndicator/)
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+{/* __JSON_SCHEMA__
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "ProgressIndicatorProps",
+	"x-component": "ProgressIndicator",
+	"type": "object",
+	"properties": {
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.\n\n**Note:** Available since [v1.16.0](https://github.com/UI5/webcomponents/releases/tag/v1.16.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"displayValue": {
+			"description": "Specifies the text value to be displayed in the bar.\n\n**Note:**\n\n- If there is no value provided or the value is empty, the default percentage value is shown.\n- If `hideValue` property is `true` both the `displayValue` and `value` property values are not shown.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"hideValue": {
+			"description": "Defines whether the component value is shown.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"value": {
+			"description": "Specifies the numerical value in percent for the length of the component.\n\n**Note:**\nIf a value greater than 100 is provided, the percentValue is set to 100. In other cases of invalid value, percentValue is set to its default of 0.",
+			"default": 0,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"valueState": {
+			"description": "Defines the value state of the component.",
+			"default": "None",
+			"x-typescriptType": "'Positive' | 'Negative' | ValueState | 'None' | 'Critical' | 'Information'"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}
+*/}
+
+{/* __RAW_STORIES_SOURCE__
+import { ProgressIndicator } from "@ui5/webcomponents-react/ProgressIndicator";
+import preview from "../../.storybook/preview";
+
+const meta = preview.meta({
+	component: ProgressIndicator,
+	parameters: { layout: "centered" },
+	args: {
+		value: 42,
+	},
+	decorators: [
+		(Story) => (
+			<div style={{ width: 320 }}>
+				<Story />
+			</div>
+		),
+	],
+});
+
+export default meta;
+
+export const Default = meta.story({});
+
+export const WithDisplayValue = meta.story({
+	args: {
+		value: 60,
+		displayValue: "60 of 100 records imported",
+	},
+});
+
+export const HiddenValue = meta.story({
+	args: {
+		value: 75,
+		hideValue: true,
+	},
+});
+
+export const Information = meta.story({
+	args: {
+		value: 50,
+		valueState: "Information",
+	},
+});
+
+export const Positive = meta.story({
+	args: {
+		value: 100,
+		valueState: "Positive",
+		displayValue: "Complete",
+	},
+});
+
+export const Critical = meta.story({
+	args: {
+		value: 80,
+		valueState: "Critical",
+		displayValue: "Approaching quota",
+	},
+});
+
+export const Negative = meta.story({
+	args: {
+		value: 33,
+		valueState: "Negative",
+		displayValue: "Failed",
+	},
+});
+
+export const Empty = meta.story({
+	args: {
+		value: 0,
+	},
+});
+
+export const Full = meta.story({
+	args: {
+		value: 100,
+	},
+});
+*/}
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

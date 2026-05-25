@@ -104,8 +104,12 @@ Do NOT apply Reltio Design Platform conventions (Biome, CSS Modules, `type` keyw
 
 ## Commands
 
+Toolchain: **Node ≥ 22** (pinned via `.nvmrc`) and **npm ≥ 10**. The repo is an npm-workspaces monorepo — `pnpm`/`yarn` are not supported; `scripts/release.mjs` and `bitbucket-pipelines.yml` assume npm's lockfile and `--workspace=` flag.
+
 ```bash
-npm run dev               # Start Storybook dev server (port 6006)
+nvm use                   # pick the Node version from .nvmrc
+npm install               # installs all workspaces in one pass
+npm run dev               # Start Storybook dev server (port 6006) — also serves the Reltio Design MCP at /mcp
 npm run build-storybook   # Build Storybook for production
 npm run build-tokens      # Generate public/variables.css, public/fonts.css and copy public/fonts/*.woff2 from the @sap-theming/theming-base-content npm package
 npm run lint              # Check code with Biome (no auto-fix)
@@ -113,9 +117,40 @@ npm run format            # Format code with Biome (auto-fix)
 npm run deploy            # Deploy to Chromatic for visual testing
 npm run test              # Run Vitest tests
 npm run coverage          # Run tests with coverage
+npm run changeset         # Author a release-intent file under .changeset/ (see Release & PR workflow)
 npm run apps:init         # Initialize app submodules (fetch source code into apps/)
 npm run apps:update       # Update app submodules to latest remote commits
 ```
+
+Run a single Vitest file or test name:
+
+```bash
+npx vitest run components/Chat/Chat.test.tsx        # one file
+npx vitest run -t "renders streaming messages"      # by test-name pattern
+```
+
+## Release & PR workflow
+
+Releases are driven by [Changesets](https://github.com/changesets/changesets). The contributor's only release responsibility is to ship a changeset with the PR; a CoE maintainer cuts the actual release later.
+
+- **Branch from `main`** (the only long-lived branch), one topic per branch, **squash-merge**.
+- **PR title**: `<type>: <imperative summary>` — e.g. `feat: add Chat composer`, `fix: align Avatar focus ring`, `docs: update token guide`.
+- **Required CI checks** in the `pull-requests` pipeline: `test` and `chromatic`.
+- **Changeset by convention** for every PR that changes source of a published package. The CI guard currently only inspects `packages/*` and misses changes under root-level `components/`, `charts/`, `hooks/`, `utils/` (which reach `@reltio/design` via the re-export layer in `packages/design/*.ts`). Add changesets manually for those paths so release notes stay accurate.
+- **Bump-type heuristic** when running `npm run changeset`:
+
+| Bump | Use when |
+|---|---|
+| `patch` | Bug fix, perf fix, internal refactor, doc-only `.tsx` change — no public-API impact |
+| `minor` | New component, new prop, new variant, additional types — anything **additive** that is safe to upgrade into |
+| `major` | Renamed/removed export, behaviour change, restructured API — anything a consumer must read a migration note for. Include the migration snippet in the changeset summary |
+
+- **Skip a changeset** when the PR only touches `*.story.mdx`/guides/READMEs/comments, `.storybook/`, `scripts/`, root `biome.json`/`tsconfig.json`, or dev-only `package.json` deps. Use `npm run changeset -- --empty` to record an intentional no-bump.
+- **Releases are not automatic on merge.** Merging a feature PR never publishes. A maintainer triggers the `version @reltio packages` custom pipeline, which opens a release/version PR that — once merged into `main` — triggers the publish.
+- **Sharing a PR build** with a consumer app: ask a maintainer to run `snapshot @reltio packages`; the consumer installs `@reltio/design@pr-<id>` (does not affect `latest`).
+- **Adding a new publishable package**: under `packages/<name>/` with `"license": "Apache-2.0"`, `"publishConfig": { "access": "public" }`, a `dist/` build output, and a `postbuild` step that copies the manifest, `README.md`, and the root `LICENSE` + `NOTICE` into `dist/`. The release pipeline picks it up automatically.
+
+Detailed mechanics live in `CONTRIBUTING.md` and the in-Storybook **Guides → Release Process**.
 
 ## UI Architecture
 
@@ -188,6 +223,8 @@ Nested theming works: a `[data-theme]` on a child element scopes that theme to i
 ## Component Structure (MANDATORY for Reltio components)
 
 This rule applies to **Reltio** components under `components/` — i.e. business components and primitives we author. It does **not** apply to bare re-exports or thin pass-throughs of UI5 components.
+
+> See [`components/AGENTS.md`](components/AGENTS.md) for the canonical component-author rules — props typing with `HtmlProps<Tag, CustomProps>`, rest-prop spreading onto the wrapper element, ref forwarding, and the documentation-only directory pattern.
 
 ```
 components/ComponentName/

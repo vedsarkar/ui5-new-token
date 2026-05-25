@@ -1,0 +1,31 @@
+# ProgressIndicator
+
+`ProgressIndicator` is the SAP Fiori horizontal progress bar, re-exported from `@ui5/webcomponents-react/ProgressIndicator` as the canonical Reltio entry point. Use it for any long-running operation where the consumer needs to communicate determinate progress: data imports, exports, multi-step submissions, batch jobs, file uploads.
+
+There is no Reltio wrapping around the underlying UI5 component: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/ProgressIndicator`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### When to use ProgressIndicator vs BusyIndicator
+
+- **ProgressIndicator** — determinate progress (you know how far through the operation you are: 47%, 6/10 records, etc.). Show numeric or text feedback in the bar.
+- **BusyIndicator** — indeterminate progress (operation is running, you cannot estimate completion). Use the spinner instead.
+
+### value state colors
+
+`valueState` maps the bar fill to a SAP semantic token so the same component communicates context without a separate icon:
+
+- `None` (default) — neutral, in-progress
+- `Information` — informational milestone (`--sapInformativeColor`)
+- `Positive` — successfully completed (`--sapPositiveColor`)
+- `Critical` — approaching limit or quota (`--sapCriticalColor`)
+- `Negative` — operation failed (`--sapNegativeColor`)
+
+Always pair `Critical` and `Negative` states with `displayValue` text — the color carries semantic meaning but is not sufficient by itself for color-blind users or screen readers.
+
+### Inside layouts
+
+ProgressIndicator stretches to the full width of its container. Place it inside a box with a defined `width` (cards, panels, status rows). For a fixed-width bar, wrap it in a sized container — do not pass `width` as a prop.
+
+### See also
+
+- [SAP Fiori ProgressIndicator guideline](https://experience.sap.com/fiori-design-web/progress-indicator/)
+- [UI5 ProgressIndicator reference](https://ui5.github.io/webcomponents/components/main/ProgressIndicator/)

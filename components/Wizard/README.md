@@ -1,0 +1,58 @@
+# Wizard
+
+`Wizard` is the SAP Fiori multi-step flow, re-exported from `@ui5/webcomponents-react/Wizard` as the canonical Reltio entry point. Pair it with `WizardStep` (also re-exported from `@reltio/design/components`) for each step. Use it for any task that requires progressive disclosure — new export configuration, multi-page form, guided import, onboarding.
+
+There is no Reltio wrapping around the underlying UI5 component: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Wizard`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### Pairing with `WizardStep`
+
+Each `<WizardStep>` represents one step plus its body content. Steps form an ordered sequence; the active step has `selected={true}`, future steps have `disabled={true}` until the user reaches them.
+
+```tsx
+const [current, setCurrent] = useState(0);
+
+<Wizard onStepChange={(e) => setCurrent(steps.indexOf(e.detail.step))}>
+  <WizardStep titleText="Source" icon="product" selected={current === 0}>
+    <Button onClick={() => setCurrent(1)}>Continue</Button>
+  </WizardStep>
+  <WizardStep
+    titleText="Attributes"
+    icon="hint"
+    selected={current === 1}
+    disabled={current < 1}
+  >
+    {/* … */}
+  </WizardStep>
+  <WizardStep titleText="Review" icon="lead" selected={current === 2} disabled={current < 2}>
+    {/* … */}
+  </WizardStep>
+</Wizard>
+```
+
+### Content layout
+
+- `contentLayout="MultipleSteps"` (default) — all step contents are stacked vertically, the active one is centered.
+- `contentLayout="SingleStep"` — only the active step renders; previous/next sections collapse.
+
+`SingleStep` matches the typical Reltio new-task flow (one focused screen at a time). `MultipleSteps` matches a long-form review or summary flow.
+
+### Branching
+
+Set `branching={true}` on a step when the next step depends on user input from the current one. The Wizard does not pre-render the path after a branching step.
+
+### Step icons
+
+`WizardStep` accepts a UI5 icon name via the `icon` prop. Load the icon as a side-effect import in the file that mounts the Wizard:
+
+```tsx
+import "@ui5/webcomponents-icons/dist/product.js";
+```
+
+### Reltio Stepper note
+
+A Reltio-flavored Stepper (with controlled current-step prop, telemetry hooks, opinionated styling) is intentionally out of scope for v1. If the CoE decides to author one, it would land as a separate OpenSpec change without breaking this thin endorsement.
+
+### See also
+
+- [SAP Fiori Wizard guideline](https://experience.sap.com/fiori-design-web/wizard/)
+- [UI5 Wizard reference](https://ui5.github.io/webcomponents/components/fiori/Wizard/)

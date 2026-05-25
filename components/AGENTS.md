@@ -435,6 +435,8 @@ The response should include: the JSDoc one-liner, the listing of all stories wit
 
 ## Creating a New Component
 
+> **TL;DR for AI agents:** invoke `Skill add-design-component` (args: `<Name> trajectory=thin|wrapper`). It walks both trajectories (thin UI5 endorsement / Reltio wrapper), composes `openspec-propose` for wrappers and `add-changeset` for the release intent, and stops at `git commit` ready for human review. See [`.agents/skills/add-design-component/SKILL.md`](../.agents/skills/add-design-component/SKILL.md) and the canonical multi-component rollout example at [`.agents/skills/add-design-component/examples/RP-184745-ui-export-component-backlog.md`](../.agents/skills/add-design-component/examples/RP-184745-ui-export-component-backlog.md).
+
 Two stages: **iterate** locally with the default autodocs, **ship** by opting into the static MDX pipeline. You only do the second stage when the API is stable and you want remote MCP consumers to receive the rich payload.
 
 ### Stage 1 — iterate (default autodocs)

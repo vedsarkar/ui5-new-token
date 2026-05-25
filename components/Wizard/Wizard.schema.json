@@ -1,0 +1,36 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "WizardProps",
+	"x-component": "Wizard",
+	"type": "object",
+	"properties": {
+		"children": {
+			"description": "Defines the steps.\n\n**Note:** Use the available `WizardStep` component.\n\n__Supported Node Type/s:__ `Array<WizardStep>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"contentLayout": {
+			"description": "Defines how the content of the `Wizard` would be visualized.\n\n**Note:** Available since [v1.14.0](https://github.com/UI5/webcomponents/releases/tag/v1.14.0) of **@ui5/webcomponents-fiori**.",
+			"default": "MultipleSteps",
+			"x-typescriptType": "WizardContentLayout | 'MultipleSteps' | 'SingleStep'"
+		},
+		"onStepChange": {
+			"description": "Fired when the step is changed by user interaction - either with scrolling,\nor by clicking on the steps within the component header.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<WizardDomRef, WizardStepChangeEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<WizardDomRef, WizardStepChangeEventDetail>) => void"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

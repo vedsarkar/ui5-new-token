@@ -1,0 +1,46 @@
+# Table
+
+`Table` is the SAP Fiori grid for tabular data, re-exported from `@ui5/webcomponents-react/Table` as the canonical Reltio entry point. Use it for any list of structured records that the user reads in columns: entities, relationships, jobs, audit log entries, downloads, exports.
+
+There is no Reltio wrapping around the underlying UI5 component: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Table`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### Composing the family
+
+A `Table` is built from four child components, all re-exported from `@reltio/design/components`:
+
+- `TableHeaderRow` — the column header strip (one per Table, goes in the `headerRow` slot)
+- `TableHeaderCell` — a single column header inside `TableHeaderRow`
+- `TableRow` — a data row
+- `TableCell` — a single cell inside `TableRow`
+
+```tsx
+<Table>
+  <TableHeaderRow slot="headerRow">
+    <TableHeaderCell><span>Entity</span></TableHeaderCell>
+    <TableHeaderCell><span>Status</span></TableHeaderCell>
+  </TableHeaderRow>
+  {records.map((r) => (
+    <TableRow key={r.id} rowKey={r.id}>
+      <TableCell>{r.name}</TableCell>
+      <TableCell>{r.status}</TableCell>
+    </TableRow>
+  ))}
+</Table>
+```
+
+### Row keys are mandatory
+
+UI5 `Table` uses `rowKey` (not React's `key`) to track row identity for selection, virtualization, and `onRowClick`. Always set `rowKey` to a stable, unique identifier per row — typically the entity ID, not an array index.
+
+### Empty state
+
+When there is no data, set the `noDataText` prop on `<Table>` and render only the `<TableHeaderRow>`. The table will display the empty message instead of an empty grid.
+
+### Selection, growing, virtualization
+
+The Table family ships several additional sub-parts in `@ui5/webcomponents-react` (not yet re-exported from `@reltio/design`): `TableSelectionSingle`, `TableSelectionMulti`, `TableGrowing`, `TableVirtualizer`, `TableRowAction`. Open an issue with the UI CoE when one of these becomes needed in a product app.
+
+### See also
+
+- [SAP Fiori Table guideline](https://experience.sap.com/fiori-design-web/table/)
+- [UI5 Table reference](https://ui5.github.io/webcomponents/components/main/Table/)
