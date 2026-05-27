@@ -247,7 +247,6 @@ The default Reltio brand mark `<img>` has `alt="Reltio"` so screen readers annou
 {/* __RAW_STORIES_SOURCE__
 import { Avatar } from "@ui5/webcomponents-react/Avatar";
 import { Button } from "@ui5/webcomponents-react/Button";
-import { ShellBarBranding } from "@ui5/webcomponents-react/ShellBarBranding";
 import { ShellBarItem } from "@ui5/webcomponents-react/ShellBarItem";
 import { ShellBarSearch } from "@ui5/webcomponents-react/ShellBarSearch";
 import { fn } from "storybook/test";
@@ -287,30 +286,6 @@ export const Default = meta.story({
 	},
 });
 
-export const DarkTheme = meta.story({
-	args: {
-		primaryTitle: "Console",
-		notificationsCount: "10",
-		showNotifications: true,
-		startButton: <Button accessibleName="Menu" icon="menu2" tooltip="Menu" />,
-		profile: <Avatar initials="Y" colorScheme="Accent4" />,
-		searchField: (
-			<ShellBarSearch placeholder="Search Apps, Products" showClearIcon />
-		),
-		children: <ShellBarItem icon="sys-help" text="Help" />,
-	},
-	decorators: [
-		(Story) => (
-			<div
-				data-theme="horizon-dark"
-				style={{ background: "var(--sapShell_Background)" }}
-			>
-				<Story />
-			</div>
-		),
-	],
-});
-
 export const Minimal = meta.story({
 	args: {
 		primaryTitle: "Console",
@@ -323,39 +298,8 @@ export const CustomBranding = meta.story({
 	args: {
 		primaryTitle: "Acme Module",
 		startButton: <Button accessibleName="Menu" icon="menu2" tooltip="Menu" />,
-		profile: <Avatar initials="A" colorScheme="Accent2" />,
-		branding: (
-			<ShellBarBranding accessibleName="Acme">
-				<span
-					slot="logo"
-					style={{ display: "inline-flex", alignItems: "center" }}
-				>
-					<svg width={32} height={15} viewBox="0 0 32 15" role="img">
-						<title>Acme</title>
-						<rect width={32} height={15} fill="var(--sapBrandColor)" rx={2} />
-						<text
-							x={16}
-							y={11}
-							textAnchor="middle"
-							fontFamily="sans-serif"
-							fontSize={10}
-							fill="white"
-						>
-							ACME
-						</text>
-					</svg>
-				</span>
-			</ShellBarBranding>
-		),
-	},
-});
-
-export const WithTestId = meta.story({
-	args: {
-		primaryTitle: "Console",
-		startButton: <Button accessibleName="Menu" icon="menu2" tooltip="Menu" />,
-		profile: <Avatar initials="Y" colorScheme="Accent4" />,
-		"data-test-id": "app-shell-bar",
+		profile: <Avatar colorScheme="Accent2" />,
+		logo: <Avatar initials="A" colorScheme="Accent1" size="XS" />,
 	},
 });
 */}
