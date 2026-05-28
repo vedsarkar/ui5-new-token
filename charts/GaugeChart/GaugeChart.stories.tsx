@@ -5,6 +5,7 @@ import { GaugeChart } from "./GaugeChart";
 const meta = preview.meta({
 	title: "Charts/GaugeChart",
 	component: GaugeChart,
+	tags: ["vitest"],
 	parameters: {
 		layout: "fullscreen",
 		dualTheme: { split: "vertical" },

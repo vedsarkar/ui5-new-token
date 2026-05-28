@@ -3,6 +3,7 @@ import { Skeleton } from "./Skeleton";
 
 const meta = preview.meta({
 	component: Skeleton,
+	tags: ["vitest"],
 });
 
 export default meta;

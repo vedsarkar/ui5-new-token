@@ -27,6 +27,7 @@ const timestampData = [
 const meta = preview.meta({
 	title: "Charts/BarChart",
 	component: BarChart,
+	tags: ["vitest"],
 	parameters: {
 		layout: "fullscreen",
 		dualTheme: { split: "vertical" },

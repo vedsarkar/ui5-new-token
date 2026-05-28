@@ -3,6 +3,7 @@ import { Details } from "./Details";
 
 const meta = preview.meta({
 	component: Details,
+	tags: ["vitest"],
 });
 
 export default meta;

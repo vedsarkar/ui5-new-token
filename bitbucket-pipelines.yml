@@ -25,6 +25,7 @@ definitions:
     npm: $HOME/.npm
     playwright: $HOME/.cache/ms-playwright
   steps:
+    # Full test suite with coverage — runs on main only.
     - step: &test
         name: Run Tests with Coverage
         caches:
@@ -35,6 +36,28 @@ definitions:
           - npm ci
           - npx playwright install --with-deps chromium
           - npm run coverage
+    # Auth unit tests — Node-only, no Playwright needed. Fast (~5 s).
+    - step: &test-auth
+        name: Unit Tests (auth)
+        caches:
+          - npm
+          - node
+        script:
+          - npm ci
+          - npx vitest run --project auth
+    # Storybook browser tests — only files changed since origin/main.
+    # No coverage overhead. Runs on PRs for fast feedback.
+    - step: &test-storybook-changed
+        name: Storybook Tests (changed)
+        caches:
+          - npm
+          - node
+          - playwright
+        script:
+          - npm ci
+          - npx playwright install --with-deps chromium
+          - git fetch --depth=200 origin main
+          - npx vitest run --project storybook --changed origin/main
     - step: &chromatic
         name: Deploy to Chromatic
         caches:
@@ -137,7 +160,8 @@ pipelines:
   pull-requests:
     '**':
       - parallel:
-          - step: *test
+          - step: *test-auth
+          - step: *test-storybook-changed
           - step: *chromatic
   custom:
     version @reltio packages:

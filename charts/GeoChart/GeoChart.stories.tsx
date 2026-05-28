@@ -98,6 +98,7 @@ const europeData = [
 const meta = preview.meta({
 	title: "Charts/GeoChart",
 	component: GeoChart,
+	tags: ["vitest"],
 	parameters: {
 		layout: "fullscreen",
 		dualTheme: { split: "vertical" },

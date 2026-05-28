@@ -22,6 +22,7 @@ const sampleLinks = [
 const meta = preview.meta({
 	title: "Charts/SankeyChart",
 	component: SankeyChart,
+	tags: ["vitest"],
 	parameters: {
 		layout: "fullscreen",
 		dualTheme: { split: "vertical" },

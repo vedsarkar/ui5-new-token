@@ -93,6 +93,7 @@ const simpleEdges: DiagramEdge[] = [
 const meta = preview.meta({
 	title: "Charts/Diagram",
 	component: Diagram,
+	tags: ["vitest"],
 	parameters: {
 		layout: "fullscreen",
 		dualTheme: { split: "vertical" },

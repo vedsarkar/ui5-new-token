@@ -3,6 +3,7 @@ import { Markdown } from "./Markdown";
 
 const meta = preview.meta({
 	component: Markdown,
+	tags: ["vitest"],
 });
 
 export default meta;

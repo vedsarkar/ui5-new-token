@@ -1,3 +1,8 @@
+// Pre-load UI5 CLDR locale data so components don't fall back to CDN at runtime.
+// Without this import, Calendar/DatePicker/TimePicker components make network
+// requests during tests, adding ~10s of latency in CI.
+import "@ui5/webcomponents-localization/dist/Assets.js";
+
 import addonA11y from "@storybook/addon-a11y";
 import addonDocs from "@storybook/addon-docs";
 import {
@@ -14,7 +19,11 @@ import reltioTheme from "./reltio-theme";
 initialize({ onUnhandledRequest: "bypass" });
 
 export default definePreview({
-	tags: ["autodocs"],
+	// Vitest is off by default — Chromatic already covers visual regression
+	// for every story. Components with real source code (.tsx) opt back in
+	// via `tags: ["vitest"]` in their story meta so they appear in coverage.
+	// Documentation-only UI5 re-exports (stories-only dirs) stay excluded.
+	tags: ["autodocs", "!vitest"],
 
 	decorators: [DualThemeDecorator],
 

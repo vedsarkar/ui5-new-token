@@ -3,6 +3,7 @@ import { AppSelector } from "./AppSelector";
 
 const meta = preview.meta({
 	component: AppSelector,
+	tags: ["vitest"],
 	parameters: {
 		layout: "centered",
 	},

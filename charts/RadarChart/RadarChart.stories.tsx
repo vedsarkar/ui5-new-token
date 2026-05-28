@@ -13,6 +13,7 @@ const indicators = [
 const meta = preview.meta({
 	title: "Charts/RadarChart",
 	component: RadarChart,
+	tags: ["vitest"],
 	parameters: {
 		layout: "fullscreen",
 		dualTheme: { split: "vertical" },
