@@ -66,7 +66,6 @@ const largeGraph = generateEntityGraph(120);
 const meta = preview.meta({
 	title: "Charts/GraphChart",
 	component: GraphChart,
-	tags: ["test"],
 	parameters: {
 		layout: "fullscreen",
 		dualTheme: { split: "vertical" },

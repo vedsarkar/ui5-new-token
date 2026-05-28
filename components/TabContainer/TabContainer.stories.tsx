@@ -8,6 +8,7 @@ import "@ui5/webcomponents-icons/dist/pending.js";
 
 const meta = preview.meta({
 	component: TabContainer,
+	tags: ["doc-only"],
 	parameters: { layout: "padded" },
 	args: {
 		onTabSelect: fn(),

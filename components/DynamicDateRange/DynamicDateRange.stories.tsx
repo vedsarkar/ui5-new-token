@@ -11,6 +11,7 @@ import "@ui5/webcomponents/dist/dynamic-date-range-options/NextOptions.js";
 
 const meta = preview.meta({
 	component: DynamicDateRange,
+	tags: ["doc-only"],
 	parameters: {
 		layout: "centered",
 	},

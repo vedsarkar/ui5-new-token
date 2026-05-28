@@ -5,6 +5,7 @@ import preview from "../../.storybook/preview";
 
 const meta = preview.meta({
 	component: FileUploader,
+	tags: ["doc-only"],
 	parameters: {
 		layout: "centered",
 	},

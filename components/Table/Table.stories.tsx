@@ -8,6 +8,7 @@ import preview from "../../.storybook/preview";
 
 const meta = preview.meta({
 	component: Table,
+	tags: ["doc-only"],
 	parameters: { layout: "padded" },
 	args: {
 		onRowClick: fn(),

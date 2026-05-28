@@ -3,6 +3,7 @@ import preview from "../../.storybook/preview";
 
 const meta = preview.meta({
 	component: BusyIndicator,
+	tags: ["doc-only"],
 	parameters: {
 		layout: "centered",
 	},

@@ -4,6 +4,7 @@ import preview from "../../.storybook/preview";
 
 const meta = preview.meta({
 	component: RadioButton,
+	tags: ["doc-only"],
 	parameters: {
 		layout: "centered",
 	},

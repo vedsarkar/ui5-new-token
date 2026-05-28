@@ -11,6 +11,7 @@ import "@ui5/webcomponents-icons/dist/save.js";
 
 const meta = preview.meta({
 	component: Button,
+	tags: ["doc-only"],
 	parameters: {
 		layout: "centered",
 	},

@@ -4,6 +4,7 @@ import preview from "../../.storybook/preview";
 
 const meta = preview.meta({
 	component: Panel,
+	tags: ["doc-only"],
 	parameters: { layout: "padded" },
 	args: {
 		headerText: "Section",

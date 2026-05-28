@@ -9,6 +9,7 @@ import "@ui5/webcomponents-icons/dist/decline.js";
 
 const meta = preview.meta({
 	component: SplitButton,
+	tags: ["doc-only"],
 	parameters: {
 		layout: "centered",
 	},

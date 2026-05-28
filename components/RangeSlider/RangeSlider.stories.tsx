@@ -4,6 +4,7 @@ import preview from "../../.storybook/preview";
 
 const meta = preview.meta({
 	component: RangeSlider,
+	tags: ["doc-only"],
 	parameters: {
 		layout: "centered",
 	},

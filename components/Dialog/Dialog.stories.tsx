@@ -7,6 +7,7 @@ import preview from "../../.storybook/preview";
 
 const meta = preview.meta({
 	component: Dialog,
+	tags: ["doc-only"],
 	parameters: { layout: "centered" },
 	args: {
 		onClose: fn(),

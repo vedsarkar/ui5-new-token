@@ -6,6 +6,7 @@ import "@ui5/webcomponents-icons/dist/sys-help-2.js";
 
 const meta = preview.meta({
 	component: MessageStrip,
+	tags: ["doc-only"],
 	parameters: {
 		layout: "padded",
 	},

@@ -11,6 +11,7 @@ import "@ui5/webcomponents-icons/dist/lead.js";
 
 const meta = preview.meta({
 	component: Wizard,
+	tags: ["doc-only"],
 	parameters: { layout: "fullscreen" },
 	args: {
 		onStepChange: fn(),

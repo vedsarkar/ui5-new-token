@@ -80,7 +80,6 @@ const waitForError = (el: HTMLElement) =>
 
 const meta = preview.meta({
 	component: UseTextStreamDemo,
-	tags: ["test"],
 	parameters: {
 		// Hook stories demonstrate runtime behaviour (events, state, network),
 		// not visual UI, so the dual-theme decorator adds no value here.

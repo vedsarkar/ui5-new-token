@@ -8,6 +8,7 @@ import "@ui5/webcomponents-icons/dist/table-view.js";
 
 const meta = preview.meta({
 	component: SegmentedButton,
+	tags: ["doc-only"],
 	parameters: {
 		layout: "centered",
 	},

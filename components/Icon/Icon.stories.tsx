@@ -10,6 +10,7 @@ import "@ui5/webcomponents-icons/dist/save.js";
 
 const meta = preview.meta({
 	component: Icon,
+	tags: ["doc-only"],
 	parameters: {
 		layout: "centered",
 	},

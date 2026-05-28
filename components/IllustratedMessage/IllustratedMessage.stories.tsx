@@ -9,6 +9,7 @@ import "@ui5/webcomponents-fiori/dist/illustrations/SuccessScreen.js";
 
 const meta = preview.meta({
 	component: IllustratedMessage,
+	tags: ["doc-only"],
 	parameters: { layout: "centered" },
 });
 

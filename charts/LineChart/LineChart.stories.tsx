@@ -27,7 +27,6 @@ const timestampData = [
 const meta = preview.meta({
 	title: "Charts/LineChart",
 	component: LineChart,
-	tags: ["test"],
 	parameters: {
 		layout: "fullscreen",
 		dualTheme: { split: "vertical" },

@@ -10,7 +10,6 @@ import "@ui5/webcomponents-icons/dist/sys-help.js";
 
 const meta = preview.meta({
 	component: ShellBar,
-	tags: ["test"],
 	parameters: { layout: "fullscreen" },
 	args: {
 		onLogoClick: fn(),

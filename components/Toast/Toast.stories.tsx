@@ -6,6 +6,7 @@ import preview from "../../.storybook/preview";
 
 const meta = preview.meta({
 	component: Toast,
+	tags: ["doc-only"],
 	parameters: { layout: "centered" },
 	args: {
 		duration: 3000,

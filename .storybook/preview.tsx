@@ -26,13 +26,7 @@ import reltioTheme from "./reltio-theme";
 initialize({ onUnhandledRequest: "bypass" });
 
 export default definePreview({
-	// Tests are off by default — Chromatic already covers visual regression
-	// for every story. Components with real source code (.tsx) opt back in
-	// via `tags: ["test"]` in their story meta so they appear in coverage.
-	// Documentation-only UI5 re-exports (stories-only dirs) stay excluded.
-	// Note: the tag is "test" (not "vitest") — this is the Storybook 10.x
-	// addon-vitest convention (Tag.TEST = "test").
-	tags: ["autodocs", "!test"],
+	tags: ["autodocs"],
 
 	decorators: [DualThemeDecorator],
 

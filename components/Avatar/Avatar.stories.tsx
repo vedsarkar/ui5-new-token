@@ -7,6 +7,7 @@ import "@ui5/webcomponents-icons/dist/product.js";
 
 const meta = preview.meta({
 	component: Avatar,
+	tags: ["doc-only"],
 	parameters: {
 		layout: "centered",
 	},
