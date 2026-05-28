@@ -4,26 +4,12 @@ import { reltioProxyDevPlugin } from "./reltioProxyDevPlugin.ts";
 export default defineMain({
 	framework: "@storybook/react-vite",
 
-	// Story sources are enumerated per platform directory on purpose.
-	// Do NOT use broad `../**/*.story.mdx` or `../**/*.stories.@(ts|tsx)`
-	// patterns: Storybook's `normalizeStoriesEntry` treats every entry as a
-	// pure inclusion pattern (negation via `!...` is silently ignored), and
-	// the `apps/` submodules — which are read-only mirrors of consumer apps
-	// and explicitly NOT part of this build — would get pulled in.
 	stories: [
 		"../Welcome.story.mdx",
-		"../charts/**/*.story.mdx",
-		"../charts/**/*.stories.@(ts|tsx)",
-		"../components/**/*.story.mdx",
-		"../components/**/*.stories.@(ts|tsx)",
 		"../guides/**/*.story.mdx",
-		"../guides/**/*.stories.@(ts|tsx)",
-		"../hooks/**/*.story.mdx",
-		"../hooks/**/*.stories.@(ts|tsx)",
 		"../openApi/**/*.story.mdx",
-		"../openApi/**/*.stories.@(ts|tsx)",
-		"../packages/**/*.story.mdx",
-		"../packages/**/*.stories.@(ts|tsx)",
+		"../**/*.story.mdx",
+		"../**/*.stories.@(ts|tsx)",
 	],
 
 	addons: [

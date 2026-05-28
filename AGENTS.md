@@ -45,38 +45,27 @@ Eliminate UI fragmentation across products while accelerating development of new
 
 ## Application Context (`apps/`)
 
-The `apps/` directory provides AI agents and platform developers with full source-code context of Reltio product applications. Each app directory contains a **read-only git submodule** (`src/`) with the application code and **platform-owned context files** (documentation, migration status, review checklists) managed by the UI CoE.
+The `apps/` directory holds **platform-owned context files** for Reltio product applications — story MDX, migration status, review checklists, PRDs — managed by the UI CoE. Each subdirectory groups the documentation for one app.
 
 ```
 apps/<app-name>/
-├── CLAUDE.md              # Platform-owned context for AI agents
+├── <app-name>.story.mdx   # Storybook entry describing the app
+├── CLAUDE.md              # Platform-owned context for AI agents (when present)
 ├── migration-status.md    # Migration tracking (MUI→UI5, auth, etc.)
-├── ...                    # Any other platform-owned documentation
-└── src/                   # Git submodule — application source code (READ-ONLY)
+└── ...                    # Any other platform-owned documentation
 ```
 
-These are **not part of the platform build** — they exist for cross-application analysis and coordinated migrations (e.g. MUI to SAP UI5, adoption of `@reltio/auth`).
+Application **source code is no longer tracked here**. Each app lives in its own Bitbucket repository and is owned by its own team. Git submodules were removed — they caused too much friction (stale pointers, accidental commits, slow clones). To work across the platform repo and one or more app repos, use **VSCode multi-root workspaces**: clone each app independently and add it to a `.code-workspace` file alongside `reltio-design`.
 
-To discover available apps, list the `apps/` directory. Each subdirectory follows the structure above.
-
-### Working with apps/
-
-- **Cloning** — `git clone --recurse-submodules` fetches all apps. Existing clones: `npm run apps:init`.
-- **Updating to latest** — `npm run apps:update` pulls the latest default branch for each app.
-- **Optional** — `apps/` is not required for platform development. A plain `git clone` (without `--recurse-submodules`) works as before — submodules stay empty until explicitly initialized.
-- **Reviewing feature branches** — AI agents can `git fetch` and `git checkout` any branch inside `apps/<name>/src/` to review pending changes.
-
-### Read-only contract
-
-All changes to application repositories are made through the standard git workflow in their own separate repositories. The `src/` submodules are strictly read-only mirrors — never commit or push changes through them. Files outside `src/` (CLAUDE.md, migration docs, etc.) are owned by the reltio-design repo and maintained by the UI CoE.
+If you do clone an app into `apps/<name>/src/` for local cross-app analysis, the `apps/*/src/` pattern in `.gitignore` keeps those files untracked — they will never be committed back into reltio-design.
 
 ### How AI agents should use apps/
 
 When asked to analyze, compare, review, or plan migrations across applications:
-1. Read platform-owned context from `apps/<name>/` (CLAUDE.md, migration status, etc.)
-2. Read application source code from `apps/<name>/src/`
-3. Reference Reltio Design Platform standards (this CLAUDE.md) as the target state
-4. Propose changes that respect each application's existing architecture and conventions
+1. Read platform-owned context from `apps/<name>/` (story.mdx, CLAUDE.md, migration status, PRDs, etc.) — this is the canonical, in-repo material.
+2. If you need application source code, ask the user to add the relevant app repos to a VSCode workspace, or to clone them into `apps/<name>/src/` locally — those checkouts stay untracked.
+3. Reference Reltio Design Platform standards (this CLAUDE.md) as the target state.
+4. Propose changes that respect each application's existing architecture and conventions; deliver them as PRs in the app's own repository, not here.
 
 Do NOT apply Reltio Design Platform conventions (Biome, CSS Modules, `type` keyword, etc.) when analyzing or suggesting changes to application code — each app has its own standards. Platform conventions apply only to code inside this repository.
 
@@ -118,8 +107,6 @@ npm run deploy            # Deploy to Chromatic for visual testing
 npm run test              # Run Vitest tests
 npm run coverage          # Run tests with coverage
 npm run changeset         # Author a release-intent file under .changeset/ (see Release & PR workflow)
-npm run apps:init         # Initialize app submodules (fetch source code into apps/)
-npm run apps:update       # Update app submodules to latest remote commits
 ```
 
 Run a single Vitest file or test name:
