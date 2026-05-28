@@ -11,7 +11,7 @@ const sampleData = [
 const meta = preview.meta({
 	title: "Charts/DonutChart",
 	component: DonutChart,
-	tags: ["vitest"],
+	tags: ["test"],
 	parameters: {
 		layout: "fullscreen",
 		dualTheme: { split: "vertical" },

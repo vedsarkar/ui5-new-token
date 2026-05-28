@@ -7,7 +7,7 @@ const meta = preview.meta({
 	parameters: {
 		layout: "padded",
 	},
-	tags: ["autodocs", "vitest"],
+	tags: ["autodocs", "test"],
 });
 
 export default meta;

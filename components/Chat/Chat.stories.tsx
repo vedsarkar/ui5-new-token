@@ -7,7 +7,7 @@ faker.seed(42);
 
 const meta = preview.meta({
 	component: Chat,
-	tags: ["vitest"],
+	tags: ["test"],
 	parameters: {
 		layout: "fullscreen",
 		dualTheme: { split: "vertical" },

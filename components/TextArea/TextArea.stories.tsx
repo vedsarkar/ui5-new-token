@@ -8,7 +8,7 @@ import "@ui5/webcomponents-icons/dist/share-2.js";
 
 const meta = preview.meta({
 	component: TextArea,
-	tags: ["vitest"],
+	tags: ["test"],
 	parameters: {
 		layout: "centered",
 	},

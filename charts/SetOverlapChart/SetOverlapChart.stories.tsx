@@ -81,7 +81,7 @@ const defaultIntersections: Intersection[] = [
 const meta = preview.meta({
 	title: "Charts/SetOverlapChart",
 	component: SetOverlapChart,
-	tags: ["vitest"],
+	tags: ["test"],
 	parameters: {
 		layout: "fullscreen",
 		dualTheme: { split: "vertical" },
