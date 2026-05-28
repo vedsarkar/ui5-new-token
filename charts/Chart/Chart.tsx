@@ -30,6 +30,30 @@ function findThemeAncestor(el: HTMLElement): HTMLElement | null {
 	return null;
 }
 
+/**
+ * In automated environments (Storybook preview, Chromatic snapshots,
+ * addon-vitest browser tests) the preview module sets a window-level flag to
+ * disable ECharts animations — entrance, layout, and transitions on data
+ * change. Without this, snapshots can land on an intermediate frame and flip
+ * to "Unstable" between runs. Production apps consuming `@reltio/design`
+ * never set the flag, so animations stay enabled by default for end users.
+ * The check is scoped to runtime to avoid coupling the chart module to any
+ * test infrastructure.
+ */
+function chartAnimationsDisabled(): boolean {
+	return (
+		typeof window !== "undefined" &&
+		(window as Window & { __reltioChartAnimationsDisabled__?: boolean })
+			.__reltioChartAnimationsDisabled__ === true
+	);
+}
+
+function withAnimationsOverride(
+	raw: ChartProps["option"],
+): ChartProps["option"] {
+	return chartAnimationsDisabled() ? { animation: false, ...raw } : raw;
+}
+
 export const Chart = ({
 	option,
 	renderer = "canvas",
@@ -58,7 +82,7 @@ export const Chart = ({
 				renderer: rendererRef.current,
 			});
 			chartRef.current = chart;
-			chart.setOption(optionRef.current);
+			chart.setOption(withAnimationsOverride(optionRef.current));
 		};
 
 		initChart();
@@ -92,7 +116,7 @@ export const Chart = ({
 	}, []);
 
 	useEffect(() => {
-		chartRef.current?.setOption(option);
+		chartRef.current?.setOption(withAnimationsOverride(option));
 	}, [option]);
 
 	return (

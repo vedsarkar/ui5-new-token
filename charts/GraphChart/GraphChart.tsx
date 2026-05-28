@@ -137,7 +137,15 @@ function buildGraphOption(
 				},
 				...(hasCategories && { categories }),
 				...(layout === "force" && {
+					// `initLayout: "circular"` gives the force simulation a fully
+					// deterministic starting arrangement (nodes spread on a circle in
+					// data order). Without this, ECharts seeds initial positions with
+					// `Math.random()` and the converged layout shifts by a few pixels
+					// between runs — enough for Chromatic to flag the snapshot as
+					// unstable. Combined with the seeded `Math.random` patch from the
+					// Storybook preview, this gives byte-identical layouts in CI.
 					force: {
+						initLayout: "circular",
 						repulsion: Math.round(200 * scale),
 						gravity: 0.1 / scale,
 						edgeLength: [Math.round(80 * scale), Math.round(200 * scale)],

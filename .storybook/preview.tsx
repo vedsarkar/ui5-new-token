@@ -3,6 +3,13 @@
 // requests during tests, adding ~10s of latency in CI.
 import "@ui5/webcomponents-localization/dist/Assets.js";
 
+// Side-effect module — turns the preview into a deterministic snapshot
+// environment (frozen Date, UI5 animations off, CSS animations off, ECharts
+// animations off via a window flag). See the file's JSDoc for the rationale
+// of every step. Imported FIRST so the global Date is patched before any
+// component renders or any UI5 module reads "today".
+import "./blocks/snapshotEnvironment";
+
 import addonA11y from "@storybook/addon-a11y";
 import addonDocs from "@storybook/addon-docs";
 import {

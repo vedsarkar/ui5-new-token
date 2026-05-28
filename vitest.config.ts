@@ -26,9 +26,7 @@ export default defineConfig({
 						enabled: true,
 						headless: true,
 						provider: playwright({}),
-						// Two parallel Chromium processes split story files between them.
-						// Halves browser-test wall time vs a single instance.
-						instances: [{ browser: "chromium" }, { browser: "chromium" }],
+						instances: [{ browser: "chromium" }],
 					},
 
 					// Exclude Storybook template files from tests

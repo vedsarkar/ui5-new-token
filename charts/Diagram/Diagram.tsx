@@ -84,6 +84,7 @@ const DiagramFlow = ({
 						preventScrolling={false}
 						proOptions={{ hideAttribution: true }}
 						fitView
+						fitViewOptions={{ duration: 0 }}
 					/>
 				</div>
 			) : (

@@ -928,6 +928,96 @@ const messages = Array.from({ length: 50 }, () => ({
 
 > **💡 Tip:** Use specific ranges in `faker.number.int()` that match the data domain. For example, `{ min: 50, max: 400 }` for latency in ms, or `{ min: 800, max: 5000 }` for request counts — this produces more realistic-looking charts and tables.
 
+## Deterministic Snapshots
+
+A Chromatic snapshot only catches a real regression if the story renders the same pixels on every run. Anything that changes between renders — animation frames, `Math.random()`, `new Date()`, force-directed physics — flips the snapshot to "Unstable" and pollutes review queues with false positives.
+
+The platform already neutralizes the most common sources of non-determinism for every story, automatically. You do **not** need to opt in. The setup lives in `.storybook/blocks/snapshotEnvironment.ts` and runs once when the preview frame loads.
+
+> **🎯 Key Principle:** Stable snapshots are an opt-out, not an opt-in. The platform freezes time, animations, and randomness for every story by default.
+
+### What runs automatically
+
+<table>
+  <thead>
+    <tr>
+      <th>Source of drift</th>
+      <th>How it's neutralized</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>UI5 animations (BusyIndicator dots, Toast slide-in, ComboBox open transition, …)</td>
+      <td><code>setAnimationMode("none")</code> from <code>@ui5/webcomponents-base</code> — disables every UI5 animation in one call</td>
+    </tr>
+    <tr>
+      <td>CSS animations and transitions (Skeleton shimmer, hover transitions, …)</td>
+      <td>Global stylesheet sets <code>animation-duration: 0s !important</code> and <code>transition-duration: 0s !important</code> on every element and pseudo-element</td>
+    </tr>
+    <tr>
+      <td>ECharts entrance / data-change animations (BarChart bars, LineChart draw, DonutChart slice rotation, …)</td>
+      <td>The base <code>Chart</code> component reads <code>window.__reltioChartAnimationsDisabled__</code> and merges <code>animation: false</code> into the option. Production apps consuming <code>@reltio/design/charts</code> never see the flag, so animations stay on for end users</td>
+    </tr>
+    <tr>
+      <td>Force-directed graph layout (<code>GraphChart</code> with <code>layout: "force"</code>)</td>
+      <td>Two-part fix: (1) <code>Math.random</code> is replaced with a seeded mulberry32 PRNG so ECharts' physics jitter becomes deterministic; (2) <code>force.initLayout: "circular"</code> arranges nodes in data order before the simulation starts</td>
+    </tr>
+    <tr>
+      <td>"Today" / current month (<code>Calendar</code>, <code>DatePicker</code>, <code>DateTimePicker</code>)</td>
+      <td>The global <code>Date</code> constructor and <code>Date.now()</code> are replaced with a frozen instant (May 15, 2026, 12:00 UTC). <code>new Date(arg)</code> with explicit arguments still works normally</td>
+    </tr>
+    <tr>
+      <td><code>xyflow</code> fitView animation (<code>Diagram</code>)</td>
+      <td><code>fitViewOptions=&#123;&#123; duration: 0 &#125;&#125;</code> on <code>&lt;ReactFlow&gt;</code> — the auto-fit happens instantly</td>
+    </tr>
+  </tbody>
+</table>
+
+### Implications for story authors
+
+**Do not** rely on `Date.now()`, `new Date()` (without arguments), or `Math.random()` to generate story data. Even though the platform freezes them inside the preview, the resulting values change as soon as you ship — and the same story behaves differently in unit tests that import it. Use `faker` with a fixed seed (see the section above) for any randomness, and pass explicit ISO date strings (<code>"2026-05-11"</code>) to date-aware components.
+
+**✅ Do:** Pass explicit ISO date strings
+
+```tsx
+export const PreselectedDate = meta.story({
+  render: (args) => (
+    <Calendar {...args}>
+      <CalendarDate value="2026-05-11" />
+    </Calendar>
+  ),
+});
+```
+
+**❌ Don't:** Compute dates relative to "today"
+
+```tsx
+// Bad: the story behaves differently in stories vs. unit tests vs. consumer apps
+const today = new Date();
+const tomorrow = new Date(today.getTime() + 86_400_000);
+
+export const TomorrowSelected = meta.story({
+  args: { value: tomorrow.toISOString().slice(0, 10) },
+});
+```
+
+### When to escape the snapshot
+
+If a story genuinely cannot be made stable — for example, it demonstrates a hook with WebSocket reconnection that emits unpredictable events — opt out of the snapshot rather than introducing more delays:
+
+```tsx
+const meta = preview.meta({
+  component: useReconnectDemo,
+  parameters: {
+    chromatic: { disableSnapshot: true },
+  },
+});
+```
+
+This is what the `useTextStream` hook stories and the entire `openApi/` documentation surface already do — they have no visual regression value, so paying the snapshot cost would only generate noise.
+
+> **💡 Tip:** Reach for `chromatic: { disableSnapshot: true }` only after exhausting the platform-level fixes above. Almost every "flaky" story turns out to be one of the categories in the table — disabled animations, frozen time, or seeded randomness will fix it without losing visual coverage.
+
 ## Best Practices
 
 ### Story Structure
