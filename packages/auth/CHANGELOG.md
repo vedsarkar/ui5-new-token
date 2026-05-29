@@ -1,5 +1,19 @@
 # @reltio/auth
 
+## 1.2.0
+
+### Minor Changes
+
+- 1ace89b: Export the full `@reltio/auth/utils` surface as supported public API.
+
+  The barrel now `export *`s every helper the router uses, so BFF code can reuse them instead of carrying magic strings. Newly exposed: `parseCookies`, `serializeCookie`, `clearCookie`, the `CookieOptions` type, `ACCESS_TOKEN_COOKIE` / `REFRESH_TOKEN_COOKIE`, `validateState`, `readHeader` / `AnyRequest`, and `resolveRedirectParams` / `upgradeToHttps` / `RedirectParams`. Purely additive — no existing import or behaviour changes.
+
+### Patch Changes
+
+- 1ace89b: Fix subpath imports failing to type-check under TypeScript `moduleResolution: "node"` (classic / `node10`).
+
+  Legacy consumers on the classic resolver hit `TS2305` / `TS2307` on every subpath import because it ignores `exports`. Added a `typesVersions` map pointing each subpath at the same `.d.ts` as `exports.types`; modern resolvers keep using `exports.types`, classic-node falls back to `typesVersions`. Runtime is untouched and no consumer-side tsconfig change is needed.
+
 ## 1.1.0
 
 ### Minor Changes
