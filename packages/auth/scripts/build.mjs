@@ -73,10 +73,12 @@ step("write dist/esm/package.json", () => {
 // relative to the package root (e.g. "./dist/esm/types/index.js"), which
 // is correct for in-repo workspace resolution. But `scripts/release.mjs`
 // publishes from `dist/`, so the manifest that ends up at the tarball
-// root must reference paths WITHOUT the leading `./dist/`. Same logic
-// applies to the `files` field — once we're inside `dist/`, listing
-// "dist" makes no sense. Dev-only fields (`scripts`, `devDependencies`)
-// are stripped so they don't leak to consumers.
+// root must reference paths WITHOUT the leading `./dist/`. The same
+// rewrite applies to `typesVersions` — its values are arrays of
+// `.d.ts` paths that classic-resolver consumers will read. The `files`
+// field — once we're inside `dist/`, listing "dist" makes no sense —
+// is dropped, and dev-only fields (`scripts`, `devDependencies`) are
+// stripped so they don't leak to consumers.
 step("stage dist/package.json", () => {
 	const source = JSON.parse(readFileSync(join(pkgDir, "package.json"), "utf8"));
 	const rewritePath = (value) =>
@@ -96,6 +98,17 @@ step("stage dist/package.json", () => {
 			nextExports[subpath] = rewriteEntry(entry);
 		}
 		staged.exports = nextExports;
+	}
+	if (staged.typesVersions) {
+		const nextVersions = {};
+		for (const [version, mapping] of Object.entries(staged.typesVersions)) {
+			const nextMapping = {};
+			for (const [subpath, paths] of Object.entries(mapping)) {
+				nextMapping[subpath] = paths.map(rewritePath);
+			}
+			nextVersions[version] = nextMapping;
+		}
+		staged.typesVersions = nextVersions;
 	}
 	delete staged.scripts;
 	delete staged.devDependencies;

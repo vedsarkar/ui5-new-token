@@ -79,7 +79,7 @@ See the [Setup → Express](?path=/docs/guides-auth-setup-express--docs) or [Set
 | `@reltio/auth/types` | TypeScript type declarations: `AuthConfig`, `SsoRedirect`, `SsoRedirectContext`, `TokenResponse`, `CheckTokenResponse`. Use these to type your callback and config objects. No runtime code. |
 | `@reltio/auth/express` | `createExpressAuth(config)` — Express `Router` factory. |
 | `@reltio/auth/next` | `createNextAuth(config)` — returns `{ handlers: { GET, POST } }` for Next.js App Router. |
-| `@reltio/auth/utils` | Framework-agnostic helpers: `getAccessToken(req)`, `getRefreshToken(req)`, `getBasicToken(clientId, clientSecret)`. Accepts Express `Request`, Next.js `NextRequest`, or Web `Request` uniformly. |
+| `@reltio/auth/utils` | The full set of framework-agnostic helpers the router itself uses. Token readers (`getAccessToken`, `getRefreshToken`, `getBasicToken`), cookie plumbing (`parseCookies`, `serializeCookie`, `clearCookie`, `defaultCookieOptions`, the `CookieOptions` type, and the `ACCESS_TOKEN_COOKIE` / `REFRESH_TOKEN_COOKIE` / `STATE_COOKIE` name constants), CSRF-state primitives (`generateState`, `validateState`), the request-shape adapter (`readHeader`, `AnyRequest`), and the redirect-param resolver (`resolveRedirectParams`, `upgradeToHttps`, `RedirectParams`). All accept Express `Request`, Next.js `NextRequest`, or Web `Request` uniformly where applicable. |
 
 > **Always use a subpath.** `import x from "@reltio/auth"` (no subpath) deliberately fails — there is no `main`/`exports` target for the bare package name.
 
@@ -146,6 +146,39 @@ app.get("/api/profile", async (req, res, next) => {
 ```
 
 `getAccessToken` accepts Express `Request`, Next.js `NextRequest`, or Web `Request` uniformly, reads from `Authorization: Bearer` first then the `access_token` cookie, and **never mutates** the request argument.
+
+## Seeding the CSRF state cookie from a custom pre-login handler
+
+A custom pre-login endpoint (custom error page, tenant picker, MFA challenge) sometimes needs to redirect the user to the Reltio Login Page directly while still letting the packaged `/callback` validate the CSRF `state` parameter. To do that the handler must set the same `state` cookie the packaged `/login` would have set.
+
+Three primitives from `@reltio/auth/utils` are the single source of truth for this contract — consumers MUST NOT replicate the cookie name, the cookie options, or the state token format inline:
+
+```ts
+import {
+	defaultCookieOptions,
+	generateState,
+	STATE_COOKIE,
+} from "@reltio/auth/utils";
+
+app.get("/error", (req, res) => {
+	const state = generateState();
+	res.cookie(
+		STATE_COOKIE,
+		state,
+		defaultCookieOptions(process.env.NODE_ENV === "production"),
+	);
+	const url = new URL("https://login.reltio.com/");
+	url.searchParams.set("state", state);
+	url.searchParams.set("callbackUrl", "https://app.example.com/auth/callback");
+	res.redirect(url.toString());
+});
+```
+
+- `generateState()` returns a fresh CSRF state token in whatever format `@reltio/auth` currently uses (today a v4 UUID; the format is an internal detail).
+- `STATE_COOKIE` is the cookie name the packaged `/callback` reads.
+- `defaultCookieOptions(secure)` returns the full option vector applied at set time so the cookie matches what the packaged router would have produced. Pass `secure: true` in production and `secure: false` only when serving over plain HTTP in local development.
+
+The remaining cookie and state helpers (`serializeCookie`, `clearCookie`, `parseCookies`, `validateState`, `ACCESS_TOKEN_COOKIE`, `REFRESH_TOKEN_COOKIE`) are also exported from `@reltio/auth/utils` for adjacent BFF use cases — for example reading and stripping the `access_token` cookie before proxying a request upstream. They are part of the supported public contract; use them instead of carrying the magic-string `"access_token"` around.
 
 ## Storybook documentation
 

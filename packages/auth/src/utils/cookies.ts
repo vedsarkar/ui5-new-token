@@ -18,7 +18,7 @@ export const REFRESH_TOKEN_COOKIE = "refresh_token";
 export const STATE_COOKIE = "state";
 
 /** Options applied to every cookie set or cleared by the router. */
-type CookieOptions = {
+export type CookieOptions = {
 	httpOnly: boolean;
 	secure: boolean;
 	sameSite: "lax" | "strict" | "none";
