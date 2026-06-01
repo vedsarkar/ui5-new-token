@@ -1,0 +1,73 @@
+.root {
+	display: inline-flex;
+	align-items: center;
+	min-width: 0;
+}
+
+.trigger {
+	max-width: 320px;
+	--sapButton_Lite_TextColor: var(--sapShell_TextColor);
+	--sapButton_Lite_Hover_Background: var(--sapShell_Hover_Background);
+}
+
+.dialog {
+	width: 60vw;
+	height: 80vh;
+}
+
+.dialogTitle {
+	color: var(--sapPageHeader_TextColor);
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.search {
+	width: 240px;
+}
+
+.table {
+	width: 100%;
+}
+
+/* UI5's table collapses a header cell to its content height on a sort
+ * re-render, which top-aligns the label inside the taller header row. Pin the
+ * cell to the standard row height so the title stays vertically centered
+ * across sort toggles. 2.75rem is UI5's default list-item/row height. */
+.table ui5-table-header-cell {
+	min-height: 2.75rem;
+	cursor: pointer;
+}
+
+.selectedRow {
+	background: var(--sapList_SelectionBackgroundColor);
+}
+
+.filterMenu {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.filterField {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.filterLabel {
+	color: var(--sapContent_LabelColor);
+	font-size: 12px;
+}
+
+.clearFilter {
+	align-self: flex-start;
+}
+
+.empty {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	color: var(--sapContent_LabelColor);
+	font-size: 14px;
+}

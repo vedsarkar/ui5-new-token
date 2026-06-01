@@ -1,0 +1,33 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "TenantSelectorProps",
+	"x-component": "TenantSelector",
+	"type": "object",
+	"properties": {
+		"onSelect": {
+			"description": "Fired when the user picks a row. Receives the chosen `TenantEntry`. The component\ncloses the dialog after invoking it. The trigger label format is fixed to\n`\"${customerName} - ${tenantName} - ${environment}\"` once a tenant is selected.",
+			"x-typescriptType": "(tenant: TenantEntry) => void",
+			"x-functionSignature": "(tenant: TenantEntry) => void"
+		},
+		"tenants": {
+			"description": "Tenants offered in the picker dialog. Filtered and sorted client-side.",
+			"x-typescriptType": "Array<TenantEntry>",
+			"type": "array"
+		},
+		"loading": {
+			"description": "When `true`, the default trigger button shows a loading spinner. Use it while\nthe tenant list (or the active tenant) is being fetched, before the picker is\nopened. Ignored when a custom `trigger` is supplied — the consumer owns that\nelement's loading state.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"selectedTenantId": {
+			"description": "`tenantId` of the currently selected tenant. Drives the trigger label and the\nhighlighted row. When omitted (or when it matches no entry), the trigger renders\nthe placeholder `\"Select tenant\"` with a dropdown caret. The component holds no\nshadow selection state — this prop is the single source of truth.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"trigger": {
+			"description": "Custom trigger that opens the dialog. When a React element is supplied, the\ncomponent injects an `onClick` handler (merged with any `onClick` already on\nthe element) that opens the dialog — so the element should be interactive.\nDefaults to the built-in transparent `Button` showing the selected-tenant\nlabel, a leading `building` icon, and a dropdown caret.",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal"
+		}
+	},
+	"required": ["onSelect", "tenants"]
+}

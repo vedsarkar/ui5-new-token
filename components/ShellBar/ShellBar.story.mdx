@@ -74,6 +74,27 @@ UI5 ShellBar still exposes a `logo` slot for backwards compatibility, but it now
 - `notificationsCount` + `showNotifications` — bell + count badge.
 - Children — additional `<ShellBarItem>` entries for Help, Settings, etc.
 
+### Tenant selector slot
+
+`tenantSelector` accepts a `<TenantSelector>` element and renders it into the UI5
+ShellBar `content` slot, so the picker sits in the content area just after the
+branding/title (left cluster), not in the right actions cluster. It takes
+precedence over a directly-supplied `content` prop. Omit it to render nothing
+extra.
+
+```tsx
+<ShellBar
+  primaryTitle="Console"
+  tenantSelector={
+    <TenantSelector
+      tenants={tenants}
+      selectedTenantId={currentTenantId}
+      onSelect={(tenant) => setCurrentTenantId(tenant.tenantId)}
+    />
+  }
+/>
+```
+
 ### Accessibility
 
 The default Reltio brand mark `<img>` has `alt="Reltio"` so screen readers announce the brand. The hidden dark `<img>` is `aria-hidden` to avoid duplicate announcements. When you pass a custom `branding`, set `accessibleName` on `<ShellBarBranding>` and `alt` (or `aria-label`) on the inner logo image.
@@ -235,6 +256,14 @@ The default Reltio brand mark `<img>` has `alt="Reltio"` so screen readers annou
 			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
 			"x-typescriptType": "CSSProperties"
 		},
+		"tenantSelector": {
+			"description": "Tenant picker rendered into the UI5 ShellBar `content` slot, so it sits in\nthe content area just after the branding/title (left cluster) rather than\nin the right actions cluster. Intended to host a `<TenantSelector>`\nelement; the type is the generic `ReactElement` and the wrapper does not\nenforce the runtime element type. Takes precedence over a directly-supplied\n`content` prop.",
+			"x-typescriptType": "ReactElement<any, string | JSXElementConstructor<any>>"
+		},
+		"userMenu": {
+			"description": "User menu rendered into the UI5 ShellBar `profile` slot. Intended to host a\n`<UserMenu>` element whose inner avatar carries `slot=\"profile\"`, so UI5's\nslot routing mounts the avatar in the canonical profile position while the\npopover and About modal render as overlays. The type is the generic\n`ReactElement` and the wrapper does not enforce the runtime element type.\n\nPrecedence: an explicit `profile` prop wins — when both are supplied, the\n`userMenu` element is not rendered.",
+			"x-typescriptType": "ReactElement<any, string | JSXElementConstructor<any>>"
+		},
 		"waitForDefine": {
 			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
 			"x-typescriptType": "boolean",
@@ -245,12 +274,15 @@ The default Reltio brand mark `<img>` has `alt="Reltio"` so screen readers annou
 */}
 
 {/* __RAW_STORIES_SOURCE__
+import { faker } from "@faker-js/faker";
 import { Avatar } from "@ui5/webcomponents-react/Avatar";
 import { Button } from "@ui5/webcomponents-react/Button";
 import { ShellBarItem } from "@ui5/webcomponents-react/ShellBarItem";
 import { ShellBarSearch } from "@ui5/webcomponents-react/ShellBarSearch";
 import { fn } from "storybook/test";
 import preview from "../../.storybook/preview";
+import type { TenantEntry } from "../TenantSelector";
+import { TenantSelector } from "../TenantSelector";
 import { ShellBar } from "./ShellBar";
 import "@ui5/webcomponents-icons/dist/menu2.js";
 import "@ui5/webcomponents-icons/dist/sys-help.js";
@@ -300,6 +332,34 @@ export const CustomBranding = meta.story({
 		startButton: <Button accessibleName="Menu" icon="menu2" tooltip="Menu" />,
 		profile: <Avatar colorScheme="Accent2" />,
 		logo: <Avatar initials="A" colorScheme="Accent1" size="XS" />,
+	},
+});
+
+faker.seed(7);
+
+const shellBarTenants: TenantEntry[] = Array.from({ length: 4 }, () => ({
+	customerName: faker.company.name(),
+	tenantName: `${faker.commerce.department().toLowerCase()}-${faker.string.alpha({ length: 3, casing: "lower" })}`,
+	tenantId: faker.string.alphanumeric(12),
+	environment: faker.helpers.arrayElement([
+		"EUS102-DEVELOP",
+		"EUS105-PRODUCTION",
+		"WUS201-STAGING",
+	]),
+}));
+
+export const WithTenantSelector = meta.story({
+	args: {
+		primaryTitle: "Console",
+		startButton: <Button accessibleName="Menu" icon="menu2" tooltip="Menu" />,
+		profile: <Avatar initials="Y" colorScheme="Accent4" />,
+		tenantSelector: (
+			<TenantSelector
+				onSelect={fn()}
+				selectedTenantId={shellBarTenants[0].tenantId}
+				tenants={shellBarTenants}
+			/>
+		),
 	},
 });
 */}

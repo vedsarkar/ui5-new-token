@@ -1,9 +1,12 @@
+import { faker } from "@faker-js/faker";
 import { Avatar } from "@ui5/webcomponents-react/Avatar";
 import { Button } from "@ui5/webcomponents-react/Button";
 import { ShellBarItem } from "@ui5/webcomponents-react/ShellBarItem";
 import { ShellBarSearch } from "@ui5/webcomponents-react/ShellBarSearch";
 import { fn } from "storybook/test";
 import preview from "../../.storybook/preview";
+import type { TenantEntry } from "../TenantSelector";
+import { TenantSelector } from "../TenantSelector";
 import { ShellBar } from "./ShellBar";
 import "@ui5/webcomponents-icons/dist/menu2.js";
 import "@ui5/webcomponents-icons/dist/sys-help.js";
@@ -53,5 +56,33 @@ export const CustomBranding = meta.story({
 		startButton: <Button accessibleName="Menu" icon="menu2" tooltip="Menu" />,
 		profile: <Avatar colorScheme="Accent2" />,
 		logo: <Avatar initials="A" colorScheme="Accent1" size="XS" />,
+	},
+});
+
+faker.seed(7);
+
+const shellBarTenants: TenantEntry[] = Array.from({ length: 4 }, () => ({
+	customerName: faker.company.name(),
+	tenantName: `${faker.commerce.department().toLowerCase()}-${faker.string.alpha({ length: 3, casing: "lower" })}`,
+	tenantId: faker.string.alphanumeric(12),
+	environment: faker.helpers.arrayElement([
+		"EUS102-DEVELOP",
+		"EUS105-PRODUCTION",
+		"WUS201-STAGING",
+	]),
+}));
+
+export const WithTenantSelector = meta.story({
+	args: {
+		primaryTitle: "Console",
+		startButton: <Button accessibleName="Menu" icon="menu2" tooltip="Menu" />,
+		profile: <Avatar initials="Y" colorScheme="Accent4" />,
+		tenantSelector: (
+			<TenantSelector
+				onSelect={fn()}
+				selectedTenantId={shellBarTenants[0].tenantId}
+				tenants={shellBarTenants}
+			/>
+		),
 	},
 });

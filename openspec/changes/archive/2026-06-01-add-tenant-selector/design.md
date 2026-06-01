@@ -70,11 +70,11 @@ The dialog body uses UI5 `Dialog` for the overlay frame and UI5 `Table` (or `Ana
 
 **Why:** matches the platform's "endorsed UI5 first" rule. We add only the Reltio-specific logic (trigger label, the four-column projection, the search filter, the close-on-select behavior).
 
-### Decision 7 — Slot prop renders into UI5 `children`, CSS handles positioning
+### Decision 7 — Slot prop renders into the UI5 ShellBar `content` slot
 
-The `tenantSelector` slot in `ShellBar` is rendered into the UI5 ShellBar `children` slot alongside the existing `appSelector`. CSS inside `TenantSelector.module.css` handles whatever absolute/flex positioning is needed to anchor the trigger near the title area visually. We do NOT use the experimental UI5 `content` slot.
+The `tenantSelector` slot in `ShellBar` is rendered into the UI5 ShellBar `content` slot, which places the picker in the content area immediately after the branding/title (left cluster). `tenantSelector` takes precedence over a directly-supplied `content` prop.
 
-**Why:** explicit user decision during exploration. Avoids depending on UI5's experimental APIs that may change.
+**Why:** the picker must sit just after the logo/title. The `children` (default) slot puts content in the right actions cluster next to the profile — the wrong position. The `content` slot is UI5's intended mechanism for content in the title area. It is marked `@experimental` in `@ui5/webcomponents-fiori`, which is acceptable because the CoE pins the UI5 version in `@reltio/design` and tests every release; if SAP graduates or renames the slot, the wrapper follows. (This supersedes the earlier exploration decision to avoid the `content` slot, which left the trigger in the wrong, right-aligned position.)
 
 ## Risks / Trade-offs
 
@@ -87,9 +87,19 @@ The `tenantSelector` slot in `ShellBar` is rendered into the UI5 ShellBar `child
 
 None — purely additive. New component, new slot prop. Existing apps continue to roll their own selectors and migrate at their own pace.
 
-## Open Questions
+## Open Questions (resolved)
 
-- Which UI5 component is the right base for the dialog body — `Table`, `AnalyticalTable`, or `List`? Decided during implementation based on the sort/filter ergonomics. Default expectation: `Table` (simple, accepts the four-column header row directly).
-- Should the dialog be a UI5 `Dialog` (modal) or a UI5 `ResponsivePopover` (anchored)? The screenshot looks centered/modal — `Dialog` is the leading candidate.
-- What's the keyboard interaction inside the dialog? At minimum: arrow keys move between rows, Enter selects the focused row, ESC closes. Verified during implementation against UI5's table keyboard model.
-- Should the dialog show a row count ("Showing 12 of 47 tenants") below the search field? Nice-to-have; not in v1 unless trivial.
+- Dialog body base component → **UI5 `Table`** (accepts the four-column header row directly; client-side sort/filter handled in the wrapper).
+- Dialog vs anchored popover → **UI5 `Dialog`** (modal, centered), matching the Console reference.
+- Keyboard interaction → handled by UI5's `Table` (interactive rows: arrow keys move focus, Enter selects) and `Dialog` (ESC closes).
+- Row count below the search field → **not included** in v1.
+
+## Enhancements added during branch review
+
+The following were added on top of the original scope while reviewing the branch (all captured in the spec, README, and stories):
+
+- Default trigger is the endorsed UI5 `Button` (transparent, leading `building` icon, dropdown caret); an optional `trigger?: ReactNode` prop replaces it (the component injects the open-on-click handler, merged with any existing `onClick`).
+- Optional `loading?: boolean` prop drives the default trigger button's loading spinner (used while the app fetches the full tenant list before opening; ignored for a custom trigger). Lazy-loading while open was explicitly rejected — the trigger label needs the full list to render, so apps load everything up front.
+- Empty states use UI5 `IllustratedMessage` (`NoEntries` / `NoData`) instead of plain text.
+- The collapsing search has no close button; the expanded input collapses on blur when empty.
+- The filter popover has a ghost `Clear filter` button, and the filter button shows a UI5 `ButtonBadge` (`InlineText`) with the active-filter count. `InlineText` is used rather than an overlay dot because the surrounding UI5 `Bar` clips overlay badges via `overflow: hidden`.

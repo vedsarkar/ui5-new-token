@@ -22,11 +22,26 @@ const defaultReltioLogo = (
 export const ShellBar = ({
 	logo = defaultReltioLogo,
 	className,
+	content,
+	tenantSelector,
+	children,
+	userMenu,
+	profile,
 	...rest
 }: ShellBarProps) => (
 	<Ui5ShellBar
 		logo={logo}
+		content={
+			<>
+				{tenantSelector}
+				{content}
+			</>
+		}
+		profile={profile}
 		className={classNames(styles.root, className)}
 		{...rest}
-	/>
+	>
+		{children}
+		{!profile && userMenu}
+	</Ui5ShellBar>
 );

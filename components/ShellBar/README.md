@@ -55,6 +55,27 @@ UI5 ShellBar still exposes a `logo` slot for backwards compatibility, but it now
 - `notificationsCount` + `showNotifications` — bell + count badge.
 - Children — additional `<ShellBarItem>` entries for Help, Settings, etc.
 
+### Tenant selector slot
+
+`tenantSelector` accepts a `<TenantSelector>` element and renders it into the UI5
+ShellBar `content` slot, so the picker sits in the content area just after the
+branding/title (left cluster), not in the right actions cluster. It takes
+precedence over a directly-supplied `content` prop. Omit it to render nothing
+extra.
+
+```tsx
+<ShellBar
+  primaryTitle="Console"
+  tenantSelector={
+    <TenantSelector
+      tenants={tenants}
+      selectedTenantId={currentTenantId}
+      onSelect={(tenant) => setCurrentTenantId(tenant.tenantId)}
+    />
+  }
+/>
+```
+
 ### Accessibility
 
 The default Reltio brand mark `<img>` has `alt="Reltio"` so screen readers announce the brand. The hidden dark `<img>` is `aria-hidden` to avoid duplicate announcements. When you pass a custom `branding`, set `accessibleName` on `<ShellBarBranding>` and `alt` (or `aria-label`) on the inner logo image.

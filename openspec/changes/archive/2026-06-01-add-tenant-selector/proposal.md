@@ -11,16 +11,19 @@ This proposal ships a single endorsed Reltio `TenantSelector` business component
   - `tenants: TenantEntry[]` where `TenantEntry = { customerName: string; tenantName: string; tenantId: string; environment: string }`.
   - `selectedTenantId?: string` — the currently selected `tenantId`, used to derive the trigger label and the row highlighting inside the dialog. When omitted, the trigger renders the placeholder "Select tenant" with a caret.
   - `onSelect: (tenant: TenantEntry) => void` — required callback fired when the user picks a row. The component closes the dialog after calling `onSelect`.
+  - `trigger?: ReactNode` — optional custom trigger that replaces the default button. When a React element is supplied, the component clones it and injects an `onClick` (merged with any existing handler) that opens the dialog. Defaults to the built-in transparent button with a leading `building` icon and the trigger label.
+  - `loading?: boolean` — when `true`, the default trigger button shows its loading spinner (used while the application fetches the full tenant list before opening the picker). Ignored when a custom `trigger` is supplied.
 - Trigger label format: `"customerName - tenantName - environment"` once a tenant is selected; placeholder `"Select tenant"` with a dropdown caret otherwise. Long values are truncated with ellipsis; the full string is exposed via `title` for hover-tooltip.
-- Dialog content:
-  - Search field at the top — filters rows by case-insensitive substring match across all four columns.
+- Dialog content (mirrors the canonical Console tenant picker):
+  - Dialog header carries a **collapsing search** (search icon that expands into an input) — filters rows by case-insensitive substring match across all four columns.
+  - Dialog header carries a **filter menu** (filter icon opening a popover with `Customer` and `Environment` dropdowns, each with an `All …` sentinel) — narrows rows by exact customer/environment; combines with the search query.
   - Table with columns `Customer name`, `Tenant name`, `Tenant ID`, `Environment` — sortable by the `Customer name` column (default), other columns sortable on click.
   - Each row is a clickable surface; clicking a row calls `onSelect(tenant)` and closes the dialog.
   - `Cancel` button in the dialog footer dismisses without selection.
-  - Empty state when `tenants=[]` (no data): "No tenants available".
-  - Empty state when search has no matches: "No tenants match your search".
+  - Empty state when `tenants=[]` (no data): an `IllustratedMessage` (`NoEntries`) titled "No tenants available".
+  - Empty state when search has no matches: an `IllustratedMessage` (`NoData`) titled "No tenants match your search".
 - The component owns its own dialog open/close state internally — clicking the trigger opens; selecting a row, clicking Cancel, pressing ESC, or clicking the backdrop closes. There is NO `open` prop. (Rationale: the dialog is an ephemeral interaction, not application state. The consumer only cares about the selected tenant.)
-- Add a corresponding `tenantSelector?: ReactElement` slot prop to `ShellBar`. When supplied, `ShellBar` renders the slot element in the canonical position via the UI5 ShellBar `children` slot. Final CSS positioning is handled by the `TenantSelector` itself (no UI5 experimental `content` slot).
+- Add a corresponding `tenantSelector?: ReactElement` slot prop to `ShellBar`. When supplied, `ShellBar` renders the slot element into the UI5 ShellBar `content` slot, placing the picker just after the branding/title (left cluster).
 - Export the new component and its types from `@reltio/design/components`.
 
 ## Capabilities

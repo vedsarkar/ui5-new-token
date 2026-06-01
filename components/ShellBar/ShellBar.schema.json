@@ -144,6 +144,14 @@
 			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
 			"x-typescriptType": "CSSProperties"
 		},
+		"tenantSelector": {
+			"description": "Tenant picker rendered into the UI5 ShellBar `content` slot, so it sits in\nthe content area just after the branding/title (left cluster) rather than\nin the right actions cluster. Intended to host a `<TenantSelector>`\nelement; the type is the generic `ReactElement` and the wrapper does not\nenforce the runtime element type. Takes precedence over a directly-supplied\n`content` prop.",
+			"x-typescriptType": "ReactElement<any, string | JSXElementConstructor<any>>"
+		},
+		"userMenu": {
+			"description": "User menu rendered into the UI5 ShellBar `profile` slot. Intended to host a\n`<UserMenu>` element whose inner avatar carries `slot=\"profile\"`, so UI5's\nslot routing mounts the avatar in the canonical profile position while the\npopover and About modal render as overlays. The type is the generic\n`ReactElement` and the wrapper does not enforce the runtime element type.\n\nPrecedence: an explicit `profile` prop wins — when both are supplied, the\n`userMenu` element is not rendered.",
+			"x-typescriptType": "ReactElement<any, string | JSXElementConstructor<any>>"
+		},
 		"waitForDefine": {
 			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
 			"x-typescriptType": "boolean",
