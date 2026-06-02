@@ -42,10 +42,10 @@ export function buildTheme(element: HTMLElement) {
 		},
 
 		tooltip: {
-			backgroundColor: getToken(styles, "--sapBlockLayer_Background"),
+			backgroundColor: getToken(styles, "--sapGroup_ContentBackground"),
 			borderColor: getToken(styles, "--sapField_BorderColor"),
 			textStyle: {
-				color: getToken(styles, "--sapContent_ContrastTextColor"),
+				color: getToken(styles, "--sapTextColor"),
 			},
 		},
 
