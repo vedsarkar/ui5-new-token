@@ -1,5 +1,23 @@
 # @reltio/design
 
+## 1.2.0
+
+### Minor Changes
+
+- a3e8b4b: Add `TenantSelector` component and a `tenantSelector` slot on `ShellBar`.
+
+  - `TenantSelector` renders a trigger label (`"customer - tenant - environment"` or a `"Select tenant"` placeholder) that opens a searchable, sortable dialog of tenants.
+  - Fully controlled selection via `selectedTenantId` + `onSelect`; the dialog open/close state is internal.
+  - Search filters case-insensitively across all four columns; columns are sortable (default `Customer name` ascending); empty states for no data and no search matches.
+  - `ShellBar` gains an additive `tenantSelector?: ReactElement` slot rendered into the UI5 ShellBar `children` slot.
+
+### Patch Changes
+
+- 7204356: Fix unreadable chart tooltip text in dark theme.
+
+  - Tooltip now uses `--sapGroup_ContentBackground` and `--sapTextColor` so background and text contrast correctly in both light and dark themes
+  - Affects all charts (`BarChart`, `LineChart`, `DonutChart`, `RadarChart`, `SankeyChart`, `GraphChart`, `GeoChart`)
+
 ## 1.1.0
 
 ### Minor Changes
