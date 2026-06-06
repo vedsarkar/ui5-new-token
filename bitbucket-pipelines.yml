@@ -100,7 +100,7 @@ definitions:
             fi
           - 'BRANCH="release/version-$(date +%Y%m%d-%H%M%S)"'
           - 'git checkout -b "$BRANCH"'
-          - 'git commit -m "chore: version packages"'
+          - 'git commit -m "DESIGN-1: version packages"'
           - 'git push -u origin "$BRANCH"'
           - 'echo "Versioning branch $BRANCH pushed to origin."'
           # Opens the version PR via Bitbucket REST API when $BITBUCKET_PR_TOKEN
