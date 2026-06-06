@@ -12,6 +12,7 @@
 
 import { createNextAuth } from "@reltio/auth/next";
 import type { AuthConfig, SsoRedirect } from "@reltio/auth/types";
+import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll } from "vitest";
 
@@ -153,6 +154,44 @@ export function parseSetCookies(
 		out[name] = { value, attributes: attrs };
 	}
 	return out;
+}
+
+/**
+ * Mints a signed `reltio_aurl` routing cookie the only way a consumer can:
+ * by driving a real `GET /auth/callback` exchange whose access token carries
+ * the given `aurl` claim. The HMAC signing key never leaves the router, so
+ * this public round-trip is how tests obtain a valid routing cookie without
+ * reaching into the private `core/` signer. Registers its own one-off MSW
+ * handler for the Login Page `/token` endpoint; callers register their own
+ * handlers (for `/checkToken` etc.) independently.
+ */
+export async function mintAurlCookie(
+	handlers: { GET: (req: Request) => Promise<Response> },
+	accessToken: string,
+): Promise<string> {
+	const state = "mint-state";
+	mswServer.use(
+		http.post(`${TEST_LOGIN_HOST}/token`, () =>
+			HttpResponse.json({
+				access_token: accessToken,
+				refresh_token: "mint_refresh",
+			}),
+		),
+	);
+	const res = await handlers.GET(
+		buildRequest({
+			path: "/auth/callback",
+			query: { code: "mint-code", state },
+			cookies: { state },
+		}),
+	);
+	const cookie = parseSetCookies(res).reltio_aurl?.value;
+	if (!cookie) {
+		throw new Error(
+			"test helper: GET /auth/callback did not mint a reltio_aurl cookie",
+		);
+	}
+	return cookie;
 }
 
 /** Extracts the `state` cookie value from a response's `Set-Cookie` headers. */

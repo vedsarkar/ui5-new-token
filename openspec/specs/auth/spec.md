@@ -426,7 +426,7 @@ Each request-accepting helper SHALL accept Express `Request`, Next.js `NextReque
 
 ### Requirement: No public OAuth client surface in v1 (BREAKING)
 
-The package SHALL NOT expose a `createOAuthClient`, `clientCredentialsLogin`, password-grant `login`, or any other public function that performs direct OAuth API calls outside the BFF router endpoints. The OAuth HTTP logic the router needs (authorization code exchange, refresh, introspection) is internal to `src/core/createOAuthClient.ts` and not reachable through any public subpath.
+The package SHALL NOT expose a `createOAuthClient`, `clientCredentialsLogin`, password-grant `login`, or any other public function that performs direct OAuth API calls outside the BFF router endpoints. The OAuth HTTP logic the router needs (authorization code exchange, refresh, introspection) is internal to `src/core/oauthClient.ts` (the pure `exchangeCode` / `refreshAccessToken` / `checkAccessToken` functions) and not reachable through any public subpath.
 
 #### Scenario: createOAuthClient is not importable
 

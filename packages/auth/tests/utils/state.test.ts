@@ -2,8 +2,8 @@
  * Unit tests for CSRF state utilities used by `GET /login` and `GET /callback`.
  */
 
+import { generateState, validateState } from "@reltio/auth/utils";
 import { describe, expect, it } from "vitest";
-import { generateState, validateState } from "../../src/utils/state";
 
 describe("state — generateState", () => {
 	const UUID_RE =

@@ -19,13 +19,16 @@
  */
 
 import type { AuthConfig } from "../types";
-import { createOAuthClient } from "./createOAuthClient";
+import { getBasicToken } from "../utils/getBasicToken";
+import type { AnyRequest } from "../utils/readHeader";
+import { deriveHmacKey } from "./aurlCookie";
 import { callbackHandler } from "./handlers/callbackHandler";
 import { checkTokenHandler } from "./handlers/checkTokenHandler";
 import { loginHandler } from "./handlers/loginHandler";
 import { logoutHandler } from "./handlers/logoutHandler";
 import { refreshTokenHandler } from "./handlers/refreshTokenHandler";
-import type { Handler } from "./handlers/types";
+import type { AuthDeps, Handler } from "./handlers/types";
+import { resolveAuthPath } from "./resolveAuthPath";
 
 const CACHE_CONTROL = "no-store, no-cache, max-age=0, must-revalidate, private";
 const PRAGMA = "no-cache";
@@ -48,25 +51,35 @@ const ROUTES: ReadonlyArray<{
 	{ method: "POST", suffix: "checkToken", handler: checkTokenHandler },
 ];
 
-/** Returned object — exposes `handle(request)`. */
+/**
+ * Returned object — the single composition root of the package.
+ *
+ * - `handle(request)` is the per-request router entry point.
+ * - `resolveAuthPath(request)` resolves the per-session Auth Server URL
+ *   from the signed `reltio_aurl` cookie (falling back to the static
+ *   `oauthPath`). Exposed for app code that calls the Auth server directly,
+ *   bypassing the router's `/checkToken` and `/refreshToken` endpoints.
+ *   Framework adapters re-surface it on their own return values.
+ */
 export type AuthHandler = {
 	handle: (request: Request) => Promise<Response>;
+	resolveAuthPath: (request: AnyRequest) => Promise<string>;
 };
 
 /**
- * Builds the auth router.
+ * Builds the auth router — the ONLY factory in the package.
  *
- * Call this ONCE per application — the returned `handle` function is the
- * per-request entry point. Building per request would re-create the OAuth
- * client and the route table on every call, which is wasteful.
+ * Call this ONCE per application. Every "derive-once" value (the Basic auth
+ * header and the HMAC routing key) is computed here and captured in a single
+ * `deps` record shared by the route table and the pure OAuth/routing
+ * functions. Building per request would re-derive the HMAC key on every call.
  */
 export function createAuth(config: AuthConfig): AuthHandler {
-	const oauth = createOAuthClient({
-		oauthPath: config.oauthPath,
-		loginPath: config.loginPath,
-		clientId: config.clientId,
-		clientSecret: config.clientSecret,
-	});
+	const deps: AuthDeps = {
+		config,
+		authHeader: `Basic ${getBasicToken(config.clientId, config.clientSecret)}`,
+		keyPromise: deriveHmacKey(config.clientSecret),
+	};
 
 	return {
 		async handle(request) {
@@ -78,9 +91,9 @@ export function createAuth(config: AuthConfig): AuthHandler {
 			if (!route) {
 				return withCacheHeaders(new Response(null, { status: 404 }));
 			}
-			const response = await route.handler({ request, config, oauth });
-			return withCacheHeaders(response);
+			return withCacheHeaders(await route.handler({ ...deps, request }));
 		},
+		resolveAuthPath: (request) => resolveAuthPath({ ...deps, request }),
 	};
 }
 

@@ -1,11 +1,11 @@
 /**
- * Unit tests for the internal `readHeader` helper — the polymorphic shape
+ * Unit tests for the public `readHeader` helper — the polymorphic shape
  * detector that lets `getAccessToken` / `getRefreshToken` accept Express
  * `Request`, Next.js `NextRequest`, and Web `Request` uniformly.
  */
 
+import { readHeader } from "@reltio/auth/utils";
 import { describe, expect, it } from "vitest";
-import { readHeader } from "../../src/utils/readHeader";
 
 describe("readHeader — Web Request shape (Headers instance)", () => {
 	it("reads a header value via Headers.get", () => {

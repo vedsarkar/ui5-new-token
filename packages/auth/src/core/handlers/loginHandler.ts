@@ -11,12 +11,15 @@ import {
 	STATE_COOKIE,
 	serializeCookie,
 } from "../../utils/cookies";
+import {
+	resolveRedirectParams,
+	upgradeToHttps,
+} from "../../utils/resolveRedirectParams";
 import { generateState } from "../../utils/state";
-import { resolveRedirectParams, upgradeToHttps } from "../../utils/resolveRedirectParams";
 import type { Handler } from "./types";
 
-export const loginHandler: Handler = async (ctx) => {
-	const { request, config } = ctx;
+export const loginHandler: Handler = async (options) => {
+	const { request, config } = options;
 	const secure = config.secure !== false;
 
 	const redirectParams = resolveRedirectParams(request);

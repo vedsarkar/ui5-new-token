@@ -22,6 +22,10 @@ export default defineProject({
 		environment: "node",
 		include: [`${REPO_ROOT}packages/auth/tests/**/*.test.ts`],
 		exclude: ["**/node_modules/**", "**/dist/**"],
+		// Tests run in ~100ms each; the headroom over Vitest's 5s default
+		// absorbs CPU-contention spikes during parallel `--coverage` runs
+		// (v8 instrumentation + workers) without masking a real hang.
+		testTimeout: 15_000,
 		coverage: {
 			// Only the package's source files count toward coverage. Test
 			// helpers (testApp.ts, testHandlers.ts, etc.) are NOT measured —

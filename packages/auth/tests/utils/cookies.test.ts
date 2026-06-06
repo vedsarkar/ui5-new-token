@@ -1,14 +1,12 @@
 /**
- * Unit tests for the internal cookie utilities.
+ * Unit tests for the public cookie utilities exported from
+ * `@reltio/auth/utils`.
  *
- * These functions are not part of `@reltio/auth/utils`'s public surface —
- * we exercise them through the same relative path the router uses
- * internally. Coverage for them is established here so the integration
- * tests can rely on cookie serialisation behaviour without re-asserting
- * every edge case in every endpoint test.
+ * Establishing cookie serialisation behaviour here lets the integration
+ * tests rely on it without re-asserting every edge case in every endpoint
+ * test.
  */
 
-import { describe, expect, it } from "vitest";
 import {
 	ACCESS_TOKEN_COOKIE,
 	clearCookie,
@@ -17,7 +15,8 @@ import {
 	REFRESH_TOKEN_COOKIE,
 	STATE_COOKIE,
 	serializeCookie,
-} from "../../src/utils/cookies";
+} from "@reltio/auth/utils";
+import { describe, expect, it } from "vitest";
 
 describe("cookies — constants", () => {
 	it("uses the legacy auth-middleware cookie names verbatim", () => {
@@ -73,6 +72,15 @@ describe("cookies — serializeCookie", () => {
 		expect(out).not.toContain("Secure");
 		expect(out).toContain("HttpOnly");
 		expect(out).toContain("SameSite=Lax");
+	});
+
+	it("omits HttpOnly when httpOnly: false", () => {
+		const out = serializeCookie("k", "v", {
+			...defaultCookieOptions(true),
+			httpOnly: false,
+		});
+		expect(out).not.toContain("HttpOnly");
+		expect(out).toContain("Secure");
 	});
 
 	it("includes Max-Age when provided", () => {

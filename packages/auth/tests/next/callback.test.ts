@@ -3,9 +3,14 @@
  * Router adapter.
  */
 
+import { createNextAuth } from "@reltio/auth/next";
 import type { SsoRedirect } from "@reltio/auth/types";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
+import {
+	TOKEN_WITH_AURL,
+	TOKEN_WITH_AURL_ORIGIN,
+} from "../fixtures/aurlTokens";
 import {
 	buildRequest,
 	createTestHandlers,
@@ -13,7 +18,6 @@ import {
 	mswServer,
 	parseSetCookies,
 	TEST_APP_ORIGIN,
-	TEST_HOST,
 	TEST_LOGIN_HOST,
 	useMswServer,
 } from "./testHandlers";
@@ -315,6 +319,58 @@ describe("Next.js adapter — GET /auth/callback", () => {
 		);
 
 		expect(res.status).toBe(400);
+	});
+
+	it("minted reltio_aurl resolves through the public adapter resolveAuthPath (writer/reader contract)", async () => {
+		// Writer: the callback handler signs the JWT's aurl into the
+		// reltio_aurl cookie. Reader: the public `resolveAuthPath` exposed on
+		// the Next.js adapter. Both sides must agree byte-for-byte on cookie
+		// name, envelope, encoding, and MAC — this test drives both through
+		// their public surfaces, so a one-sided change to the private signer
+		// only breaks CI here if it also breaks the public contract.
+		mockTokenExchange({ access_token: TOKEN_WITH_AURL });
+		const { GET } = createTestHandlers();
+
+		const res = await GET(
+			buildRequest({
+				path: "/auth/callback",
+				query: { code: "x", state: STATE },
+				cookies: { state: STATE },
+			}),
+		);
+		const reltioAurl = parseSetCookies(res).reltio_aurl?.value;
+
+		// A standalone reader configured with the same secret but a
+		// different static fallback — proves the cookie (not the fallback)
+		// drives the resolution.
+		const { resolveAuthPath } = createNextAuth({
+			...DEFAULT_CONFIG,
+			oauthPath: "https://fallback.example.com",
+		});
+		const request = new Request("https://app.test/", {
+			headers: { Cookie: `reltio_aurl=${reltioAurl}` },
+		});
+
+		expect(await resolveAuthPath(request)).toBe(
+			`${TOKEN_WITH_AURL_ORIGIN}/oauth`,
+		);
+	});
+
+	it("clears reltio_aurl when the access token has no aurl claim", async () => {
+		mockTokenExchange({ access_token: "opaque-access-token-string" });
+		const { GET } = createTestHandlers();
+
+		const res = await GET(
+			buildRequest({
+				path: "/auth/callback",
+				query: { code: "x", state: STATE },
+				cookies: { state: STATE },
+			}),
+		);
+
+		const cookies = parseSetCookies(res);
+		expect(cookies.reltio_aurl?.value).toBe("");
+		expect(cookies.reltio_aurl?.attributes).toContain("Max-Age=0");
 	});
 
 	it("emits Cache-Control headers on every response", async () => {

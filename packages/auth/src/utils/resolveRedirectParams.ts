@@ -17,7 +17,11 @@ export type RedirectParams =
 	| { ok: false; error: Response };
 
 function resolveTenant(url: URL, refererUrl: URL | null): string | null {
-	return url.searchParams.get("tenant")?.trim() || refererUrl?.searchParams.get("tenant")?.trim() || null;
+	return (
+		url.searchParams.get("tenant")?.trim() ||
+		refererUrl?.searchParams.get("tenant")?.trim() ||
+		null
+	);
 }
 
 function tryParseUrl(raw: string): URL | null {
@@ -42,16 +46,30 @@ export function resolveRedirectParams(request: Request): RedirectParams {
 	const refererUrl = refererHeader ? tryParseUrl(refererHeader) : null;
 
 	if (refererHeader && !refererUrl && !queryReturnTo) {
-		return { ok: false, error: new Response("Malformed Referer header", { status: 400 }) };
+		return {
+			ok: false,
+			error: new Response("Malformed Referer header", { status: 400 }),
+		};
 	}
 
 	const returnTo = queryReturnTo ?? refererUrl?.href ?? null;
 	if (!returnTo) {
-		return { ok: false, error: new Response("Missing returnTo query parameter or Referer header", { status: 400 }) };
+		return {
+			ok: false,
+			error: new Response(
+				"Missing returnTo query parameter or Referer header",
+				{ status: 400 },
+			),
+		};
 	}
 
 	if (returnToUrl && refererUrl && returnToUrl.origin !== refererUrl.origin) {
-		return { ok: false, error: new Response("returnTo origin does not match Referer origin", { status: 400 }) };
+		return {
+			ok: false,
+			error: new Response("returnTo origin does not match Referer origin", {
+				status: 400,
+			}),
+		};
 	}
 
 	return { ok: true, tenant: resolveTenant(url, refererUrl), returnTo };

@@ -1,10 +1,11 @@
 /**
- * Unit tests for `resolveRedirectParams` — the source-resolution helper used
- * by `/login` and `/logout` handlers.
+ * Unit tests for `resolveRedirectParams` — the public source-resolution
+ * helper exported from `@reltio/auth/utils` and used by the `/login` and
+ * `/logout` handlers.
  */
 
+import { resolveRedirectParams } from "@reltio/auth/utils";
 import { describe, expect, it } from "vitest";
-import { resolveRedirectParams } from "../../src/utils/resolveRedirectParams";
 
 const BASE_URL = "https://bff.internal/api/auth/login";
 const APP_ORIGIN = "https://app.example.com";

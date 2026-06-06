@@ -6,8 +6,13 @@
  * success.
  */
 
+import { createExpressAuth } from "@reltio/auth/express";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
+import {
+	TOKEN_WITH_AURL,
+	TOKEN_WITH_AURL_ORIGIN,
+} from "../fixtures/aurlTokens";
 import {
 	createTestApp,
 	DEFAULT_CONFIG,
@@ -27,7 +32,7 @@ function mockOAuthTokenRefresh(response: {
 	body?: unknown;
 }) {
 	mswServer.use(
-		http.post(`${TEST_OAUTH_HOST}/token`, async () => {
+		http.post(`${TEST_OAUTH_HOST}/oauth/token`, async () => {
 			if (response.status && response.status >= 400) {
 				return HttpResponse.json(response.body ?? { error: "rejected" }, {
 					status: response.status,
@@ -86,7 +91,7 @@ describe("Express adapter — POST /refreshToken", () => {
 		let capturedBody: URLSearchParams | undefined;
 		let capturedAuth: string | null = null;
 		mswServer.use(
-			http.post(`${TEST_OAUTH_HOST}/token`, async ({ request }) => {
+			http.post(`${TEST_OAUTH_HOST}/oauth/token`, async ({ request }) => {
 				const bodyText = await request.text();
 				capturedBody = new URLSearchParams(bodyText);
 				capturedAuth = request.headers.get("authorization");
@@ -129,7 +134,7 @@ describe("Express adapter — POST /refreshToken", () => {
 	it("returns 401 when the refresh_token cookie is missing — no upstream call made", async () => {
 		let upstreamCalled = false;
 		mswServer.use(
-			http.post(`${TEST_OAUTH_HOST}/token`, () => {
+			http.post(`${TEST_OAUTH_HOST}/oauth/token`, () => {
 				upstreamCalled = true;
 				return HttpResponse.json({});
 			}),
@@ -169,6 +174,27 @@ describe("Express adapter — POST /refreshToken", () => {
 		expect(res.statusCode).toBe(502);
 	});
 
+	it("propagates (500) when the OAuth server returns a malformed 200 body", async () => {
+		// A 200 with a non-JSON body throws a SyntaxError inside
+		// refreshAccessToken, which is NOT a RequestError. The handler must not
+		// mistranslate it to 401/502 — it propagates (→ 500) rather than
+		// emitting broken cookies from a half-parsed success.
+		mswServer.use(
+			http.post(
+				`${TEST_OAUTH_HOST}/oauth/token`,
+				() => new HttpResponse("<<not json>>", { status: 200 }),
+			),
+		);
+		const app = createTestApp();
+
+		const res = await app
+			.post("/api/auth/refreshToken")
+			.set("Host", TEST_HOST)
+			.set("Cookie", ["refresh_token=token"]);
+
+		expect(res.statusCode).toBe(500);
+	});
+
 	it("emits Cache-Control headers", async () => {
 		mockOAuthTokenRefresh({});
 		const app = createTestApp();
@@ -180,5 +206,34 @@ describe("Express adapter — POST /refreshToken", () => {
 
 		expect(res.headers["cache-control"]).toContain("no-store");
 		expect(res.headers.pragma).toBe("no-cache");
+	});
+
+	it("re-mints reltio_aurl from the refreshed token's aurl claim (verifies via resolveAuthPath)", async () => {
+		// The refreshed access token may belong to a different cluster than
+		// the previous one, so the handler re-derives the routing cookie from
+		// the NEW token. Drive the writer through the public refresh endpoint
+		// and the reader through the public adapter resolveAuthPath.
+		mockOAuthTokenRefresh({ access_token: TOKEN_WITH_AURL });
+		const app = createTestApp();
+
+		const res = await app
+			.post("/api/auth/refreshToken")
+			.set("Host", TEST_HOST)
+			.set("Cookie", ["refresh_token=token"]);
+
+		const reltioAurl = parseSetCookies(res.headers["set-cookie"]).reltio_aurl
+			?.value;
+		expect(reltioAurl).toBeTruthy();
+
+		const { resolveAuthPath } = createExpressAuth({
+			...DEFAULT_CONFIG,
+			oauthPath: "https://fallback.example.com",
+		});
+		const request = new Request("https://app.test/", {
+			headers: { Cookie: `reltio_aurl=${reltioAurl}` },
+		});
+		expect(await resolveAuthPath(request)).toBe(
+			`${TOKEN_WITH_AURL_ORIGIN}/oauth`,
+		);
 	});
 });

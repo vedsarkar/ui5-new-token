@@ -88,5 +88,8 @@
 		"express": "^5.2.1",
 		"supertest": "^7.2.2",
 		"typescript": "^5.7.2"
+	},
+	"dependencies": {
+		"fzstd": "^0.1.1"
 	}
 }

@@ -11,10 +11,12 @@
  */
 
 import { getAccessToken } from "../../utils/getAccessToken";
+import { checkAccessToken } from "../checkAccessToken";
 import { isRequestError } from "../errors";
 import type { Handler } from "./types";
 
-export const checkTokenHandler: Handler = async ({ request, oauth }) => {
+export const checkTokenHandler: Handler = async (options) => {
+	const { request } = options;
 	const accessToken = getAccessToken(request);
 	if (!accessToken) {
 		return new Response(null, { status: 401 });
@@ -22,7 +24,9 @@ export const checkTokenHandler: Handler = async ({ request, oauth }) => {
 
 	const url = new URL(request.url);
 	try {
-		const data = await oauth.checkToken(accessToken, {
+		const data = await checkAccessToken({
+			...options,
+			accessToken,
 			serviceId: url.searchParams.get("serviceId") ?? undefined,
 			tenantId: url.searchParams.get("tenantId") ?? undefined,
 		});

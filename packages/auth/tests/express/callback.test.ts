@@ -11,12 +11,20 @@
  *     by default.
  */
 
+import { createExpressAuth } from "@reltio/auth/express";
 import type { SsoRedirect } from "@reltio/auth/types";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
 import {
+	TOKEN_LYING_PREFIX,
+	TOKEN_OVERSIZED_PREFIX,
+	TOKEN_WITH_AURL,
+	TOKEN_WITH_AURL_ORIGIN,
+} from "../fixtures/aurlTokens";
+import {
 	createTestApp,
 	DEFAULT_CONFIG,
+	mintAurlCookie,
 	mswServer,
 	parseSetCookies,
 	TEST_APP_ORIGIN,
@@ -328,6 +336,28 @@ describe("Express adapter — GET /callback", () => {
 		expect(res.statusCode).toBe(502);
 	});
 
+	it("propagates (500) when the Login Page returns a malformed 200 body", async () => {
+		// A 200 with a non-JSON body throws a SyntaxError inside exchangeCode,
+		// which is NOT a RequestError. The handler must not mistranslate it to
+		// 401/502 — it propagates (→ 500) so a broken upstream never looks like
+		// a successful login.
+		mswServer.use(
+			http.post(
+				`${TEST_LOGIN_HOST}/token`,
+				() => new HttpResponse("<<not json>>", { status: 200 }),
+			),
+		);
+		const app = createTestApp();
+
+		const res = await app
+			.get("/api/auth/callback")
+			.set("Host", TEST_HOST)
+			.set("Cookie", [`state=${STATE}`])
+			.query({ code: "x", state: STATE });
+
+		expect(res.statusCode).toBe(500);
+	});
+
 	it("returns 400 when the code query parameter is missing", async () => {
 		const app = createTestApp();
 
@@ -338,6 +368,151 @@ describe("Express adapter — GET /callback", () => {
 			.query({ state: STATE });
 
 		expect(res.statusCode).toBe(400);
+	});
+
+	it("minted reltio_aurl verifies through the public adapter resolveAuthPath (writer/reader contract)", async () => {
+		// Writer: callbackHandler signs an aurl into the reltio_aurl cookie
+		// using createAuth's internal signer. Reader: the public
+		// `resolveAuthPath` exposed on the Express adapter's router, the
+		// helper apps use when they bypass the BFF. The two MUST agree
+		// byte-for-byte on cookie name, envelope, encoding, attributes,
+		// and MAC — this test is the only one that drives both sides
+		// through their public surfaces. A one-sided change to either side
+		// (constant rename, alphabet swap, MAC length, …) breaks CI here.
+		mockTokenExchange({ access_token: TOKEN_WITH_AURL });
+		const app = createTestApp();
+
+		const res = await app
+			.get("/api/auth/callback")
+			.set("Host", TEST_HOST)
+			.set("Cookie", [`state=${STATE}`])
+			.query({ code: "x", state: STATE });
+
+		const reltioAurl = parseSetCookies(res.headers["set-cookie"]).reltio_aurl
+			.value;
+
+		// A standalone reader configured with the same secret but a
+		// different static fallback — proves the cookie (not the fallback)
+		// drives the resolution.
+		const { resolveAuthPath } = createExpressAuth({
+			...DEFAULT_CONFIG,
+			oauthPath: "https://fallback.example.com",
+		});
+		const request = new Request("https://app.test/", {
+			headers: { Cookie: `reltio_aurl=${reltioAurl}` },
+		});
+
+		expect(await resolveAuthPath(request)).toBe(
+			`${TOKEN_WITH_AURL_ORIGIN}/oauth`,
+		);
+	});
+
+	it("clears reltio_aurl when the access token has no aurl claim", async () => {
+		// An opaque (non-JWT) token is the common case: no decodable aurl
+		// claim, so the router must not mint a routing cookie.
+		mockTokenExchange({ access_token: "opaque-access-token-string" });
+		const app = createTestApp();
+
+		const res = await app
+			.get("/api/auth/callback")
+			.set("Host", TEST_HOST)
+			.set("Cookie", [`state=${STATE}`])
+			.query({ code: "x", state: STATE });
+
+		const cookies = parseSetCookies(res.headers["set-cookie"]);
+		expect(cookies.reltio_aurl?.value).toBe("");
+		expect(cookies.reltio_aurl?.attributes).toContain("Max-Age=0");
+	});
+
+	// Fail-closed routing contract: a token that is NOT a clean, decodable
+	// Reltio JWT carrying an aurl claim must never steer per-session routing,
+	// no matter why it failed to decode. Publicly this is observable as one
+	// outcome — the reltio_aurl cookie is cleared — so a single parametrised
+	// test covers the class. The malicious decompression-bomb fixtures
+	// additionally drive the decoder's bomb-defence gates (oversized prefix,
+	// lying prefix → ZstdError) end-to-end through the public callback.
+	it.each([
+		[
+			"a decompression-bomb token (honest oversized prefix)",
+			TOKEN_OVERSIZED_PREFIX,
+		],
+		[
+			"a decompression-bomb token (lying prefix, oversized stream)",
+			TOKEN_LYING_PREFIX,
+		],
+		[
+			"a token whose encoded payload segment exceeds the size ceiling",
+			`s.${"A".repeat(11_000)}.fakesig`,
+		],
+		[
+			"a Reltio-shaped token with an undecodable payload",
+			"s.!!!not-base64!!!.fakesig",
+		],
+	])("fail-closed: clears reltio_aurl for %s", async (_label, accessToken) => {
+		mockTokenExchange({ access_token: accessToken });
+		const app = createTestApp();
+
+		const res = await app
+			.get("/api/auth/callback")
+			.set("Host", TEST_HOST)
+			.set("Cookie", [`state=${STATE}`])
+			.query({ code: "x", state: STATE });
+
+		const cookies = parseSetCookies(res.headers["set-cookie"]);
+		expect(cookies.reltio_aurl?.value).toBe("");
+		expect(cookies.reltio_aurl?.attributes).toContain("Max-Age=0");
+	});
+
+	it("clears a stale reltio_aurl cookie carried over from a previous session", async () => {
+		// Without the clear, a valid stale cookie from a previous
+		// session keeps routing /checkToken to the old cluster using
+		// a token that was never issued by it.
+		const app = createTestApp();
+		// A genuine signed cookie from an earlier session, obtained through
+		// the public callback round-trip rather than the private signer.
+		const stalePreviousAurl = await mintAurlCookie(app, TOKEN_WITH_AURL);
+
+		mockTokenExchange({ access_token: "opaque-access-token-string" });
+
+		const res = await app
+			.get("/api/auth/callback")
+			.set("Host", TEST_HOST)
+			.set("Cookie", [`state=${STATE}`, `reltio_aurl=${stalePreviousAurl}`])
+			.query({ code: "x", state: STATE });
+
+		const cookies = parseSetCookies(res.headers["set-cookie"]);
+		expect(cookies.reltio_aurl?.value).toBe("");
+		expect(cookies.reltio_aurl?.attributes).toContain("Max-Age=0");
+	});
+
+	it("does not override Cache-Control / Pragma that the ssoRedirect callback already set", async () => {
+		// withCacheHeaders only fills in the no-store headers when absent, so a
+		// consumer callback can opt into its own caching policy on the final
+		// response.
+		mockTokenExchange({});
+		const ssoRedirect: SsoRedirect = ({ redirectUrl }) =>
+			new Response(null, {
+				status: 302,
+				headers: {
+					Location: redirectUrl,
+					"Cache-Control": "private, max-age=30",
+					Pragma: "custom-pragma",
+				},
+			});
+		const app = createTestApp({ ssoRedirect });
+
+		const res = await app
+			.get("/api/auth/callback")
+			.set("Host", TEST_HOST)
+			.set("Cookie", [`state=${STATE}`])
+			.query({
+				code: "x",
+				state: STATE,
+				redirectUrl: `${TEST_APP_ORIGIN}/dashboard`,
+			});
+
+		expect(res.headers["cache-control"]).toBe("private, max-age=30");
+		expect(res.headers.pragma).toBe("custom-pragma");
 	});
 
 	it("emits Cache-Control headers on every response (success and error)", async () => {

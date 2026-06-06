@@ -6,8 +6,13 @@
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
 import {
+	TOKEN_WITH_AURL,
+	TOKEN_WITH_AURL_ORIGIN,
+} from "../fixtures/aurlTokens";
+import {
 	buildRequest,
 	createTestHandlers,
+	mintAurlCookie,
 	mswServer,
 	TEST_OAUTH_HOST,
 	useMswServer,
@@ -19,7 +24,7 @@ function mockOAuthCheckToken(response: {
 	onRequest?: (request: globalThis.Request) => void;
 }) {
 	mswServer.use(
-		http.post(`${TEST_OAUTH_HOST}/checkToken`, async ({ request }) => {
+		http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, async ({ request }) => {
 			response.onRequest?.(request);
 			if (response.status && response.status >= 400) {
 				return HttpResponse.json(response.body ?? { error: "rejected" }, {
@@ -106,7 +111,7 @@ describe("Next.js adapter — POST /auth/checkToken", () => {
 	it("accepts Bearer header in any case (Bearer / bearer / BEARER)", async () => {
 		const seen: string[] = [];
 		mswServer.use(
-			http.post(`${TEST_OAUTH_HOST}/checkToken`, async ({ request }) => {
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, async ({ request }) => {
 				const body = new URLSearchParams(await request.text());
 				seen.push(body.get("token") ?? "");
 				return HttpResponse.json({});
@@ -130,7 +135,7 @@ describe("Next.js adapter — POST /auth/checkToken", () => {
 	it("returns 401 with no upstream call when neither header nor cookie is present", async () => {
 		let upstreamCalled = false;
 		mswServer.use(
-			http.post(`${TEST_OAUTH_HOST}/checkToken`, () => {
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, () => {
 				upstreamCalled = true;
 				return HttpResponse.json({});
 			}),
@@ -148,7 +153,7 @@ describe("Next.js adapter — POST /auth/checkToken", () => {
 	it("forwards serviceId and tenantId query parameters to the upstream call", async () => {
 		let capturedUrl: URL | undefined;
 		mswServer.use(
-			http.post(`${TEST_OAUTH_HOST}/checkToken`, async ({ request }) => {
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, async ({ request }) => {
 				capturedUrl = new URL(request.url);
 				return HttpResponse.json({});
 			}),
@@ -171,7 +176,7 @@ describe("Next.js adapter — POST /auth/checkToken", () => {
 	it("omits absent query parameters in the upstream URL", async () => {
 		let capturedUrl: URL | undefined;
 		mswServer.use(
-			http.post(`${TEST_OAUTH_HOST}/checkToken`, async ({ request }) => {
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, async ({ request }) => {
 				capturedUrl = new URL(request.url);
 				return HttpResponse.json({});
 			}),
@@ -239,6 +244,62 @@ describe("Next.js adapter — POST /auth/checkToken", () => {
 		);
 
 		expect(res.status).toBe(502);
+	});
+
+	it("routes the upstream call to the verified reltio_aurl cluster URL", async () => {
+		let clusterCalled = false;
+		let staticCalled = false;
+		mswServer.use(
+			http.post(`${TOKEN_WITH_AURL_ORIGIN}/oauth/checkToken`, () => {
+				clusterCalled = true;
+				return HttpResponse.json({});
+			}),
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, () => {
+				staticCalled = true;
+				return HttpResponse.json({});
+			}),
+		);
+		const handlers = createTestHandlers();
+		const reltioAurl = await mintAurlCookie(handlers, TOKEN_WITH_AURL);
+		const { POST } = handlers;
+
+		await POST(
+			buildRequest({
+				method: "POST",
+				path: "/auth/checkToken",
+				cookies: { access_token: "token", reltio_aurl: reltioAurl },
+			}),
+		);
+
+		expect(clusterCalled).toBe(true);
+		expect(staticCalled).toBe(false);
+	});
+
+	it("falls back to the static oauthPath when reltio_aurl is tampered (fail-closed)", async () => {
+		let clusterCalled = false;
+		let staticCalled = false;
+		mswServer.use(
+			http.post(`${TOKEN_WITH_AURL_ORIGIN}/oauth/checkToken`, () => {
+				clusterCalled = true;
+				return HttpResponse.json({});
+			}),
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, () => {
+				staticCalled = true;
+				return HttpResponse.json({});
+			}),
+		);
+		const { POST } = createTestHandlers();
+
+		await POST(
+			buildRequest({
+				method: "POST",
+				path: "/auth/checkToken",
+				cookies: { access_token: "token", reltio_aurl: "tampered-garbage" },
+			}),
+		);
+
+		expect(staticCalled).toBe(true);
+		expect(clusterCalled).toBe(false);
 	});
 
 	it("emits Cache-Control headers", async () => {

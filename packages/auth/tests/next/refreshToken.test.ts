@@ -23,7 +23,7 @@ function mockOAuthTokenRefresh(response: {
 	body?: unknown;
 }) {
 	mswServer.use(
-		http.post(`${TEST_OAUTH_HOST}/token`, async () => {
+		http.post(`${TEST_OAUTH_HOST}/oauth/token`, async () => {
 			if (response.status && response.status >= 400) {
 				return HttpResponse.json(response.body ?? { error: "rejected" }, {
 					status: response.status,
@@ -88,7 +88,7 @@ describe("Next.js adapter — POST /auth/refreshToken", () => {
 		let capturedBody: URLSearchParams | undefined;
 		let capturedAuth: string | null = null;
 		mswServer.use(
-			http.post(`${TEST_OAUTH_HOST}/token`, async ({ request }) => {
+			http.post(`${TEST_OAUTH_HOST}/oauth/token`, async ({ request }) => {
 				const bodyText = await request.text();
 				capturedBody = new URLSearchParams(bodyText);
 				capturedAuth = request.headers.get("authorization");
@@ -137,7 +137,7 @@ describe("Next.js adapter — POST /auth/refreshToken", () => {
 	it("returns 401 when the refresh_token cookie is missing — no upstream call made", async () => {
 		let upstreamCalled = false;
 		mswServer.use(
-			http.post(`${TEST_OAUTH_HOST}/token`, () => {
+			http.post(`${TEST_OAUTH_HOST}/oauth/token`, () => {
 				upstreamCalled = true;
 				return HttpResponse.json({});
 			}),

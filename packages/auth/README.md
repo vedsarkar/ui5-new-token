@@ -79,7 +79,7 @@ See the [Setup → Express](?path=/docs/guides-auth-setup-express--docs) or [Set
 | `@reltio/auth/types` | TypeScript type declarations: `AuthConfig`, `SsoRedirect`, `SsoRedirectContext`, `TokenResponse`, `CheckTokenResponse`. Use these to type your callback and config objects. No runtime code. |
 | `@reltio/auth/express` | `createExpressAuth(config)` — Express `Router` factory. |
 | `@reltio/auth/next` | `createNextAuth(config)` — returns `{ handlers: { GET, POST } }` for Next.js App Router. |
-| `@reltio/auth/utils` | The full set of framework-agnostic helpers the router itself uses. Token readers (`getAccessToken`, `getRefreshToken`, `getBasicToken`), cookie plumbing (`parseCookies`, `serializeCookie`, `clearCookie`, `defaultCookieOptions`, the `CookieOptions` type, and the `ACCESS_TOKEN_COOKIE` / `REFRESH_TOKEN_COOKIE` / `STATE_COOKIE` name constants), CSRF-state primitives (`generateState`, `validateState`), the request-shape adapter (`readHeader`, `AnyRequest`), and the redirect-param resolver (`resolveRedirectParams`, `upgradeToHttps`, `RedirectParams`). All accept Express `Request`, Next.js `NextRequest`, or Web `Request` uniformly where applicable. |
+| `@reltio/auth/utils` | The full set of framework-agnostic helpers the router itself uses. Token readers (`getAccessToken`, `getRefreshToken`, `getBasicToken`), cookie plumbing (`parseCookies`, `serializeCookie`, `clearCookie`, `defaultCookieOptions`, the `CookieOptions` type, and the `ACCESS_TOKEN_COOKIE` / `REFRESH_TOKEN_COOKIE` / `STATE_COOKIE` / `AUTH_URL_COOKIE` name constants), CSRF-state primitives (`generateState`, `validateState`), the request-shape adapter (`readHeader`, `AnyRequest`), and the redirect-param resolver (`resolveRedirectParams`, `upgradeToHttps`, `RedirectParams`). All accept Express `Request`, Next.js `NextRequest`, or Web `Request` uniformly where applicable. The dynamic Auth-server routing resolver is **not** here — it lives on the adapter return value as `createExpressAuth(config).resolveAuthPath` / `createNextAuth(config).resolveAuthPath` so it shares the router's once-derived HMAC key. |
 
 > **Always use a subpath.** `import x from "@reltio/auth"` (no subpath) deliberately fails — there is no `main`/`exports` target for the bare package name.
 
@@ -184,6 +184,7 @@ The remaining cookie and state helpers (`serializeCookie`, `clearCookie`, `parse
 
 - [Setup → Express](?path=/docs/guides-auth-setup-express--docs) — full walkthrough including config object, router mount, and error handling.
 - [Setup → Next.js App Router](?path=/docs/guides-auth-setup-next-js-app-router--docs) — full walkthrough for `app/auth/[...auth]/route.ts`.
+- [Dynamic OAuth Routing](?path=/docs/guides-auth-dynamic-oauth-routing--docs) — how the per-session `reltio_aurl` cookie routes `/checkToken` and `/refreshToken` to the right Auth Server cluster, and how to use the adapter's `resolveAuthPath` in apps that bypass the BFF.
 - [Migration → From auth-middleware](?path=/docs/guides-auth-migration-from-auth-middleware--docs) — import-path mapping, before/after code, breaking changes.
 
 ## License

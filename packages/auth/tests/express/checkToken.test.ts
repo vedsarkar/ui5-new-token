@@ -9,7 +9,12 @@
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
 import {
+	TOKEN_WITH_AURL,
+	TOKEN_WITH_AURL_ORIGIN,
+} from "../fixtures/aurlTokens";
+import {
 	createTestApp,
+	mintAurlCookie,
 	mswServer,
 	TEST_HOST,
 	TEST_OAUTH_HOST,
@@ -23,7 +28,7 @@ function mockOAuthCheckToken(response: {
 	onRequest?: (request: globalThis.Request) => void;
 }) {
 	mswServer.use(
-		http.post(`${TEST_OAUTH_HOST}/checkToken`, async ({ request }) => {
+		http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, async ({ request }) => {
 			response.onRequest?.(request);
 			if (response.status && response.status >= 400) {
 				return HttpResponse.json(response.body ?? { error: "rejected" }, {
@@ -101,7 +106,7 @@ describe("Express adapter — POST /checkToken", () => {
 	it("accepts Bearer header in any case (Bearer / bearer / BEARER)", async () => {
 		const seen: string[] = [];
 		mswServer.use(
-			http.post(`${TEST_OAUTH_HOST}/checkToken`, async ({ request }) => {
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, async ({ request }) => {
 				const body = new URLSearchParams(await request.text());
 				seen.push(body.get("token") ?? "");
 				return HttpResponse.json({});
@@ -122,7 +127,7 @@ describe("Express adapter — POST /checkToken", () => {
 	it("returns 401 with no upstream call when neither header nor cookie is present", async () => {
 		let upstreamCalled = false;
 		mswServer.use(
-			http.post(`${TEST_OAUTH_HOST}/checkToken`, () => {
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, () => {
 				upstreamCalled = true;
 				return HttpResponse.json({});
 			}),
@@ -138,7 +143,7 @@ describe("Express adapter — POST /checkToken", () => {
 	it("forwards serviceId and tenantId query parameters to the upstream call", async () => {
 		let capturedUrl: URL | undefined;
 		mswServer.use(
-			http.post(`${TEST_OAUTH_HOST}/checkToken`, async ({ request }) => {
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, async ({ request }) => {
 				capturedUrl = new URL(request.url);
 				return HttpResponse.json({});
 			}),
@@ -158,7 +163,7 @@ describe("Express adapter — POST /checkToken", () => {
 	it("omits absent query parameters in the upstream URL", async () => {
 		let capturedUrl: URL | undefined;
 		mswServer.use(
-			http.post(`${TEST_OAUTH_HOST}/checkToken`, async ({ request }) => {
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, async ({ request }) => {
 				capturedUrl = new URL(request.url);
 				return HttpResponse.json({});
 			}),
@@ -219,6 +224,94 @@ describe("Express adapter — POST /checkToken", () => {
 			.set("Cookie", ["access_token=token"]);
 
 		expect(res.statusCode).toBe(502);
+	});
+
+	it("returns 502 when the OAuth server is unreachable (network error)", async () => {
+		// A thrown fetch (DNS/connection failure) is distinct from an HTTP
+		// 5xx: it surfaces in safeFetch's catch, which normalises it to 502.
+		mswServer.use(
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, () =>
+				HttpResponse.error(),
+			),
+		);
+		const app = createTestApp();
+
+		const res = await app
+			.post("/api/auth/checkToken")
+			.set("Host", TEST_HOST)
+			.set("Cookie", ["access_token=token"]);
+
+		expect(res.statusCode).toBe(502);
+	});
+
+	it("propagates (500) when the OAuth server returns a malformed 200 body", async () => {
+		// A 200 with a non-JSON body is a hostile/buggy upstream: response.json()
+		// throws a SyntaxError, which is NOT a RequestError. The handler must
+		// NOT mistranslate it to 401/502 — it propagates (→ 500) so the failure
+		// is loud rather than a silently-broken success.
+		mswServer.use(
+			http.post(
+				`${TEST_OAUTH_HOST}/oauth/checkToken`,
+				() => new HttpResponse("<<not json>>", { status: 200 }),
+			),
+		);
+		const app = createTestApp();
+
+		const res = await app
+			.post("/api/auth/checkToken")
+			.set("Host", TEST_HOST)
+			.set("Cookie", ["access_token=token"]);
+
+		expect(res.statusCode).toBe(500);
+	});
+
+	it("routes the upstream call to the verified reltio_aurl cluster URL", async () => {
+		let clusterCalled = false;
+		let staticCalled = false;
+		mswServer.use(
+			http.post(`${TOKEN_WITH_AURL_ORIGIN}/oauth/checkToken`, () => {
+				clusterCalled = true;
+				return HttpResponse.json({});
+			}),
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, () => {
+				staticCalled = true;
+				return HttpResponse.json({});
+			}),
+		);
+		const app = createTestApp();
+		const reltioAurl = await mintAurlCookie(app, TOKEN_WITH_AURL);
+
+		await app
+			.post("/api/auth/checkToken")
+			.set("Host", TEST_HOST)
+			.set("Cookie", [`access_token=token; reltio_aurl=${reltioAurl}`]);
+
+		expect(clusterCalled).toBe(true);
+		expect(staticCalled).toBe(false);
+	});
+
+	it("falls back to the static oauthPath when reltio_aurl is tampered (fail-closed)", async () => {
+		let clusterCalled = false;
+		let staticCalled = false;
+		mswServer.use(
+			http.post(`${TOKEN_WITH_AURL_ORIGIN}/oauth/checkToken`, () => {
+				clusterCalled = true;
+				return HttpResponse.json({});
+			}),
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, () => {
+				staticCalled = true;
+				return HttpResponse.json({});
+			}),
+		);
+		const app = createTestApp();
+
+		await app
+			.post("/api/auth/checkToken")
+			.set("Host", TEST_HOST)
+			.set("Cookie", ["access_token=token; reltio_aurl=tampered-garbage"]);
+
+		expect(staticCalled).toBe(true);
+		expect(clusterCalled).toBe(false);
 	});
 
 	it("emits Cache-Control headers", async () => {

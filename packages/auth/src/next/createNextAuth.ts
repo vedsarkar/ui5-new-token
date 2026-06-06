@@ -22,12 +22,20 @@
 
 import { createAuth } from "../core/createAuth";
 import type { AuthConfig } from "../types";
+import type { AnyRequest } from "../utils/readHeader";
 
 export function createNextAuth(config: AuthConfig): {
 	handlers: {
 		GET: (req: Request) => Promise<Response>;
 		POST: (req: Request) => Promise<Response>;
 	};
+	/**
+	 * Resolves the per-session Auth Server URL from the signed `reltio_aurl`
+	 * cookie (falling back to the static `oauthPath`). Use in route handlers
+	 * that call the Auth server directly, bypassing the BFF's `/checkToken`
+	 * and `/refreshToken` endpoints.
+	 */
+	resolveAuthPath: (req: AnyRequest) => Promise<string>;
 } {
 	const auth = createAuth(config);
 	const handle = (request: Request) => auth.handle(request);
@@ -37,5 +45,6 @@ export function createNextAuth(config: AuthConfig): {
 			GET: handle,
 			POST: handle,
 		},
+		resolveAuthPath: auth.resolveAuthPath,
 	};
 }

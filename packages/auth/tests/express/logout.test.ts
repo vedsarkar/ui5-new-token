@@ -203,4 +203,19 @@ describe("Express adapter — GET /logout", () => {
 		expect(res.headers["cache-control"]).toContain("no-store");
 		expect(res.headers.pragma).toBe("no-cache");
 	});
+
+	it("appends notenant=true to the Login Page URL when configured", async () => {
+		const app = createTestApp({ config: { notenant: true } });
+
+		const res = await app
+			.get("/api/auth/logout")
+			.set("Host", TEST_HOST)
+			.set("Referer", `${TEST_APP_ORIGIN}/dashboard`);
+
+		expect(res.statusCode).toBe(302);
+		const loginUrl = new URL(
+			new URL(res.headers.location).searchParams.get("redirectUrl") as string,
+		);
+		expect(loginUrl.searchParams.get("notenant")).toBe("true");
+	});
 });
