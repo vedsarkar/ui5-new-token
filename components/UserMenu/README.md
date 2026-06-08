@@ -1,0 +1,62 @@
+# UserMenu
+
+`UserMenu` is the Reltio header user menu. It bundles the three pieces every
+Reltio application composes by hand today — the trigger avatar, the UI5 user-menu
+popover, and the About modal — into a single endorsed component so popover
+placement, avatar rhythm, and About-modal content stay consistent across products.
+
+It composes UI5 `Avatar`, `UserMenu`, and `Dialog`. The avatar carries
+`slot="profile"` so that, when passed to `ShellBar`'s `userMenu` slot, UI5's slot
+routing mounts it in the canonical profile position; the popover and About modal
+render as overlays anchored to the avatar and the document body respectively.
+
+### Required props
+
+`user`, `appVersion`, and `onSignOut` are all required. `user` drives the avatar and
+the popover header (name + email). `appVersion` is the application version shown in the
+About modal — and the **only** About field a consumer controls. The modal title,
+copyright, and legal links are fixed inside the component so applications cannot
+alter Reltio's branding or legal references.
+
+### Avatar derivation
+
+When `user.avatarUrl` is set the avatar shows the image. Otherwise it shows
+initials derived from `user.username`
+(the first letter of each space-separated word, up to two characters). The trigger
+avatar uses `colorScheme="Accent4"` by default to match the canonical Console
+look; pass `colorScheme` to override.
+
+### Internal popover and modal state
+
+Both the popover and the About modal own their open/close state internally — there
+are no `open` props. Clicking the avatar toggles the popover; clicking the About
+item opens the modal and closes the popover; the popover and modal each close on
+`Escape`, backdrop click, or their respective actions. This matches the
+`TenantSelector` / `AppSelector` precedent for ephemeral interaction state.
+
+### Sign out is fire-and-forget
+
+`onSignOut` is invoked synchronously when the user clicks the popover's Sign Out
+button. The component does NOT navigate, clear cookies, or call any auth API — the
+consumer's app-level auth flow owns everything that happens after the callback.
+
+### About modal content
+
+The modal renders a fixed `"About"` heading, a fixed Reltio copyright line, the
+consumer-supplied `appVersion` as a labelled value, and a fixed list of legal links
+(Privacy Policy, Terms of Use) that open in a new tab with
+`rel="noopener noreferrer"`. Only `appVersion` is configurable; the heading, copyright,
+and links are constants inside the component and cannot be overridden by the app.
+
+### Accessibility
+
+The trigger avatar is rendered with UI5 `mode="Interactive"`, so it is a real
+`role="button"` in the tab order and opens the menu via mouse **and** keyboard
+(`Enter` / `Space`); it advertises `aria-haspopup="menu"`. The popover and About
+modal inherit UI5's focus and `Escape` handling.
+
+### See also
+
+- [UI5 UserMenu reference](https://ui5.github.io/webcomponents/components/fiori/UserMenu/) — popover slots, accounts, Sign Out
+- [UI5 Avatar reference](https://ui5.github.io/webcomponents/components/Avatar/) — initials, image, color schemes
+- [SAP Fiori — Shell Bar](https://www.sap.com/design-system/fiori-design-web/v1-145/ui-elements/shell-bar) — the profile/user area of the canonical header

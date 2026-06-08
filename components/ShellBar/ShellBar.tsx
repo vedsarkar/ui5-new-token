@@ -18,7 +18,7 @@ const defaultReltioLogo = (
 	</picture>
 );
 
-/** Top navigation chrome with the Reltio brand mark in the left `branding` slot. */
+/** Top navigation chrome with the Reltio brand mark in the `logo` slot. */
 export const ShellBar = ({
 	logo = defaultReltioLogo,
 	className,
@@ -26,7 +26,6 @@ export const ShellBar = ({
 	tenantSelector,
 	children,
 	userMenu,
-	profile,
 	...rest
 }: ShellBarProps) => (
 	<Ui5ShellBar
@@ -37,11 +36,10 @@ export const ShellBar = ({
 				{content}
 			</>
 		}
-		profile={profile}
 		className={classNames(styles.root, className)}
 		{...rest}
 	>
 		{children}
-		{!profile && userMenu}
+		{userMenu}
 	</Ui5ShellBar>
 );

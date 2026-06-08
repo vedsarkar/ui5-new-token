@@ -17,7 +17,7 @@ This is one of six `ShellBar`-related changes. The decision was made during expl
 **Goals:**
 
 - A single self-contained component that bundles avatar + UserMenu popover + About modal.
-- Required user info (`name`, `email`) and About info (`title`, `copyright`, `version`, `legalLinks`).
+- Required user info (`name`, `email`) and the application `version`. The About-modal title, copyright, and legal links are fixed inside the component (locked Reltio branding) and are NOT part of the public API — `version` is the only About field a consumer controls.
 - Sign Out is a callback; auth flow is the consumer's concern.
 - Avatar mounts into UI5 ShellBar `profile` slot via `slot=` attribute.
 - Popover and About-modal open/close are internal state (consistent with `TenantSelector`/`CustomerSelector`/`AppSelector` precedent).
@@ -45,13 +45,13 @@ Both the user-menu popover (`open`) AND the About modal (`aboutOpen`) are intern
 
 **Why:** these are ephemeral interaction states reflexively driven by user clicks (avatar click → popover; About item click → modal). Apps don't open the user menu programmatically — they reference auth state directly. The internal-state choice matches `AppSelector`, `TenantSelector`, and `CustomerSelector` precedents.
 
-### Decision 3 — Required `about` props
+### Decision 3 — Locked About branding; expose only `version`
 
-The `about` object (`title`, `copyright`, `version`, `legalLinks?`) is a required prop. There is no opt-out — the menu always shows the About item.
+The only consumer-controlled About field is `version: string` (required). The About-modal title (`"About"`), the Reltio copyright paragraph, and the legal links (Privacy Policy, Terms of Use) are constants inside the component — there are no `title`/`copyright`/`legalLinks` props. There is no opt-out; the menu always shows the About item.
 
-**Why:** every Reltio app has an About modal today. Making the About metadata required surfaces the legal/compliance content the platform expects (copyright notice, version stamping for support, legal links per region). Apps that genuinely don't want an About modal (rare) can pass minimal placeholders or — in a future change — opt out via a `showAbout={false}` prop.
+**Why:** the About modal carries Reltio's brand and legal references (copyright notice, Privacy Policy, Terms of Use). Applications must not be able to alter or omit them — letting each app pass its own copyright/legal text risks inconsistent or non-compliant legal copy across the product suite. Locking them inside the component guarantees one canonical, compliant About surface everywhere, while `version` (the one genuinely app-specific value, needed for support) stays consumer-supplied.
 
-**Alternative considered:** make `about` optional and hide the About item when omitted. Rejected — the current Console + admin-tools UX has About in every menu; making it required is the right default to lock in the canonical layout.
+**Alternative considered:** an `about` object prop (`title`, `copyright`, `version`, `legalLinks?`) letting consumers supply all fields. Rejected — it lets an app override Reltio branding and legal references, which is exactly what must be centrally controlled. If a real need for richer per-app About content emerges, it can be added additively (e.g. a `children` slot below the fixed legal block) without unlocking the branding.
 
 ### Decision 4 — UI5 `UserMenu` + standalone `Dialog` for About
 
@@ -77,20 +77,20 @@ The user-menu popover is the UI5 `UserMenu` component (`@ui5/webcomponents-fiori
 
 The About modal body renders, in order:
 
-1. Title (modal heading)
-2. Copyright (small paragraph)
-3. Version (labelled value, e.g. `"Version: 2.21.3"`)
-4. Legal links (rendered as a horizontal list of anchors with `target="_blank" rel="noopener noreferrer"`)
+1. The fixed heading `"About"` (modal heading).
+2. The fixed Reltio copyright paragraph (small paragraph).
+3. The consumer-supplied `version` as a labelled value, e.g. `"Version: 2.21.3"` — the only variable line.
+4. The fixed legal links (Privacy Policy, Terms of Use) rendered as a horizontal list of anchors with `target="_blank" rel="noopener noreferrer"`.
 
 The footer has a single `Close` button. ESC and backdrop click also close the modal.
 
-**Why:** matches the typical About-modal pattern (terse, informational, no interaction beyond Close). Apps that need richer content (release notes, support contacts) skip the slot prop and roll their own.
+**Why:** matches the typical About-modal pattern (terse, informational, no interaction beyond Close). Everything except `version` is fixed inside the component per Decision 3 (locked branding). Apps that need richer content (release notes, support contacts) skip the slot prop and roll their own.
 
 ## Risks / Trade-offs
 
 - [Risk] UI5 React's slot-attribute routing may NOT route the avatar to `profile` when the whole `<UserMenu>` element is supplied via `ShellBar`'s `userMenu` slot. → Mitigation: smoke-test during implementation. The same risk applies to `NavigationDrawer`'s `startButton` slot — both share the resolution path (verify once, fall back to `cloneElement` inside ShellBar if needed).
 - [Risk] Two `UserMenu` instances mounted at once (unlikely but possible in stories) would create two popovers anchored to two avatars. → Acceptable: they don't share an opener id, so they coexist; React's `useId` ensures unique opener ids.
-- [Trade-off] Required `about` props force every consumer to think about copyright/version even if they don't display them. → Accepted: matches the legal/compliance default. Easier to relax later (make `about` optional) than to tighten.
+- [Trade-off] Locked About branding (only `version` is configurable) means an app cannot customise the copyright text or legal links even when it has a legitimate reason. → Accepted: a single, centrally-controlled legal/branding surface across the product suite outweighs per-app flexibility. Easier to relax later (open a `children` slot) than to claw back an over-permissive `about` object.
 - [Trade-off] No account-switcher in v1. → Accepted: not on the user's list. Additive in the future.
 
 ## Migration Plan

@@ -2,34 +2,34 @@
 
 ### Requirement: Component export
 
-The `UserMenu` component SHALL be exported from `@reltio/design/components` as a named export, together with its `UserMenuProps`, `UserMenuUser`, `UserMenuAbout`, and `UserMenuLegalLink` types.
+The `UserMenu` component SHALL be exported from `@reltio/design/components` as a named export, together with its `UserMenuProps` and `UserMenuUser` types. The About-modal title, copyright, and legal links are fixed inside the component and are NOT part of the public API.
 
 #### Scenario: Public import
 
-- **WHEN** a consumer writes `import { UserMenu, type UserMenuProps, type UserMenuUser, type UserMenuAbout, type UserMenuLegalLink } from "@reltio/design/components"`
+- **WHEN** a consumer writes `import { UserMenu, type UserMenuProps, type UserMenuUser } from "@reltio/design/components"`
 - **THEN** module resolution succeeds and all symbols are available with TypeScript types
 
-### Requirement: Required user, about, and onSignOut props
+### Requirement: Required user, version, and onSignOut props
 
-The component SHALL require three props with no defaults: `user`, `about`, and `onSignOut`. The TypeScript signature SHALL enforce these as required (TypeScript compilation SHALL fail if any are omitted).
+The component SHALL require three props with no defaults: `user`, `version`, and `onSignOut`. The TypeScript signature SHALL enforce these as required (TypeScript compilation SHALL fail if any are omitted). `version` is the ONLY About-modal field the consumer controls; the modal title, copyright, and legal links are constants inside the component so applications cannot alter Reltio's branding or legal references.
 
 - `user: { name: string; email: string; initials?: string; avatarUrl?: string }`
-- `about: { title: string; copyright: string; version: string; legalLinks?: { label: string; href: string }[] }`
+- `version: string`
 - `onSignOut: () => void`
 
 #### Scenario: Missing user is a type error
 
-- **WHEN** a consumer writes `<UserMenu about={…} onSignOut={…} />` (no `user`)
+- **WHEN** a consumer writes `<UserMenu version={…} onSignOut={…} />` (no `user`)
 - **THEN** TypeScript compilation fails with a missing-property error on the `user` prop
 
-#### Scenario: Missing about is a type error
+#### Scenario: Missing version is a type error
 
-- **WHEN** a consumer writes `<UserMenu user={…} onSignOut={…} />` (no `about`)
-- **THEN** TypeScript compilation fails with a missing-property error on the `about` prop
+- **WHEN** a consumer writes `<UserMenu user={…} onSignOut={…} />` (no `version`)
+- **THEN** TypeScript compilation fails with a missing-property error on the `version` prop
 
 #### Scenario: Missing onSignOut is a type error
 
-- **WHEN** a consumer writes `<UserMenu user={…} about={…} />` (no `onSignOut`)
+- **WHEN** a consumer writes `<UserMenu user={…} version={…} />` (no `onSignOut`)
 - **THEN** TypeScript compilation fails with a missing-property error on the `onSignOut` prop
 
 ### Requirement: Avatar trigger renders into ShellBar profile slot
@@ -66,7 +66,7 @@ The component SHALL render a UI5 `Avatar` as the user-menu trigger with the attr
 When the user clicks the avatar trigger, the component SHALL open a UI5 `UserMenu` popover anchored to the avatar. The popover SHALL show:
 
 - A header area displaying `user.name` (primary text) and `user.email` (secondary text).
-- A primary menu item with the label `about.title` (e.g. `"About Console"`) that opens the About modal when activated.
+- A primary menu item with the fixed label `"About"` that opens the About modal when activated.
 - A footer Sign Out button that closes the popover and invokes `onSignOut()`.
 
 The popover SHALL close when the user activates an item, clicks the backdrop, or presses `Escape`. The popover open/close state SHALL be internal to the component (no `open`/`onOpenChange` props).
@@ -81,10 +81,10 @@ The popover SHALL close when the user activates an item, clicks the backdrop, or
 - **WHEN** the popover is open with `user={{name: "Alaina Chevalier", email: "alaina.chevalier@sap.com"}}`
 - **THEN** the popover header displays `"Alaina Chevalier"` and `"alaina.chevalier@sap.com"`
 
-#### Scenario: About item label uses about.title
+#### Scenario: About item uses the fixed label
 
-- **WHEN** the popover is open with `about={{title: "About Console", ...}}`
-- **THEN** the popover renders a menu item with the label `"About Console"`
+- **WHEN** the popover is open
+- **THEN** the popover renders a menu item with the fixed label `"About"`
 
 #### Scenario: About item click opens About modal and closes popover
 
@@ -110,27 +110,27 @@ The popover SHALL close when the user activates an item, clicks the backdrop, or
 
 The About modal SHALL be a UI5 `Dialog` opened from the popover's About menu item. The modal SHALL render:
 
-1. The heading `about.title`.
-2. The body containing `about.copyright` as a paragraph.
-3. A labelled value rendering `about.version` (e.g. `"Version: 2.21.3"`).
-4. When `about.legalLinks` is supplied and non-empty, the list of legal links rendered as anchors with `target="_blank"` and `rel="noopener noreferrer"`.
+1. The fixed heading `"About"`.
+2. The body containing a fixed Reltio copyright paragraph.
+3. A labelled value rendering the consumer-supplied `version` (e.g. `"Version: 2.21.3"`).
+4. A fixed list of legal links (`Privacy Policy`, `Terms of Use`) rendered as anchors with `target="_blank"` and `rel="noopener noreferrer"`.
 
-The modal SHALL include a `Close` footer button. The modal SHALL also close on `Escape` and backdrop click. The modal open/close state SHALL be internal to the component (no `aboutOpen`/`onAboutOpenChange` props).
+Only `version` is consumer-controlled; the heading, copyright, and links are constants inside the component. The modal SHALL include a `Close` footer button. The modal SHALL also close on `Escape` and backdrop click. The modal open/close state SHALL be internal to the component (no `aboutOpen`/`onAboutOpenChange` props).
 
-#### Scenario: Modal shows title, copyright, version
+#### Scenario: Modal shows fixed heading and copyright with supplied version
 
-- **WHEN** the modal is open with `about={{title: "About Console", copyright: "© 2026 Reltio Inc.", version: "2.21.3"}}`
-- **THEN** the rendered modal contains the heading `"About Console"`, the paragraph `"© 2026 Reltio Inc."`, and the labelled value `"Version: 2.21.3"` (or similar formatted label)
+- **WHEN** the modal is open with `version="2.21.3"`
+- **THEN** the rendered modal contains the fixed heading `"About"`, a fixed Reltio copyright paragraph, and the labelled value `"Version: 2.21.3"` (or similar formatted label)
 
-#### Scenario: Modal renders legal links as new-tab anchors
+#### Scenario: Modal renders the fixed legal links as new-tab anchors
 
-- **WHEN** the modal is open with `about.legalLinks=[{label: "Privacy", href: "/privacy"}, {label: "Terms", href: "/terms"}]`
-- **THEN** the rendered modal contains two anchors with text `"Privacy"` and `"Terms"`, each carrying `target="_blank"` and `rel="noopener noreferrer"`
+- **WHEN** the modal is open
+- **THEN** the rendered modal contains anchors with text `"Privacy Policy"` and `"Terms of Use"`, each carrying `target="_blank"` and `rel="noopener noreferrer"`
 
-#### Scenario: Missing legalLinks omits the section
+#### Scenario: Application cannot override the About branding
 
-- **WHEN** the modal is open with `about={{title: "...", copyright: "...", version: "..."}}` (no `legalLinks` field)
-- **THEN** the rendered modal does NOT contain a legal-links section
+- **WHEN** a consumer renders `<UserMenu>` with any props
+- **THEN** there is no prop that changes the modal heading, copyright, or legal links — they are constants inside the component
 
 #### Scenario: Close button closes modal
 

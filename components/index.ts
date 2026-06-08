@@ -79,3 +79,4 @@ export * from "./ShellBar";
 export * from "./Skeleton";
 export * from "./TenantSelector";
 export * from "./TextArea";
+export * from "./UserMenu";

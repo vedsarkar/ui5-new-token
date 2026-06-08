@@ -5,37 +5,57 @@ type Ui5ShellBarProps = ComponentPropsWithoutRef<typeof Ui5ShellBar>;
 
 /**
  * Reltio ShellBar — top navigation chrome with a default Reltio brand mark
- * in the left `branding` slot.
+ * in the `logo` slot.
  *
  * Wraps `@ui5/webcomponents-react/ShellBar` and adds:
- * - default `branding` slot rendering a `ShellBarBranding` with the Reltio
- *   brand mark, switching between `horizon-light` and `horizon-dark`
- *   variants based on the closest `[data-theme]` ancestor
- * - `branding?: ReactNode` override prop for sub-apps that want their own mark
+ * - default `logo` slot rendering the Reltio brand mark, switching between
+ *   `horizon-light` and `horizon-dark` variants based on the closest
+ *   `[data-theme]` ancestor
+ * - `logo` override prop (the recommended customization path) for sub-apps
+ *   that want their own mark
  * - `tenantSelector` / `userMenu` Reltio slot props (see below)
  * - `data-test-id` forwarding to the rendered light-DOM host
  *
- * The UI5 `logo` slot is a separate concern (it now lives near the profile
- * in UI5 2.21+) and remains available as a regular pass-through prop.
- *
- * Every other UI5 ShellBar prop (`primaryTitle`, `secondaryTitle`,
- * `startButton`, `searchField`, …) passes through unchanged.
+ * The wrapper deliberately exposes a minimal surface. The remaining UI5
+ * pass-through props are `primaryTitle`, `secondaryTitle`, `logo`,
+ * `onLogoClick`, `content`, `children`, `className`, and `style`. All
+ * deep-customization UI5 props (experimental slots, search, notifications,
+ * product switch, menu items, profile, …) are intentionally omitted to keep
+ * the component focused; dedicated Reltio props will be added when needed.
  */
-export type ShellBarProps = Omit<Ui5ShellBarProps, "branding"> & {
-	/**
-	 * Override the default Reltio branding (left brand mark + optional title).
-	 * Must be a `<ShellBarBranding>` element (or any React element that UI5
-	 * recognises as the `branding` slot child). Primitive types (string, null)
-	 * are silently discarded by UI5's slot validation — pass an element only.
-	 */
-	branding?: ReactElement;
+export type ShellBarProps = Omit<
+	Ui5ShellBarProps,
+	| "accessibilityAttributes"
+	| "assistant"
+	| "branding"
+	| "disableSearchCollapse"
+	| "hideSearchButton"
+	| "menuItems"
+	| "notificationsCount"
+	| "onContentItemVisibilityChange"
+	| "onMenuItemClick"
+	| "onNotificationsClick"
+	| "onProductSwitchClick"
+	| "onProfileClick"
+	| "onSearchButtonClick"
+	| "onSearchFieldClear"
+	| "onSearchFieldToggle"
+	| "profile"
+	| "searchField"
+	| "showNotifications"
+	| "showProductSwitch"
+	| "showSearchField"
+	| "startButton"
+	| "waitForDefine"
+> & {
 	/**
 	 * Tenant picker rendered into the UI5 ShellBar `content` slot, so it sits in
 	 * the content area just after the branding/title (left cluster) rather than
 	 * in the right actions cluster. Intended to host a `<TenantSelector>`
 	 * element; the type is the generic `ReactElement` and the wrapper does not
-	 * enforce the runtime element type. Takes precedence over a directly-supplied
-	 * `content` prop.
+	 * enforce the runtime element type. Composed with a directly-supplied
+	 * `content` prop (the tenant selector renders first, then `content`) rather
+	 * than replacing it.
 	 */
 	tenantSelector?: ReactElement;
 	/**
@@ -45,8 +65,8 @@ export type ShellBarProps = Omit<Ui5ShellBarProps, "branding"> & {
 	 * popover and About modal render as overlays. The type is the generic
 	 * `ReactElement` and the wrapper does not enforce the runtime element type.
 	 *
-	 * Precedence: an explicit `profile` prop wins — when both are supplied, the
-	 * `userMenu` element is not rendered.
+	 * This is the only way to populate the user area — the UI5 `profile` prop is
+	 * intentionally not exposed.
 	 */
 	userMenu?: ReactElement;
 };
