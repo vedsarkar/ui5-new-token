@@ -11,13 +11,38 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Design Tokens
 
-The Reltio Design Platform mirrors [SAP Horizon](https://github.com/SAP/theming-base-content) design tokens 1:1. Every `--sap*` CSS variable is available on `:root` when `variables.css` is loaded. Colors **must** use these tokens — never hardcode hex values.
+The Reltio Design Platform ships two SAP-branded themes — **SAP Reltio** (light) and **SAP Reltio Dark** — built as a **lightly customized SAP Horizon theme**. We keep SAP Horizon's full token **surface** — every `--sap*` CSS variable is present on `:root` when `variables.css` is loaded — and only adjust the **values** of selected tokens to match the Reltio brand. Token **names, casing, and structure are never changed**, so the themes stay fully compatible with the UI5 web components. Colors **must** use these tokens — never hardcode hex values.
+
+> **🎯 Key Principle:** Same SAP Horizon token names, Reltio-tuned values. Because the names are identical to upstream, UI5 components consume our customized values automatically — no forks, no parallel theme, no per-component overrides.
+
+> **ℹ️ Naming:** **SAP Reltio** / **SAP Reltio Dark** are the display names of the themes. Following SAP's acquisition of Reltio, these brand the customized Horizon theme. The technical identifiers are still SAP Horizon's — `data-theme="horizon-light"` / `horizon-dark` and `sapSapThemeId` = `sap_horizon` / `sap_horizon_dark`. Official registration of the theme with SAP under a dedicated `themeId` is planned; until then, keep using the Horizon identifiers in code.
 
 The same token surface powers both **Reltio components** (CSS Modules under `components/`) and the underlying **UI5 web components** from `@ui5/webcomponents-react` — UI5 reads `--sap*` variables through Shadow DOM automatically, so there is no separate theme system to manage.
 
+### What "customized" means
+
+<table>
+	<thead>
+		<tr><th>Aspect</th><th>Behavior</th></tr>
+	</thead>
+	<tbody>
+		<tr><td>Theme display names</td><td><strong>SAP Reltio</strong> (light) and <strong>SAP Reltio Dark</strong></td></tr>
+		<tr><td>Technical identifiers</td><td><code>data-theme="horizon-light"</code> / <code>"horizon-dark"</code>; <code>sapSapThemeId</code> = <code>sap_horizon</code> / <code>sap_horizon_dark</code> (official SAP <code>themeId</code> registration pending)</td></tr>
+		<tr><td>Token names</td><td>Identical to SAP Horizon (<code>@sap-theming/theming-base-content</code>) — 1:1, verbatim</td></tr>
+		<tr><td>Token set</td><td>Complete — every upstream <code>--sap*</code> key is present, in upstream order</td></tr>
+		<tr><td>Token values</td><td>Reltio-tuned for selected tokens (brand, links, accents, …); the rest match SAP defaults</td></tr>
+		<tr><td>UI5 compatibility</td><td>Full — UI5 components read the same variable names and pick up our values automatically</td></tr>
+		<tr><td>Source of truth</td><td>Repo-local <code>utils/sap_horizon.tokens.json</code> (light) and <code>utils/sap_horizon_dark.tokens.json</code> (dark); <code>npm run build-tokens</code> generates <code>public/variables.css</code> (fonts are generated separately by <code>npm run build-fonts</code>)</td></tr>
+	</tbody>
+</table>
+
 ## Usage
 
-Include `variables.css` and `fonts.css` in your page `<head>`, then set `data-theme` on any ancestor element:
+Load `variables.css` and `fonts.css`, then set `data-theme` on any ancestor element. There are two equivalent ways to load the CSS — both ship the exact same files.
+
+### Option 1 — CDN (`<link>`)
+
+The simplest setup: link the files straight from `https://reltio.design/`.
 
 ```html
 <link rel="stylesheet" href="https://reltio.design/variables.css" />
@@ -28,7 +53,22 @@ Include `variables.css` and `fonts.css` in your page `<head>`, then set `data-th
 </div>
 ```
 
-Switch the active theme by toggling `data-theme="horizon-light"` or `data-theme="horizon-dark"` on any ancestor. Nested theming is supported — a `[data-theme]` on a child element scopes that theme to its subtree.
+> **📌 Need a version-pinned URL?** The `https://reltio.design/` URLs always serve the **latest** published files, which may change at runtime as the platform ships updates. Our static assets are hosted on Vercel, so we can provide a **fixed, version-locked CDN URL** for any release — useful if you want to guard against unexpected runtime changes or roll back to a previous version. Reach out to the UI Center of Excellence at [ui.coe@reltio.com](mailto:ui.coe@reltio.com) to get a pinned URL for the version you need.
+
+### Option 2 — Import from the package
+
+`@reltio/design` ships both stylesheets in its published bundle, so a bundler-based app (Vite, webpack, Next.js, …) can import them as side effects — no separate CDN request:
+
+```ts
+import "@reltio/design/variables.css";
+import "@reltio/design/fonts.css";
+```
+
+> **⚠️ Fonts still load from the CDN.** The package ships `fonts.css`, but **not** the `.woff2` binaries. Every `@font-face` rule inside `fonts.css` points its `src` at `https://reltio.design/fonts/*.woff2`, so the font files are always fetched from the CDN — regardless of which option you choose. `variables.css`, by contrast, is fully self-contained (only `--sap*` declarations, no external references).
+>
+> **Self-hosting fonts?** To serve the `.woff2` files from your own origin (air-gapped or CSP-locked environments), download the SAP 72 binaries yourself and generate your own `fonts.css` whose `src` URLs point at your host — see the [Typography guide](/?path=/docs/guides-typography--docs). Do not rely on `@reltio/design`'s `fonts.css` for that case.
+
+Either way, switch the active theme by toggling `data-theme="horizon-light"` (**SAP Reltio**) or `data-theme="horizon-dark"` (**SAP Reltio Dark**) on any ancestor. Nested theming is supported — a `[data-theme]` on a child element scopes that theme to its subtree.
 
 **CSS** — reference any variable: `color: var(--sapBrandColor)`, `background: var(--sapErrorBackground)`, etc.
 

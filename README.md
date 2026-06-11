@@ -105,6 +105,8 @@ Load the platform's static CSS files in `<head>` and set the `data-theme` attrib
 
 Switch the theme by toggling `data-theme="horizon-light"` or `data-theme="horizon-dark"` on any ancestor element. Nested theming is supported.
 
+The two themes are branded **SAP Reltio** (light) and **SAP Reltio Dark** — a Reltio-branded customisation of SAP Horizon. These are display names; the technical identifiers stay SAP Horizon's (`data-theme="horizon-light"` / `horizon-dark`). Official SAP `themeId` registration is planned.
+
 ### Using endorsed UI5 components
 
 Endorsed SAP Fiori components are re-exported from `@reltio/design/components` — that's where you import them from in app code. No need to install `@ui5/webcomponents-react` yourself; it arrives transitively at the version the CoE has tested.
@@ -326,7 +328,8 @@ export const Thinking = {
 ```bash
 npm run dev               # Run Storybook in development mode
 npm run build-storybook   # Build Storybook for production
-npm run build-tokens      # Regenerate variables.css, fonts.css, fonts/ from @sap-theming/theming-base-content
+npm run build-tokens      # Regenerate variables.css from utils/*.tokens.json
+npm run build-fonts       # Regenerate fonts.css (SAP 72 @font-face rules; .woff2 vendored in public/fonts)
 npm run lint              # Check code with Biome
 npm run format            # Format code with Biome
 npm run test              # Run Vitest tests

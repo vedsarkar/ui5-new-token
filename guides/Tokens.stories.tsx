@@ -1,6 +1,6 @@
-import tokens from "@sap-theming/theming-base-content/content/Base/baseLib/sap_horizon/variables.json";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { TokenTable } from "@/.storybook/blocks/TokenTable";
+import tokens from "@/utils/sap_horizon.tokens.json";
 
 const root = (tokens as { root: Record<string, string> }).root;
 const keys = Object.keys(root);
@@ -30,7 +30,7 @@ const baseKeys = new Set([
 ]);
 
 const meta: Meta<typeof TokenTable> = {
-	title: "Design Tokens/Horizon Morning",
+	title: "Design Tokens/SAP Reltio",
 	component: TokenTable,
 	tags: ["!autodocs"],
 	parameters: {

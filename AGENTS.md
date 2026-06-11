@@ -75,7 +75,7 @@ Do NOT apply Reltio Design Platform conventions (Biome, CSS Modules, `type` keyw
 - **Single distribution package**: [`@reltio/design`](packages/design/) — the only thing a Reltio app installs. Re-exports an endorsed subset of SAP Fiori (UI5) components plus all Reltio business components, charts, hooks, and utilities. Pinned to an exact UI5 version that the UI Center of Excellence has tested.
 - **UI foundation (transitive, pinned)**: [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/) — bundled with `@reltio/design` at an exact version (currently `2.21.3`). Apps never install it directly.
 - **Icons**: [`@ui5/webcomponents-icons`](https://sap.github.io/ui5-webcomponents/) — SAP Fiori icon set. Apps load icons as side-effect imports (`import "@ui5/webcomponents-icons/dist/save.js"`); the package itself comes transitively via `@reltio/design`.
-- **Design tokens & fonts**: [`@sap-theming/theming-base-content`](https://github.com/SAP/theming-base-content) — generated into static `public/variables.css`, `public/fonts.css`, `public/fonts/*.woff2`
+- **Design tokens & fonts**: repo-local token files (`utils/sap_horizon.tokens.json`, `utils/sap_horizon_dark.tokens.json`) that mirror the SAP Horizon ([`@sap-theming/theming-base-content`](https://github.com/SAP/theming-base-content)) key surface 1:1 with Reltio-customised values — `npm run build-tokens` generates `public/variables.css` and `npm run build-fonts` generates `public/fonts.css`; the SAP 72 `public/fonts/*.woff2` binaries are vendored in the repo
 - **Charts**: [ECharts](https://echarts.apache.org/) — see `charts/`
 - **Language**: TypeScript (strict mode)
 - **Documentation & Testing**: Storybook + Chromatic (visual, interaction, accessibility, coverage)
@@ -100,7 +100,8 @@ nvm use                   # pick the Node version from .nvmrc
 npm install               # installs all workspaces in one pass
 npm run dev               # Start Storybook dev server (port 6006) — also serves the Reltio Design MCP at /mcp
 npm run build-storybook   # Build Storybook for production
-npm run build-tokens      # Generate public/variables.css, public/fonts.css and copy public/fonts/*.woff2 from the @sap-theming/theming-base-content npm package
+npm run build-tokens      # Generate public/variables.css from utils/*.tokens.json
+npm run build-fonts       # Generate public/fonts.css (SAP 72 @font-face rules; .woff2 vendored in public/fonts)
 npm run lint              # Check code with Biome (no auto-fix)
 npm run format            # Format code with Biome (auto-fix)
 npm run deploy            # Deploy to Chromatic for visual testing
@@ -341,10 +342,11 @@ UI5 components live in Shadow DOM, so regular CSS selectors do not reach their i
 
 Do NOT wrap a UI5 component in a Reltio component just to restyle it. Wrap only when there is real business logic to add.
 
-### Global Design Tokens (SAP Horizon)
-- The platform mirrors SAP Horizon design tokens 1:1 from [SAP/theming-base-content](https://github.com/SAP/theming-base-content). Names, casing (camelCase), and values are preserved verbatim.
+### Global Design Tokens (SAP Reltio themes)
+- The platform ships two SAP-branded themes — **SAP Reltio** (light) and **SAP Reltio Dark** — a Reltio-branded customisation of SAP Horizon. Display names only: the technical identifiers stay SAP Horizon's (`data-theme="horizon-light"` / `horizon-dark`, `sapSapThemeId` = `sap_horizon` / `sap_horizon_dark`). Official SAP `themeId` registration is planned — keep using the Horizon identifiers in code until then.
+- The platform mirrors SAP Horizon's design-token **key surface** 1:1 from [SAP/theming-base-content](https://github.com/SAP/theming-base-content) — names and casing (camelCase) are preserved verbatim. **Values** are Reltio-customised for selected tokens; every SAP Horizon key stays present.
 - Generated CSS lives at `public/variables.css` — a single file with all `--sap*` tokens on `:root` (light defaults) and `[data-theme]` overrides for theme-specific values. Auto-generated — do NOT edit manually, run `npm run build-tokens`.
-- Sources: the `@sap-theming/theming-base-content` npm package, which ships SAP Horizon's light (`content/Base/baseLib/sap_horizon/variables.json`), dark (`content/Base/baseLib/sap_horizon_dark/variables.json`), and the typography `.woff2` font binaries under `content/Base/baseLib/baseTheme/fonts/`. The version is pinned via `package-lock.json`. To upgrade: `npm update @sap-theming/theming-base-content` (or bump the version in `package.json` and run `npm install`), then re-run `npm run build-tokens` and commit the regenerated artifacts together with the lockfile bump.
+- Sources: repo-local token files `utils/sap_horizon.tokens.json` (light) and `utils/sap_horizon_dark.tokens.json` (dark). Each carries the full SAP Horizon key set in upstream order with Reltio-tuned values. The SAP 72 typography `.woff2` binaries are vendored under `public/fonts/`. To customise tokens: edit the `utils/*.tokens.json` files, then re-run `npm run build-tokens` and commit the regenerated `public/variables.css`. The `@font-face` stylesheet `public/fonts.css` is generated separately by `npm run build-fonts`.
 - Token naming: `--sap{Group}*` or `--sap{Group}_{Detail}` (camelCase + underscore separators). Examples: `--sapBrandColor`, `--sapTextColor`, `--sapElement_BorderCornerRadius`, `--sapContent_FocusColor`, `--sapContent_Shadow0`, `--sapButton_Background`, `--sapField_BorderColor`.
 - Theme activation: the consumer loads `variables.css` in `<head>` and sets `data-theme="horizon-light"` or `data-theme="horizon-dark"` on any ancestor element. Without `data-theme`, light theme applies as the `:root` default. Nested theming is supported — a `[data-theme]` on a child element scopes that theme to its subtree.
 - UI5 web components and Reltio CSS Modules read the same tokens from the cascade — set the attribute once and both layers re-theme together.
