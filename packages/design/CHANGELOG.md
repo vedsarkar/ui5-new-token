@@ -1,5 +1,19 @@
 # @reltio/design
 
+## 1.3.0
+
+### Minor Changes
+
+- ff7d05b: Add `UserMenu` component and a `userMenu` slot on `ShellBar`.
+
+  - `UserMenu` bundles the trigger avatar (image or derived initials), the UI5 user-menu popover (name + email, About item, Sign Out), and the About modal (copyright, version, optional legal links).
+  - Required `user`, `about`, and `onSignOut` props; popover and About-modal open/close state is internal. `onSignOut` is fire-and-forget — the component performs no navigation.
+  - `ShellBar` gains an additive `userMenu?: ReactElement` slot routed into the UI5 ShellBar `profile` slot; an explicit `profile` prop takes precedence.
+
+- c9c4303: Ship the **SAP Reltio** (light) and **SAP Reltio Dark** themes — a Reltio-branded customization of SAP Horizon. The published `variables.css` now carries Reltio-tuned values for selected `--sap*` tokens (brand, links, accents, and more).
+
+  Token **names, casing, and structure are unchanged** and remain 1:1 with SAP Horizon, so the themes stay fully compatible with the UI5 web components — no migration required. Technical identifiers also stay the same: `data-theme="horizon-light"` / `horizon-dark`.
+
 ## 1.2.0
 
 ### Minor Changes
