@@ -63,6 +63,10 @@ type ComponentManifestEntry = {
 	path?: string;
 	import?: string;
 	error?: { name: string; message: string };
+	/** Storybook's default react-docgen (JS parser) output. MCP prefers this
+	 * field over `reactDocgenTypescript`, so we delete it whenever our own
+	 * extractor produces resolved props — see `experimental_manifests`. */
+	reactDocgen?: unknown;
 	reactDocgenTypescript?: ReactDocgenTypescript;
 	[key: string]: unknown;
 };
@@ -187,21 +191,42 @@ export const experimental_manifests = async (
 	for (const [id, entry] of Object.entries(existing.components.components)) {
 		let next: ComponentManifestEntry = entry;
 
-		if (entry.path) {
-			const subpath = subpathFromPath(entry.path);
-			if (subpath) {
-				next = {
-					...next,
-					import: rewriteImportForSubpath(next.import, next.name, subpath),
-				};
-			}
+		// Only `components/` and `charts/` entries participate in the Reltio
+		// docs pipeline. Everything else (guides, openApi docs, hook demos)
+		// keeps Storybook's own manifest output untouched.
+		const subpath = entry.path ? subpathFromPath(entry.path) : undefined;
+		if (!subpath) {
+			rewritten[id] = next;
+			continue;
 		}
 
-		const hasMissingDocgen =
+		next = {
+			...next,
+			import: rewriteImportForSubpath(next.import, next.name, subpath),
+		};
+
+		// Always prefer our TypeScript Compiler API extractor for components
+		// that follow the `<Name>.types.ts` → `<Name>Props` convention. Two
+		// failure modes of Storybook's built-in docgen make this necessary:
+		//
+		//   1. UI5 endorsed re-exports (`declare const X: ForwardRefExoticComponent<…>`)
+		//      make react-docgen error outright — no props at all.
+		//   2. Our own Reltio components type props via the imported
+		//      `HtmlProps<Tag, {…}>` generic. react-docgen (the JS parser
+		//      Storybook react-vite uses by default) cannot resolve an
+		//      imported generic type alias — it silently returns only the
+		//      props that carry an inline default literal in the destructuring
+		//      (often just one), with type `any`. No error is raised, so the
+		//      incomplete result would otherwise pass straight through.
+		//
+		// `@storybook/mcp` prefers `reactDocgen` over `reactDocgenTypescript`
+		// (see getParsedDocgen), so we must also delete the incomplete
+		// `reactDocgen` field for our authoritative props to win.
+		const hadMissingDocgen =
 			next.error?.name === "No component import found" ||
 			next.error?.name === "No component found";
 		const typesPath = typesPathForEntry(entry);
-		if (hasMissingDocgen && typesPath && fs.existsSync(typesPath)) {
+		if (typesPath && fs.existsSync(typesPath)) {
 			try {
 				const props = getExtractor().extractProps(
 					typesPath,
@@ -215,14 +240,21 @@ export const experimental_manifests = async (
 							props,
 						),
 					};
+					delete next.reactDocgen;
 					delete next.error;
 				}
 			} catch (err) {
-				console.warn(
-					`[reltio-manifest] could not enrich docgen for ${entry.name}: ${
-						err instanceof Error ? err.message : String(err)
-					}`,
-				);
+				// Only surface a warning when there is no usable docgen to fall
+				// back on (component errored or has a `.types.ts` that does not
+				// export `<Name>Props`). Components with working react-docgen
+				// stay quiet.
+				if (hadMissingDocgen || !next.reactDocgen) {
+					console.warn(
+						`[reltio-manifest] could not enrich docgen for ${entry.name}: ${
+							err instanceof Error ? err.message : String(err)
+						}`,
+					);
+				}
 			}
 		}
 

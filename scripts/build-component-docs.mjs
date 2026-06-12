@@ -64,11 +64,6 @@ const FIXED_IMPORTS = `import { Meta, Stories } from "@storybook/addon-docs/bloc
 import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
 import { SectionHeading } from "@/.storybook/blocks/SectionHeading";`;
 
-/** Escape a string for safe embedding inside an MDX comment block.
- * The only sequence that closes a `/* ... *\/` comment is the literal `*\/`,
- * so we break it up the same way build-api-docs.mjs does for raw JSON. */
-const escapeForMdxComment = (text) => text.replaceAll("*/", "*\\/");
-
 /** Map a component directory to its published `@reltio/design` subpath.
  * Mirrors the runtime mapping in `.storybook/reltioManifestPreset.ts` so
  * the import shown in the docs page matches the import the MCP rewrites
@@ -106,12 +101,7 @@ const injectAutoImport = (readme, componentName, subpath) => {
 	return `# ${componentName}\n\n${importBlock}\n\n${stripped.trim()}\n`;
 };
 
-const buildMdx = ({
-	componentName,
-	readmeWithImport,
-	jsonSchemaSource,
-	storiesSource,
-}) =>
+const buildMdx = ({ componentName, readmeWithImport }) =>
 	`${HEADER}
 
 ${FIXED_IMPORTS}
@@ -125,14 +115,6 @@ ${readmeWithImport.trim()}
 <SectionHeading>Prop types</SectionHeading>
 
 <JsonSchema schema={schema} />
-
-{/* __JSON_SCHEMA__
-${escapeForMdxComment(jsonSchemaSource)}
-*/}
-
-{/* __RAW_STORIES_SOURCE__
-${escapeForMdxComment(storiesSource.trim())}
-*/}
 
 <div style={{ marginTop: 32 }}>
 	<Stories />
@@ -189,7 +171,6 @@ const buildOne = (typeExtractor, { dir, componentName }) => {
 	}
 
 	const readme = fs.readFileSync(readmePath, "utf8");
-	const storiesSource = fs.readFileSync(storiesPath, "utf8");
 	const readmeWithImport = injectAutoImport(
 		readme,
 		componentName,
@@ -203,12 +184,7 @@ const buildOne = (typeExtractor, { dir, componentName }) => {
 		);
 	}
 
-	const mdx = buildMdx({
-		componentName,
-		readmeWithImport,
-		jsonSchemaSource: schemaResult.serialized,
-		storiesSource,
-	});
+	const mdx = buildMdx({ componentName, readmeWithImport });
 
 	fs.writeFileSync(outPath, mdx, "utf8");
 	return {
