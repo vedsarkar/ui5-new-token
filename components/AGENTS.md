@@ -313,7 +313,7 @@ Each component ships with **four hand-authored sources** that together feed the 
 | `README.md` | Anyone reading the docs page or browsing the repo | Narrative context — why the component exists, what concerns it owns, conventions agents need to know |
 | `ComponentName.stories.tsx` | Chromatic, Storybook UI, AI agents | Concrete usage examples (one per visual variant), plus the canonical demo data |
 
-The build script (`scripts/build-component-docs.mjs`) reads these and produces `ComponentName.story.mdx` — a fully static MDX page. Visible content for human readers is the README narrative + `<JsonSchema>` prop-types table + native `<Stories>` block. Two payloads that AI agents need but humans do not are inlined as **MDX comments**: the JSON Schema for the props (under `__JSON_SCHEMA__`) and the full raw `.stories.tsx` (under `__RAW_STORIES_SOURCE__`). Both are invisible in the rendered page but appear verbatim in the MCP response.
+The build script (`scripts/build-component-docs.mjs`) reads these and produces `ComponentName.story.mdx` — a fully static MDX page whose visible content is the README narrative + `<JsonSchema>` prop-types table (from the generated `<Name>.schema.json`) + native `<Stories>` block. What an AI agent receives from `get-documentation` is **assembled by Storybook MCP from the components manifest**, not from hidden text in the MDX: a `## Stories` section (the first stories with resolved code snippets + an index of the rest) and a `## Props` section (resolved prop types with JSDoc and defaults). The README prose is returned verbatim as the `## Docs` section. See [Why the manifest, not inlined comments](#why-the-manifest-not-inlined-comments) for how the `## Props` block is populated.
 
 ### Pipeline is opt-in (for production / MCP-targeted components)
 
@@ -322,14 +322,16 @@ The static MDX pipeline is **not required for local iteration**. While you are s
 Opt the component into the static MDX pipeline (write a `README.md` in its folder — the build script auto-discovers it) when:
 
 - The API is stable enough to be consumed externally
-- You want remote MCP consumers (AI agents querying the deployed Storybook) to receive the rich payload — full README, raw types with nested-field JSDoc, raw stories source
+- You want remote MCP consumers (AI agents querying the deployed Storybook) to receive the rich payload — full README narrative, a complete resolved prop table, and story examples with code
 - You are about to ship / publish the component
 
 Until then, keep iterating with the default autodocs page. No `.story.mdx` is committed to disk, no opt-in needed, no script runs — just `npm run dev` and the autodocs page reflects whatever JSDoc/types/stories you have right now.
 
-### Why static MDX
+### Why the manifest, not inlined comments
 
-Storybook MCP returns the source MDX as plain text. JSX expressions like `<ArgTypes />` or `<TypesSource source={typesSource} />` arrive at the agent as raw JSX with **unresolved variables**, not as their rendered content. Anything we want the agent to see must already be in the MDX as text — markdown body, inline string literals in JSX props, or MDX comments. The build script turns every dynamic source into one of these forms before writing the file. Result: one MCP `get-documentation` call returns the JSDoc summary + listing of all stories with args + full README + complete `.types.ts` (in `__RAW_TYPES_SOURCE__` MDX comment) + complete `.stories.tsx` (in `__RAW_STORIES_SOURCE__` MDX comment) — no roundtrips, no missing context.
+Storybook MCP returns the source MDX as plain text. JSX expressions like `<JsonSchema schema={schema} />` or `<Stories />` arrive at the agent as **raw, unrendered tags** — the agent never sees the prop table or the rendered stories they produce. The detailed payload therefore comes from the **components manifest** `@storybook/addon-mcp` builds, which the MCP renders as two native text blocks: `## Stories` (from the CSF stories) and `## Props` (from docgen). The README prose is plain markdown in the MDX body, so it comes through verbatim as `## Docs`. Do **not** try to smuggle extra data into the MDX via hidden comments — it only duplicates these native blocks and bloats every `get-documentation` response.
+
+The `## Props` block needs help. Storybook react-vite's default docgen is `react-docgen` (the JS parser), which **cannot resolve our imported `HtmlProps<Tag, {…}>` generic** (it silently returns only props with an inline default literal) and **errors outright** on UI5 endorsed re-exports (`declare const X: ForwardRefExoticComponent<…>`). So out of the box `## Props` is empty or wrong. [`.storybook/reltioManifestPreset.ts`](../.storybook/reltioManifestPreset.ts) fixes it: for every `components/` and `charts/` entry it runs the TypeScript Compiler API extractor ([`scripts/extractTypeApi.mjs`](../scripts/extractTypeApi.mjs)) against `<Name>.types.ts` → `<Name>Props`, writes the resolved props into `reactDocgenTypescript`, and **deletes the incomplete `reactDocgen`** (`@storybook/mcp` prefers `reactDocgen`). Net result: one `get-documentation` call returns the JSDoc summary + stories (first few with code, rest indexed) + full README + a complete props table.
 
 ### What renders in the docs page
 
@@ -342,14 +344,12 @@ import { ... } from "@reltio/design/components";   ← AUTO-INJECTED import (bui
 ### Subsection / ### Subsection            ← README ### sections (no H2)
 
 PROP TYPES                                 ← <SectionHeading>
-[JsonSchema table]                         ← visible to humans
-{/* __JSON_SCHEMA__ ... */}                ← invisible, only for MCP
+[JsonSchema table]                         ← visible to humans (from <Name>.schema.json)
 
-{/* __RAW_STORIES_SOURCE__ ... */}         ← invisible, only for MCP
 [Stories block]                            ← native Storybook <Stories /> with auto STORIES heading
 ```
 
-Authors do not write this layout — the script does. Authors write README, .types.ts, .stories.tsx, and the JSDoc summary. The script handles all three "audiences" (human readers, ArgTypes table, MCP agents) from those four sources.
+Authors do not write this layout — the script does. Authors write README, .types.ts, .stories.tsx, and the JSDoc summary. The script (for the human-facing page) and the manifest preset (for the MCP props/stories blocks) together serve all three "audiences" (human readers, the visible prop table, MCP agents) from those four sources.
 
 ### JSDoc convention
 
@@ -399,7 +399,9 @@ Compact narrative — only critical info not visible elsewhere on the page.
 
 ### `.types.ts` per-field JSDoc
 
-The full source of `.types.ts` is inlined into the docs page as an MDX comment (`__RAW_TYPES_SOURCE__`). It is **not** rendered for human readers — they have the `<ArgTypes>` table. But MCP agents read the MDX as plain text, so the comment lands in their `get-documentation` response with every JSDoc intact. Every field — including nested types like `AppEntry` — should carry a JSDoc comment, because the comment is the only place where nested type fields get described (`react-docgen-typescript` does not expand them in the `<ArgTypes>` table).
+Each top-level prop reaches the MCP `## Props` block through the extractor in [`.storybook/reltioManifestPreset.ts`](../.storybook/reltioManifestPreset.ts), which carries every prop's name, resolved type, JSDoc description, `@default`, and `@deprecated`. So put a JSDoc comment on **every** top-level prop — it shows in the visible `<JsonSchema>` table for humans and in `## Props` for agents.
+
+Nested object types (e.g. `apps: AppEntry[]`) are rendered by their type **name** only (`Array<AppEntry>`) — the extractor does not expand `AppEntry`'s fields, so a nested type's per-field JSDoc does **not** reach the props table. If an agent needs to understand a nested shape, describe it in the parent prop's JSDoc or in the README. Still keep JSDoc on nested fields — it powers IDE Quick Info and keeps the source self-documenting.
 
 ```tsx
 export type AppEntry = {
@@ -431,7 +433,9 @@ curl -s 'http://localhost:6006/mcp' \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get-documentation","arguments":{"id":"components-componentname"}}}'
 ```
 
-The response should include: the JSDoc one-liner, the listing of all stories with args, the README content (with H1, import, intro, sections), the JSON Schema for the props inside an MDX comment marked `__JSON_SCHEMA__`, and the full raw `.stories.tsx` body inside an MDX comment marked `__RAW_STORIES_SOURCE__`.
+The response should include: the JSDoc one-liner (component description), a `## Stories` section listing the stories with resolved code, a `## Props` section with the full resolved prop table (types, JSDoc, defaults), and a `## Docs` section containing the README (H1, import, intro, sections).
+
+If `## Props` is empty or shows only a single prop (often `any`-typed), the manifest preset's extractor failed for that component — confirm `<Name>.types.ts` exports `<Name>Props`, and check the dev-server log for a `[reltio-manifest] could not enrich docgen for <Name>` warning.
 
 ## Creating a New Component
 

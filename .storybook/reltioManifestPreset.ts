@@ -18,21 +18,29 @@
  *    under `components/` or `charts/`. Other entries (guides, openApi
  *    docs, design-token tables) are left alone.
  *
- * 2. **Resolved prop types for endorsed UI5 components.** Storybook's
- *    built-in `react-docgen-typescript` cannot parse the
- *    `declare const Button: ForwardRefExoticComponent<...>` pattern UI5
- *    React generates — it returns `error: "No component import found"`
- *    on Manifest Debugger. We already solve the same problem for our
- *    own MDX docs pipeline through `scripts/extractTypeApi.mjs`
- *    (a TypeScript Compiler API extractor that walks generics,
- *    intersections, and cross-package imports). This preset reuses that
- *    extractor: for every component whose directory has a matching
- *    `<Name>.types.ts`, we extract the resolved props, convert them to
- *    the `react-docgen-typescript` shape Storybook MCP and the Manifest
- *    Debugger expect, write them into `reactDocgenTypescript`, and
- *    clear the error. As a side effect the MCP `get-documentation`
- *    payload starts including a native `## Props` block alongside the
- *    custom `__JSON_SCHEMA__` MDX comment.
+ * 2. **Resolved prop types for the `## Props` block.** Storybook's
+ *    default docgen for react-vite is `react-docgen` (the JS parser),
+ *    which fails on our components in two distinct ways:
+ *      - **UI5 endorsed re-exports** (`declare const Button:
+ *        ForwardRefExoticComponent<...>`) make it error outright
+ *        (`error: "No component import found"`) — no props at all.
+ *      - **Our own Reltio components** type props via the imported
+ *        `HtmlProps<Tag, {...}>` generic. react-docgen cannot resolve an
+ *        imported generic alias, so it silently returns only the props
+ *        that carry an inline default literal in the destructuring (often
+ *        just one), typed `any`, with no error raised.
+ *    Either way the native `## Props` block in the MCP `get-documentation`
+ *    payload would be empty or wrong. This preset fixes it with the same
+ *    TypeScript Compiler API extractor the MDX docs pipeline uses
+ *    (`scripts/extractTypeApi.mjs`, which walks generics, intersections,
+ *    and cross-package imports): for every `components/` and `charts/`
+ *    entry that has a matching `<Name>.types.ts` exporting `<Name>Props`,
+ *    we extract the resolved props, convert them to the
+ *    `react-docgen-typescript` shape, write them into
+ *    `reactDocgenTypescript`, and clear any docgen error. Because
+ *    `@storybook/mcp` prefers `reactDocgen` over `reactDocgenTypescript`
+ *    (see its `getParsedDocgen`), we also DELETE the incomplete
+ *    `reactDocgen` field so our authoritative props win.
  *
  * Hooks into Storybook's `experimental_manifests` preset extension
  * point — the same hook `@storybook/addon-mcp` reads when assembling
