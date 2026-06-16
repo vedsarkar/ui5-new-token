@@ -1,0 +1,31 @@
+# SideNavigation
+
+`SideNavigation` is the Reltio entry point for application navigation — a thin wrapper over the SAP Fiori `SideNavigation` (`@ui5/webcomponents-react/SideNavigation`) that renders a vertical menu of links, optionally grouped and with second-level sub-items, plus an icon-only collapsed rail.
+
+The wrapper deliberately exposes a **minimal, narrowed API**. Only `accessibleName`, `children`, `collapsable`, and the standard element attributes (`className`, `style`, `id`, `data-*`, `aria-*`, …) are public. Every other UI5 prop and slot — `header`, `fixedItems`, `onSelectionChange`, `onItemClick`, and the rest — is intentionally hidden so navigation stays simple and consistent across Reltio applications. Dedicated Reltio props will be added on demand as teams need them.
+
+### Structure — items, groups, sub-items
+
+Build the menu from the endorsed parts, all imported from `@reltio/design/components` and passed as `children`: `SideNavigationItem` is a top-level entry (`text`, `icon`, `href`). Wrap related items in a `SideNavigationGroup` with a `text` title; groups cannot nest. Nest `SideNavigationSubItem` children inside an item for a second level — set `expanded` on the parent item to open it. Per the SAP guideline, do not put icons on second-level items, and keep icon usage consistent across a level (all items on a level have icons, or none do).
+
+### Selection and navigation
+
+Set `selected` on the active item to highlight it; the component does not auto-select. Items with an `href` behave as links. Items that open in a new tab (`target="_blank"`) or trigger an action (`design="Action"`) should be marked `unselectable`.
+
+### Inside ShellBar vs. standalone
+
+The most common placement is the [`ShellBar`](/?path=/docs/components-shellbar--docs) `sideNavigation` slot, which renders the menu as a full-height left drawer with an automatic hamburger toggle and a dimming backdrop — pass a `SideNavigation` element and the overlay behavior comes for free. Used standalone, `SideNavigation` is a plain vertical menu and the host owns layout.
+
+### Collapse toggle
+
+Set `collapsable` to render a collapse / expand toggle pinned at the bottom of the menu. The component owns its expanded/collapsed state internally — clicking the toggle switches the menu to an icon-only rail and clicking again restores the full menu. Always provide a `tooltip` on each item so entries stay discoverable while the menu is collapsed.
+
+### Accessibility
+
+Set `accessibleName` to announce the menu's purpose so screen readers can tell it apart from other navigation regions on the page (e.g. `"Main navigation"`). The internal navigation landmark lives inside the component's Shadow DOM, so a plain `aria-label` on the host does not reach it — `accessibleName` is the supported way to name the menu. Provide a `tooltip` on icon-only / collapsed items and on any item whose text may truncate.
+
+### See also
+
+- [SAP Fiori Side Navigation design guideline](https://experience.sap.com/fiori-design-web/side-navigation/) — semantic guidance and visual patterns
+- [UI5 SideNavigation web component reference](https://ui5.github.io/webcomponents/components/fiori/SideNavigation/) — full underlying API
+- [ShellBar](/?path=/docs/components-shellbar--docs) — hosts this component in its `sideNavigation` drawer slot

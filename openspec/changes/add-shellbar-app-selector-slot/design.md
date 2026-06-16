@@ -13,7 +13,7 @@ Today, the consumer wires it via `children`:
 
 This is a valid arrangement but mixes "the canonical app-selector slot" with "any extra ShellBarItem actions". The new pattern across Reltio apps is to surface every header concern as a typed slot prop on `ShellBar`, so the API is symmetric and AI agents can generate the canonical header without guessing position-in-children semantics.
 
-This change is one of six `ShellBar`-related changes that together establish a uniform slot-prop API: `notificationsHref`, `appSelector`, `navigationDrawer`, `tenantSelector`, `customerSelector`, `userMenu`. Each is shipped independently as its own minor bump.
+This change is one of six `ShellBar`-related changes that together establish a uniform slot-prop API: `notificationsHref`, `appSelector`, `sideNavigation`, `tenantSelector`, `customerSelector`, `userMenu`. Each is shipped independently as its own minor bump.
 
 ## Goals / Non-Goals
 

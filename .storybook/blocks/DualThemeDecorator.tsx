@@ -51,20 +51,6 @@ function halfStyleFor(layout: Layout): React.CSSProperties {
 	}
 }
 
-const labelStyle: React.CSSProperties = {
-	position: "absolute",
-	top: 4,
-	left: 8,
-	fontSize: 10,
-	fontWeight: 600,
-	letterSpacing: 0.5,
-	textTransform: "uppercase",
-	color: "var(--sapContent_LabelColor)",
-	pointerEvents: "none",
-	userSelect: "none",
-	zIndex: 999,
-};
-
 // In the docs view (each story rendered inline in a Canvas block) we shrink
 // the dual-theme frame to a sensible preview size so the page does not become
 // a stack of viewport-tall blocks. Story view keeps the full viewport.
@@ -132,15 +118,9 @@ export const DualThemeDecorator: Decorator = (Story, context) => {
 	return (
 		<div data-dual-theme="true" style={containerStyle}>
 			<div data-theme="horizon-light" style={halfStyle}>
-				<span aria-hidden="true" style={labelStyle}>
-					Light
-				</span>
 				<Story />
 			</div>
 			<div data-theme="horizon-dark" style={halfStyle}>
-				<span aria-hidden="true" style={labelStyle}>
-					Dark
-				</span>
 				<Story />
 			</div>
 		</div>

@@ -2,6 +2,62 @@
 	width: 100%;
 }
 
+/* When the auto hamburger is present (a sideNavigation was supplied), tighten
+ * the bar's inline gutter from UI5's default 2rem to the SAP "has-side-navigation"
+ * rhythm so the trigger sits snug at the edge. This outer-tree rule overrides
+ * UI5's `:host` padding without `!important`. */
+.withStartButton {
+	padding-inline: 0.875rem 1rem;
+}
+
+/* Side navigation drawer — a full-height panel that slides in from the left
+ * over a dimming backdrop, covering the whole viewport. */
+.overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 99;
+	pointer-events: none;
+}
+
+.overlayOpen {
+	pointer-events: auto;
+}
+
+.backdrop {
+	position: absolute;
+	inset: 0;
+	margin: 0;
+	padding: 0;
+	border: none;
+	background: var(--sapBlockLayer_Background);
+	opacity: 0;
+	cursor: pointer;
+	transition: opacity 0.2s ease;
+}
+
+.overlayOpen .backdrop {
+	opacity: var(--sapBlockLayer_Opacity);
+}
+
+.panel {
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: 0;
+	width: 16rem;
+	overflow: hidden;
+	transform: translateX(-100%);
+	transition: transform 0.2s ease;
+}
+
+.overlayOpen .panel {
+	transform: translateX(0);
+}
+
+.panel > * {
+	width: 100%;
+	height: 100%;
+}
+
 .logo {
 	display: inline-flex;
 	align-items: center;

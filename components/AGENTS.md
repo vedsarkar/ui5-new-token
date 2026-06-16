@@ -302,6 +302,12 @@ export const SaveEntityButton = ({
 
 **Free-form props** (arbitrary strings, numbers, CSS values) need only ONE story demonstrating usage — do NOT create multiple stories for different values of the same prop. Multiple stories are for **enum-like variants** where each value is a distinct visual state worth snapshot-testing.
 
+**Dual-theme rendering (MANDATORY).** Every story MUST render in both light and dark themes. The global `DualThemeDecorator` ([`.storybook/blocks/DualThemeDecorator.tsx`](../.storybook/blocks/DualThemeDecorator.tsx)) renders each story twice — side-by-side `horizon-light` / `horizon-dark` containers — so a single Chromatic snapshot and a single a11y run cover both themes. This is on by default; do NOT disable it for visual component stories.
+
+- **Default** — set nothing. The story renders in both themes automatically.
+- **Fullscreen / wide visuals** (charts, full-bleed layouts) — use `parameters.dualTheme: { split: "vertical" }` to stack the two themes vertically instead of disabling them.
+- **`parameters.dualTheme: false` is a last resort.** It is allowed ONLY for genuinely non-visual stories (hook demos, API references, token tables) and MUST carry an inline comment explaining why, e.g. `dualTheme: false, // hook demo — runtime behaviour, not visual UI`. Disabling dual-theme for a normal visual component story is not allowed.
+
 ## Documentation
 
 Each component ships with **four hand-authored sources** that together feed the auto-generated docs page (`ComponentName.story.mdx`):

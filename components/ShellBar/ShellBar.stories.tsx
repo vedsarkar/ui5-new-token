@@ -2,10 +2,18 @@ import { faker } from "@faker-js/faker";
 import { Avatar } from "@ui5/webcomponents-react/Avatar";
 import { expect, fn, userEvent, waitFor } from "storybook/test";
 import preview from "../../.storybook/preview";
+import { SideNavigation } from "../SideNavigation";
+import { SideNavigationGroup } from "../SideNavigationGroup";
+import { SideNavigationItem } from "../SideNavigationItem";
 import type { TenantEntry } from "../TenantSelector";
 import { TenantSelector } from "../TenantSelector";
 import { UserMenu } from "../UserMenu";
 import { ShellBar } from "./ShellBar";
+import "@ui5/webcomponents-icons/dist/home.js";
+import "@ui5/webcomponents-icons/dist/product.js";
+import "@ui5/webcomponents-icons/dist/database.js";
+import "@ui5/webcomponents-icons/dist/employee.js";
+import "@ui5/webcomponents-icons/dist/shield.js";
 
 faker.seed(7);
 
@@ -52,6 +60,56 @@ export const CustomBranding = meta.story({
 		primaryTitle: "Acme Module",
 		logo: <Avatar initials="A" colorScheme="Accent1" size="XS" />,
 	},
+});
+
+export const WithNavigation = meta.story({
+	args: {
+		primaryTitle: "Console",
+		userMenu: (
+			<UserMenu onSignOut={fn()} user={shellBarUser} appVersion="2.21.3" />
+		),
+		sideNavigation: (
+			<SideNavigation accessibleName="Main navigation">
+				<SideNavigationItem text="Home" icon="home" href="/home" selected />
+				<SideNavigationGroup text="Configuration" expanded>
+					<SideNavigationItem
+						text="UI Modeler"
+						icon="product"
+						href="/ui-modeler"
+					/>
+					<SideNavigationItem
+						text="Data Modeler"
+						icon="database"
+						href="/data-modeler"
+					/>
+				</SideNavigationGroup>
+				<SideNavigationGroup text="Security" expanded>
+					<SideNavigationItem
+						text="User Management"
+						icon="employee"
+						href="/users"
+					/>
+					<SideNavigationItem
+						text="SSO Configuration"
+						icon="shield"
+						href="/sso"
+					/>
+				</SideNavigationGroup>
+			</SideNavigation>
+		),
+	},
+	render: (args) => (
+		<>
+			<ShellBar {...args} />
+			<div style={{ padding: "24px 32px" }}>
+				<h2 style={{ margin: 0 }}>Console</h2>
+				<p>
+					Use the hamburger in the top-left corner to open the navigation
+					drawer. It slides in from the left and dims this content.
+				</p>
+			</div>
+		</>
+	),
 });
 
 const shellBarTenants: TenantEntry[] = Array.from({ length: 4 }, () => ({

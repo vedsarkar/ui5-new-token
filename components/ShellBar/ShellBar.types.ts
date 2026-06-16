@@ -22,6 +22,10 @@ type Ui5ShellBarProps = ComponentPropsWithoutRef<typeof Ui5ShellBar>;
  * deep-customization UI5 props (experimental slots, search, notifications,
  * product switch, menu items, profile, …) are intentionally omitted to keep
  * the component focused; dedicated Reltio props will be added when needed.
+ *
+ * The UI5 `startButton` slot is also not exposed: when a `sideNavigation`
+ * element is supplied, `ShellBar` renders the hamburger toggle automatically
+ * and owns the navigation's collapsed state.
  */
 export type ShellBarProps = Omit<
 	Ui5ShellBarProps,
@@ -48,6 +52,19 @@ export type ShellBarProps = Omit<
 	| "startButton"
 	| "waitForDefine"
 > & {
+	/**
+	 * Side navigation for the application. Intended to host a UI5
+	 * `<SideNavigation>` element. The type is the generic `ReactElement`; the
+	 * wrapper does not enforce the runtime element type.
+	 *
+	 * When provided, `ShellBar` renders it as a fully encapsulated left drawer:
+	 * a full-height panel that slides in from the left over a dimming backdrop
+	 * covering the viewport. `ShellBar` automatically renders the hamburger toggle
+	 * in the start area and owns the open/closed state — clicking the
+	 * hamburger or the backdrop, or pressing `Escape`, toggles the drawer. The
+	 * drawer behavior is not customizable.
+	 */
+	sideNavigation?: ReactElement;
 	/**
 	 * Tenant picker rendered into the UI5 ShellBar `content` slot, so it sits in
 	 * the content area just after the branding/title (left cluster) rather than

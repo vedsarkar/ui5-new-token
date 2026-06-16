@@ -36,6 +36,10 @@
 			"x-typescriptType": "string",
 			"type": "string"
 		},
+		"sideNavigation": {
+			"description": "Side navigation for the application. Intended to host a UI5\n`<SideNavigation>` element. The type is the generic `ReactElement`; the\nwrapper does not enforce the runtime element type.\n\nWhen provided, `ShellBar` renders it as a fully encapsulated left drawer:\na full-height panel that slides in from the left over a dimming backdrop\ncovering the viewport. `ShellBar` automatically renders the hamburger toggle\nin the start area and owns the open/closed state — clicking the\nhamburger or the backdrop, or pressing `Escape`, toggles the drawer. The\ndrawer behavior is not customizable.",
+			"x-typescriptType": "ReactElement<any, string | JSXElementConstructor<any>>"
+		},
 		"style": {
 			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
 			"x-typescriptType": "CSSProperties"

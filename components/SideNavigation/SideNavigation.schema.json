@@ -1,0 +1,19 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "SideNavigationProps",
+	"x-component": "SideNavigation",
+	"type": "object",
+	"properties": {
+		"accessibleName": {
+			"description": "Accessible ARIA name announced for the navigation landmark. Set this so\nscreen readers can tell this menu apart from other navigation regions\non the page (e.g. \"Main navigation\"). A plain `aria-label` on the host\ndoes not reach the internal landmark inside the component's Shadow DOM,\nso this prop is the supported way to name the menu.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"collapsable": {
+			"description": "Renders a collapse / expand toggle pinned at the bottom of the menu and\nlets the component own its expanded/collapsed state internally. Clicking\nthe toggle switches the menu to an icon-only rail and back. Provide a\n`tooltip` on each item so entries stay discoverable when collapsed.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

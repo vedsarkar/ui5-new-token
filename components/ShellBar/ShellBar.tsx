@@ -1,7 +1,10 @@
+import { Button } from "@ui5/webcomponents-react/Button";
 import { ShellBar as Ui5ShellBar } from "@ui5/webcomponents-react/ShellBar";
+import { isValidElement, useEffect, useState } from "react";
 import { classNames } from "@/utils/classNames";
 import styles from "./ShellBar.module.css";
 import type { ShellBarProps } from "./ShellBar.types";
+import "@ui5/webcomponents-icons/dist/menu2.js";
 
 const lightLogoUrl = "https://reltio.design/brand/reltio-logo-light.svg";
 const darkLogoUrl = "https://reltio.design/brand/reltio-logo-dark.svg";
@@ -23,23 +26,74 @@ export const ShellBar = ({
 	logo = defaultReltioLogo,
 	className,
 	content,
+	sideNavigation,
 	tenantSelector,
 	children,
 	userMenu,
 	...rest
-}: ShellBarProps) => (
-	<Ui5ShellBar
-		logo={logo}
-		content={
-			<>
-				{tenantSelector}
-				{content}
-			</>
+}: ShellBarProps) => {
+	const hasSideNavigation = isValidElement(sideNavigation);
+	const [navOpen, setNavOpen] = useState(false);
+
+	useEffect(() => {
+		if (!navOpen) {
+			return;
 		}
-		className={classNames(styles.root, className)}
-		{...rest}
-	>
-		{children}
-		{userMenu}
-	</Ui5ShellBar>
-);
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") {
+				setNavOpen(false);
+			}
+		};
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
+	}, [navOpen]);
+
+	return (
+		<>
+			<Ui5ShellBar
+				logo={logo}
+				content={
+					<>
+						{tenantSelector}
+						{content}
+					</>
+				}
+				className={classNames(
+					styles.root,
+					hasSideNavigation && styles.withStartButton,
+					className,
+				)}
+				startButton={
+					hasSideNavigation ? (
+						<Button
+							icon="menu2"
+							accessibleName="Toggle navigation"
+							tooltip="Toggle navigation"
+							onClick={() => setNavOpen((value) => !value)}
+						/>
+					) : undefined
+				}
+				{...rest}
+			>
+				{children}
+				{userMenu}
+			</Ui5ShellBar>
+			{hasSideNavigation && (
+				<div
+					className={classNames(styles.overlay, navOpen && styles.overlayOpen)}
+				>
+					<button
+						type="button"
+						aria-label="Close navigation"
+						tabIndex={navOpen ? 0 : -1}
+						className={styles.backdrop}
+						onClick={() => setNavOpen(false)}
+					/>
+					<aside className={styles.panel} aria-hidden={!navOpen}>
+						{sideNavigation}
+					</aside>
+				</div>
+			)}
+		</>
+	);
+};

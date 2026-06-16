@@ -88,7 +88,7 @@ The footer has a single `Close` button. ESC and backdrop click also close the mo
 
 ## Risks / Trade-offs
 
-- [Risk] UI5 React's slot-attribute routing may NOT route the avatar to `profile` when the whole `<UserMenu>` element is supplied via `ShellBar`'s `userMenu` slot. → Mitigation: smoke-test during implementation. The same risk applies to `NavigationDrawer`'s `startButton` slot — both share the resolution path (verify once, fall back to `cloneElement` inside ShellBar if needed).
+- [Risk] UI5 React's slot-attribute routing may NOT route the avatar to `profile` when the whole `<UserMenu>` element is supplied via `ShellBar`'s `userMenu` slot. → Mitigation: smoke-test during implementation. The same risk applies to other element-valued ShellBar slots (e.g. `sideNavigation`) — both share the resolution path (verify once, fall back to `cloneElement` inside ShellBar if needed).
 - [Risk] Two `UserMenu` instances mounted at once (unlikely but possible in stories) would create two popovers anchored to two avatars. → Acceptable: they don't share an opener id, so they coexist; React's `useId` ensures unique opener ids.
 - [Trade-off] Locked About branding (only `version` is configurable) means an app cannot customise the copyright text or legal links even when it has a legitimate reason. → Accepted: a single, centrally-controlled legal/branding surface across the product suite outweighs per-app flexibility. Easier to relax later (open a `children` slot) than to claw back an over-permissive `about` object.
 - [Trade-off] No account-switcher in v1. → Accepted: not on the user's list. Additive in the future.

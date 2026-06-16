@@ -2,7 +2,7 @@
 
 `AppSelector` already exists as a Reltio business component — it renders the 3×3 ProductSwitch grid + popover triggered by the canonical SAP Fiori grid icon. Today consumers wire it into `ShellBar` by hand: they pass `<AppSelector …/>` as a regular `children` member of `ShellBar`, which places it in the right cluster alongside other `<ShellBarItem>` actions. There is no compile-time signal that "this is THE Reltio app-selector slot, not a random ShellBar action item", and the consumer has to know which position in the children array yields the canonical layout.
 
-This proposal adds a dedicated `appSelector?: ReactElement` slot prop to `ShellBar` so the placement is documented as a first-class concern, mirrors UI5's slot-prop convention (`profile`, `startButton`, `searchField`, …), and lines up symmetrically with the four other slot props introduced by sibling changes (`navigationDrawer`, `tenantSelector`, `customerSelector`, `userMenu`).
+This proposal adds a dedicated `appSelector?: ReactElement` slot prop to `ShellBar` so the placement is documented as a first-class concern, mirrors UI5's slot-prop convention (`profile`, `startButton`, `searchField`, …), and lines up symmetrically with the four other slot props introduced by sibling changes (`sideNavigation`, `tenantSelector`, `customerSelector`, `userMenu`).
 
 `AppSelector` itself does NOT change. This is purely a ShellBar wiring change.
 
