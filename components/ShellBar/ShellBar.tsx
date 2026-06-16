@@ -6,8 +6,8 @@ import styles from "./ShellBar.module.css";
 import type { ShellBarProps } from "./ShellBar.types";
 import "@ui5/webcomponents-icons/dist/menu2.js";
 
-const lightLogoUrl = "https://reltio.design/brand/reltio-logo-light.svg";
-const darkLogoUrl = "https://reltio.design/brand/reltio-logo-dark.svg";
+const lightLogoUrl = "https://reltio.design/logo/sap-reltio-light.svg";
+const darkLogoUrl = "https://reltio.design/logo/sap-reltio-dark.svg";
 
 const defaultReltioLogo = (
 	<picture className={styles.logo}>
