@@ -65,17 +65,17 @@
 }
 
 .lightLogo {
-	display: block;
+	display: none;
 }
 
 .darkLogo {
-	display: none;
+	display: block;
 }
 
 :global([data-theme="horizon-dark"]) .lightLogo {
-	display: none;
+	display: block;
 }
 
 :global([data-theme="horizon-dark"]) .darkLogo {
-	display: block;
+	display: none;
 }
