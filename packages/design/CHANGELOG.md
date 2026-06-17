@@ -1,5 +1,28 @@
 # @reltio/design
 
+## 1.4.0
+
+### Minor Changes
+
+- 9c25329: Add endorsed `List` surface for menus and selectable row lists: `List`, a single `ListItem` row entity (backed by SAP Fiori `ListItemStandard`, customised via props and children), and `ListItemGroup` for sectioned lists. UI5's `ListItemCustom` is intentionally not endorsed in favour of one obvious item entity.
+- 9c25329: Add endorsed `Tree` surface for hierarchical data: `Tree` and a single `TreeItem` node entity. `TreeItem` is a thin Reltio wrapper that collapses UI5's `TreeItem` / `TreeItemCustom` split into one component — the row label is the `content` prop (a string renders a standard node and keeps `additionalText`; any other `ReactNode` renders as custom row content). It also adds a `loading` prop: when `true`, the node renders three non-interactive skeleton placeholder rows while its children are fetched, the standard lazy-loading affordance. UI5's `TreeItemCustom` is not exposed directly — `TreeItem` selects the right underlying node automatically.
+- d3219a4: Endorse the UI5 `SideNavigation` family and add a `sideNavigation` slot on `ShellBar` (DESIGN-78). Application navigation is now built directly from the SAP Fiori side navigation primitives instead of bespoke Reltio wrappers.
+
+  **`SideNavigation` family** — thin Reltio wrappers over the SAP Fiori side-navigation parts, each with a deliberately narrowed API. Deep-customization UI5 props are intentionally hidden across the family and will be re-exposed as dedicated Reltio props on demand.
+
+  - **`SideNavigation`** — public props: `accessibleName`, `children`, `collapsable`, and standard element attributes (`className`, `style`, `id`, `data-*`, `aria-*`, …). Hidden: `header`, `fixedItems`, `onSelectionChange`, `onItemClick`, …. When `collapsable` is set, the component renders a collapse/expand toggle at the bottom and owns its collapsed state internally.
+  - **`SideNavigationGroup`** — public props: `text`, `expanded`, `children`, `className`, `style`.
+  - **`SideNavigationItem`** — public props: `text`, `icon`, `href`, `target`, `selected`, `disabled`, `expanded`, `design`, `unselectable`, `tooltip`, `children`, `className`, `style`. Hidden: `accessibilityAttributes` and the low-level UI5 `onClick` custom-event handler.
+  - **`SideNavigationSubItem`** — public props: `text`, `href`, `target`, `selected`, `disabled`, `design`, `unselectable`, `tooltip`, `className`, `style`. The UI5 `icon` prop is intentionally omitted to enforce the SAP guideline that second-level items do not carry icons.
+
+  Build the menu from `SideNavigationItem` (with `text`, `icon`, `href`, `selected`, `disabled`, `design`, `unselectable`), nest `SideNavigationSubItem` for second-level entries, group entries with `SideNavigationGroup`, and set `collapsable` on `SideNavigation` to add a self-managed collapse/expand toggle for the icon-only rail.
+
+  **`ShellBar`** — gains a `sideNavigation?: ReactElement` slot prop that hosts a `<SideNavigation>` element. When supplied, `ShellBar` renders it as a fully encapsulated left drawer: a full-height panel that slides in from the left over a dimming backdrop covering the viewport. `ShellBar` automatically renders the hamburger toggle, owns the open/closed state, and wires the handlers (hamburger click, backdrop click, and `Escape` all toggle the drawer) — the UI5 `startButton` slot is no longer part of the `ShellBar` public API and the drawer behavior is not customizable. When the hamburger is present, `ShellBar` also tightens its inline gutter from UI5's default `2rem` to `0.875rem 1rem` so the trigger sits snug at the edge.
+
+### Patch Changes
+
+- 9c25329: Fix `Skeleton` being invisible in the light theme. The shimmer and base bar both resolved to `--sapBackgroundColor` / `--sapNeutralBackground` (identical `#f5f5fa` in light Horizon), so the loading animation had no contrast. The bars now use a translucent neutral grey that darkens light surfaces and lightens dark ones, keeping the skeleton visible on any background in both themes without being overly prominent.
+
 ## 1.3.0
 
 ### Minor Changes
