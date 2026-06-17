@@ -1,0 +1,80 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as TreeItemStories from "./TreeItem.stories";
+import schema from "./TreeItem.schema.json";
+
+<Meta of={TreeItemStories} />
+
+# TreeItem
+
+```tsx
+import { TreeItem } from "@reltio/design/components";
+```
+
+`TreeItem` is the single node entity for [`Tree`](?path=/docs/components-tree--docs). It is a thin Reltio wrapper that collapses UI5's `TreeItem` / `TreeItemCustom` split into one component, with a built-in `loading` state for lazy-loaded nodes.
+
+UI5 ships two node components — `TreeItem` (typed `text` label) and `TreeItemCustom` (an arbitrary `content` slot) — because a tree node's `children` slot is taken by its nested nodes, leaving no room for custom row content the way a flat `ListItem` has. Reltio hides that split: there is one `TreeItem`, and its label is the `content` prop. Pass a string for an ordinary labelled node, or any `ReactNode` for a custom row — the wrapper renders the right underlying UI5 node for you. This removes the recurring "which tree item do I use?" question while keeping the full capability.
+
+### Customising a node
+
+- `content` — the row label. A plain string renders as a standard label; any other `ReactNode` (rich layout, controls) renders as custom row content. Nested nodes go in `children`, not here.
+- `icon` — leading SAP icon (load via side-effect import, e.g. `import "@ui5/webcomponents-icons/dist/folder.js"`).
+- `expanded` — whether the node is initially open.
+- `selected` — initial selection state (the parent `Tree` drives the `selectionMode`).
+- `additionalText` / `additionalTextState` — right-aligned metadata with an optional value state. Applies to string `content` (standard nodes); for custom content, compose the metadata inside `content` yourself.
+- `type` — `Active` (default), `Inactive`, `Navigation` (chevron), or `Detail`.
+
+```tsx
+<TreeItem content="Organizations" icon="folder" expanded>
+  <TreeItem content="Acme Corp" icon="document" />
+</TreeItem>
+```
+
+### Custom row content
+
+Pass a non-string `content` when the row needs markup the props can't express:
+
+```tsx
+<TreeItem content={<b>Acme</b>} />
+```
+
+### Nesting and hierarchy
+
+Build any depth of hierarchy by nesting `TreeItem`s in `children`. A node with children automatically shows the expand/collapse affordance.
+
+### Lazy loading
+
+Lazy loading is a common tree pattern, so `TreeItem` builds it in:
+
+- `hasChildren` — renders the expand affordance for a node whose children are not yet slotted, so large trees can load nodes on demand (handle `onItemToggle` on the parent `Tree`).
+- `loading` — while `true`, the node renders three non-interactive skeleton placeholder rows instead of its `children`. The typical flow: the user expands a `hasChildren` node → your `onItemToggle` handler `preventDefault()`s, marks the node `expanded`, and sets `loading` while it fetches → once data arrives, set `loading` back to `false` and pass the real child `TreeItem`s. The skeletons only show while the node is `expanded`, so keep both in sync.
+
+The placeholders wrap the [`Skeleton`](?path=/docs/components-skeleton--docs) primitive — the same composition you would write by hand, encapsulated behind one prop.
+
+### Partial selection
+
+- `indeterminate` — in a `Multiple`-selection tree, displays a parent node as partially selected. It can only be set programmatically and takes effect alongside `selected`.
+
+### See also
+
+- [Tree](?path=/docs/components-tree--docs) — the container, selection modes, and lazy loading
+- [Skeleton](?path=/docs/components-skeleton--docs) — the loading placeholder rendered by `loading`
+- [ListItem](?path=/docs/components-listitem--docs) — the analogous single-row entity for flat lists
+- [SAP Fiori Tree design guideline](https://experience.sap.com/fiori-design-web/tree/) — semantic guidance and visual patterns
+- [UI5 TreeItem web component reference](https://ui5.github.io/webcomponents/components/TreeItem/) — full underlying API
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

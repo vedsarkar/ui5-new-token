@@ -1,0 +1,110 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "TreeProps",
+	"x-component": "Tree",
+	"type": "object",
+	"properties": {
+		"accessibleDescription": {
+			"description": "Defines the accessible description of the component.\n\n**Note:** Available since [v2.5.0](https://github.com/UI5/webcomponents/releases/tag/v2.5.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleDescriptionRef": {
+			"description": "Defines the IDs of the elements that describe the component.\n\n**Note:** Available since [v2.5.0](https://github.com/UI5/webcomponents/releases/tag/v2.5.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleName": {
+			"description": "Defines the accessible name of the component.\n\n**Note:** Available since [v1.8.0](https://github.com/UI5/webcomponents/releases/tag/v1.8.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleNameRef": {
+			"description": "Defines the IDs of the elements that label the component.\n\n**Note:** Available since [v1.8.0](https://github.com/UI5/webcomponents/releases/tag/v1.8.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"children": {
+			"description": "Defines the items of the component. Tree items may have other tree items as children.\n\n**Note:** Use `TreeItem` for the intended design.\n\n__Supported Node Type/s:__ `Array<TreeItemBase>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"footerText": {
+			"description": "Defines the component footer text.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"header": {
+			"description": "Defines the component header.\n\n**Note:** When the `header` slot is set, the\n`headerText` property is ignored.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"header\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"headerText": {
+			"description": "Defines the component header text.\n\n**Note:** If the `header` slot is set, this property is ignored.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"noDataText": {
+			"description": "Defines the text that is displayed when the component contains no items.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onItemClick": {
+			"description": "Fired when a tree item is activated.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TreeDomRef, TreeItemClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TreeDomRef, TreeItemClickEventDetail>) => void"
+		},
+		"onItemDelete": {
+			"description": "Fired when the Delete button of any tree item is pressed.\n\n**Note:** A Delete button is displayed on each item,\nwhen the component `selectionMode` property is set to `Delete`.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TreeDomRef, TreeItemDeleteEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TreeDomRef, TreeItemDeleteEventDetail>) => void"
+		},
+		"onItemMouseout": {
+			"description": "Fired when the mouse cursor leaves the tree item borders.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TreeDomRef, TreeItemMouseoutEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TreeDomRef, TreeItemMouseoutEventDetail>) => void"
+		},
+		"onItemMouseover": {
+			"description": "Fired when the mouse cursor enters the tree item borders.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TreeDomRef, TreeItemMouseoverEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TreeDomRef, TreeItemMouseoverEventDetail>) => void"
+		},
+		"onItemToggle": {
+			"description": "Fired when a tree item is expanded or collapsed.\n\n**Note:** You can call `preventDefault()` on the event object to suppress the event, if needed.\nThis may be handy for example if you want to dynamically load tree items upon the user expanding a node.\nEven if you prevented the event's default behavior, you can always manually call `toggle()` on a tree item.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TreeDomRef, TreeItemToggleEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TreeDomRef, TreeItemToggleEventDetail>) => void"
+		},
+		"onMove": {
+			"description": "Fired when a movable tree item is moved over a potential drop target during a drag-and-drop operation.\n\nIf the new position is valid, prevent the default action of the event using `preventDefault()`.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TreeDomRef, TreeMoveEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TreeDomRef, TreeMoveEventDetail>) => void"
+		},
+		"onMoveOver": {
+			"description": "Fired when a movable tree item is dropped onto a drop target.\n\n**Note:** The `move` event is fired only if there was a preceding `move-over` event with prevented default action.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TreeDomRef, TreeMoveEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TreeDomRef, TreeMoveEventDetail>) => void"
+		},
+		"onSelectionChange": {
+			"description": "Fired when selection is changed by user interaction\nin `Single`, `SingleStart`, `SingleEnd` and `Multiple` modes.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TreeDomRef, TreeSelectionChangeEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TreeDomRef, TreeSelectionChangeEventDetail>) => void"
+		},
+		"selectionMode": {
+			"description": "Defines the selection mode of the component. Since the tree uses a `List` to display its structure,\nthe tree modes are exactly the same as the list modes, and are all applicable.",
+			"default": "None",
+			"x-typescriptType": "'Single' | 'Multiple' | 'None' | ListSelectionMode | 'SingleStart' | 'SingleEnd' | 'SingleAuto' | 'Delete'"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

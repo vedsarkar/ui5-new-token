@@ -81,7 +81,7 @@
 		"overflowMode": {
 			"description": "Defines the mode of the <code>ui5-table</code> overflow behavior.\n\nAvailable options are:\n\n<code>Scroll</code> - Columns are shown as regular columns and horizontal scrolling is enabled.\n<code>Popin</code> - Columns are shown as pop-ins instead of regular columns.",
 			"default": "Scroll",
-			"x-typescriptType": "TableOverflowMode | 'Scroll' | 'Popin'"
+			"x-typescriptType": "'Scroll' | TableOverflowMode | 'Popin'"
 		},
 		"rowActionCount": {
 			"description": "Defines the maximum number of row actions that is displayed, which determines the width of the row action column.\n\n**Note:** It is recommended to use a maximum of 3 row actions, as exceeding this limit may take up too much space on smaller screens.\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents**.",

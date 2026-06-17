@@ -29,6 +29,13 @@ export { FileUploader } from "@ui5/webcomponents-react/FileUploader";
 export { Icon } from "@ui5/webcomponents-react/Icon";
 export { IllustratedMessage } from "@ui5/webcomponents-react/IllustratedMessage";
 export { Input } from "@ui5/webcomponents-react/Input";
+export { List } from "@ui5/webcomponents-react/List";
+export { ListItemGroup } from "@ui5/webcomponents-react/ListItemGroup";
+// Reltio endorses a single `ListItem` (SAP Fiori `ListItemStandard`) as the
+// canonical list-row entity, customised via props and children. UI5's
+// `ListItemCustom` is intentionally NOT endorsed — one obvious item entity
+// over the Standard/Custom split. See `components/ListItem/README.md`.
+export { ListItemStandard as ListItem } from "@ui5/webcomponents-react/ListItemStandard";
 export { MessageStrip } from "@ui5/webcomponents-react/MessageStrip";
 export { MultiComboBox } from "@ui5/webcomponents-react/MultiComboBox";
 export { MultiComboBoxItem } from "@ui5/webcomponents-react/MultiComboBoxItem";
@@ -66,6 +73,10 @@ export { TableRow } from "@ui5/webcomponents-react/TableRow";
 export { TimePicker } from "@ui5/webcomponents-react/TimePicker";
 export { Toast } from "@ui5/webcomponents-react/Toast";
 export { Token } from "@ui5/webcomponents-react/Token";
+// `Tree` is a 1:1 UI5 re-export. Its node entity is the Reltio `TreeItem`
+// wrapper (exported from the Reltio section below), which collapses UI5's
+// `TreeItem` / `TreeItemCustom` split into one `content`-based entity.
+export { Tree } from "@ui5/webcomponents-react/Tree";
 export { Wizard } from "@ui5/webcomponents-react/Wizard";
 export { WizardStep } from "@ui5/webcomponents-react/WizardStep";
 
@@ -83,4 +94,5 @@ export * from "./SideNavigationSubItem";
 export * from "./Skeleton";
 export * from "./TenantSelector";
 export * from "./TextArea";
+export * from "./TreeItem";
 export * from "./UserMenu";

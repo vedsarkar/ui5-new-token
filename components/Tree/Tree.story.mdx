@@ -1,0 +1,73 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as TreeStories from "./Tree.stories";
+import schema from "./Tree.schema.json";
+
+<Meta of={TreeStories} />
+
+# Tree
+
+```tsx
+import { Tree } from "@reltio/design/components";
+```
+
+`Tree` is the SAP Fiori component for displaying hierarchically structured data, re-exported from `@ui5/webcomponents-react/Tree` as the canonical Reltio entry point. Reach for it when items form a parent/child hierarchy that users expand and collapse — data domains and their records, organizational structures, navigation hierarchies, or any nested taxonomy. Compose nodes with `TreeItem`, nesting them to express the structure.
+
+There is no Reltio wrapping or default override on `Tree` itself: the props, slots, and runtime behavior are exactly those of the underlying UI5 component. The Reltio layer adds curation (these are the endorsed tree surfaces), pinned versioning, and Reltio-specific guidance.
+
+### Basic tree
+
+```tsx
+<Tree>
+  <TreeItem content="Organizations" expanded>
+    <TreeItem content="Acme Corp" />
+    <TreeItem content="Globex" />
+  </TreeItem>
+  <TreeItem content="Individuals">
+    <TreeItem content="Ada Lovelace" />
+  </TreeItem>
+</Tree>
+```
+
+Each `TreeItem` is shaped through props — its label is the `content` prop (a string or any `ReactNode`), plus `icon`, `expanded`, `selected`, `loading`, … — and nests child `TreeItem`s to build the hierarchy. See the [TreeItem docs](?path=/docs/components-treeitem--docs) for the full node API.
+
+### Selection modes
+
+The tree is internally a `List`, so its `selectionMode` values match `List` exactly. By default `selectionMode` is `"None"` — nodes are not selectable. Set it on `Tree` to enable selection:
+
+- `"Single"` / `"SingleStart"` / `"SingleEnd"` — one node selected at a time, indicator at the start or end of the row.
+- `"Multiple"` — any number of nodes selected; supports the partially-selected (`indeterminate`) visual on parent nodes.
+- `"Delete"` — shows a delete button per node; fires `onItemDelete`.
+
+Mark the initially selected node with `selected` on `TreeItem`. React to changes via `onSelectionChange` (`e.detail.selectedItems`), expansion via `onItemToggle`, or activation via `onItemClick`.
+
+### Lazy loading
+
+For large hierarchies, set `hasChildren` on a `TreeItem` whose children are not yet loaded — this renders the expand affordance without slotting children. Call `event.preventDefault()` inside `onItemToggle` to load nodes on demand before expanding, and set the node's `loading` prop to show skeleton placeholders while the request runs.
+
+### When to prefer Tree
+
+Use `Tree` for genuinely hierarchical data that users drill into. If the hierarchy is only two levels deep, prefer a [`List`](?path=/docs/components-list--docs) with `ListItemGroup` sections. For a flat set of items, use `List`; for picking one value from a small flat set, use `Select` or `ComboBox`.
+
+### See also
+
+- [TreeItem](?path=/docs/components-treeitem--docs) — the node entity, its `content` label, and the `loading` state
+- [List](?path=/docs/components-list--docs) — flat-list alternative and the source of the selection modes
+- [SAP Fiori Tree design guideline](https://experience.sap.com/fiori-design-web/tree/) — semantic guidance and visual patterns
+- [UI5 Tree web component reference](https://ui5.github.io/webcomponents/components/Tree/) — full underlying API
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

@@ -1,490 +1,159 @@
 # Component Development Guidelines
 
-This directory contains **Reltio-specific** components — business components and primitives built on top of [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/). It is not a duplicate of UI5: every component here either composes several UI5 parts with Reltio product logic, or fills a primitive gap that UI5 does not cover.
+This directory holds **Reltio components** (business components + primitives) built on top of [`@ui5/webcomponents-react`](https://sap.github.io/ui5-webcomponents-react/), plus the **endorsed UI5 surface** as documentation-only directories (e.g. `components/Button/`). These directories are what `@reltio/design` re-exports for app teams.
 
-Reltio is broader than a traditional MDM platform. When naming, documenting, or designing components, frame reusable work around **Context Intelligence and Unified Data** unless the component is explicitly tied to an MDM-only concept. Use MDM language only for domain-specific cases such as match groups, survivorship, entity merge/unmerge, source priority, or similar workflows.
+Reltio is broader than MDM. Frame reusable work around **Context Intelligence and Unified Data**; use MDM language only for genuinely MDM-specific concepts (match groups, survivorship, merge/unmerge, source priority).
 
-This is also where the **endorsed UI5 surface** lives as documentation-only directories (e.g. `components/Button/`) — README + types re-export + stories + auto-generated `schema.json`, no runtime code. Those directories are what `@reltio/design` re-exports for app teams.
+## `@reltio/design` is a facade, not a passthrough
 
-> **Compose, don't reinvent.** If UI5 already ships a component that fits the design, surface it as an endorsed re-export from `@reltio/design`. Wrap with custom code only when there is real Reltio-specific value to add (Reltio product logic or filling a UI5 primitive gap).
+UI5 is our **foundation**, but it is not our public API. `@reltio/design` is a facade with two jobs:
 
-> **Two import contexts, two conventions.** Inside this repo (Reltio component authors), we import UI5 directly from `@ui5/webcomponents-react/X` — we are the wrappers. In app code (consumers) and every public-facing example (README, stories, MDX), the convention is `import { X } from "@reltio/design/components"` — so apps inherit the pinned, CoE-tested UI5 version transitively. See the [UI Architecture guide](/?path=/docs/guides-ui-architecture--docs) for the rationale.
+1. **Endorse** a pinned, CoE-tested subset of UI5 so apps inherit a single tested version transitively.
+2. **Simplify** that surface for consumers — humans and AI agents. Building on UI5 does **not** mean inheriting its legacy or awkward ergonomics. Where a UI5 API is confusing, redundant, or legacy, the facade may **curate** it — rename, alias, collapse multiple components into one, or hide a component — to present the simplest correct API.
 
-> **CRITICAL — always include the `/components` subpath.** The published `packages/design/package.json` exposes only subpath entries (`./components`, `./charts`, `./hooks`, `./utils`) — there is no `main`/`exports` target for the bare package name. Any `import { X } from "@reltio/design"` (without subpath) **resolves to nothing and breaks at app install time**. This is the most common mistake when authoring READMEs and component MDX — double-check before committing. The Reltio Design MCP rewrites generated snippets to `@reltio/design/components` automatically via [`.storybook/reltioManifestPreset.ts`](../.storybook/reltioManifestPreset.ts), so AI agents reading from MCP always see the correct path.
+Three endorsement modes, in order of preference:
 
-## When to build a Reltio component vs. endorse a UI5 component
+| Mode | When | How |
+|---|---|---|
+| **1:1 re-export** (default) | UI5's API is already clean and fits the design | Doc-only dir; `types.ts` re-exports the UI5 type unchanged. Stays aligned with SAP docs at zero cost. |
+| **Curated re-export** | UI5's surface is awkward/legacy (confusing split, bad name, redundant variants) | Doc-only dir, but rename/alias/collapse the export in `components/index.ts`. **Document the divergence and rationale in the component README.** |
+| **Wrapper** | Real Reltio product logic, or a primitive UI5 lacks | Full Reltio component (see structure below). |
 
-Walk through the decision tree before creating anything new under this folder:
+**Divergence is deliberate, not casual.** Default to 1:1. Curate only when there is a real ergonomics/legacy problem, and treat it as a **public-API decision**: explain it in the README, ship a changeset, and route non-trivial cases through the CoE / OpenSpec. Restyling is never a reason to diverge or wrap.
+
+> **Example — `ListItem`.** UI5 splits list rows into `ListItemStandard` (typed props) and `ListItemCustom` (empty slot). Reltio collapses this into one entity: `ListItemStandard` is exported as `ListItem`, customised via props + children; `ListItemCustom` is intentionally not endorsed. One obvious row entity instead of "which item wrapper do I use?".
+
+### Import conventions
+
+- **Inside this repo** (component authors): import UI5 directly — `import { Button } from "@ui5/webcomponents-react/Button"`. We are the wrappers.
+- **App code & all public examples** (README, MDX, story snippets): `import { Button } from "@reltio/design/components"`.
+- **CRITICAL — always include the `/components` subpath.** The published package exposes only subpath entries (`./components`, `./charts`, `./hooks`, `./utils`); bare `@reltio/design` resolves to nothing and breaks at install time. The MCP rewrites generated snippets via [`.storybook/reltioManifestPreset.ts`](../.storybook/reltioManifestPreset.ts).
+
+## Decision tree
 
 ```
-Does @ui5/webcomponents-react already ship a component that fits the design?
-├── Yes → Is it already endorsed (re-exported from @reltio/design)?
-│         ├── Yes → Just import it. No new files needed.
-│         │
-│         └── No  → Add a documentation-only directory here:
-│                   components/<UI5Name>/ with README.md +
-│                   <UI5Name>.types.ts (re-exporting the UI5 type) +
-│                   <UI5Name>.stories.tsx, then add the named export
-│                   to packages/design/components.ts and
-│                   components/index.ts. The component is now endorsed.
-│
-└── No → Do you need to compose several UI5 components with Reltio product logic
-         (entity profile, relationship view, source priority, context intelligence workflow ...)?
-         ├── Yes → Build a Reltio business component here.
-         │
-         └── No → Is it a product-agnostic primitive that UI5 simply does not provide?
-                  ├── Yes → Build a Reltio primitive here.
-                  │
+Does @ui5/webcomponents-react ship a component that fits?
+├── Yes → Already endorsed (re-exported from @reltio/design)?
+│         ├── Yes → Just import it.
+│         └── No  → Add a doc-only dir and endorse it (1:1 or curated — see facade modes).
+└── No → Compose several UI5 parts with Reltio product logic?
+         ├── Yes → Build a Reltio business component.
+         └── No → A product-agnostic primitive UI5 lacks?
+                  ├── Yes → Build a Reltio primitive.
                   └── No → You probably don't need a new component.
 ```
 
-### Restyling is NOT a reason to wrap
+## Component structure
 
-If your only goal is to change colors, spacing, or shape of a UI5 component, do it through:
-
-1. **`--sap*` design tokens** scoped to a parent class — UI5 reads them through Shadow DOM automatically.
-2. **CSS Parts (`::part()`)** for fine-grained tweaks no token covers.
-
-Do not create a Reltio wrapper just for visual changes.
-
-## Component Structure
-
-Every Reltio component MUST follow this mandatory pattern:
+A Reltio (wrapper/primitive) component MUST follow this layout:
 
 ```
 components/ComponentName/
-├── ComponentName.tsx          # Implementation (with one-line JSDoc summary above the export)
-├── ComponentName.types.ts     # TypeScript types (REQUIRED) — every field carries JSDoc
-├── ComponentName.module.css   # Scoped styles
-├── ComponentName.stories.tsx  # CSF stories for Chromatic (visual / interaction / a11y tests)
-├── README.md                  # Prose documentation (REQUIRED) — narrative context, conventions
-├── ComponentName.story.mdx    # AUTO-GENERATED docs page — do NOT edit by hand
+├── ComponentName.tsx          # Implementation (one-line JSDoc summary above the export)
+├── ComponentName.types.ts     # Types (REQUIRED, separate file) — JSDoc on every field
+├── ComponentName.module.css   # Scoped CSS Modules
+├── ComponentName.stories.tsx  # CSF stories (Chromatic / interaction / a11y)
+├── README.md                  # Prose docs (REQUIRED to ship)
+├── ComponentName.story.mdx    # AUTO-GENERATED — never edit by hand
 └── index.ts                   # Public API
 ```
 
-`ComponentName.story.mdx` is regenerated by `npm run build-component-docs` from `README.md` + `.types.ts` + `.stories.tsx`. Edit those three sources; the script rebuilds the MDX. The script is wired into `predev` and `prebuild-storybook`, so a fresh `.story.mdx` is built automatically before Storybook starts and before a production build.
+### Doc-only directories (endorsed UI5 components)
 
-Both `README.md` and `ComponentName.story.mdx` are part of the final (shipped) component layout. While iterating on a new component locally, you can skip them — the component will render via the simpler default autodocs page until you opt it into the static MDX pipeline. See the **Documentation** section below for the two-stage workflow and the full rationale.
+An endorsed UI5 component is documented **without runtime code**, in two stages:
 
-### Documentation-only directories (endorsed UI5 components)
+- **Iterate:** a `*.stories.tsx` alone (importing straight from `@ui5/webcomponents-react`) renders via default autodocs. No other files needed while you pick variants.
+- **Ship:** add `README.md` + `<Name>.types.ts` (a `ComponentPropsWithoutRef<typeof UI5Component>` re-export, possibly under a curated name) so the build regenerates `<Name>.story.mdx` + `<Name>.schema.json`. Then add the export to `components/index.ts` (which `packages/design/components.ts` forwards). See `components/Button/` for the canonical 1:1 example, `components/ListItem/` for a curated one.
 
-A directory under `components/` may document a UI5 component without authoring any Reltio runtime code. Two stages exist for this pattern:
+As soon as custom logic, styles, or props appear, the directory must follow the full structure above.
 
-**Stage 1 — iterate (autodocs only):** A `*.stories.tsx` file alone is enough — no `.tsx`, no `.types.ts`, no `.module.css`, no `README.md`, no `index.ts`. The stories file imports the component straight from `@ui5/webcomponents-react`, and the directory name provides a stable Storybook navigation path. Use this while you're still picking variants and edge cases for the endorsed surface.
+## Standards
 
-**Stage 2 — endorse (full doc pipeline):** When the curated set of stories is stable enough to publish, add `README.md` + `<UI5Name>.types.ts` (a `ComponentPropsWithoutRef<typeof UI5Component>` re-export) so the build pipeline regenerates `<UI5Name>.story.mdx` (with full prop tables) and `<UI5Name>.schema.json` (publishable JSON Schema). Then add the named re-export to both `packages/design/components.ts` and `components/index.ts`. The component is now part of the endorsed surface — apps can `import { <UI5Name> } from "@reltio/design/components"` (always with the `/components` subpath, never bare). See `components/Button/` for the canonical example.
+### Public API
 
-Use this exception only for endorsement. As soon as any custom logic, styles, or props are introduced, the directory must follow the full Reltio component structure above (and is no longer just a UI5 re-export).
+Import via each component's `index.ts`. Direct imports of internal files (`.tsx`, `.types.ts`, `.module.css`) from outside the folder are **forbidden** (`import { Chat } from "@/components/Chat"`, never `.../Chat/Chat`).
 
-## Component Standards
+### TypeScript types (`.types.ts`)
 
-### Public API (CRITICAL)
-
-Always import components via their `index.ts` (Public API). Direct imports of internal files (`.tsx`, `.types.ts`, `.module.css`) from outside the component folder are **strictly forbidden**.
-
-**Good — inside this monorepo (Reltio component authors):**
-```typescript
-import { Chat } from "@/components/Chat";
-import { Button } from "@ui5/webcomponents-react/Button";
-```
-
-UI5 imports are allowed here because we are the authors of the wrappers — Reltio components reach into the underlying UI5 surface to compose. App-facing examples (READMEs, MDX, story snippets via MCP) always show `import { Button } from "@reltio/design/components"` instead — note the **mandatory `/components` subpath**.
-
-**Bad:**
-```typescript
-import { Chat } from "@/components/Chat/Chat";
-import type { ChatProps } from "@/components/Chat/Chat.types";
-```
-
-### CSS Styling
-
-#### Reltio components
-
-**External customization** — Reltio components do NOT expose internal CSS classes as a styling API. Hashed CSS Module class names are an implementation detail and may change at any build. Consumers customize a component through its **React props** (the public API) and the SAP Horizon `--sap*` tokens its CSS reads from the cascade. Internal CSS custom properties are not a customization API either (see encapsulation rules below).
-
-**Colors** — always reference SAP Horizon `--sap*` tokens declared on `:root` by `https://reltio.design/variables.css` (and overridden under each `[data-theme]`). Never hardcode hex color values in component CSS. The full token surface is browseable in Storybook → Design Tokens; canonical semantic guidance lives at <https://www.sap.com/design-system/>.
-
-**Typography, spacing, sizing** — use plain values directly (e.g. `font-size: 14px`, `padding: 8px 16px`). There are no global tokens for these.
-
-**CSS custom properties** — almost never needed in component CSS. Do NOT create component-level variables as a customization API. Prefer direct CSS property overrides.
-
-**When a variable seems useful but isn't:** If the variable is set and consumed on the **same element**, a property override is always simpler — even when variants reassign it:
-
-```css
-/* ❌ BAD — variable adds indirection for no benefit */
-.root { --chip-height: 32px; height: var(--chip-height); }
-.small { --chip-height: 26px; }
-
-/* ✅ GOOD — direct property override */
-.root { height: 32px; }
-.small { height: 26px; }
-```
-
-```css
-/* ❌ BAD — background variable set and consumed on .root */
-.root { --chip-bg: var(--sapButton_Lite_Background); background: var(--chip-bg); }
-.filled.primary { --chip-bg: var(--sapButton_Emphasized_Background); }
-
-/* ✅ GOOD — variants override the property directly */
-.root { background: var(--sapButton_Lite_Background); }
-.filled.primary { background: var(--sapButton_Emphasized_Background); }
-```
-
-**The only valid case** for a CSS variable is when a parent sets a value that **cascades to multiple child elements** via the DOM:
-
-```css
-/* ✅ GOOD — parent value cascades to two different children */
-.root { --icon-size: 18px; }
-.small { --icon-size: 16px; }
-.leadingIcon { width: var(--icon-size); height: var(--icon-size); }
-.removeButton { width: var(--icon-size); height: var(--icon-size); }
-```
-
-Even then, consider whether compound selectors (`.small .leadingIcon`) are simpler:
-
-```css
-/* Also fine — explicit and easy to understand */
-.leadingIcon { width: 18px; height: 18px; }
-.small .leadingIcon { width: 16px; height: 16px; }
-.removeButton { width: 18px; height: 18px; }
-.small .removeButton { width: 16px; height: 16px; }
-```
-
-**Rule of thumb:** Default to no variables. Only introduce one when it demonstrably reduces repetition across multiple child selectors and the direct approach is clearly worse.
-
-**Encapsulation — internal CSS variables must never leak:**
-
-When a component uses an internal CSS variable (e.g. for a dynamic prop that cascades to pseudo-elements), the component MUST always set that variable explicitly on its root element — including the default value. This creates a hard boundary that prevents any ancestor or global variable with the same name from leaking in.
-
-The only CSS variables a component may consume from outside are the SAP Horizon `--sap*` tokens declared on `:root` by `https://reltio.design/variables.css`. All other customization goes through **React props** — the component's public API.
-
-```tsx
-/* ✅ GOOD — variable always set on root, no external leak possible */
-const rootStyle = {
-  ...style,
-  "--size": size ?? "32px",
-} as React.CSSProperties;
-
-<div style={rootStyle}>...</div>
-```
-
-```tsx
-/* ❌ BAD — variable set only when prop is provided; fallback in CSS can pick up ancestor values */
-const rootStyle = size
-  ? { ...style, "--size": size }
-  : style;
-```
-
-If the dynamic value only affects regular DOM elements (no pseudo-elements), prefer inline styles directly — no CSS variable needed at all:
-
-```tsx
-/* ✅ GOOD — inline style, fully encapsulated, no variable */
-<div style={size ? { height: size } : undefined} />
-```
-
-**Responsive / media queries** — do NOT add `@media` queries or mobile-specific styles to component CSS. Responsive design guidelines will be developed separately. For now, components target desktop viewports only.
-
-#### UI5 web components
-
-UI5 components live in Shadow DOM, so regular CSS selectors do not reach their internals. Two mechanisms are available:
-
-1. **`--sap*` design tokens** — UI5 reads them directly from the document `:root` and the active `[data-theme]` subtree. Changing a token at any level re-themes every UI5 component beneath it. This is the **preferred** way to restyle UI5.
-2. **CSS Parts (`::part()`)** — UI5 components expose a stable set of named parts (e.g. `ui5-button::part(button)`, `ui5-input::part(content)`). Use them for fine-grained tweaks that no token covers.
-
-```css
-/* Preferred — token override scoped to a subtree */
-.toolbar {
-  --sapButton_Background: var(--sapButton_Lite_Background);
-  --sapButton_BorderColor: transparent;
-}
-
-/* Fallback — CSS Part for a tweak no token covers */
-.toolbar ui5-button::part(button) {
-  border-radius: 999px;
-}
-```
-
-When a Reltio component embeds UI5 internally, prefer scoping these overrides to the component's own root class so they do not bleed out.
-
-### TypeScript Types (`.types.ts`)
-
-**`HtmlProps<Tag, CustomProps>` utility** — the standard way to type props for components that render a native HTML element. Import from `@/utils/types`. It combines custom props with native HTML element attributes, automatically omitting native props that overlap with custom ones. This ensures custom props appear in Storybook's Props table without manual `Omit`:
+- `type` only, never `interface`. Strict mode; no unjustified `any`.
+- Components rendering a native element use `HtmlProps<Tag, CustomProps>` from `@/utils/types` (or bare `React.ComponentPropsWithoutRef<"tag">` for pure pass-through). Use `Omit<...>` to drop unsupported native props.
 
 ```typescript
 import type { HtmlProps } from "@/utils/types";
 
 export type ChipProps = HtmlProps<"button", {
-  variant?: ChipVariant;
-  color?: ChipColor;
-  size?: ChipSize;
-  onClick?: () => void;
+	variant?: ChipVariant;
+	size?: ChipSize;
 }>;
 ```
 
-**Rules:**
-1. Components with a **native HTML wrapper** MUST use `HtmlProps<Tag, CustomProps>` (or bare `React.ComponentPropsWithoutRef<"tag">` for pure pass-through with no custom props)
-2. All rest props (`...rest`) MUST be spread onto the wrapper element
-3. Do NOT redeclare native props (`className`, `style`, etc.) in custom props — they are inherited automatically
-4. Only declare a native prop in custom props when the component changes its type or semantics (e.g. `children: string` instead of `ReactNode`, or `open?: boolean` that needs Storybook visibility)
-5. Use `React.ComponentPropsWithoutRef` (not `ComponentProps`) — refs are handled via `React.forwardRef` when needed
+- All rest props (`...rest`) MUST be spread onto the wrapper element (or onto the root UI5 component when wrapping one).
+- Do NOT redeclare native props (`className`, `style`) — they are inherited. Declare a native prop only to change its type/semantics.
+- Polymorphic components use a discriminated union with `HtmlProps` per branch.
+- **Wrapping a UI5 component:** derive the prop type from the component (`ComponentPropsWithoutRef<typeof Button>`), spread rest onto the UI5 root, and forward `className` via `classNames(styles.root, className)`.
 
-**Removing native props** the component doesn't support — wrap with `Omit`:
+### CSS styling (Reltio components)
 
-```typescript
-export type SkeletonProps = Omit<HtmlProps<"div", {
-  rows?: number;
-  size?: string;
-}>, "children">;
-```
+- All `className` attributes use the `classNames()` utility from `@/utils/classNames`.
+- **Colors:** only SAP Horizon `--sap*` tokens (from `https://reltio.design/variables.css`). Never hardcode hex.
+- **Typography, spacing, sizing, radii:** plain values (`font-size: 14px`, `padding: 8px 16px`). No global tokens for these.
+- **Box-shadow:** use SAP elevation presets (`--sapContent_Shadow0..3`) when matching SAP elevation; otherwise plain values.
+- **No component-level CSS variables as a customization API.** If a value is set and consumed on the same element, override the property directly — even across variants (`.root { height: 32px } .small { height: 26px }`). The only valid variable is a parent value that cascades to multiple children, and even then a compound selector (`.small .icon`) is often simpler.
+- **Encapsulation:** if a component does use an internal CSS variable, always set it on the root (including its default, via inline style) so no ancestor/global variable can leak in. If the dynamic value only affects regular DOM (no pseudo-elements), use inline styles and skip the variable.
+- **No `@media` queries** — components target desktop viewports for now.
+- External customization happens only through React props and `--sap*` overrides — never via hashed CSS Module class names.
 
-**Polymorphic components** (e.g. a button that renders as `<button>` or `<a>`) use a discriminated union with `HtmlProps` per branch:
+### CSS styling (UI5 web components)
 
-```typescript
-type LinkButtonBase = {
-  variant?: "filled" | "outlined";
-  size?: "small" | "medium";
-};
+UI5 lives in Shadow DOM. Restyle via, in order: (1) **`--sap*` tokens** scoped to a parent class (preferred — re-themes everything beneath), (2) **CSS Parts** (`ui5-button::part(button)`) for tweaks no token covers. Scope overrides to the component's own root so they don't bleed out. Do NOT wrap a UI5 component just to restyle it.
 
-type AsButton = HtmlProps<"button", LinkButtonBase & {
-  href?: never;
-  type?: "button" | "submit" | "reset";
-}>;
+### Storybook stories
 
-type AsAnchor = HtmlProps<"a", LinkButtonBase & {
-  href: string;
-}>;
+- One story per **enum-like** visual variant (worth a snapshot). **Free-form props** (arbitrary strings/numbers/CSS) get ONE demo story, not one per value.
+- **Dual-theme is MANDATORY.** The global `DualThemeDecorator` renders every story in `horizon-light` + `horizon-dark`. It is on by default — do NOT disable for visual stories. Use `parameters.dualTheme: { split: "vertical" }` for wide/fullscreen visuals. `dualTheme: false` is a last resort for genuinely non-visual stories (hook/API demos) and needs an inline comment explaining why.
+- Callbacks via `fn()` from `storybook/test`.
 
-export type LinkButtonProps = AsButton | AsAnchor;
-```
+## Documentation pipeline
 
-#### Wrapping a UI5 component
+Four hand-authored sources feed the auto-generated `ComponentName.story.mdx`:
 
-When a Reltio component's root is a UI5 component instead of a plain HTML tag, derive the prop type from the UI5 component itself. This keeps the wrapper aligned with UI5's evolving API:
+| Source | Purpose |
+|---|---|
+| One-line JSDoc above the export | Concise "what it does" → IDE hover, autodocs, MCP description |
+| `ComponentName.types.ts` (per-field JSDoc) | Canonical API → `<JsonSchema>` table + MCP `## Props` |
+| `README.md` | Narrative → docs page body + MCP `## Docs` |
+| `ComponentName.stories.tsx` | Usage examples → `<Stories>` + MCP `## Stories` |
 
-```typescript
-import type { ComponentPropsWithoutRef } from "react";
-import type { Button } from "@ui5/webcomponents-react/Button";
+`scripts/build-component-docs.mjs` reads these and writes the static MDX + `<Name>.schema.json`. It is **opt-in by `README.md` presence**: the script globs `components/*` and `charts/*` and picks up any dir with `README.md` + `<Name>.types.ts` + `<Name>.stories.tsx`. Wired into `predev`/`prebuild-storybook`; run `npm run build-component-docs` manually after editing a source while the dev server runs. Never edit `.story.mdx` by hand.
 
-type Ui5ButtonProps = ComponentPropsWithoutRef<typeof Button>;
-
-export type SaveEntityButtonProps = Omit<Ui5ButtonProps, "design" | "onClick"> & {
-  entityId: string;
-  onSaved?: (entityId: string) => void;
-};
-```
-
-Spread the rest onto the UI5 root and forward `className` so the consumer's `className` reaches the wrapped element:
-
-```tsx
-import { Button } from "@ui5/webcomponents-react/Button";
-import { classNames } from "@/utils/classNames";
-import styles from "./SaveEntityButton.module.css";
-import type { SaveEntityButtonProps } from "./SaveEntityButton.types";
-
-export const SaveEntityButton = ({
-  entityId,
-  onSaved,
-  className,
-  ...rest
-}: SaveEntityButtonProps) => {
-  return (
-    <Button
-      design="Emphasized"
-      className={classNames(styles.root, className)}
-      onClick={() => onSaved?.(entityId)}
-      {...rest}
-    />
-  );
-};
-```
-
-### Storybook Stories
-
-**Free-form props** (arbitrary strings, numbers, CSS values) need only ONE story demonstrating usage — do NOT create multiple stories for different values of the same prop. Multiple stories are for **enum-like variants** where each value is a distinct visual state worth snapshot-testing.
-
-**Dual-theme rendering (MANDATORY).** Every story MUST render in both light and dark themes. The global `DualThemeDecorator` ([`.storybook/blocks/DualThemeDecorator.tsx`](../.storybook/blocks/DualThemeDecorator.tsx)) renders each story twice — side-by-side `horizon-light` / `horizon-dark` containers — so a single Chromatic snapshot and a single a11y run cover both themes. This is on by default; do NOT disable it for visual component stories.
-
-- **Default** — set nothing. The story renders in both themes automatically.
-- **Fullscreen / wide visuals** (charts, full-bleed layouts) — use `parameters.dualTheme: { split: "vertical" }` to stack the two themes vertically instead of disabling them.
-- **`parameters.dualTheme: false` is a last resort.** It is allowed ONLY for genuinely non-visual stories (hook demos, API references, token tables) and MUST carry an inline comment explaining why, e.g. `dualTheme: false, // hook demo — runtime behaviour, not visual UI`. Disabling dual-theme for a normal visual component story is not allowed.
-
-## Documentation
-
-Each component ships with **four hand-authored sources** that together feed the auto-generated docs page (`ComponentName.story.mdx`):
-
-| Source | Audience | Purpose |
-|--------|----------|---------|
-| One-line JSDoc on the exported component | IDE hover, Storybook autodocs Description, MCP description, Manifest Debugger | Concise summary of what the component does |
-| `ComponentName.types.ts` (with per-field JSDoc) | TypeScript users, `<ArgTypes>` table, AI agents | Canonical API surface — every prop and nested type, with a comment on each field |
-| `README.md` | Anyone reading the docs page or browsing the repo | Narrative context — why the component exists, what concerns it owns, conventions agents need to know |
-| `ComponentName.stories.tsx` | Chromatic, Storybook UI, AI agents | Concrete usage examples (one per visual variant), plus the canonical demo data |
-
-The build script (`scripts/build-component-docs.mjs`) reads these and produces `ComponentName.story.mdx` — a fully static MDX page whose visible content is the README narrative + `<JsonSchema>` prop-types table (from the generated `<Name>.schema.json`) + native `<Stories>` block. What an AI agent receives from `get-documentation` is **assembled by Storybook MCP from the components manifest**, not from hidden text in the MDX: a `## Stories` section (the first stories with resolved code snippets + an index of the rest) and a `## Props` section (resolved prop types with JSDoc and defaults). The README prose is returned verbatim as the `## Docs` section. See [Why the manifest, not inlined comments](#why-the-manifest-not-inlined-comments) for how the `## Props` block is populated.
-
-### Pipeline is opt-in (for production / MCP-targeted components)
-
-The static MDX pipeline is **not required for local iteration**. While you are still designing a component (writing types, styles, stories), the component renders via the simpler default autodocs page from [.storybook/preview.tsx](../.storybook/preview.tsx) — `<Title>` (from name), `<Description>` (from JSDoc summary), `<ArgTypes>` (from types), `<Stories>` (from `.stories.tsx`). That is enough to verify the component visually, click through the variants, and check accessibility, and it requires zero extra files beyond the mandatory component structure.
-
-Opt the component into the static MDX pipeline (write a `README.md` in its folder — the build script auto-discovers it) when:
-
-- The API is stable enough to be consumed externally
-- You want remote MCP consumers (AI agents querying the deployed Storybook) to receive the rich payload — full README narrative, a complete resolved prop table, and story examples with code
-- You are about to ship / publish the component
-
-Until then, keep iterating with the default autodocs page. No `.story.mdx` is committed to disk, no opt-in needed, no script runs — just `npm run dev` and the autodocs page reflects whatever JSDoc/types/stories you have right now.
+While iterating (no `README.md` yet) the component renders via the simpler default autodocs page — enough to verify visuals and a11y. Opt into the static pipeline when the API is stable and you want remote MCP consumers to receive the rich payload.
 
 ### Why the manifest, not inlined comments
 
-Storybook MCP returns the source MDX as plain text. JSX expressions like `<JsonSchema schema={schema} />` or `<Stories />` arrive at the agent as **raw, unrendered tags** — the agent never sees the prop table or the rendered stories they produce. The detailed payload therefore comes from the **components manifest** `@storybook/addon-mcp` builds, which the MCP renders as two native text blocks: `## Stories` (from the CSF stories) and `## Props` (from docgen). The README prose is plain markdown in the MDX body, so it comes through verbatim as `## Docs`. Do **not** try to smuggle extra data into the MDX via hidden comments — it only duplicates these native blocks and bloats every `get-documentation` response.
+Storybook MCP returns the MDX as plain text, so JSX like `<JsonSchema />` / `<Stories />` arrives as raw tags. The detailed payload comes from the **components manifest** (`## Stories`, `## Props`); the README prose comes through verbatim as `## Docs`. Do NOT smuggle data into the MDX via hidden comments.
 
-The `## Props` block needs help. Storybook react-vite's default docgen is `react-docgen` (the JS parser), which **cannot resolve our imported `HtmlProps<Tag, {…}>` generic** (it silently returns only props with an inline default literal) and **errors outright** on UI5 endorsed re-exports (`declare const X: ForwardRefExoticComponent<…>`). So out of the box `## Props` is empty or wrong. [`.storybook/reltioManifestPreset.ts`](../.storybook/reltioManifestPreset.ts) fixes it: for every `components/` and `charts/` entry it runs the TypeScript Compiler API extractor ([`scripts/extractTypeApi.mjs`](../scripts/extractTypeApi.mjs)) against `<Name>.types.ts` → `<Name>Props`, writes the resolved props into `reactDocgenTypescript`, and **deletes the incomplete `reactDocgen`** (`@storybook/mcp` prefers `reactDocgen`). Net result: one `get-documentation` call returns the JSDoc summary + stories (first few with code, rest indexed) + full README + a complete props table.
-
-### What renders in the docs page
-
-The static MDX produces this visible structure:
-
-```
-# ComponentName                            ← README H1
-import { ... } from "@reltio/design/components";   ← AUTO-INJECTED import (build script)
-[intro paragraph]                          ← README intro
-### Subsection / ### Subsection            ← README ### sections (no H2)
-
-PROP TYPES                                 ← <SectionHeading>
-[JsonSchema table]                         ← visible to humans (from <Name>.schema.json)
-
-[Stories block]                            ← native Storybook <Stories /> with auto STORIES heading
-```
-
-Authors do not write this layout — the script does. Authors write README, .types.ts, .stories.tsx, and the JSDoc summary. The script (for the human-facing page) and the manifest preset (for the MCP props/stories blocks) together serve all three "audiences" (human readers, the visible prop table, MCP agents) from those four sources.
+The `## Props` block needs help: default `react-docgen` can't resolve our `HtmlProps<…>` generic and errors on UI5 re-exports. [`.storybook/reltioManifestPreset.ts`](../.storybook/reltioManifestPreset.ts) fixes this by running the TS Compiler API extractor ([`scripts/extractTypeApi.mjs`](../scripts/extractTypeApi.mjs)) against `<Name>.types.ts` → `<Name>Props`. If `## Props` is empty/single-prop, that extraction failed — confirm `<Name>.types.ts` exports `<Name>Props` and check the dev log for a `[reltio-manifest]` warning.
 
 ### JSDoc convention
 
-Put a **single-line summary** above `export const ComponentName`:
-
-```tsx
-/** Application navigator popover for switching between the Reltio platform apps available to the current tenant. */
-export const AppSelector = ({ ... }: AppSelectorProps) => { ... };
-```
-
-- One sentence, action-oriented, describes WHAT the component does
-- Does **not** duplicate the README intro
-- Does **not** describe internals (e.g. "wraps SAP Fiori `ProductSwitch`") — that belongs in the README
-
-This summary lands in IDE Quick Info, Storybook's Manifest Debugger, the autodocs Description block, and the description field in MCP `get-documentation`.
+A single-line, action-oriented summary above `export const ComponentName` — describes WHAT it does, does not duplicate the README, does not describe internals. Lands in IDE hover, autodocs, and MCP `get-documentation`.
 
 ### `README.md` conventions
 
-Required structure — narrative only, no import line:
-
-````markdown
-# ComponentName
-
-One-paragraph intro: what is this component, what does it wrap (if anything),
-and what concerns does it own that justify its existence as a wrapper.
-
-### First topic
-
-Compact narrative — only critical info not visible elsewhere on the page.
-
-### Second topic
-
-...
-
-### See also
-
-- [external link](...) — short description
-````
-
-**Rules:**
-- Starts with `# ComponentName` H1 (one only) — Storybook renders it as the page title; in raw markdown the file stays self-contained for GitHub/Bitbucket viewers
-- **Do NOT include a `tsx` code-fence with the import line.** The build script ([`scripts/build-component-docs.mjs`](../scripts/build-component-docs.mjs)) auto-injects the canonical import (`import { <Name> } from "@reltio/design/components"` for components, `/charts` for charts) right after the H1. Any `tsx import { ... } from "@reltio/design..."` block found in the README is stripped during build to prevent stale paths surviving across renames or repackagings. This eliminates a recurring class of mistakes (typing `from "@reltio/design"` without the mandatory subpath, or referencing the wrong subpath after a chart-vs-component move).
-- Short intro paragraph — the WHY of the component
-- All subsections use `###` (H3). No H2 inside README — H2-level section headers (PROP TYPES, STORIES) are owned by the docs page itself via `<SectionHeading>` and `<Stories />`
-- **Compact:** do NOT duplicate prop descriptions (those live in `.types.ts` JSDoc), do NOT duplicate code examples (those live in `.stories.tsx`)
-- Cover only what is **not in other sections**: business rationale, conventions, edge cases, design-system references
+- Start with `# ComponentName` (one H1). **No import code-fence** — the build script injects the canonical `@reltio/design/...` import after the H1 (and strips any stale one).
+- One intro paragraph (the WHY), then `###` subsections only (no H2). End with `### See also`.
+- **Compact:** don't duplicate prop descriptions (`.types.ts`) or code examples (`.stories.tsx`). Cover only what isn't elsewhere — rationale, conventions, **any curation/divergence from UI5 and why**, edge cases.
 
 ### `.types.ts` per-field JSDoc
 
-Each top-level prop reaches the MCP `## Props` block through the extractor in [`.storybook/reltioManifestPreset.ts`](../.storybook/reltioManifestPreset.ts), which carries every prop's name, resolved type, JSDoc description, `@default`, and `@deprecated`. So put a JSDoc comment on **every** top-level prop — it shows in the visible `<JsonSchema>` table for humans and in `## Props` for agents.
+Put JSDoc on **every top-level prop** — it reaches both the `<JsonSchema>` table and MCP `## Props` (with `@default`, `@deprecated`). Nested object types are rendered by name only, so describe nested shapes in the parent prop's JSDoc or the README.
 
-Nested object types (e.g. `apps: AppEntry[]`) are rendered by their type **name** only (`Array<AppEntry>`) — the extractor does not expand `AppEntry`'s fields, so a nested type's per-field JSDoc does **not** reach the props table. If an agent needs to understand a nested shape, describe it in the parent prop's JSDoc or in the README. Still keep JSDoc on nested fields — it powers IDE Quick Info and keeps the source self-documenting.
+## Creating a new component
 
-```tsx
-export type AppEntry = {
-  /** Application display name. Apps without a name are ignored. */
-  name?: string;
-  /** URL opened in a new tab on click. Apps without a URI are ignored. */
-  uri?: string;
-  ...
-};
-```
+> **TL;DR for AI agents:** invoke `Skill add-design-component` (`<Name> trajectory=thin|wrapper`). It walks both trajectories, composes `openspec-propose` (wrappers) + `add-changeset`, and stops at a review-ready commit.
 
-### Build script
+1. **Confirm the gap** — check UI5 docs and Reltio Design MCP `list-all-documentation`.
+2. **Iterate** — create the structure files; verify visually via default autodocs (`npm run dev`); `npm run format && npm run lint` as you go.
+3. **Ship** — write `README.md` (opts in automatically), `npm run build-component-docs`, format + lint, visual check, and for non-trivial nested types verify the MCP payload. Commit `README.md` + the generated `.story.mdx` together.
 
-```bash
-npm run build-component-docs   # regenerate all opted-in components
-```
-
-Opt-in is **automatic by README.md presence**. The script ([scripts/build-component-docs.mjs](../scripts/build-component-docs.mjs)) globs `components/*` and `charts/*` and picks up every directory that has all three: `README.md` + `<Name>.types.ts` + `<Name>.stories.tsx`. Internal helpers without stories (e.g. `charts/Chart` — the shared ECharts wrapper) are skipped automatically. The script is chained into `predev` and `prebuild-storybook`, so a fresh `.story.mdx` is built automatically before the dev server starts and before a production build. It is **not** chained into `pretest` — tests run against `.stories.tsx` directly and do not depend on the generated MDX.
-
-If the dev server is already running and you edit `README.md` / `.types.ts` / `.stories.tsx`, run `npm run build-component-docs` manually so HMR picks up the regenerated `.story.mdx`.
-
-### Verifying the result
-
-After regenerating, sanity-check that the MCP returns the expected content:
-
-```bash
-curl -s 'http://localhost:6006/mcp' \
-  -X POST -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get-documentation","arguments":{"id":"components-componentname"}}}'
-```
-
-The response should include: the JSDoc one-liner (component description), a `## Stories` section listing the stories with resolved code, a `## Props` section with the full resolved prop table (types, JSDoc, defaults), and a `## Docs` section containing the README (H1, import, intro, sections).
-
-If `## Props` is empty or shows only a single prop (often `any`-typed), the manifest preset's extractor failed for that component — confirm `<Name>.types.ts` exports `<Name>Props`, and check the dev-server log for a `[reltio-manifest] could not enrich docgen for <Name>` warning.
-
-## Creating a New Component
-
-> **TL;DR for AI agents:** invoke `Skill add-design-component` (args: `<Name> trajectory=thin|wrapper`). It walks both trajectories (thin UI5 endorsement / Reltio wrapper), composes `openspec-propose` for wrappers and `add-changeset` for the release intent, and stops at `git commit` ready for human review. See [`.agents/skills/add-design-component/SKILL.md`](../.agents/skills/add-design-component/SKILL.md) and the canonical multi-component rollout example at [`.agents/skills/add-design-component/examples/RP-184745-ui-export-component-backlog.md`](../.agents/skills/add-design-component/examples/RP-184745-ui-export-component-backlog.md).
-
-Two stages: **iterate** locally with the default autodocs, **ship** by opting into the static MDX pipeline. You only do the second stage when the API is stable and you want remote MCP consumers to receive the rich payload.
-
-### Stage 1 — iterate (default autodocs)
-
-This is where most of the work happens. You can stay here for as long as the API is still in flux.
-
-1. **Confirm the gap.** Check `@ui5/webcomponents-react` docs and Reltio Design MCP `list-all-documentation` to make sure no existing component already covers the use case.
-2. **Create the folder** with the iteration-stage files:
-   - `ComponentName.tsx` — implementation with a one-line JSDoc summary above the export
-   - `ComponentName.types.ts` — every prop and nested type, with JSDoc on every field
-   - `ComponentName.module.css` — scoped styles (no hardcoded colors, only `--sap*` tokens; no `@media` queries)
-   - `ComponentName.stories.tsx` — one story per visual variant, callbacks via `fn()` from `storybook/test`
-   - `index.ts` — re-exports the public API only
-3. **Run the dev server** (`npm run dev`) and iterate. The component renders via the default autodocs page (`<Title>` + `<Description>` from JSDoc + `<ArgTypes>` + `<Stories>`) — no extra files needed. Visually verify all stories, click through variants, fix accessibility.
-4. **Lint & format** as you go: `npm run format` && `npm run lint`.
-
-At this stage no `README.md` and no `.story.mdx` exist on disk. The component is fully usable from `index.ts` but does not appear in the static MDX pipeline yet — remote MCP consumers will see the auto-derived (less rich) docs only.
-
-### Stage 2 — ship (opt into static MDX)
-
-When the API is stable enough to publish and you want AI agents to receive the rich payload:
-
-1. **Write `README.md`** — H1 with component name, one-paragraph intro, H3 subsections only, compact and non-duplicative (see [README conventions](#readmemd-conventions) above). **Do NOT add an import code-fence — the build script injects the canonical import automatically.**
-2. The component is now opted in automatically — the docs script globs `components/*` and `charts/*` and picks up any folder with `README.md` + `<Name>.types.ts` + `<Name>.stories.tsx`.
-3. **Generate the docs page** — `npm run build-component-docs`. It produces `ComponentName.story.mdx`. Never edit this file by hand — it is overwritten on every build.
-4. **Format & lint** — `npm run format` && `npm run lint`. Both must pass with no errors.
-5. **Visual check** in Storybook (`npm run dev`): open the component's Docs tab, confirm README content / PROP TYPES / Stories render as expected.
-6. **MCP check** (recommended for components with non-trivial nested types): query Reltio Design MCP `get-documentation` for the component and confirm AI agents will receive the JSDoc summary, full README, full JSON Schema, and full stories source in one payload (see "Verifying the result" above).
-7. **Commit `README.md` and the generated `.story.mdx`** together. The MDX is auto-generated but committed so production Storybook builds (and remote MCP consumers) always see the right content without running the build script themselves.
-
-### OpenSpec workflow (for spec-driven changes)
-
-For larger features or breaking changes, drive the implementation through OpenSpec:
-
-1. `/opsx:new` to create a change and build artifacts step by step
-2. `/opsx:continue` to create each artifact (proposal → specs → design → tasks)
-3. Review each artifact before proceeding to the next
-4. `/opsx:apply` to implement the component following all standards above
-5. `/opsx:archive` to archive the change after deployment
-
-> See full development workflow: [Spec-Driven Development Guide](/?path=/docs/guides-spec-driven-development--docs)
+For new business components, breaking changes, or curated divergences from UI5, drive it through **OpenSpec** (`/opsx:new` → `/opsx:continue` → `/opsx:apply` → `/opsx:archive`). See the [Spec-Driven Development guide](/?path=/docs/guides-spec-driven-development--docs).

@@ -1,0 +1,118 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "ListItemProps",
+	"x-component": "ListItem",
+	"type": "object",
+	"properties": {
+		"accessibilityAttributes": {
+			"description": "Defines the additional accessibility attributes that will be applied to the component.\nThe following fields are supported:\n\n- **ariaSetsize**: Defines the number of items in the current set  when not all items in the set are present in the DOM.\n**Note:** The value is an integer reflecting the number of items in the complete set. If the size of the entire set is unknown, set `-1`.\n\n\t- **ariaPosinset**: Defines an element's number or position in the current set when not all items are present in the DOM.\n\t**Note:** The value is an integer greater than or equal to 1, and less than or equal to the size of the set when that size is known.\n\n**Note:** Available since [v1.15.0](https://github.com/UI5/webcomponents/releases/tag/v1.15.0) of **@ui5/webcomponents**.",
+			"default": {},
+			"x-typescriptType": "ListItemAccessibilityAttributes"
+		},
+		"accessibleName": {
+			"description": "Defines the text alternative of the component.\nNote: If not provided a default text alternative will be set, if present.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"additionalText": {
+			"description": "Defines the `additionalText`, displayed in the end of the list item.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"additionalTextState": {
+			"description": "Defines the state of the `additionalText`.\n\nAvailable options are: `\"None\"` (by default), `\"Positive\"`, `\"Critical\"`, `\"Information\"` and `\"Negative\"`.",
+			"default": "None",
+			"x-typescriptType": "'Positive' | 'Negative' | ValueState | 'None' | 'Critical' | 'Information'"
+		},
+		"children": {
+			"description": "Defines the custom formatted text of the component.\n\n**Note:** For optimal text wrapping and a consistent layout, it is strongly recommended to use the `text` property.\n\nUse the `default` slot only when custom formatting with HTML elements (e.g., `<b>`, `<i>`) is required.\nBe aware that wrapping (via `wrappingType=\"Normal\"`) may not function correctly with custom HTML content in the `default` slot.\n\nIf both `text` and `default` slot are used, the `text` property takes precedence.\n\n__Supported Node Type/s:__ `Array<Node>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"deleteButton": {
+			"description": "Defines the delete button, displayed in \"Delete\" mode.\n**Note:** While the slot allows custom buttons, to match\ndesign guidelines, please use the `Button` component.\n**Note:** When the slot is not present, a built-in delete button will be displayed.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"deleteButton\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v1.9.0](https://github.com/UI5/webcomponents/releases/tag/v1.9.0) of **@ui5/webcomponents**.\n\n__Supported Node Type/s:__ `Array<IButton>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"description": {
+			"description": "Defines the description displayed right under the item text, if such is present.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"highlight": {
+			"description": "Defines the highlight state of the list items.\nAvailable options are: `\"None\"` (by default), `\"Positive\"`, `\"Critical\"`, `\"Information\"` and `\"Negative\"`.\n\n**Note:** Available since [v1.24](https://github.com/UI5/webcomponents/releases/tag/v1.24) of **@ui5/webcomponents**.",
+			"default": "None",
+			"x-typescriptType": "'Positive' | 'Negative' | 'None' | 'Critical' | 'Information' | Highlight"
+		},
+		"icon": {
+			"description": "Defines the `icon` source URI.\n\n**Note:**\nSAP-icons font provides numerous built-in icons. To find all the available icons, see the\n[Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"iconEnd": {
+			"description": "Defines whether the `icon` should be displayed in the beginning of the list item or in the end.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"image": {
+			"description": "**Note:** While the slot allows option for setting custom avatar, to match the\ndesign guidelines, please use the `Avatar` with it's default size - S.\n\n**Note:** If bigger `Avatar` needs to be used, then the size of the\n`ListItemStandard` should be customized in order to fit.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"image\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"movable": {
+			"description": "Defines whether the item is movable.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"navigated": {
+			"description": "The navigated state of the list item.\nIf set to `true`, a navigation indicator is displayed at the end of the list item.\n\n**Note:** Available since [v1.10.0](https://github.com/UI5/webcomponents/releases/tag/v1.10.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"onDetailClick": {
+			"description": "Fired when the user clicks on the detail button when type is `Detail`.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ListItemStandardDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ListItemStandardDomRef>) => void"
+		},
+		"selected": {
+			"description": "Defines the selected state of the component.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"text": {
+			"description": "Defines the text of the component.\n\n**Note:** Available since [v2.10.0](https://github.com/UI5/webcomponents/releases/tag/v2.10.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"tooltip": {
+			"description": "Defines the text of the tooltip that would be displayed for the list item.\n\n**Note:** Available since [v1.23.0](https://github.com/UI5/webcomponents/releases/tag/v1.23.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"type": {
+			"description": "Defines the visual indication and behavior of the list items.\nAvailable options are `Active` (by default), `Inactive`, `Detail` and `Navigation`.\n\n**Note:** When set to `Active` or `Navigation`, the item will provide visual response upon press and hover,\nwhile with type `Inactive` and `Detail` - will not.",
+			"default": "Active",
+			"x-typescriptType": "ListItemType | 'Inactive' | 'Active' | 'Detail' | 'Navigation'"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"wrappingType": {
+			"description": "Defines if the text of the component should wrap when it's too long.\nWhen set to \"Normal\", the content (title, description) will be wrapped\nusing the `ExpandableText` component.<br/>\n\nThe text can wrap up to 100 characters on small screens (size S) and\nup to 300 characters on larger screens (size M and above). When text exceeds\nthese limits, it truncates with an ellipsis followed by a text expansion trigger.\n\nAvailable options are:\n- `None` (default) - The text will truncate with an ellipsis.\n- `Normal` - The text will wrap (without truncation).\n\n**Note:** Available since [v2.10.0](https://github.com/UI5/webcomponents/releases/tag/v2.10.0) of **@ui5/webcomponents**.",
+			"default": "None",
+			"x-typescriptType": "'None' | WrappingType | 'Normal'"
+		}
+	}
+}

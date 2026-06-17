@@ -29,7 +29,6 @@ function resolveParams(parameters: Record<string, unknown>): ResolvedParams {
 function halfStyleFor(layout: Layout): React.CSSProperties {
 	const base: React.CSSProperties = {
 		position: "relative",
-		background: "var(--sapBackgroundColor)",
 		color: "var(--sapTextColor)",
 		minWidth: 0,
 		minHeight: 0,
