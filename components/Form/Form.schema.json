@@ -1,0 +1,83 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "FormProps",
+	"x-component": "Form",
+	"type": "object",
+	"properties": {
+		"accessibleMode": {
+			"description": "Defines the accessibility mode of the component in \"edit\" and \"display\" use-cases.\n\nBased on the mode, the component renders different HTML elements and ARIA attributes,\nwhich are appropriate for the use-case.\n\n**Usage:**\n- Set this property to \"Display\", when the form consists of non-editable (e.g. texts) form items.\n- Set this property to \"Edit\", when the form consists of editable (e.g. input fields) form items.\n\n**Note:** Available since [v2.16.0](https://github.com/UI5/webcomponents/releases/tag/v2.16.0) of **@ui5/webcomponents**.",
+			"default": "Display",
+			"x-typescriptType": "FormAccessibleMode | 'Display' | 'Edit'"
+		},
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.\n\n**Note:** Available since [v2.10.0](https://github.com/UI5/webcomponents/releases/tag/v2.10.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleNameRef": {
+			"description": "Defines id (or many ids) of the element (or elements) that label the component.\n\n**Note:** Available since [v2.16.0](https://github.com/UI5/webcomponents/releases/tag/v2.16.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"children": {
+			"description": "Defines the component content - FormGroups or FormItems.\n\n**Note:** Mixing FormGroups and standalone FormItems (not belonging to a group) is not supported.\nEither use FormGroups and make sure all FormItems are part of a FormGroup, or use just FormItems without any FormGroups.\n\n__Supported Node Type/s:__ `Array<IFormItem>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"emptySpan": {
+			"description": "Defines the number of cells that are empty at the end of each form item, configurable by breakpoint.\n\nBy default, a form item spans 12 cells, fully divided between its label (4 cells) and field (8 cells), with no empty space at the end.\nThe `emptySpan` provides additional layout flexibility by defining empty space at the form item’s end.\n\n**Note:**\n- The maximum allowable empty space is 10 cells. At least 1 cell each must remain for the label and the field.\n- When `emptySpan` is specified (greater than 0), ensure that the combined value of `emptySpan` and `labelSpan` does not exceed 11. This guarantees a minimum of 1 cell for the field.\n\n**Note:** Available since [v2.5.0](https://github.com/UI5/webcomponents/releases/tag/v2.5.0) of **@ui5/webcomponents**.",
+			"default": "S0 M0 L0 XL0",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"header": {
+			"description": "Defines the component header area.\n\n**Note:** When a `header` is provided, the `headerText` property is ignored.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"header\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"headerLevel": {
+			"description": "Defines the compoennt heading level,\nset by the `headerText`.\n\n**Note:** Available since [v2.10.0](https://github.com/UI5/webcomponents/releases/tag/v2.10.0) of **@ui5/webcomponents**.",
+			"default": "H2",
+			"x-typescriptType": "TitleLevel | 'H1' | 'H2' | 'H3' | 'H4' | 'H5' | 'H6'"
+		},
+		"headerText": {
+			"description": "Defines the header text of the component.\n\n**Note:** The property gets overridden by the `header` slot.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"itemSpacing": {
+			"description": "Defines the vertical spacing between form items.\n\n**Note:** If the Form is meant to be switched between \"display\"(\"non-edit\") and \"edit\" modes,\nwe recommend using \"Large\" item spacing in \"display\"(\"non-edit\") mode, and \"Normal\" - for \"edit\" mode,\nto avoid \"jumping\" effect, caused by the hight difference between texts in \"display\"(\"non-edit\") mode and the input fields in \"edit\" mode.",
+			"default": "Normal",
+			"x-typescriptType": "'Normal' | FormItemSpacing | 'Large'"
+		},
+		"labelSpan": {
+			"description": "Width proportion (out of 12 cells) the label occupies per breakpoint;\n`12` places the label on top of its field. Reltio diverges from UI5's\ndefault (`\"S12 M4 L4 XL4\"`, labels beside fields) and defaults to labels\non top on every breakpoint. Set this explicitly for side labels\n(e.g. `\"S12 M4 L4 XL4\"`).",
+			"default": "S12 M12 L12 XL12",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"layout": {
+			"description": "Number of columns to distribute the form content by breakpoint\n(`\"S<n> M<n> L<n> XL<n>\"`). Reltio diverges from UI5's responsive default\n(`\"S1 M1 L2 XL3\"`) and defaults to a single column on every breakpoint —\npredictable and scannable for product forms. Set this explicitly for\ndenser multi-column layouts (e.g. `\"S1 M2 L2 XL2\"`).",
+			"default": "S1 M1 L1 XL1",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onSubmit": {
+			"description": "Called when the form is submitted (via a `Button` with `type=\"Submit\"`,\npressing Enter in a field, or `formRef.current.requestSubmit()`). Receives\nthe form's fields as a flat JSON object ready to send to a JSON API: each\nnamed field becomes a key; a field whose `name` appears more than once\n(checkbox group, multi-select) becomes an array of its values; fields\nwithout a `name` are omitted. The wrapper calls `event.preventDefault()`\nfirst. Need the raw `FormData` (e.g. for file fields) — build it from\n`event.currentTarget`.",
+			"x-typescriptType": "(values: FormValues, event: FormEvent<HTMLFormElement>) => void",
+			"x-functionSignature": "(values: FormValues, event: FormEvent<HTMLFormElement>) => void"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

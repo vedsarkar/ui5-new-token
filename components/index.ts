@@ -90,6 +90,11 @@ export * from "./AppSelector";
 export * from "./Chat";
 export * from "./Details";
 export * from "./ErrorBoundary";
+// `Form` is a thin Reltio wrapper (not a 1:1 re-export): it renders the UI5
+// Form floorplan inside a native `<form>` and adds an `onSubmit(formData)`
+// callback that serializes the form-associated UI5 fields. `FormGroup` and
+// `FormItem` remain 1:1 UI5 re-exports. See `components/Form/README.md`.
+export * from "./Form";
 export * from "./Markdown";
 export * from "./ShellBar";
 export * from "./SideNavigation";

@@ -1,0 +1,77 @@
+# Form
+
+`Form` is the SAP Fiori form floorplan for configuration, entity-edit, and
+settings screens — it lays out labelled fields in a consistent, responsive grid
+instead of hand-rolled label/field markup whose spacing and breakpoints drift
+between Reltio products. `FormGroup` and `FormItem` are re-exported alongside it.
+
+### Divergence from UI5 — why this is a wrapper
+
+`FormGroup` and `FormItem` are 1:1 re-exports of their UI5 counterparts. `Form`
+is **not**: it is a thin Reltio wrapper that renders the UI5 Form floorplan
+inside a native `<form>` element, adds an `onSubmit` callback, and ships
+opinionated layout defaults. The UI5 `Form` is layout-only and never submits;
+almost every product screen then re-implements the same "collect the field
+values and POST them" boilerplate. Because UI5 input components are
+form-associated (`ElementInternals`), a native `<form>` serializes them for free
+— so the wrapper turns that boilerplate into one prop. Aside from `onSubmit` and
+the changed `layout`/`labelSpan` defaults below, all UI5 Form props, slots, and
+children pass through unchanged.
+
+### Submitting and serialization
+
+Give every field a `name` — `onSubmit` receives the form's fields as a flat JSON
+object (its first argument), ready to send straight to a JSON API, and only
+named, form-associated fields are included. A `name` submitted once maps to a
+single value; a `name` submitted more than once (a checkbox group, a
+multi-select) maps to an **array** of its values, so multi-value fields survive.
+Submit is triggered by a `Button` with `type="Submit"`, by pressing Enter in a
+field, or programmatically via a `ref` to the form
+(`formRef.current.requestSubmit()`). The wrapper calls `event.preventDefault()`
+before invoking `onSubmit`, so there is no full-page reload; the consumer owns
+the network call. Need the raw `FormData` (e.g. for `File` fields), build it from
+the event: `new FormData(event.currentTarget)`.
+
+This wrapper is intentionally layout + serialization only. It does **not** manage
+field state, run validation, or track submit/loading — keep field-level
+validation on the inputs (`valueState`, `required`) and own async submission and
+pending UI in your app (or a form library). Do not nest `Form` inside another
+`<form>`: nested form elements are invalid HTML.
+
+### Anatomy — Form, FormGroup, FormItem
+
+- `Form` is the container. It owns the column `layout`, the label width
+  (`labelSpan`), item spacing, and the edit/display `accessibleMode`.
+- `FormItem` is one label/field row: put the label in the `labelContent` slot and
+  the field (an `Input`, `Select`, `Text`, …) as its children.
+- `FormGroup` splits a form into labelled sections of `FormItem`s. Use it only
+  when the fields fall into distinct groups; a flat list of `FormItem`s under the
+  `Form` is fine otherwise.
+
+### Layout defaults (Reltio divergence)
+
+Reltio overrides two UI5 layout defaults to make the out-of-the-box form a
+single column with labels above the fields — the most predictable, scannable
+shape for product forms:
+
+- `layout` defaults to `"S1 M1 L1 XL1"` (one column on every breakpoint). UI5's
+  default is the responsive `"S1 M1 L2 XL3"` (2 columns on large, 3 on
+  extra-large).
+- `labelSpan` defaults to `"S12 M12 L12 XL12"` (label on top everywhere). UI5's
+  default is `"S12 M4 L4 XL4"` (label beside the field from M up).
+
+Override either prop to opt back into denser layouts: `layout="S1 M2 L2 XL2"` for
+a two-column grid, `labelSpan="S12 M4 L4 XL4"` for side labels. Do not wrap the
+Form in fixed-width containers to force a layout — let `layout` and the
+breakpoints do the work.
+
+### Edit vs display
+
+Set `accessibleMode="Edit"` (the default is `Display`) so the rendered ARIA
+semantics match the content. Use `Display` for read-only summaries whose items are
+plain `Text`, and `Edit` for forms whose items are editable fields like `Input`.
+
+### See also
+
+- [UI5 Form reference](https://ui5.github.io/webcomponents/components/Form/) — layout grid, label spans, slots
+- [SAP Fiori — Form](https://www.sap.com/design-system/fiori-design-web/v1-145/ui-elements/form/) — when to group, label placement, edit vs display guidance

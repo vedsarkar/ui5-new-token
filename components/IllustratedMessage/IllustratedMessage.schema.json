@@ -27,7 +27,7 @@
 		"design": {
 			"description": "Determines which illustration breakpoint variant is used.\n\nAs `IllustratedMessage` adapts itself around the `Illustration`, the other\nelements of the component are displayed differently on the different breakpoints/illustration designs.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents-fiori**.",
 			"default": "Auto",
-			"x-typescriptType": "'Auto' | 'Dialog' | IllustrationMessageDesign | 'Base' | 'Dot' | 'Spot' | 'Scene' | 'ExtraSmall' | 'Small' | 'Medium' | 'Large'"
+			"x-typescriptType": "'Auto' | 'Dialog' | 'Large' | IllustrationMessageDesign | 'Base' | 'Dot' | 'Spot' | 'Scene' | 'ExtraSmall' | 'Small' | 'Medium'"
 		},
 		"name": {
 			"description": "Defines the illustration name that will be displayed in the component.\n\nExample:\n\n`name='BeforeSearch'`, `name='UnableToUpload'`, etc..\n\n**Note:** To use the TNT illustrations,\nyou need to set the `tnt` or `Tnt` prefix in front of the icon's name.\n\nExample:\n\n`name='tnt/Avatar'` or `name='TntAvatar'`.\n\n**Note:** By default the `BeforeSearch` illustration is loaded.\nWhen using an illustration type, other than the default, it should be loaded in addition:\n\n`import \"@ui5/webcomponents-fiori/dist/illustrations/NoData.js\";`\n\nFor TNT illustrations:\n\n`import \"@ui5/webcomponents-fiori/dist/illustrations/tnt/SessionExpired.js\";`",

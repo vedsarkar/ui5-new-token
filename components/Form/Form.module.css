@@ -1,0 +1,6 @@
+/* The native <form> is a transparent submission wrapper — it must not
+   introduce a layout box, so the UI5 Form's responsive grid stays the
+   outermost visual element exactly as in the prior re-export. */
+.root {
+	display: contents;
+}

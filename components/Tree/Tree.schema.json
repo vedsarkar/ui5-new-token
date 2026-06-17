@@ -95,7 +95,7 @@
 		"selectionMode": {
 			"description": "Defines the selection mode of the component. Since the tree uses a `List` to display its structure,\nthe tree modes are exactly the same as the list modes, and are all applicable.",
 			"default": "None",
-			"x-typescriptType": "'Single' | 'Multiple' | 'None' | ListSelectionMode | 'SingleStart' | 'SingleEnd' | 'SingleAuto' | 'Delete'"
+			"x-typescriptType": "'None' | 'Single' | 'Multiple' | ListSelectionMode | 'SingleStart' | 'SingleEnd' | 'SingleAuto' | 'Delete'"
 		},
 		"style": {
 			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",

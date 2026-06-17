@@ -109,7 +109,7 @@
 		"state": {
 			"description": "Defines the state of the `Dialog`.\n\n**Note:** If `\"Negative\"` and `\"Critical\"` states is set, it will change the\naccessibility role to \"alertdialog\", if the accessibleRole property is set to `\"Dialog\"`.",
 			"default": "None",
-			"x-typescriptType": "'Positive' | 'Negative' | ValueState | 'None' | 'Critical' | 'Information'"
+			"x-typescriptType": "'None' | 'Positive' | 'Negative' | ValueState | 'Critical' | 'Information'"
 		},
 		"stretch": {
 			"description": "Determines if the dialog will be stretched to full screen on mobile. On desktop,\nthe dialog will be stretched to approximately 90% of the viewport.\n\n**Note:** For better usability of the component it is recommended to set this property to \"true\" when the dialog is opened on phone.",
