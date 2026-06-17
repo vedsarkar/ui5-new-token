@@ -55,9 +55,35 @@ UI5 `Table` uses `rowKey` (not React's `key`) to track row identity for selectio
 
 When there is no data, set the `noDataText` prop on `<Table>` and render only the `<TableHeaderRow>`. The table will display the empty message instead of an empty grid.
 
-### Selection, growing, virtualization
+### Selection
 
-The Table family ships several additional sub-parts in `@ui5/webcomponents-react` (not yet re-exported from `@reltio/design`): `TableSelectionSingle`, `TableSelectionMulti`, `TableGrowing`, `TableVirtualizer`, `TableRowAction`. Open an issue with the UI CoE when one of these becomes needed in a product app.
+Row selection is enabled by passing a selection feature component into the `features` slot. Two modes are available, both re-exported from `@reltio/design/components`:
+
+- `TableSelectionMulti` — lets users select any number of rows via checkboxes; fires `onChange` with the new selected row keys.
+- `TableSelectionSingle` — restricts selection to one row at a time; fires `onChange` with the newly selected row key.
+
+```tsx
+<Table features={<TableSelectionMulti onChange={(e) => console.log(e.detail.selectedRows)} />}>
+  <TableHeaderRow slot="headerRow">
+    <TableHeaderCell><span>Entity</span></TableHeaderCell>
+    <TableHeaderCell><span>Status</span></TableHeaderCell>
+  </TableHeaderRow>
+  {records.map((r) => (
+    <TableRow key={r.id} rowKey={r.id}>
+      <TableCell>{r.name}</TableCell>
+      <TableCell>{r.status}</TableCell>
+    </TableRow>
+  ))}
+</Table>
+```
+
+The `onChange` event detail contains `selectedRows` (a `NodeList` of the selected `ui5-table-row` elements) and `previouslySelectedRows`. Use the `rowKey` prop on each `TableRow` to identify which records are selected in your application state.
+
+For single-select, replace `TableSelectionMulti` with `TableSelectionSingle` — the slot and `onChange` API are identical.
+
+### Growing and row actions
+
+`TableGrowing` and `TableRowAction` are also re-exported from `@reltio/design/components` for completeness. Pass `TableGrowing` in the `features` slot to enable infinite-scroll or load-more behaviour. Place `TableRowAction` inside a `TableRow` to render per-row action buttons.
 
 ### See also
 

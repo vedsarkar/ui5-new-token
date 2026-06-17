@@ -1,9 +1,13 @@
-import { Table } from "@ui5/webcomponents-react/Table";
-import { TableCell } from "@ui5/webcomponents-react/TableCell";
-import { TableHeaderCell } from "@ui5/webcomponents-react/TableHeaderCell";
-import { TableHeaderRow } from "@ui5/webcomponents-react/TableHeaderRow";
-import { TableRow } from "@ui5/webcomponents-react/TableRow";
 import { fn } from "storybook/test";
+import {
+	Table,
+	TableCell,
+	TableHeaderCell,
+	TableHeaderRow,
+	TableRow,
+	TableSelectionMulti,
+	TableSelectionSingle,
+} from "@/components";
 import preview from "../../.storybook/preview";
 
 const meta = preview.meta({
@@ -109,4 +113,54 @@ export const ManyRows = meta.story({
 			</div>
 		);
 	},
+});
+
+export const MultiSelect = meta.story({
+	render: (args) => (
+		<Table {...args} features={<TableSelectionMulti onChange={fn()} />}>
+			<TableHeaderRow slot="headerRow">
+				<TableHeaderCell>
+					<span>Entity</span>
+				</TableHeaderCell>
+				<TableHeaderCell>
+					<span>Status</span>
+				</TableHeaderCell>
+				<TableHeaderCell>
+					<span>Records</span>
+				</TableHeaderCell>
+			</TableHeaderRow>
+			{rows.map((r) => (
+				<TableRow key={r.id} rowKey={r.id}>
+					<TableCell>{r.name}</TableCell>
+					<TableCell>{r.status}</TableCell>
+					<TableCell>{r.records.toLocaleString()}</TableCell>
+				</TableRow>
+			))}
+		</Table>
+	),
+});
+
+export const SingleSelect = meta.story({
+	render: (args) => (
+		<Table {...args} features={<TableSelectionSingle onChange={fn()} />}>
+			<TableHeaderRow slot="headerRow">
+				<TableHeaderCell>
+					<span>Entity</span>
+				</TableHeaderCell>
+				<TableHeaderCell>
+					<span>Status</span>
+				</TableHeaderCell>
+				<TableHeaderCell>
+					<span>Records</span>
+				</TableHeaderCell>
+			</TableHeaderRow>
+			{rows.map((r) => (
+				<TableRow key={r.id} rowKey={r.id}>
+					<TableCell>{r.name}</TableCell>
+					<TableCell>{r.status}</TableCell>
+					<TableCell>{r.records.toLocaleString()}</TableCell>
+				</TableRow>
+			))}
+		</Table>
+	),
 });
