@@ -9,6 +9,7 @@
 // the Reltio `AppSelector` business component (re-exported below) is the
 // canonical app navigator across every Reltio product and supersedes them.
 export { Avatar } from "@ui5/webcomponents-react/Avatar";
+export { Bar } from "@ui5/webcomponents-react/Bar";
 export { BusyIndicator } from "@ui5/webcomponents-react/BusyIndicator";
 export { Button } from "@ui5/webcomponents-react/Button";
 export { Calendar } from "@ui5/webcomponents-react/Calendar";
