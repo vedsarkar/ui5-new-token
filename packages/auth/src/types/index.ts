@@ -91,10 +91,101 @@ export type TokenResponse = {
 };
 
 /**
- * Shape of the parsed JSON returned by `POST /checkToken`.
+ * Per-permission action map inside {@link CheckTokenResponseUserPermissions}.
  *
- * The response is Reltio-specific: it includes user identity and permission
- * data filtered by `serviceId`/`tenantId` query parameters. The exact body
- * varies by Reltio environment, so the type is intentionally permissive.
+ * Keyed by Reltio permission string (e.g. `"MDM:data.*"`, `"Auth:customer.*"`),
+ * each value maps an action (`READ`, `CREATE`, `UPDATE`, `DELETE`, `EXECUTE`)
+ * to the list of tenant ids / scope tokens (e.g. `"SuperUser:*"`,
+ * `"customerId:Reltio"`, or a tenant id) the action is granted for.
  */
-export type CheckTokenResponse = Record<string, unknown>;
+export type CheckTokenResponsePermissionMap = Record<
+	string,
+	Record<string, string[]>
+>;
+
+/**
+ * The `userPermissions` block of {@link CheckTokenResponseUser}.
+ */
+export type CheckTokenResponseUserPermissions = {
+	/** Role name → tenant ids / scope tokens the role applies to. */
+	roles: Record<string, string[]>;
+	/** Permission string → action → tenant ids / scope tokens. */
+	permissions: CheckTokenResponsePermissionMap;
+	/** Permissions grouped by service. Shape varies by environment. */
+	permissionsByService: Record<string, unknown>;
+	[key: string]: unknown;
+};
+
+/**
+ * Identity of the user a token represents, as returned by `POST /checkToken`.
+ */
+export type CheckTokenResponseUser = {
+	/** Reltio customer the user belongs to. */
+	customer: string;
+	/** Username of the authenticated user. */
+	username: string;
+	/** Email of the authenticated user. */
+	email: string;
+	/** Bound entity, when the user maps to a Reltio entity (else `null`). */
+	entity: unknown;
+	/** Linked external identity-provider tokens. */
+	externalTokens: unknown[];
+	/** Tenant ids the user has access to. */
+	tenants: string[];
+	/** Reltio role names granted to the user. */
+	roles: string[];
+	/** Resolved per-tenant role and permission grants. */
+	userPermissions: CheckTokenResponseUserPermissions;
+	/** Whether the account is enabled. */
+	enabled: boolean;
+	/** Whether the account has not expired. */
+	accountNonExpired: boolean;
+	/** Whether the credentials have not expired. */
+	credentialsNonExpired: boolean;
+	/** Whether the account is not locked. */
+	accountNonLocked: boolean;
+	/** Whether the user authenticates through an external IdP. */
+	externalUser: boolean;
+	/** Preferred locale (e.g. `"en"`). */
+	locale: string;
+	/** Preferred timezone (e.g. `"UTC"`). */
+	timezone: string;
+	/** Group memberships. */
+	groups: unknown[];
+	/** Whether the user record is encrypted. */
+	encrypted: boolean;
+	[key: string]: unknown;
+};
+
+/**
+ * Parsed payload returned by the Auth Server's `POST /checkToken`
+ * introspection endpoint — the resolved type of `auth.checkToken(request)`.
+ *
+ * The response is Reltio-specific: it carries the client and user identity
+ * plus the permission data (`roles`, `scopes`, `resourceIds`) filtered by the
+ * `serviceId`/`tenantId` scopes. The known fields are typed for ergonomic
+ * route gating; the index signatures keep the type permissive because the
+ * exact body varies by Reltio environment.
+ *
+ * This is a compile-time convenience only — `checkToken` casts the upstream
+ * JSON to this shape and performs NO runtime schema validation.
+ */
+export type CheckTokenResponse = {
+	/** OAuth client id the token was issued to. */
+	clientId: string;
+	/** Token expiry as a Unix timestamp. */
+	expiration: number;
+	/** Resource ids the token grants access to. */
+	resourceIds: string[];
+	/** Roles granted to the token, filtered by the requested scopes. */
+	roles: string[];
+	/** OAuth scopes granted to the token. */
+	scopes: string[];
+	/** Identity of the user the token represents. */
+	user: CheckTokenResponseUser;
+	/** Reltio error code when introspection reports a problem (else `null`). */
+	errorCode: string | null;
+	/** Human-readable error message paired with `errorCode` (else `null`). */
+	errorMessage: string | null;
+	[key: string]: unknown;
+};

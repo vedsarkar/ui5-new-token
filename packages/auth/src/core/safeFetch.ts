@@ -13,7 +13,7 @@
  * `checkAccessToken`. Never returns a non-ok response.
  */
 
-import { RequestError } from "./errors";
+import { RequestError } from "../utils/errors";
 
 /** Flat options for {@link safeFetch}: the URL plus native `fetch` init fields. */
 export type SafeFetchOptions = RequestInit & {

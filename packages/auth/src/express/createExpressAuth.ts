@@ -15,7 +15,10 @@
  * one `createAuth` exposes) so Express apps that call the Auth server
  * directly — bypassing the router's `/checkToken` and `/refreshToken`
  * endpoints — can resolve the per-session cluster URL without re-deriving
- * the HMAC key.
+ * the HMAC key. It additionally carries a `checkToken` method — the
+ * programmatic sibling of the `POST /checkToken` route — that introspects
+ * the request's access token server-side and returns the parsed
+ * `CheckTokenResponse` payload (throwing `RequestError` on failure).
  */
 
 import express, {
@@ -24,19 +27,23 @@ import express, {
 	type Response,
 	type Router,
 } from "express";
-import { createAuth } from "../core/createAuth";
-import type { AuthConfig } from "../types";
+import { type CheckTokenOptions, createAuth } from "../core/createAuth";
+import type { AuthConfig, CheckTokenResponse } from "../types";
 import type { AnyRequest } from "../utils/readHeader";
 import { applyWebResponseToExpressRes, expressToWebRequest } from "./adapter";
 
 /**
- * Express `Router` augmented with the dynamic Auth-server routing resolver.
- * Attaching the method to the router (rather than changing the return shape
- * to an object) keeps the existing `app.use(path, createExpressAuth(...))`
- * usage working unchanged.
+ * Express `Router` augmented with the dynamic Auth-server routing resolver
+ * and the server-side token-introspection method. Attaching the methods to
+ * the router (rather than changing the return shape to an object) keeps the
+ * existing `app.use(path, createExpressAuth(...))` usage working unchanged.
  */
 export type ExpressAuthRouter = Router & {
 	resolveAuthPath: (req: AnyRequest) => Promise<string>;
+	checkToken: (
+		req: AnyRequest,
+		opts?: CheckTokenOptions,
+	) => Promise<CheckTokenResponse>;
 };
 
 export function createExpressAuth(config: AuthConfig): ExpressAuthRouter {
@@ -59,6 +66,7 @@ export function createExpressAuth(config: AuthConfig): ExpressAuthRouter {
 	router.post("/checkToken", handle);
 
 	router.resolveAuthPath = auth.resolveAuthPath;
+	router.checkToken = auth.checkToken;
 
 	return router;
 }

@@ -17,10 +17,10 @@ import {
 	STATE_COOKIE,
 	serializeCookie,
 } from "../../utils/cookies";
+import { isRequestError } from "../../utils/errors";
 import { validateState } from "../../utils/state";
 import { signAurl } from "../aurlCookie";
 import { decodeAccessToken } from "../decodeAccessToken";
-import { isRequestError } from "../errors";
 import { exchangeCode } from "../exchangeCode";
 import type { Handler } from "./types";
 

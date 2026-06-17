@@ -147,6 +147,88 @@ export async function middleware(request: NextRequest) {
 
 `resolveAuthPath` uses Web Crypto only — no Node built-ins — so it runs unchanged on Edge runtime.
 
+## Gating routes with `checkToken`
+
+`resolveAuthPath` gives you the cluster URL; if all you need is to **introspect the current request's token** and act on the parsed result (role / permission checks), use `checkToken` instead. It is the programmatic sibling of the BFF's `POST /checkToken` route — it reads the access token from the request, routes per session via `resolveAuthPath`, calls the Auth server's introspection endpoint with the once-derived Basic credential, and returns the parsed payload. You no longer hand-roll the wire contract (form encoding, Basic header, `serviceId` / `tenantId`, cluster routing, error normalisation).
+
+```ts
+const auth = createExpressAuth(config); // or createNextAuth(config)
+auth.checkToken: (
+	request: Request,
+	opts?: { serviceId?: string; tenantId?: string },
+) => Promise<CheckTokenResponse>;
+```
+
+Unlike the route, `checkToken` returns the **parsed `CheckTokenResponse` payload** (not an HTTP `Response`) and signals failure by **throwing `RequestError`**. Branch on `isRequestError(error)` and `error.statusCode`:
+
+<table>
+	<thead>
+		<tr>
+			<th>Outcome</th>
+			<th><code>RequestError.statusCode</code></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>No access token on the request</td>
+			<td><code>401</code></td>
+		</tr>
+		<tr>
+			<td>Auth server rejected the token (upstream 4xx)</td>
+			<td>the upstream status (e.g. <code>401</code>, <code>403</code>)</td>
+		</tr>
+		<tr>
+			<td>Auth server unreachable or upstream 5xx</td>
+			<td><code>502</code></td>
+		</tr>
+	</tbody>
+</table>
+
+### Express
+
+```ts
+// server/middleware/requireAdmin.ts
+import { isRequestError } from "@reltio/auth/utils";
+import { auth } from "../auth";
+
+export async function requireAdmin(req, res, next) {
+	try {
+		const { roles } = await auth.checkToken(req, { serviceId: "MDM" });
+		if (!roles.includes("ROLE_ADMIN")) return res.sendStatus(403);
+		next();
+	} catch (error) {
+		if (isRequestError(error)) return res.sendStatus(error.statusCode);
+		next(error);
+	}
+}
+```
+
+### Next.js App Router — Route Handler
+
+```ts
+// app/api/admin/route.ts
+import { isRequestError } from "@reltio/auth/utils";
+import { NextResponse } from "next/server";
+import { checkToken } from "../../../auth";
+
+export async function GET(request: Request) {
+	try {
+		const { roles } = await checkToken(request);
+		if (!roles.includes("ROLE_ADMIN")) {
+			return new NextResponse(null, { status: 403 });
+		}
+		return NextResponse.json({ ok: true });
+	} catch (error) {
+		if (isRequestError(error)) {
+			return new NextResponse(null, { status: error.statusCode });
+		}
+		throw error;
+	}
+}
+```
+
+Like `resolveAuthPath`, `checkToken` shares the router's once-derived Basic credential and HMAC key — build the auth value once at server boot and reuse it.
+
 ## Fail-closed behaviour
 
 Every failure mode falls back silently to `config.oauthPath`. No throws, no error logs, no response codes — the routing decision is invisible from the application layer.

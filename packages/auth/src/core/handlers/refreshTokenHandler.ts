@@ -17,10 +17,10 @@ import {
 	REFRESH_TOKEN_COOKIE,
 	serializeCookie,
 } from "../../utils/cookies";
+import { isRequestError } from "../../utils/errors";
 import { getRefreshToken } from "../../utils/getRefreshToken";
 import { signAurl } from "../aurlCookie";
 import { decodeAccessToken } from "../decodeAccessToken";
-import { isRequestError } from "../errors";
 import { refreshAccessToken } from "../refreshAccessToken";
 import type { Handler } from "./types";
 

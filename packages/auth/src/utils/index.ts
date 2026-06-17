@@ -30,6 +30,7 @@
  */
 
 export * from "./cookies";
+export * from "./errors";
 export * from "./getAccessToken";
 export * from "./getBasicToken";
 export * from "./getRefreshToken";

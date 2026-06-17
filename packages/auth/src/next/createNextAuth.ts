@@ -20,8 +20,8 @@
  * server.
  */
 
-import { createAuth } from "../core/createAuth";
-import type { AuthConfig } from "../types";
+import { type CheckTokenOptions, createAuth } from "../core/createAuth";
+import type { AuthConfig, CheckTokenResponse } from "../types";
 import type { AnyRequest } from "../utils/readHeader";
 
 export function createNextAuth(config: AuthConfig): {
@@ -36,6 +36,18 @@ export function createNextAuth(config: AuthConfig): {
 	 * and `/refreshToken` endpoints.
 	 */
 	resolveAuthPath: (req: AnyRequest) => Promise<string>;
+	/**
+	 * Introspects the request's access token server-side and returns the
+	 * parsed `CheckTokenResponse` payload — the programmatic sibling of the
+	 * `POST /checkToken` route. Use in Route Handlers or Middleware to gate
+	 * routes by role/permission. Throws `RequestError` on failure (missing
+	 * token → 401, upstream 4xx → upstream status, upstream 5xx / network →
+	 * 502).
+	 */
+	checkToken: (
+		req: AnyRequest,
+		opts?: CheckTokenOptions,
+	) => Promise<CheckTokenResponse>;
 } {
 	const auth = createAuth(config);
 	const handle = (request: Request) => auth.handle(request);
@@ -46,5 +58,6 @@ export function createNextAuth(config: AuthConfig): {
 			POST: handle,
 		},
 		resolveAuthPath: auth.resolveAuthPath,
+		checkToken: auth.checkToken,
 	};
 }

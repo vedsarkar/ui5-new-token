@@ -3,8 +3,9 @@
  * App Router adapter.
  */
 
+import { createNextAuth } from "@reltio/auth/next";
 import { HttpResponse, http } from "msw";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
 	TOKEN_WITH_AURL,
 	TOKEN_WITH_AURL_ORIGIN,
@@ -12,6 +13,7 @@ import {
 import {
 	buildRequest,
 	createTestHandlers,
+	DEFAULT_CONFIG,
 	mintAurlCookie,
 	mswServer,
 	TEST_OAUTH_HOST,
@@ -316,5 +318,199 @@ describe("Next.js adapter — POST /auth/checkToken", () => {
 
 		expect(res.headers.get("cache-control")).toContain("no-store");
 		expect(res.headers.get("pragma")).toBe("no-cache");
+	});
+});
+
+/** Captures the error thrown by an async call, failing if none is thrown. */
+async function captureError(promise: Promise<unknown>): Promise<{
+	statusCode: number;
+	name: string;
+}> {
+	try {
+		await promise;
+	} catch (error) {
+		return error as { statusCode: number; name: string };
+	}
+	throw new Error("expected the call to throw, but it resolved");
+}
+
+describe("Next.js adapter — checkToken (programmatic introspection)", () => {
+	useMswServer();
+
+	it("returns the parsed introspection payload on a 200 upstream", async () => {
+		const upstreamBody = {
+			clientId: "reltio-ui",
+			expiration: 1234567890,
+			resourceIds: ["res-1"],
+			roles: ["ROLE_INTEGRATION_CUSTOMER_ADMIN"],
+			scopes: ["read", "write"],
+			user: {
+				customer: "acme",
+				username: "alice@example.com",
+				email: "alice@example.com",
+			},
+		};
+		mockOAuthCheckToken({ body: upstreamBody });
+		const { checkToken } = createNextAuth(DEFAULT_CONFIG);
+
+		const result = await checkToken(
+			buildRequest({
+				method: "POST",
+				path: "/auth/checkToken",
+				cookies: { access_token: "token" },
+			}),
+		);
+
+		expect(result).toEqual(upstreamBody);
+		expect(result.roles).toEqual(["ROLE_INTEGRATION_CUSTOMER_ADMIN"]);
+		expect(result.user.username).toBe("alice@example.com");
+	});
+
+	it("throws RequestError 401 with no upstream call when the request has no token", async () => {
+		let upstreamCalled = false;
+		mswServer.use(
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, () => {
+				upstreamCalled = true;
+				return HttpResponse.json({});
+			}),
+		);
+		const { checkToken } = createNextAuth(DEFAULT_CONFIG);
+
+		const error = await captureError(
+			checkToken(buildRequest({ method: "POST", path: "/auth/checkToken" })),
+		);
+
+		expect(error.statusCode).toBe(401);
+		expect(error.name).toBe("RequestError");
+		expect(upstreamCalled).toBe(false);
+	});
+
+	it("throws RequestError with the upstream status when the token is rejected (4xx)", async () => {
+		mockOAuthCheckToken({ status: 403, body: { error: "forbidden" } });
+		const { checkToken } = createNextAuth(DEFAULT_CONFIG);
+
+		const error = await captureError(
+			checkToken(
+				buildRequest({
+					method: "POST",
+					path: "/auth/checkToken",
+					cookies: { access_token: "expired" },
+				}),
+			),
+		);
+
+		expect(error.statusCode).toBe(403);
+	});
+
+	it("throws RequestError 502 when the upstream returns 5xx", async () => {
+		mockOAuthCheckToken({ status: 503 });
+		const { checkToken } = createNextAuth(DEFAULT_CONFIG);
+
+		const error = await captureError(
+			checkToken(
+				buildRequest({
+					method: "POST",
+					path: "/auth/checkToken",
+					cookies: { access_token: "token" },
+				}),
+			),
+		);
+
+		expect(error.statusCode).toBe(502);
+	});
+
+	it("throws RequestError 502 on a network failure", async () => {
+		mswServer.use(
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, () =>
+				HttpResponse.error(),
+			),
+		);
+		const { checkToken } = createNextAuth(DEFAULT_CONFIG);
+
+		const error = await captureError(
+			checkToken(
+				buildRequest({
+					method: "POST",
+					path: "/auth/checkToken",
+					cookies: { access_token: "token" },
+				}),
+			),
+		);
+
+		expect(error.statusCode).toBe(502);
+	});
+
+	it("routes via the verified reltio_aurl cookie", async () => {
+		let clusterCalled = false;
+		let staticCalled = false;
+		mswServer.use(
+			http.post(`${TOKEN_WITH_AURL_ORIGIN}/oauth/checkToken`, () => {
+				clusterCalled = true;
+				return HttpResponse.json({});
+			}),
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, () => {
+				staticCalled = true;
+				return HttpResponse.json({});
+			}),
+		);
+		const handlers = createTestHandlers();
+		const reltioAurl = await mintAurlCookie(handlers, TOKEN_WITH_AURL);
+		const { checkToken } = createNextAuth(DEFAULT_CONFIG);
+
+		await checkToken(
+			buildRequest({
+				method: "POST",
+				path: "/auth/checkToken",
+				cookies: { access_token: "token", reltio_aurl: reltioAurl },
+			}),
+		);
+
+		expect(clusterCalled).toBe(true);
+		expect(staticCalled).toBe(false);
+	});
+
+	it("forwards serviceId and tenantId from opts as query parameters", async () => {
+		let capturedUrl: URL | undefined;
+		mswServer.use(
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, ({ request }) => {
+				capturedUrl = new URL(request.url);
+				return HttpResponse.json({});
+			}),
+		);
+		const { checkToken } = createNextAuth(DEFAULT_CONFIG);
+
+		await checkToken(
+			buildRequest({
+				method: "POST",
+				path: "/auth/checkToken",
+				cookies: { access_token: "token" },
+			}),
+			{ serviceId: "MDM", tenantId: "acme-prod" },
+		);
+
+		expect(capturedUrl?.searchParams.get("serviceId")).toBe("MDM");
+		expect(capturedUrl?.searchParams.get("tenantId")).toBe("acme-prod");
+	});
+
+	it("derives the HMAC key once and reuses it across many checkToken calls", async () => {
+		const importKeySpy = vi.spyOn(crypto.subtle, "importKey");
+		try {
+			mockOAuthCheckToken({});
+			const { checkToken } = createNextAuth(DEFAULT_CONFIG);
+
+			for (let i = 0; i < 5; i++) {
+				await checkToken(
+					buildRequest({
+						method: "POST",
+						path: "/auth/checkToken",
+						cookies: { access_token: "token" },
+					}),
+				);
+			}
+
+			expect(importKeySpy).toHaveBeenCalledTimes(1);
+		} finally {
+			importKeySpy.mockRestore();
+		}
 	});
 });

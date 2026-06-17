@@ -10,9 +10,9 @@
  * and tenant.
  */
 
+import { isRequestError } from "../../utils/errors";
 import { getAccessToken } from "../../utils/getAccessToken";
 import { checkAccessToken } from "../checkAccessToken";
-import { isRequestError } from "../errors";
 import type { Handler } from "./types";
 
 export const checkTokenHandler: Handler = async (options) => {

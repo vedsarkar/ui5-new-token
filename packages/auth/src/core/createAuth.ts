@@ -18,10 +18,13 @@
  * intermediate caches never store authentication state.
  */
 
-import type { AuthConfig } from "../types";
+import type { AuthConfig, CheckTokenResponse } from "../types";
+import { RequestError } from "../utils/errors";
+import { getAccessToken } from "../utils/getAccessToken";
 import { getBasicToken } from "../utils/getBasicToken";
 import type { AnyRequest } from "../utils/readHeader";
 import { deriveHmacKey } from "./aurlCookie";
+import { checkAccessToken } from "./checkAccessToken";
 import { callbackHandler } from "./handlers/callbackHandler";
 import { checkTokenHandler } from "./handlers/checkTokenHandler";
 import { loginHandler } from "./handlers/loginHandler";
@@ -29,6 +32,12 @@ import { logoutHandler } from "./handlers/logoutHandler";
 import { refreshTokenHandler } from "./handlers/refreshTokenHandler";
 import type { AuthDeps, Handler } from "./handlers/types";
 import { resolveAuthPath } from "./resolveAuthPath";
+
+/** Optional scopes for {@link AuthHandler.checkToken}. */
+export type CheckTokenOptions = {
+	serviceId?: string;
+	tenantId?: string;
+};
 
 const CACHE_CONTROL = "no-store, no-cache, max-age=0, must-revalidate, private";
 const PRAGMA = "no-cache";
@@ -60,10 +69,23 @@ const ROUTES: ReadonlyArray<{
  *   `oauthPath`). Exposed for app code that calls the Auth server directly,
  *   bypassing the router's `/checkToken` and `/refreshToken` endpoints.
  *   Framework adapters re-surface it on their own return values.
+ * - `checkToken(request, opts?)` is the programmatic sibling of the
+ *   `POST /checkToken` route: it reads the access token from the request,
+ *   routes per-session via `resolveAuthPath`, introspects it upstream, and
+ *   returns the parsed `CheckTokenResponse` payload. Unlike the route, it
+ *   returns the parsed payload (not a `Response`) and signals failure by
+ *   throwing `RequestError`: a missing request token → `statusCode` 401,
+ *   an upstream 4xx → the upstream status, upstream 5xx / network failure →
+ *   502. Reuses the once-derived Basic header and HMAC key. Framework
+ *   adapters re-surface it on their own return values.
  */
 export type AuthHandler = {
 	handle: (request: Request) => Promise<Response>;
 	resolveAuthPath: (request: AnyRequest) => Promise<string>;
+	checkToken: (
+		request: AnyRequest,
+		opts?: CheckTokenOptions,
+	) => Promise<CheckTokenResponse>;
 };
 
 /**
@@ -94,6 +116,21 @@ export function createAuth(config: AuthConfig): AuthHandler {
 			return withCacheHeaders(await route.handler({ ...deps, request }));
 		},
 		resolveAuthPath: (request) => resolveAuthPath({ ...deps, request }),
+		async checkToken(request, opts) {
+			const accessToken = getAccessToken(request);
+			if (!accessToken) {
+				throw new RequestError("No access token on request", {
+					statusCode: 401,
+				});
+			}
+			return checkAccessToken({
+				...deps,
+				request,
+				accessToken,
+				serviceId: opts?.serviceId,
+				tenantId: opts?.tenantId,
+			});
+		},
 	};
 }
 

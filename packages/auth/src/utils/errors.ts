@@ -1,10 +1,15 @@
 /**
- * Error types surfaced by `@reltio/auth`.
+ * Error types surfaced by `@reltio/auth` — part of the public API
+ * (`@reltio/auth/utils`).
  *
  * `RequestError` preserves the shape exposed by the legacy `auth-middleware`
  * so consumer error handlers continue to work. Specifically, admin-tools and
  * other consumers read `err.response.json()` to extract the upstream error
  * body from their Express error middleware.
+ *
+ * These are public because the adapter-exposed `checkToken` member throws
+ * `RequestError` to its caller: consumers gate routes by catching the error
+ * and branching on `isRequestError(error)` + `error.statusCode`.
  */
 
 /**
