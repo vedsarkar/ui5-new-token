@@ -30,6 +30,7 @@ export { FileUploader } from "@ui5/webcomponents-react/FileUploader";
 export { Icon } from "@ui5/webcomponents-react/Icon";
 export { IllustratedMessage } from "@ui5/webcomponents-react/IllustratedMessage";
 export { Input } from "@ui5/webcomponents-react/Input";
+export { Label } from "@ui5/webcomponents-react/Label";
 export { List } from "@ui5/webcomponents-react/List";
 export { ListItemGroup } from "@ui5/webcomponents-react/ListItemGroup";
 // Reltio endorses a single `ListItem` (SAP Fiori `ListItemStandard`) as the
