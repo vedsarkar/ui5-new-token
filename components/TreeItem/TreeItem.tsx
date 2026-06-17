@@ -28,8 +28,10 @@ export const TreeItem: React.ForwardRefExoticComponent<
 				typeof content === "string" ? <span>{content}</span> : content;
 			return (
 				<Ui5TreeItemCustom
-					ref={ref as Ref<TreeItemCustomDomRef>}
-					{...(rest as ComponentPropsWithoutRef<typeof Ui5TreeItemCustom>)}
+					ref={ref as unknown as Ref<TreeItemCustomDomRef>}
+					{...(rest as unknown as ComponentPropsWithoutRef<
+						typeof Ui5TreeItemCustom
+					>)}
 					content={
 						label as ComponentPropsWithoutRef<
 							typeof Ui5TreeItemCustom
