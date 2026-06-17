@@ -58,6 +58,19 @@ definitions:
           - npx playwright install --with-deps chromium
           - git fetch --depth=200 origin main
           - npx vitest run --project storybook --changed origin/main
+    # Type-check + compile the publishable packages — the same `tsc` build
+    # that runs at publish time. Catches type errors in PRs that the test /
+    # chromatic steps miss, since `tsc` only ran during release before.
+    - step: &build-packages
+        name: Build @reltio packages
+        caches:
+          - npm
+          - node
+        script:
+          - npm ci
+          - npm run build-css
+          - npm run build --workspace=@reltio/design
+          - npm run build --workspace=@reltio/auth
     - step: &chromatic
         name: Deploy to Chromatic
         caches:
@@ -160,6 +173,7 @@ pipelines:
   pull-requests:
     '**':
       - parallel:
+          - step: *build-packages
           - step: *test-auth
           - step: *test-storybook-changed
           - step: *chromatic
