@@ -21,22 +21,16 @@ import type {
 	ComponentEntry,
 	Relationship,
 	StatusFilter,
+	Ui5Filter,
 } from "./Components.types";
 import data from "./components.json";
 
-type TagDesign =
-	| "Positive"
-	| "Neutral"
-	| "Information"
-	| "Critical"
-	| "Negative";
+type TagDesign = "Positive" | "Neutral" | "Information";
 
 const STATUS_BADGE: Record<Relationship, { label: string; design: TagDesign }> =
 	{
 		endorsed: { label: "Endorsed", design: "Positive" },
 		backlog: { label: "Backlog", design: "Neutral" },
-		experimental: { label: "Experimental", design: "Critical" },
-		deprecated: { label: "Deprecated", design: "Negative" },
 		excluded: { label: "Excluded", design: "Information" },
 		"reltio-only": { label: "Reltio", design: "Positive" },
 		"reltio-replacement": { label: "Reltio", design: "Positive" },
@@ -46,20 +40,30 @@ const STATUS_FILTERS: StatusFilter[] = [
 	"all",
 	"endorsed",
 	"backlog",
-	"experimental",
-	"deprecated",
 	"excluded",
 	"reltio",
 ];
 
 const STATUS_FILTER_LABEL: Record<StatusFilter, string> = {
-	all: "All",
+	all: "All statuses",
 	endorsed: "Endorsed",
 	backlog: "Backlog",
-	experimental: "Experimental",
-	deprecated: "Deprecated",
 	excluded: "Excluded",
 	reltio: "Reltio",
+};
+
+const UI5_FILTERS: Ui5Filter[] = [
+	"all",
+	"stable",
+	"experimental",
+	"deprecated",
+];
+
+const UI5_FILTER_LABEL: Record<Ui5Filter, string> = {
+	all: "All UI5",
+	stable: "Stable",
+	experimental: "Experimental",
+	deprecated: "Deprecated",
 };
 
 const filterGroup = (relationship: Relationship): StatusFilter =>
@@ -71,6 +75,7 @@ const components = data.components as ComponentEntry[];
 
 export const Components = () => {
 	const [status, setStatus] = useState<StatusFilter>("all");
+	const [ui5, setUi5] = useState<Ui5Filter>("all");
 	const [category, setCategory] = useState<string>("all");
 	const [query, setQuery] = useState("");
 
@@ -84,10 +89,11 @@ export const Components = () => {
 		return components.filter(
 			(c) =>
 				(status === "all" || filterGroup(c.relationship) === status) &&
+				(ui5 === "all" || c.ui5?.status === ui5) &&
 				(category === "all" || c.category === category) &&
 				(q === "" || c.name.toLowerCase().includes(q)),
 		);
-	}, [status, category, query]);
+	}, [status, ui5, category, query]);
 
 	return (
 		<div className={styles.root}>
@@ -102,7 +108,21 @@ export const Components = () => {
 				>
 					{STATUS_FILTERS.map((s) => (
 						<Option key={s} data-value={s} selected={status === s}>
-							{s === "all" ? "All statuses" : STATUS_FILTER_LABEL[s]}
+							{STATUS_FILTER_LABEL[s]}
+						</Option>
+					))}
+				</Select>
+				<Select
+					accessibleName="Filter by UI5 lifecycle"
+					onChange={(e) => {
+						setUi5(
+							(e.detail.selectedOption.dataset.value as Ui5Filter) ?? "all",
+						);
+					}}
+				>
+					{UI5_FILTERS.map((s) => (
+						<Option key={s} data-value={s} selected={ui5 === s}>
+							{UI5_FILTER_LABEL[s]}
 						</Option>
 					))}
 				</Select>

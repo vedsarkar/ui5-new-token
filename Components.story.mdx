@@ -12,16 +12,18 @@ Browse the full component surface in one place — the **union** of the SAP Fior
 
 <Components />
 
+The table records two independent axes: the **Status** (Reltio's stance) and the **UI5 React** lifecycle. Filter them separately — e.g. set **UI5 React → Deprecated** to see every component SAP has retired (charts included), regardless of what Reltio does with it.
+
 ## What the columns mean
 
-- **Status** — `Endorsed` (reachable from `@reltio/design/components`), `Backlog` (stable UI5 component not yet endorsed), `Experimental` (UI5 still stabilizing — wait before adopting), `Deprecated` (UI5 retired it — candidate for a Reltio-owned replacement), `Excluded` (intentionally not endorsed — see the note), or `Reltio` (Reltio-only component or chart with no UI5 counterpart).
-- **UI5 React** — the underlying UI5 component: a link to the canonical SAP docs, `Experimental` / `Deprecated` for components SAP marks as unstable or retired, or `—` when UI5 has no equivalent.
+- **Status** (Reltio's stance) — `Endorsed` (reachable from `@reltio/design/components`), `Backlog` (UI5 component not yet endorsed — includes stable and experimental candidates), `Excluded` (intentionally not shipped — see the note; includes UI5-deprecated components we don't plan to build), or `Reltio` (Reltio-only component or chart with no UI5 counterpart).
+- **UI5 React** (UI5 lifecycle) — the underlying UI5 component: a link to the canonical SAP docs, `Experimental` / `Deprecated` for components SAP marks as unstable or retired, or `—` when UI5 has no equivalent. Filterable on its own axis.
 - **Reltio Design** — how Reltio ships it (`1:1`, `renamed`, `wrapper`, `custom`) plus a link to the endorsed Storybook page, or `—` when Reltio does not ship it.
 
 ## Scope
 
-- The **entire** UI5 React surface is listed across its lifecycle — `Experimental` components signal "wait for stabilization", `Deprecated` ones signal "plan a Reltio-owned replacement".
-- **Charts** are shown as Reltio-only entries: the UI5 React charts package (`@ui5/webcomponents-react-charts`) is SAP-deprecated, so Reltio ships its own ECharts-based charts (see **Charts**).
+- The **entire** UI5 React surface is listed across its lifecycle (stable / experimental / deprecated), filterable via the **UI5 React** column.
+- **Charts** are shown as `Reltio` entries with a `Deprecated` UI5 lifecycle: the UI5 React charts package (`@ui5/webcomponents-react-charts`) is SAP-deprecated, so Reltio ships its own ECharts-based charts (see **Charts**).
 
 ## Adding a component
 

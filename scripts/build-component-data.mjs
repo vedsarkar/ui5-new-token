@@ -15,9 +15,14 @@ import path from "node:path";
  * intersection (endorsed) and the differences (UI5-only backlog/excluded, and
  * Reltio-only components / chart replacements).
  *
- * The whole UI5 React surface is listed (stable, experimental, and deprecated)
- * so the table shows the full lifecycle picture — which components to wait for
- * (experimental) and which Reltio may need to own (deprecated).
+ * The whole UI5 React surface is listed (stable, experimental, and deprecated).
+ * Two independent axes are recorded per entry:
+ *   - `relationship` (Reltio status): endorsed / backlog / excluded /
+ *     reltio-only / reltio-replacement. Deprecated UI5 components we don't plan
+ *     to build are `excluded`; experimental ones are `backlog` candidates.
+ *   - `ui5.status` (UI5 lifecycle): stable / experimental / deprecated. This is
+ *     filtered separately (via the "UI5 React" column) so e.g. every
+ *     UI5-deprecated component — charts included — is reachable in one place.
  *
  * Fully derived — never hand-edit the output JSON:
  *   - UI5 lifecycle (stable / experimental / deprecated): parsed from the
@@ -93,6 +98,9 @@ const RELTIO_NATIVE = {
 
 const CHARTS_NOTE =
 	"UI5 React charts (`@ui5/webcomponents-react-charts`) are SAP-deprecated; Reltio ships ECharts-based charts.";
+
+const DEPRECATED_NOTE =
+	"Deprecated in UI5 React — not planned for the Reltio library.";
 
 /** Map a UI5 sub-item / family member to the UI5 parent that documents it.
  * Used only as a fallback for category + UI5 docs URL when the member has no
@@ -434,11 +442,24 @@ const main = async () => {
 					reltio: { mode, url: reltioUrlFor(RELTIO_DIR[name] ?? name) },
 				};
 			}
-			// Unendorsed UI5 component — surface its lifecycle so we can plan.
+			// Unendorsed UI5 component. The Reltio status reflects our stance, not
+			// the UI5 lifecycle (which lives on the `ui5.status` axis): deprecated
+			// components we don't plan to build are Excluded; stable/experimental
+			// ones are Backlog candidates.
+			if (lifecycle === "deprecated") {
+				return {
+					name,
+					category,
+					relationship: "excluded",
+					ui5: ui5Side,
+					reltio: null,
+					note: DEPRECATED_NOTE,
+				};
+			}
 			return {
 				name,
 				category,
-				relationship: lifecycle === "stable" ? "backlog" : lifecycle,
+				relationship: "backlog",
 				ui5: ui5Side,
 				reltio: null,
 			};
@@ -488,8 +509,6 @@ const main = async () => {
 		total: components.length,
 		endorsed: countBy((c) => c.relationship === "endorsed"),
 		backlog: countBy((c) => c.relationship === "backlog"),
-		experimental: countBy((c) => c.relationship === "experimental"),
-		deprecated: countBy((c) => c.relationship === "deprecated"),
 		excluded: countBy((c) => c.relationship === "excluded"),
 		reltio: countBy(
 			(c) =>
@@ -526,7 +545,10 @@ const main = async () => {
 		);
 	} catch {}
 	console.log(
-		`✓ ${path.relative(ROOT, OUT)} — ${totals.total} total / ${totals.endorsed} endorsed / ${totals.backlog} backlog / ${totals.experimental} experimental / ${totals.deprecated} deprecated / ${totals.excluded} excluded / ${totals.reltio} reltio`,
+		`✓ ${path.relative(ROOT, OUT)} — ${totals.total} total / ${totals.endorsed} endorsed / ${totals.backlog} backlog / ${totals.excluded} excluded / ${totals.reltio} reltio`,
+	);
+	console.log(
+		`  (UI5 lifecycle: ${countBy((c) => c.ui5?.status === "experimental")} experimental, ${countBy((c) => c.ui5?.status === "deprecated")} deprecated)`,
 	);
 };
 

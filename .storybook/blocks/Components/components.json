@@ -6,10 +6,8 @@
 	"totals": {
 		"total": 204,
 		"endorsed": 91,
-		"backlog": 85,
-		"experimental": 8,
-		"deprecated": 2,
-		"excluded": 2,
+		"backlog": 93,
+		"excluded": 4,
 		"reltio": 16
 	},
 	"components": [
@@ -1285,12 +1283,13 @@
 		{
 			"name": "ResponsiveGridLayout",
 			"category": "Layouts & Floorplans",
-			"relationship": "deprecated",
+			"relationship": "excluded",
 			"ui5": {
 				"status": "deprecated",
 				"url": "https://ui5.github.io/webcomponents-react/v2/?path=/docs/layouts-floorplans-responsivegridlayout--docs"
 			},
-			"reltio": null
+			"reltio": null,
+			"note": "Deprecated in UI5 React — not planned for the Reltio library."
 		},
 		{
 			"name": "ResponsivePopover",
@@ -1322,7 +1321,7 @@
 		{
 			"name": "Search",
 			"category": "Inputs",
-			"relationship": "experimental",
+			"relationship": "backlog",
 			"ui5": {
 				"status": "experimental",
 				"url": "https://ui5.github.io/webcomponents-react/v2/?path=/docs/inputs-search--docs"
@@ -1332,7 +1331,7 @@
 		{
 			"name": "SearchItem",
 			"category": "Other",
-			"relationship": "experimental",
+			"relationship": "backlog",
 			"ui5": {
 				"status": "experimental",
 				"url": "https://ui5.github.io/webcomponents-react/v2/"
@@ -1342,7 +1341,7 @@
 		{
 			"name": "SearchItemGroup",
 			"category": "Other",
-			"relationship": "experimental",
+			"relationship": "backlog",
 			"ui5": {
 				"status": "experimental",
 				"url": "https://ui5.github.io/webcomponents-react/v2/"
@@ -1352,7 +1351,7 @@
 		{
 			"name": "SearchItemShowMore",
 			"category": "Other",
-			"relationship": "experimental",
+			"relationship": "backlog",
 			"ui5": {
 				"status": "experimental",
 				"url": "https://ui5.github.io/webcomponents-react/v2/"
@@ -1362,7 +1361,7 @@
 		{
 			"name": "SearchMessageArea",
 			"category": "Other",
-			"relationship": "experimental",
+			"relationship": "backlog",
 			"ui5": {
 				"status": "experimental",
 				"url": "https://ui5.github.io/webcomponents-react/v2/"
@@ -1372,7 +1371,7 @@
 		{
 			"name": "SearchScope",
 			"category": "Other",
-			"relationship": "experimental",
+			"relationship": "backlog",
 			"ui5": {
 				"status": "experimental",
 				"url": "https://ui5.github.io/webcomponents-react/v2/"
@@ -1850,12 +1849,13 @@
 		{
 			"name": "TableSelection",
 			"category": "Data Display",
-			"relationship": "deprecated",
+			"relationship": "excluded",
 			"ui5": {
 				"status": "deprecated",
 				"url": "https://ui5.github.io/webcomponents-react/v2/?path=/docs/data-display-table--docs"
 			},
-			"reltio": null
+			"reltio": null,
+			"note": "Deprecated in UI5 React — not planned for the Reltio library."
 		},
 		{
 			"name": "TableSelectionMulti",
@@ -1886,7 +1886,7 @@
 		{
 			"name": "TableVirtualizer",
 			"category": "Other",
-			"relationship": "experimental",
+			"relationship": "backlog",
 			"ui5": {
 				"status": "experimental",
 				"url": "https://ui5.github.io/webcomponents-react/v2/"
@@ -2058,7 +2058,7 @@
 		{
 			"name": "Tokenizer",
 			"category": "Inputs",
-			"relationship": "experimental",
+			"relationship": "backlog",
 			"ui5": {
 				"status": "experimental",
 				"url": "https://ui5.github.io/webcomponents-react/v2/?path=/docs/inputs-tokenizer--docs"

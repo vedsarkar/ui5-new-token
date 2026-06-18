@@ -1,8 +1,6 @@
 export type Relationship =
 	| "endorsed"
 	| "backlog"
-	| "experimental"
-	| "deprecated"
 	| "excluded"
 	| "reltio-only"
 	| "reltio-replacement";
@@ -34,7 +32,7 @@ export type StatusFilter =
 	| "all"
 	| "endorsed"
 	| "backlog"
-	| "experimental"
-	| "deprecated"
 	| "excluded"
 	| "reltio";
+
+export type Ui5Filter = "all" | "stable" | "experimental" | "deprecated";
