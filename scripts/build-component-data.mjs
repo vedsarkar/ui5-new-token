@@ -15,8 +15,13 @@ import path from "node:path";
  * intersection (endorsed) and the differences (UI5-only backlog/excluded, and
  * Reltio-only components / chart replacements).
  *
+ * The whole UI5 React surface is listed (stable, experimental, and deprecated)
+ * so the table shows the full lifecycle picture — which components to wait for
+ * (experimental) and which Reltio may need to own (deprecated).
+ *
  * Fully derived — never hand-edit the output JSON:
- *   - UI5 stable set + deprecated/experimental tags: the installed
+ *   - UI5 lifecycle (stable / experimental / deprecated): parsed from the
+ *     `@deprecated` / `@experimental` JSDoc tags in the installed
  *     `@ui5/webcomponents-react` `.d.ts` files (the pinned version).
  *   - Endorsed set + mode: parsed from `components/index.ts` (barrel
  *     re-exports) plus the Reltio wrapper/renamed mappings below.
@@ -125,6 +130,7 @@ const UI5_PARENT = {
 	TableRow: "Table",
 	TableRowAction: "Table",
 	TableRowActionNavigation: "Table",
+	TableSelection: "Table",
 	TableSelectionMulti: "Table",
 	TableSelectionSingle: "Table",
 	Token: "MultiInput",
@@ -364,7 +370,7 @@ const loadUi5DocsMap = async () => {
 };
 
 const main = async () => {
-	const { stable, tags } = readPkgComponentTags();
+	const { tags } = readPkgComponentTags();
 	const covered = readCoveredFromBarrel();
 	const docDirs = documentedReltioDirs();
 	const implDirs = reltioImplDirs();
@@ -386,45 +392,57 @@ const main = async () => {
 		return null;
 	};
 
-	// 1. UI5 React catalog → intersection (endorsed) + UI5-only (backlog/excluded).
-	const ui5Rows = stable.map((name) => {
-		const excluded = name in EXCLUDED;
-		const isCovered = !excluded && covered.has(name);
-		const ui5 = ui5For(name);
-		const ui5Side = {
-			status: "stable",
-			url: ui5?.url ?? "https://ui5.github.io/webcomponents-react/v2/",
-		};
-		if (excluded) {
+	// 1. UI5 React catalog → intersection (endorsed) + UI5-only rows. Every UI5
+	// component is listed; its lifecycle (stable / experimental / deprecated)
+	// drives both the UI5 side status and the relationship for unendorsed ones.
+	const ui5Rows = Object.keys(tags)
+		.sort()
+		.map((name) => {
+			const { deprecated, experimental } = tags[name];
+			const lifecycle = deprecated
+				? "deprecated"
+				: experimental
+					? "experimental"
+					: "stable";
+			const ui5 = ui5For(name);
+			const category = ui5?.category ?? "Other";
+			const ui5Side = {
+				status: lifecycle,
+				url: ui5?.url ?? "https://ui5.github.io/webcomponents-react/v2/",
+			};
+			const excluded = name in EXCLUDED;
+			const isCovered = !excluded && covered.has(name);
+			if (excluded) {
+				return {
+					name,
+					category,
+					relationship: "excluded",
+					ui5: ui5Side,
+					reltio: null,
+					note: EXCLUDED[name],
+				};
+			}
+			if (isCovered) {
+				let mode = "1:1";
+				if (name in RENAMED) mode = "renamed";
+				else if (WRAPPERS.has(name)) mode = "wrapper";
+				return {
+					name,
+					category,
+					relationship: "endorsed",
+					ui5: ui5Side,
+					reltio: { mode, url: reltioUrlFor(RELTIO_DIR[name] ?? name) },
+				};
+			}
+			// Unendorsed UI5 component — surface its lifecycle so we can plan.
 			return {
 				name,
-				category: ui5?.category ?? "Other",
-				relationship: "excluded",
+				category,
+				relationship: lifecycle === "stable" ? "backlog" : lifecycle,
 				ui5: ui5Side,
 				reltio: null,
-				note: EXCLUDED[name],
 			};
-		}
-		if (isCovered) {
-			let mode = "1:1";
-			if (name in RENAMED) mode = "renamed";
-			else if (WRAPPERS.has(name)) mode = "wrapper";
-			return {
-				name,
-				category: ui5?.category ?? "Other",
-				relationship: "endorsed",
-				ui5: ui5Side,
-				reltio: { mode, url: reltioUrlFor(RELTIO_DIR[name] ?? name) },
-			};
-		}
-		return {
-			name,
-			category: ui5?.category ?? "Other",
-			relationship: "backlog",
-			ui5: ui5Side,
-			reltio: null,
-		};
-	});
+		});
 
 	// 2. Charts → Reltio replacements for the SAP-deprecated UI5 charts package.
 	const chartRows = charts.map((name) => ({
@@ -470,6 +488,8 @@ const main = async () => {
 		total: components.length,
 		endorsed: countBy((c) => c.relationship === "endorsed"),
 		backlog: countBy((c) => c.relationship === "backlog"),
+		experimental: countBy((c) => c.relationship === "experimental"),
+		deprecated: countBy((c) => c.relationship === "deprecated"),
 		excluded: countBy((c) => c.relationship === "excluded"),
 		reltio: countBy(
 			(c) =>
@@ -506,14 +526,7 @@ const main = async () => {
 		);
 	} catch {}
 	console.log(
-		`✓ ${path.relative(ROOT, OUT)} — ${totals.total} total / ${totals.endorsed} endorsed / ${totals.backlog} backlog / ${totals.excluded} excluded / ${totals.reltio} reltio`,
-	);
-	const deprecated = Object.keys(tags).filter((n) => tags[n].deprecated).length;
-	const experimental = Object.keys(tags).filter(
-		(n) => tags[n].experimental,
-	).length;
-	console.log(
-		`  (UI5 out of scope: ${deprecated} deprecated, ${experimental} experimental)`,
+		`✓ ${path.relative(ROOT, OUT)} — ${totals.total} total / ${totals.endorsed} endorsed / ${totals.backlog} backlog / ${totals.experimental} experimental / ${totals.deprecated} deprecated / ${totals.excluded} excluded / ${totals.reltio} reltio`,
 	);
 };
 

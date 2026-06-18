@@ -4,9 +4,11 @@
 	"ui5DocsResolvedFrom": "https://ui5.github.io/webcomponents-react/v2/index.json",
 	"generatedAt": "2026-06-18",
 	"totals": {
-		"total": 192,
-		"endorsed": 89,
+		"total": 204,
+		"endorsed": 91,
 		"backlog": 85,
+		"experimental": 8,
+		"deprecated": 2,
 		"excluded": 2,
 		"reltio": 16
 	},
@@ -1281,6 +1283,16 @@
 			"reltio": null
 		},
 		{
+			"name": "ResponsiveGridLayout",
+			"category": "Layouts & Floorplans",
+			"relationship": "deprecated",
+			"ui5": {
+				"status": "deprecated",
+				"url": "https://ui5.github.io/webcomponents-react/v2/?path=/docs/layouts-floorplans-responsivegridlayout--docs"
+			},
+			"reltio": null
+		},
+		{
 			"name": "ResponsivePopover",
 			"category": "Modals & Popovers",
 			"relationship": "endorsed",
@@ -1306,6 +1318,66 @@
 				"url": "/?path=/docs/charts-sankeychart--docs"
 			},
 			"note": "UI5 React charts (`@ui5/webcomponents-react-charts`) are SAP-deprecated; Reltio ships ECharts-based charts."
+		},
+		{
+			"name": "Search",
+			"category": "Inputs",
+			"relationship": "experimental",
+			"ui5": {
+				"status": "experimental",
+				"url": "https://ui5.github.io/webcomponents-react/v2/?path=/docs/inputs-search--docs"
+			},
+			"reltio": null
+		},
+		{
+			"name": "SearchItem",
+			"category": "Other",
+			"relationship": "experimental",
+			"ui5": {
+				"status": "experimental",
+				"url": "https://ui5.github.io/webcomponents-react/v2/"
+			},
+			"reltio": null
+		},
+		{
+			"name": "SearchItemGroup",
+			"category": "Other",
+			"relationship": "experimental",
+			"ui5": {
+				"status": "experimental",
+				"url": "https://ui5.github.io/webcomponents-react/v2/"
+			},
+			"reltio": null
+		},
+		{
+			"name": "SearchItemShowMore",
+			"category": "Other",
+			"relationship": "experimental",
+			"ui5": {
+				"status": "experimental",
+				"url": "https://ui5.github.io/webcomponents-react/v2/"
+			},
+			"reltio": null
+		},
+		{
+			"name": "SearchMessageArea",
+			"category": "Other",
+			"relationship": "experimental",
+			"ui5": {
+				"status": "experimental",
+				"url": "https://ui5.github.io/webcomponents-react/v2/"
+			},
+			"reltio": null
+		},
+		{
+			"name": "SearchScope",
+			"category": "Other",
+			"relationship": "experimental",
+			"ui5": {
+				"status": "experimental",
+				"url": "https://ui5.github.io/webcomponents-react/v2/"
+			},
+			"reltio": null
 		},
 		{
 			"name": "SegmentedButton",
@@ -1384,11 +1456,37 @@
 			}
 		},
 		{
+			"name": "ShellBarBranding",
+			"category": "Layouts & Floorplans",
+			"relationship": "endorsed",
+			"ui5": {
+				"status": "experimental",
+				"url": "https://ui5.github.io/webcomponents-react/v2/?path=/docs/layouts-floorplans-shellbar--docs"
+			},
+			"reltio": {
+				"mode": "1:1",
+				"url": "/?path=/docs/components-shellbar--docs"
+			}
+		},
+		{
 			"name": "ShellBarItem",
 			"category": "Layouts & Floorplans",
 			"relationship": "endorsed",
 			"ui5": {
 				"status": "stable",
+				"url": "https://ui5.github.io/webcomponents-react/v2/?path=/docs/layouts-floorplans-shellbar--docs"
+			},
+			"reltio": {
+				"mode": "1:1",
+				"url": "/?path=/docs/components-shellbar--docs"
+			}
+		},
+		{
+			"name": "ShellBarSearch",
+			"category": "Layouts & Floorplans",
+			"relationship": "endorsed",
+			"ui5": {
+				"status": "experimental",
 				"url": "https://ui5.github.io/webcomponents-react/v2/?path=/docs/layouts-floorplans-shellbar--docs"
 			},
 			"reltio": {
@@ -1750,6 +1848,16 @@
 			"reltio": null
 		},
 		{
+			"name": "TableSelection",
+			"category": "Data Display",
+			"relationship": "deprecated",
+			"ui5": {
+				"status": "deprecated",
+				"url": "https://ui5.github.io/webcomponents-react/v2/?path=/docs/data-display-table--docs"
+			},
+			"reltio": null
+		},
+		{
 			"name": "TableSelectionMulti",
 			"category": "Data Display",
 			"relationship": "endorsed",
@@ -1774,6 +1882,16 @@
 				"mode": "1:1",
 				"url": "/?path=/docs/components-table--docs"
 			}
+		},
+		{
+			"name": "TableVirtualizer",
+			"category": "Other",
+			"relationship": "experimental",
+			"ui5": {
+				"status": "experimental",
+				"url": "https://ui5.github.io/webcomponents-react/v2/"
+			},
+			"reltio": null
 		},
 		{
 			"name": "TabSeparator",
@@ -1936,6 +2054,16 @@
 				"mode": "1:1",
 				"url": "/?path=/docs/components-multiinput--docs"
 			}
+		},
+		{
+			"name": "Tokenizer",
+			"category": "Inputs",
+			"relationship": "experimental",
+			"ui5": {
+				"status": "experimental",
+				"url": "https://ui5.github.io/webcomponents-react/v2/?path=/docs/inputs-tokenizer--docs"
+			},
+			"reltio": null
 		},
 		{
 			"name": "Toolbar",

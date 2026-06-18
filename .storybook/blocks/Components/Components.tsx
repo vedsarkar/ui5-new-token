@@ -1,13 +1,12 @@
 import "@ui5/webcomponents-icons/dist/search.js";
 import "@ui5/webcomponents-icons/dist/alert.js";
+import "@ui5/webcomponents-icons/dist/lab.js";
 import { useMemo, useState } from "react";
 import {
 	Icon,
 	Input,
 	Link,
 	Option,
-	SegmentedButton,
-	SegmentedButtonItem,
 	Select,
 	Table,
 	TableCell,
@@ -25,12 +24,19 @@ import type {
 } from "./Components.types";
 import data from "./components.json";
 
-type TagDesign = "Positive" | "Neutral" | "Information";
+type TagDesign =
+	| "Positive"
+	| "Neutral"
+	| "Information"
+	| "Critical"
+	| "Negative";
 
 const STATUS_BADGE: Record<Relationship, { label: string; design: TagDesign }> =
 	{
 		endorsed: { label: "Endorsed", design: "Positive" },
 		backlog: { label: "Backlog", design: "Neutral" },
+		experimental: { label: "Experimental", design: "Critical" },
+		deprecated: { label: "Deprecated", design: "Negative" },
 		excluded: { label: "Excluded", design: "Information" },
 		"reltio-only": { label: "Reltio", design: "Positive" },
 		"reltio-replacement": { label: "Reltio", design: "Positive" },
@@ -40,6 +46,8 @@ const STATUS_FILTERS: StatusFilter[] = [
 	"all",
 	"endorsed",
 	"backlog",
+	"experimental",
+	"deprecated",
 	"excluded",
 	"reltio",
 ];
@@ -48,6 +56,8 @@ const STATUS_FILTER_LABEL: Record<StatusFilter, string> = {
 	all: "All",
 	endorsed: "Endorsed",
 	backlog: "Backlog",
+	experimental: "Experimental",
+	deprecated: "Deprecated",
 	excluded: "Excluded",
 	reltio: "Reltio",
 };
@@ -79,67 +89,47 @@ export const Components = () => {
 		);
 	}, [status, category, query]);
 
-	const counts: Record<StatusFilter, number> = {
-		all: data.totals.total,
-		endorsed: data.totals.endorsed,
-		backlog: data.totals.backlog,
-		excluded: data.totals.excluded,
-		reltio: data.totals.reltio,
-	};
-
 	return (
 		<div className={styles.root}>
 			<div className={styles.toolbar}>
-				<SegmentedButton
+				<Select
 					accessibleName="Filter by status"
-					onSelectionChange={(e) => {
-						const selected = e.detail.selectedItems[0];
-						const next = selected?.dataset.status as StatusFilter | undefined;
-						if (next) {
-							setStatus(next);
-						}
+					onChange={(e) => {
+						setStatus(
+							(e.detail.selectedOption.dataset.value as StatusFilter) ?? "all",
+						);
 					}}
 				>
 					{STATUS_FILTERS.map((s) => (
-						<SegmentedButtonItem
-							key={s}
-							data-status={s}
-							selected={status === s}
-						>
-							{STATUS_FILTER_LABEL[s]} ({counts[s]})
-						</SegmentedButtonItem>
-					))}
-				</SegmentedButton>
-				<div className={styles.filters}>
-					<Select
-						accessibleName="Filter by category"
-						onChange={(e) => {
-							setCategory(e.detail.selectedOption.dataset.value ?? "all");
-						}}
-					>
-						<Option data-value="all" selected={category === "all"}>
-							All categories
+						<Option key={s} data-value={s} selected={status === s}>
+							{s === "all" ? "All statuses" : STATUS_FILTER_LABEL[s]}
 						</Option>
-						{categories.map((c) => (
-							<Option key={c} data-value={c} selected={category === c}>
-								{c}
-							</Option>
-						))}
-					</Select>
-					<Input
-						className={styles.search}
-						icon={<Icon name="search" />}
-						placeholder="Search component…"
-						value={query}
-						onInput={(e) => setQuery(e.target.value)}
-						accessibleName="Search component by name"
-					/>
-				</div>
+					))}
+				</Select>
+				<Select
+					accessibleName="Filter by category"
+					onChange={(e) => {
+						setCategory(e.detail.selectedOption.dataset.value ?? "all");
+					}}
+				>
+					<Option data-value="all" selected={category === "all"}>
+						All categories
+					</Option>
+					{categories.map((c) => (
+						<Option key={c} data-value={c} selected={category === c}>
+							{c}
+						</Option>
+					))}
+				</Select>
+				<Input
+					className={styles.search}
+					icon={<Icon name="search" />}
+					placeholder="Search component…"
+					value={query}
+					onInput={(e) => setQuery(e.target.value)}
+					accessibleName="Search component by name"
+				/>
 			</div>
-
-			<Text className={styles.resultCount}>
-				Showing {visible.length} of {components.length} components
-			</Text>
 
 			<Table
 				className={styles.table}
@@ -147,7 +137,7 @@ export const Components = () => {
 			>
 				<TableHeaderRow slot="headerRow">
 					<TableHeaderCell>
-						<span>Component</span>
+						<span>Component ({visible.length})</span>
 					</TableHeaderCell>
 					<TableHeaderCell>
 						<span>Category</span>
@@ -189,6 +179,13 @@ export const Components = () => {
 									<Icon name="alert" className={styles.deprecatedIcon} />
 									<Link href={c.ui5.url} target="_blank" design="Subtle">
 										Deprecated
+									</Link>
+								</span>
+							) : c.ui5.status === "experimental" ? (
+								<span className={styles.ui5Cell}>
+									<Icon name="lab" className={styles.experimentalIcon} />
+									<Link href={c.ui5.url} target="_blank" design="Subtle">
+										Experimental
 									</Link>
 								</span>
 							) : (

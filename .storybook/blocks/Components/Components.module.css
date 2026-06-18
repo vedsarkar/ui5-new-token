@@ -7,27 +7,12 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-	margin-bottom: 8px;
-}
-
-.filters {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
 	gap: 8px;
+	padding: 24px 0;
 }
 
 .search {
 	min-width: 220px;
-}
-
-.resultCount {
-	display: block;
-	margin: 4px 0 28px;
-	color: var(--sapContent_LabelColor);
-	font-size: 13px;
 }
 
 .table {
@@ -53,6 +38,12 @@
 }
 
 .deprecatedIcon {
+	width: 14px;
+	height: 14px;
+	color: var(--sapNegativeColor);
+}
+
+.experimentalIcon {
 	width: 14px;
 	height: 14px;
 	color: var(--sapCriticalColor);
