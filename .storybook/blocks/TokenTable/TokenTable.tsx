@@ -1,8 +1,5 @@
 import styles from "./TokenTable.module.css";
-
-type TokenTableProps = {
-	tokens: Record<string, string>;
-};
+import type { TokenTableProps } from "./TokenTable.types";
 
 const isColor = (v: string): boolean =>
 	/^#[0-9a-f]{3,8}$/i.test(v) || (/^rgba?\(/.test(v) && v !== "transparent");

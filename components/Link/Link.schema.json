@@ -1,0 +1,102 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "LinkProps",
+	"x-component": "Link",
+	"type": "object",
+	"properties": {
+		"accessibilityAttributes": {
+			"description": "Defines the additional accessibility attributes that will be applied to the component.\nThe following fields are supported:\n\n- **expanded**: Indicates whether the button, or another grouping element it controls, is currently expanded or collapsed.\nAccepts the following string values: `true` or `false`.\n\n- **hasPopup**: Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by the button.\nAccepts the following string values: `dialog`, `grid`, `listbox`, `menu` or `tree`.\n\n**Note:** Available since [v1.1.0](https://github.com/UI5/webcomponents/releases/tag/v1.1.0) of **@ui5/webcomponents**.",
+			"default": {},
+			"x-typescriptType": "LinkAccessibilityAttributes"
+		},
+		"accessibleDescription": {
+			"description": "Defines the accessible description of the component.\n\n**Note:** Available since [v2.5.0](https://github.com/UI5/webcomponents/releases/tag/v2.5.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.\n\n**Note:** Available since [v1.2.0](https://github.com/UI5/webcomponents/releases/tag/v1.2.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleNameRef": {
+			"description": "Receives id(or many ids) of the elements that label the input",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleRole": {
+			"description": "Defines the ARIA role of the component.\n\n**Note:** Use the <code>LinkAccessibleRole.Button</code> role in cases when navigation is not expected to occur and the href property is not defined.\n\n**Note:** Available since [v1.9.0](https://github.com/UI5/webcomponents/releases/tag/v1.9.0) of **@ui5/webcomponents**.",
+			"default": "Link",
+			"x-typescriptType": "'Button' | 'Link' | LinkAccessibleRole"
+		},
+		"children": {
+			"description": "Defines the text of the component.\n\n**Note:** Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.\n\n__Supported Node Type/s:__ `Array<Node>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"design": {
+			"description": "Defines the component design.\n\n**Note:** Avaialble options are `Default`, `Subtle`, and `Emphasized`.",
+			"default": "Default",
+			"x-typescriptType": "'Default' | 'Emphasized' | LinkDesign | 'Subtle'"
+		},
+		"disabled": {
+			"description": "Defines whether the component is disabled.\n\n**Note:** When disabled, the click event cannot be triggered by the user.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"endIcon": {
+			"description": "Defines the icon, displayed as graphical element within the component after the link's text.\nThe SAP-icons font provides numerous options.\n\n**Note:** Usage of icon-only link is not supported, the link must always have a text.\n\n**Note:** We recommend using аn icon in the beginning or the end only, and with text.\n\nSee all the available icons within the [Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html).\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"href": {
+			"description": "Defines the component href.\n\n**Note:** Standard hyperlink behavior is supported.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"icon": {
+			"description": "Defines the icon, displayed as graphical element within the component before the link's text.\nThe SAP-icons font provides numerous options.\n\n**Note:** Usage of icon-only link is not supported, the link must always have a text.\n\n**Note:** We recommend using аn icon in the beginning or the end only, and with text.\n\nSee all the available icons within the [Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html).\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"interactiveAreaSize": {
+			"description": "Defines the target area size of the link:\n- **InteractiveAreaSize.Normal**: The default target area size.\n- **InteractiveAreaSize.Large**: The target area size is enlarged to 24px in height.\n\n**Note:**The property is designed to make links easier to activate and helps meet the WCAG 2.2 Target Size requirement. It is applicable only for the SAP Horizon themes.\n**Note:**To improve <code>ui5-link</code>'s reliability and usability, it is recommended to use the <code>InteractiveAreaSize.Large</code> value in scenarios where the <code>ui5-link</code> component is placed inside another interactive component, such as a list item or a table cell.\nSetting the <code>interactiveAreaSize</code> property to <code>InteractiveAreaSize.Large</code> increases the <code>ui5-link</code>'s invisible touch area. As a result, the user's intended one-time selection command is more likely to activate the desired <code>ui5-link</code>, with minimal chance of unintentionally activating the underlying component.\n\n**Note:** Available since [v2.8.0](https://github.com/UI5/webcomponents/releases/tag/v2.8.0) of **@ui5/webcomponents**.",
+			"default": "Normal",
+			"x-typescriptType": "'Normal' | 'Large' | InteractiveAreaSize"
+		},
+		"onClick": {
+			"description": "Fired when the component is triggered either with a mouse/tap\nor by using the Enter key.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<LinkDomRef, LinkClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<LinkDomRef, LinkClickEventDetail>) => void"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"target": {
+			"description": "Defines the component target.\n\n**Notes:**\n\n- `_self`\n- `_top`\n- `_blank`\n- `_parent`\n- `_search`\n\n**This property must only be used when the `href` property is set.**",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"tooltip": {
+			"description": "Defines the tooltip of the component.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"wrappingType": {
+			"description": "Defines how the text of a component will be displayed when there is not enough space.\n\n**Note:** By default the text will wrap. If \"None\" is set - the text will truncate.",
+			"default": "Normal",
+			"x-typescriptType": "'None' | WrappingType | 'Normal'"
+		}
+	}
+}

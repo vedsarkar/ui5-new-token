@@ -37,6 +37,7 @@
 		"build-tokens": "node scripts/build-tokens.mjs",
 		"build-fonts": "node scripts/build-fonts.mjs",
 		"build-api-docs": "node scripts/build-api-docs.mjs",
+		"build-component-data": "node scripts/build-component-data.mjs",
 		"prebuild-component-docs": "npm run build-css",
 		"build-component-docs": "node scripts/build-component-docs.mjs",
 		"deploy": "chromatic --exit-zero-on-changes --exit-once-uploaded",

@@ -6,6 +6,7 @@ export default defineMain({
 
 	stories: [
 		"../Welcome.story.mdx",
+		"../Components.story.mdx",
 		"../guides/**/*.story.mdx",
 		"../openApi/**/*.story.mdx",
 		"../**/*.story.mdx",

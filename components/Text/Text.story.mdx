@@ -1,0 +1,52 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as TextStories from "./Text.stories";
+import schema from "./Text.schema.json";
+
+<Meta of={TextStories} />
+
+# Text
+
+```tsx
+import { Text } from "@reltio/design/components";
+```
+
+`Text` is the SAP Fiori text element, re-exported from `@ui5/webcomponents-react/Text` as the canonical Reltio entry point. Use it for any plain, non-interactive body copy — attribute values on an entity profile, descriptions in a card, helper text beside a control. It renders a semantically neutral span that inherits the surrounding font and color, so it sits correctly inside lists, tables, forms, and cards without extra styling.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Text`. The Reltio layer adds curation (this is the endorsed body-text surface), pinned versioning, and richer documentation.
+
+### When to use `Text` vs `Title` vs `Label`
+
+- **`Text`** — running body copy and rendered data values. The default for displaying content.
+- **`Title`** — section and page headings (`H1`–`H6`); carries heading semantics and weight.
+- **`Label`** — the caption that names a form field or a key/value pair, not the value itself.
+
+### Truncation with `maxLines`
+
+`maxLines` clamps the text to a fixed number of lines and appends an ellipsis. Use it inside fixed-width containers (table cells, card rows) where long values must not push the layout. The element still exposes the full text to assistive technology, so truncation is purely visual.
+
+### Empty values
+
+Set `emptyIndicatorMode="On"` to render a standard placeholder (a dash) when the text content is empty. This keeps data-driven layouts aligned and signals "no value" rather than silently collapsing — useful when a profile attribute is missing for a given record.
+
+### See also
+
+- [SAP Fiori Text design guideline](https://experience.sap.com/fiori-design-web/text/) — semantic guidance
+- [UI5 Text web component reference](https://ui5.github.io/webcomponents/components/Text/) — full underlying API
+- `Title` — for headings · `Label` — for field captions
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

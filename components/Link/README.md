@@ -1,0 +1,26 @@
+# Link
+
+`Link` is the SAP Fiori hyperlink element, re-exported from `@ui5/webcomponents-react/Link` as the canonical Reltio entry point. Use it for navigation to another view or an external resource, and for low-emphasis inline actions — drilling into a source record, opening a related entity, jumping to documentation. It renders an accessible anchor with SAP focus and keyboard behavior built in.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Link`. The Reltio layer adds curation (this is the endorsed link surface), pinned versioning, and richer documentation.
+
+### Navigation link vs action link
+
+- **Navigation** — set `href` (and `target` when opening a new tab). The component renders a real `<a>` so middle-click, copy-link, and open-in-new-tab all work. Prefer this whenever the destination is a URL.
+- **Action** — omit `href` and handle `onClick` for an in-app action that has no URL (open a dialog, trigger a merge). For a primary or destructive action, use `Button` instead — a link signals low-emphasis, navigational intent.
+
+### Design variants
+
+- **`Default`** — standard link; the everyday choice.
+- **`Subtle`** — lower visual emphasis for secondary links in dense areas (table cells, metadata rows).
+- **`Emphasized`** — higher emphasis when the link is the primary path forward on the surface.
+
+### Accessibility
+
+The link text itself must describe the destination — avoid "click here". For icon-only or ambiguous links, set `accessibleName`. When `target="_blank"`, make the new-tab behavior clear in the text or an adjacent hint so it isn't unexpected for screen-reader users.
+
+### See also
+
+- [SAP Fiori Link design guideline](https://experience.sap.com/fiori-design-web/link/) — semantic guidance
+- [UI5 Link web component reference](https://ui5.github.io/webcomponents/components/Link/) — full underlying API
+- `Button` — for primary and destructive actions

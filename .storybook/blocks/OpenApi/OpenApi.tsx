@@ -1,8 +1,4 @@
-import type { OpenApiSpec } from "../utils/openapi";
-
-type OpenApiProps = {
-	spec: OpenApiSpec;
-};
+import type { OpenApiProps } from "./OpenApi.types";
 
 export const OpenApi = ({ spec }: OpenApiProps) => (
 	<>

@@ -1,0 +1,28 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { Components } from "@/.storybook/blocks/Components";
+import data from "@/.storybook/blocks/Components/components.json";
+
+<Meta title="Components" />
+
+# Components
+
+Browse the full component surface in one place — the **union** of the SAP Fiori (UI5) React catalog and the Reltio Design catalog. This single filterable page shows both the **intersection** (UI5 components Reltio endorses) and the **differences** (UI5 components not yet endorsed, and Reltio-only components and charts with no UI5 equivalent). Filter by status or category, search by name, and follow the **UI5 React** / **Reltio Design** links on each row.
+
+> **🎯 Source of truth:** Generated from <code>{data.source}</code> by `scripts/build-component-data.mjs` (`npm run build-component-data`). Counts and links are derived from the installed package, the barrel in `components/index.ts`, the `charts/` directory, and the UI5 React Storybook index — never hand-edited.
+
+<Components />
+
+## What the columns mean
+
+- **Status** — `Endorsed` (reachable from `@reltio/design/components`), `Backlog` (UI5 component not yet endorsed), `Excluded` (intentionally not endorsed — see the note), or `Reltio` (Reltio-only component or chart with no UI5 counterpart).
+- **UI5 React** — the underlying UI5 component: a link to the canonical SAP docs, `Deprecated` for capabilities SAP has retired (e.g. charts), or `—` when UI5 has no equivalent.
+- **Reltio Design** — how Reltio ships it (`1:1`, `renamed`, `wrapper`, `custom`) plus a link to the endorsed Storybook page, or `—` when Reltio does not ship it.
+
+## Scope
+
+- UI5 components tagged `@deprecated` or `@experimental` by SAP are out of scope and not listed.
+- **Charts** are shown as Reltio-only entries: the UI5 React charts package (`@ui5/webcomponents-react-charts`) is SAP-deprecated, so Reltio ships its own ECharts-based charts (see **Charts**).
+
+## Adding a component
+
+To endorse a backlog component, follow the doc-only / wrapper flow in [`components/AGENTS.md`](https://bitbucket.org/reltio-ondemand/reltio-design/src/main/components/AGENTS.md), then re-run `npm run build-component-data` so this page reflects the new coverage.

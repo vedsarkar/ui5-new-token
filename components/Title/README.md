@@ -1,0 +1,24 @@
+# Title
+
+`Title` is the SAP Fiori heading element, re-exported from `@ui5/webcomponents-react/Title` as the canonical Reltio entry point. Use it for every heading that structures a screen — page titles, card headers, section and sub-section labels on an entity profile. It applies the SAP Horizon type ramp so headings stay visually consistent across every Reltio application.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Title`. The Reltio layer adds curation (this is the endorsed heading surface), pinned versioning, and richer documentation.
+
+### `level` vs `size` — decouple semantics from appearance
+
+This is the one prop pairing worth understanding:
+
+- **`level`** sets the rendered HTML heading tag (`H1`–`H6`). It drives the document outline that screen readers and SEO rely on, so it must reflect the real hierarchy of the page — never skip levels for visual reasons.
+- **`size`** sets only the visual size (`H1`–`H6`), independent of `level`. Use it when the correct semantic level needs to look bigger or smaller than its default — e.g. an `H2` section that should read at `H4` size in a dense layout.
+
+Keep `level` and `size` equal unless you have a specific reason to diverge; when they differ, the document outline follows `level` and the visuals follow `size`.
+
+### Wrapping
+
+By default a long title wraps onto multiple lines (`wrappingType="Normal"`). Set `wrappingType="None"` only inside fixed-width chrome where a heading must stay on a single line and truncate.
+
+### See also
+
+- [SAP Fiori Title design guideline](https://experience.sap.com/fiori-design-web/title/) — semantic guidance
+- [UI5 Title web component reference](https://ui5.github.io/webcomponents/components/Title/) — full underlying API
+- `Text` — for body copy · `Label` — for field captions

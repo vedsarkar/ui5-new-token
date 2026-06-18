@@ -8,7 +8,7 @@ import "@ui5/webcomponents-localization/dist/Assets.js";
 // animations off via a window flag). See the file's JSDoc for the rationale
 // of every step. Imported FIRST so the global Date is patched before any
 // component renders or any UI5 module reads "today".
-import "./blocks/snapshotEnvironment";
+import "./utils/snapshotEnvironment";
 
 import addonA11y from "@storybook/addon-a11y";
 import addonDocs from "@storybook/addon-docs";
@@ -55,7 +55,7 @@ export default definePreview({
 		options: {
 			storySort: {
 				method: "configure",
-				order: ["Welcome", "Icons", "Design Tokens", "*"],
+				order: ["Welcome", "Components", "Icons", "Design Tokens", "*"],
 			},
 		},
 	},

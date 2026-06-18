@@ -1,6 +1,6 @@
 import { Heading } from "@storybook/addon-docs/blocks";
-import type { ReactNode } from "react";
 import { styled } from "storybook/theming";
+import type { SectionHeadingProps } from "./SectionHeading.types";
 
 /** Renders a section heading visually identical to the native "STORIES" label
  * that Storybook's `<Stories />` block produces — small, uppercase, muted,
@@ -24,10 +24,6 @@ const StyledHeading = styled(Heading)(({ theme }) => ({
 		marginTop: "56px",
 	},
 }));
-
-type SectionHeadingProps = {
-	children: ReactNode;
-};
 
 export const SectionHeading = ({ children }: SectionHeadingProps) => (
 	<StyledHeading>{children}</StyledHeading>

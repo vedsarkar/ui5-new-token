@@ -1,0 +1,41 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "TitleProps",
+	"x-component": "Title",
+	"type": "object",
+	"properties": {
+		"children": {
+			"description": "Defines the text of the component.\nThis component supports nesting a `Link` component inside.\n\n**Note:** Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.\n\n__Supported Node Type/s:__ `Array<Node>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"level": {
+			"description": "Defines the component level.\nAvailable options are: `\"H6\"` to `\"H1\"`.\nThis property does not influence the style of the component.\nUse the property `size` for this purpose instead.",
+			"default": "H2",
+			"x-typescriptType": "TitleLevel | 'H1' | 'H2' | 'H3' | 'H4' | 'H5' | 'H6'"
+		},
+		"size": {
+			"description": "Defines the visual appearance of the title.\nAvailable options are: `\"H6\"` to `\"H1\"`.",
+			"default": "H5",
+			"x-typescriptType": "TitleLevel | 'H1' | 'H2' | 'H3' | 'H4' | 'H5' | 'H6'"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"wrappingType": {
+			"description": "Defines how the text of a component will be displayed when there is not enough space.\n\n**Note:** for option \"Normal\" the text will wrap and the words will not be broken based on hyphenation.",
+			"default": "Normal",
+			"x-typescriptType": "'None' | WrappingType | 'Normal'"
+		}
+	}
+}

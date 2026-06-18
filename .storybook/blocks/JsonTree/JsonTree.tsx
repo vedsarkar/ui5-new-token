@@ -7,13 +7,9 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { classNames } from "@/utils/classNames";
-import type { SchemaNode } from "../utils/openapi";
+import type { SchemaNode } from "../../utils/openapi";
 import styles from "./JsonTree.module.css";
-
-type JsonTreeProps = {
-	value: unknown;
-	schema?: SchemaNode;
-};
+import type { JsonTreeProps } from "./JsonTree.types";
 
 type TooltipInfo = {
 	type?: string;

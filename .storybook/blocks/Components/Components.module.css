@@ -1,0 +1,63 @@
+.root {
+	font-size: 14px;
+	color: var(--sapTextColor);
+}
+
+.toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 8px;
+}
+
+.filters {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+
+.search {
+	min-width: 220px;
+}
+
+.resultCount {
+	display: block;
+	margin: 4px 0 28px;
+	color: var(--sapContent_LabelColor);
+	font-size: 13px;
+}
+
+.table {
+	margin-bottom: 48px;
+}
+
+.name {
+	font-weight: 600;
+	font-family: monospace;
+	white-space: nowrap;
+}
+
+.tooltipAnchor {
+	display: inline-flex;
+	cursor: help;
+}
+
+.ui5Cell,
+.reltioCell {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.deprecatedIcon {
+	width: 14px;
+	height: 14px;
+	color: var(--sapCriticalColor);
+}
+
+.muted {
+	color: var(--sapContent_DisabledTextColor);
+}

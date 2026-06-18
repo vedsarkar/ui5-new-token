@@ -31,6 +31,7 @@ export { Icon } from "@ui5/webcomponents-react/Icon";
 export { IllustratedMessage } from "@ui5/webcomponents-react/IllustratedMessage";
 export { Input } from "@ui5/webcomponents-react/Input";
 export { Label } from "@ui5/webcomponents-react/Label";
+export { Link } from "@ui5/webcomponents-react/Link";
 export { List } from "@ui5/webcomponents-react/List";
 export { ListItemGroup } from "@ui5/webcomponents-react/ListItemGroup";
 // Reltio endorses a single `ListItem` (SAP Fiori `ListItemStandard`) as the
@@ -43,6 +44,7 @@ export { MultiComboBox } from "@ui5/webcomponents-react/MultiComboBox";
 export { MultiComboBoxItem } from "@ui5/webcomponents-react/MultiComboBoxItem";
 export { MultiComboBoxItemGroup } from "@ui5/webcomponents-react/MultiComboBoxItemGroup";
 export { MultiInput } from "@ui5/webcomponents-react/MultiInput";
+export { ObjectStatus } from "@ui5/webcomponents-react/ObjectStatus";
 export { Option } from "@ui5/webcomponents-react/Option";
 export { OptionCustom } from "@ui5/webcomponents-react/OptionCustom";
 export { Panel } from "@ui5/webcomponents-react/Panel";
@@ -76,7 +78,10 @@ export { TableRow } from "@ui5/webcomponents-react/TableRow";
 export { TableRowAction } from "@ui5/webcomponents-react/TableRowAction";
 export { TableSelectionMulti } from "@ui5/webcomponents-react/TableSelectionMulti";
 export { TableSelectionSingle } from "@ui5/webcomponents-react/TableSelectionSingle";
+export { Tag } from "@ui5/webcomponents-react/Tag";
+export { Text } from "@ui5/webcomponents-react/Text";
 export { TimePicker } from "@ui5/webcomponents-react/TimePicker";
+export { Title } from "@ui5/webcomponents-react/Title";
 export { Toast } from "@ui5/webcomponents-react/Toast";
 export { Token } from "@ui5/webcomponents-react/Token";
 // `Tree` is a 1:1 UI5 re-export. Its node entity is the Reltio `TreeItem`

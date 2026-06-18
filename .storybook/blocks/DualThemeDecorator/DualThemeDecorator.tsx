@@ -1,20 +1,9 @@
 import type { Decorator } from "@storybook/react-vite";
-
-type DualThemeSplit = "horizontal" | "vertical";
-
-type DualThemeParam =
-	| false
-	| {
-			split?: DualThemeSplit;
-	  };
-
-type Layout = "centered" | "padded" | "fullscreen";
-
-type ResolvedParams = {
-	enabled: boolean;
-	split: DualThemeSplit;
-	layout: Layout;
-};
+import type {
+	DualThemeParam,
+	Layout,
+	ResolvedParams,
+} from "./DualThemeDecorator.types";
 
 function resolveParams(parameters: Record<string, unknown>): ResolvedParams {
 	const dualTheme = parameters.dualTheme as DualThemeParam | undefined;

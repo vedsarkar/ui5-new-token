@@ -214,7 +214,7 @@ Every component and chart story is automatically rendered **twice** — once ins
 
 > **🎯 Key Principle:** One story = one test = both themes covered. You write the story once; Chromatic and axe verify it in light AND dark with no extra effort.
 
-The decorator lives in `.storybook/blocks/DualThemeDecorator.tsx` and is wired globally in `.storybook/preview.tsx`. The two halves split the canvas frame and inherit the story's existing `parameters.layout` (`centered` / `padded` / `fullscreen`) — each half centers / pads its `<Story />` independently, so existing stories work without any change.
+The decorator lives in `.storybook/blocks/DualThemeDecorator/DualThemeDecorator.tsx` and is wired globally in `.storybook/preview.tsx`. The two halves split the canvas frame and inherit the story's existing `parameters.layout` (`centered` / `padded` / `fullscreen`) — each half centers / pads its `<Story />` independently, so existing stories work without any change.
 
 ### Layout
 
@@ -932,7 +932,7 @@ const messages = Array.from({ length: 50 }, () => ({
 
 A Chromatic snapshot only catches a real regression if the story renders the same pixels on every run. Anything that changes between renders — animation frames, `Math.random()`, `new Date()`, force-directed physics — flips the snapshot to "Unstable" and pollutes review queues with false positives.
 
-The platform already neutralizes the most common sources of non-determinism, but only **inside automated environments** — Chromatic snapshot runs and `addon-vitest` browser tests. Local `npm run dev` keeps the natural look-and-feel: full UI5 animations, real wall-clock time, real randomness, and smooth ECharts tooltips. The detection logic lives in `.storybook/blocks/snapshotEnvironment.ts` and runs once when the preview frame loads.
+The platform already neutralizes the most common sources of non-determinism, but only **inside automated environments** — Chromatic snapshot runs and `addon-vitest` browser tests. Local `npm run dev` keeps the natural look-and-feel: full UI5 animations, real wall-clock time, real randomness, and smooth ECharts tooltips. The detection logic lives in `.storybook/utils/snapshotEnvironment.ts` and runs once when the preview frame loads.
 
 > **🎯 Key Principle:** Stable snapshots are an opt-out, not an opt-in — but only in CI. Dev mode stays unaffected so animations, tooltips, and time-aware components behave naturally while you author stories.
 
