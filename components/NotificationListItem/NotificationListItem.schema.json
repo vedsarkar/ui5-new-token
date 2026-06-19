@@ -1,0 +1,87 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "NotificationListItemProps",
+	"x-component": "NotificationListItem",
+	"type": "object",
+	"properties": {
+		"avatar": {
+			"description": "Defines the avatar, displayed in the `NotificationListItem`.\n\n**Note:** Consider using the `ui5-avatar` to display icons, initials or images.\n\n**Note:** In order to be complaint with the UX guidlines and for best experience,\nwe recommend using avatars with 2rem X 2rem in size (32px X 32px). In case you are using the `ui5-avatar`\nyou can set its `size` property to `XS` to get the required size - `<ui5-avatar size=\"XS\"></ui5-avatar>`.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"avatar\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"children": {
+			"description": "Defines the content of the `NotificationListItem`,\nusually a description of the notification.\n\n**Note:** Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.\n\n__Supported Node Type/s:__ `Array<Node>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"footnotes": {
+			"description": "Defines the elements, displayed in the footer of the of the component.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"footnotes\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"importance": {
+			"description": "Defines the `Important` label of the item.",
+			"default": "Standard",
+			"x-typescriptType": "'Standard' | NotificationListItemImportance | 'Important'"
+		},
+		"loading": {
+			"description": "Defines if a busy indicator would be displayed over the item.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"loadingDelay": {
+			"description": "Defines the delay in milliseconds, after which the busy indicator will show up for this component.",
+			"default": 1000,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"menu": {
+			"description": "Defines the menu, displayed in the `NotificationListItem`.\n\n**Note:** Use this for implementing actions.\n\n**Note:** Should be used instead `u5-notification-action`, which is deprecated as of version 2.0.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"menu\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"onClose": {
+			"description": "Fired when the `Close` button is pressed.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|❌|",
+			"x-typescriptType": "(event: Ui5CustomEvent<NotificationListItemDomRef, NotificationListItemCloseEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<NotificationListItemDomRef, NotificationListItemCloseEventDetail>) => void"
+		},
+		"read": {
+			"description": "Defines if the `notification` is new or has been already read.\n\n**Note:** if set to `false` the `titleText` has bold font,\nif set to true - it has a normal font.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"showClose": {
+			"description": "Defines if the `Close` button would be displayed.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"state": {
+			"description": "Defines the status indicator of the item.",
+			"default": "None",
+			"x-typescriptType": "'None' | ValueState | 'Positive' | 'Critical' | 'Negative' | 'Information'"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"titleText": {
+			"description": "Defines the `titleText` of the item.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"wrappingType": {
+			"description": "Defines if the `titleText` and `description` should wrap,\nthey truncate by default.\n\n**Note:** by default the `titleText` and `description`,\nand a `ShowMore/Less` button would be displayed.",
+			"default": "None",
+			"x-typescriptType": "'None' | WrappingType | 'Normal'"
+		}
+	}
+}

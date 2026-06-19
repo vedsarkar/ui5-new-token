@@ -54,7 +54,7 @@
 		"state": {
 			"description": "Defines the value state of the `ObjectStatus`.\n\nSince version 0.17.0 the state property also accepts values from enum `IndicationColor`.\n\n__Note:__ Only the `inverted` `ObjectStatus` supports `IndicationColor`s 11-20. For non-inverted `ObjectStatus`, these colors default to the `\"None\"` `state` color and should __not__ be used.",
 			"default": "`\"None\"`",
-			"x-typescriptType": "'None' | 'Positive' | 'Negative' | ValueState | 'Critical' | 'Information' | IndicationColor | 'Indication01' | 'Indication02' | 'Indication03' | 'Indication04' | 'Indication05' | 'Indication06' | 'Indication07' | 'Indication08' | 'Indication09' | 'Indication10' | 'Indication11' | 'Indication12' | 'Indication13' | 'Indication14' | 'Indication15' | 'Indication16' | 'Indication17' | 'Indication18' | 'Indication19' | 'Indication20'"
+			"x-typescriptType": "'None' | ValueState | 'Positive' | 'Critical' | 'Negative' | 'Information' | IndicationColor | 'Indication01' | 'Indication02' | 'Indication03' | 'Indication04' | 'Indication05' | 'Indication06' | 'Indication07' | 'Indication08' | 'Indication09' | 'Indication10' | 'Indication11' | 'Indication12' | 'Indication13' | 'Indication14' | 'Indication15' | 'Indication16' | 'Indication17' | 'Indication18' | 'Indication19' | 'Indication20'"
 		},
 		"stateAnnouncementText": {
 			"description": "Enables overriding of the default state announcement read by screen readers.",

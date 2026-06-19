@@ -1,0 +1,41 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as BreadcrumbsItemStories from "./BreadcrumbsItem.stories";
+import schema from "./BreadcrumbsItem.schema.json";
+
+<Meta of={BreadcrumbsItemStories} />
+
+# BreadcrumbsItem
+
+```tsx
+import { BreadcrumbsItem } from "@reltio/design/components";
+```
+
+`BreadcrumbsItem` is a single step in a `Breadcrumbs` trail, optionally a link via `href`.
+
+`BreadcrumbsItem` is re-exported 1:1 from `@ui5/webcomponents-react/BreadcrumbsItem`; its props, slots, and behavior are exactly the UI5 component's. The Reltio layer adds curation (the endorsed surface), pinned versioning, and documentation.
+
+### Usage
+
+Use as children of `Breadcrumbs`; the last item is the current page.
+
+### See also
+
+- [UI5 React documentation](https://ui5.github.io/webcomponents-react/v2/?path=/docs/layouts-floorplans-breadcrumbs--docs)
+- `Breadcrumbs` — the parent component
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

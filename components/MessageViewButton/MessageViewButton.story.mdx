@@ -1,0 +1,41 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as MessageViewButtonStories from "./MessageViewButton.stories";
+import schema from "./MessageViewButton.schema.json";
+
+<Meta of={MessageViewButtonStories} />
+
+# MessageViewButton
+
+```tsx
+import { MessageViewButton } from "@reltio/design/components";
+```
+
+`MessageViewButton` is a button showing the aggregate message count/severity that opens a `MessageView`.
+
+`MessageViewButton` is re-exported 1:1 from `@ui5/webcomponents-react/MessageViewButton`; its props, slots, and behavior are exactly the UI5 component's. The Reltio layer adds curation (the endorsed surface), pinned versioning, and documentation.
+
+### Usage
+
+Place in a footer or toolbar; set `type` and `counter`.
+
+### See also
+
+- [UI5 React documentation](https://ui5.github.io/webcomponents-react/v2/?path=/docs/inputs-messageviewbutton--docs)
+- `MessageView` — the parent component
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

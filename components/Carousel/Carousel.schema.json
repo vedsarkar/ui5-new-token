@@ -1,0 +1,90 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "CarouselProps",
+	"x-component": "Carousel",
+	"type": "object",
+	"properties": {
+		"accessibleName": {
+			"description": "Defines the accessible name of the component.\n\n**Note:** Available since [v1.24](https://github.com/UI5/webcomponents/releases/tag/v1.24) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleNameRef": {
+			"description": "Defines the IDs of the elements that label the input.\n\n**Note:** Available since [v1.24](https://github.com/UI5/webcomponents/releases/tag/v1.24) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"arrowsPlacement": {
+			"description": "Defines the position of arrows.\n\nAvailable options are:\n\n- `Content` - the arrows are placed on the sides of the current page.\n- `Navigation` - the arrows are placed on the sides of the page indicator.",
+			"default": "Content",
+			"x-typescriptType": "CarouselArrowsPlacement | 'Content' | 'Navigation'"
+		},
+		"backgroundDesign": {
+			"description": "Defines the carousel's background design.\n\n**Note:** Available since [v1.14](https://github.com/UI5/webcomponents/releases/tag/v1.14) of **@ui5/webcomponents**.",
+			"default": "Translucent",
+			"x-typescriptType": "'Transparent' | BackgroundDesign | 'Solid' | 'Translucent'"
+		},
+		"children": {
+			"description": "Defines the content of the component.\n\n**Note:** Items with the `hidden` attribute will be automatically excluded from carousel navigation and page calculations.\nThey will not be displayed or accessible via keyboard navigation. See [sample](./#carousel-with-hidden-items).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"cyclic": {
+			"description": "Defines whether the carousel should loop, i.e show the first page after the last page is reached and vice versa.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"hideNavigationArrows": {
+			"description": "Defines the visibility of the navigation arrows.\nIf set to true the navigation arrows will be hidden.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"hidePageIndicator": {
+			"description": "Defines the visibility of the page indicator.\nIf set to true the page indicator will be hidden.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"itemsPerPage": {
+			"description": "Defines the number of items per page depending on the carousel width.\n\n- 'S' for screens smaller than 600 pixels.\n- 'M' for screens greater than or equal to 600 pixels and smaller than 1024 pixels.\n- 'L' for screens greater than or equal to 1024 pixels and smaller than 1440 pixels.\n- 'XL' for screens greater than or equal to 1440 pixels.\n\nOne item per page is shown by default.",
+			"default": "S1 M1 L1 XL1",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onNavigate": {
+			"description": "Fired whenever the page changes due to user interaction,\nwhen the user clicks on the navigation arrows or while resizing,\nbased on the `items-per-page` property.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<CarouselDomRef, CarouselNavigateEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<CarouselDomRef, CarouselNavigateEventDetail>) => void"
+		},
+		"pageIndicatorBackgroundDesign": {
+			"description": "Defines the page indicator background design.\n\n**Note:** Available since [v1.14](https://github.com/UI5/webcomponents/releases/tag/v1.14) of **@ui5/webcomponents**.",
+			"default": "Solid",
+			"x-typescriptType": "'Transparent' | BackgroundDesign | 'Solid' | 'Translucent'"
+		},
+		"pageIndicatorBorderDesign": {
+			"description": "Defines the page indicator border design.\n\n**Note:** Available since [v1.14](https://github.com/UI5/webcomponents/releases/tag/v1.14) of **@ui5/webcomponents**.",
+			"default": "Solid",
+			"x-typescriptType": "'None' | 'Solid' | BorderDesign"
+		},
+		"pageIndicatorType": {
+			"description": "Defines the style of the page indicator.\nAvailable options are:\n\n- `Default` - The page indicator will be visualized as dots if there are fewer than 9 pages. If there are more pages, the page indicator will switch to displaying the current page and the total number of pages. (e.g. X of Y)\n- `Numeric` - The page indicator will display the current page and the total number of pages. (e.g. X of Y)\n\n**Note:** Available since [v1.10](https://github.com/UI5/webcomponents/releases/tag/v1.10) of **@ui5/webcomponents**.",
+			"default": "Default",
+			"x-typescriptType": "'Default' | CarouselPageIndicatorType | 'Numeric'"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

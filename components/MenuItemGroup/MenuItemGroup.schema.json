@@ -1,0 +1,31 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "MenuItemGroupProps",
+	"x-component": "MenuItemGroup",
+	"type": "object",
+	"properties": {
+		"checkMode": {
+			"description": "Defines the component's check mode.",
+			"default": "None",
+			"x-typescriptType": "'None' | 'Single' | 'Multiple' | MenuItemGroupCheckMode"
+		},
+		"children": {
+			"description": "Defines the items of this component.\n**Note:** The slot can hold any combination of components of type `MenuItem` or `MenuSeparator` or both.\n\n__Supported Node Type/s:__ `Array<IMenuItem>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

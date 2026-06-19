@@ -70,7 +70,7 @@
 		"tabLayout": {
 			"description": "Defines the alignment of the content and the `additionalText` of a tab.\n\n**Note:**\nThe content and the `additionalText` would be displayed vertically by default,\nbut when set to `Inline`, they would be displayed horizontally.",
 			"default": "Standard",
-			"x-typescriptType": "TabLayout | 'Inline' | 'Standard'"
+			"x-typescriptType": "'Standard' | TabLayout | 'Inline'"
 		},
 		"waitForDefine": {
 			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",

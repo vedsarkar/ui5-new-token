@@ -1,0 +1,41 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as NotificationListGroupItemStories from "./NotificationListGroupItem.stories";
+import schema from "./NotificationListGroupItem.schema.json";
+
+<Meta of={NotificationListGroupItemStories} />
+
+# NotificationListGroupItem
+
+```tsx
+import { NotificationListGroupItem } from "@reltio/design/components";
+```
+
+`NotificationListGroupItem` is a collapsible group of notifications in a `NotificationList`.
+
+`NotificationListGroupItem` is re-exported 1:1 from `@ui5/webcomponents-react/NotificationListGroupItem`; its props, slots, and behavior are exactly the UI5 component's. The Reltio layer adds curation (the endorsed surface), pinned versioning, and documentation.
+
+### Usage
+
+Use as children of `NotificationList`; set `titleText` and nest `NotificationListItem`s.
+
+### See also
+
+- [UI5 React documentation](https://ui5.github.io/webcomponents-react/v2/?path=/docs/data-display-notificationlist--docs)
+- `NotificationList` — the parent component
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

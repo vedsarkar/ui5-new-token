@@ -27,7 +27,7 @@
 		"accessibleRole": {
 			"description": "Describes the accessibility role of the button.\n\n**Note:** Use <code>ButtonAccessibleRole.Link</code> role only with a press handler, which performs a navigation. In all other scenarios the default button semantics are recommended.\n\n**Note:** Available since [v1.23](https://github.com/UI5/webcomponents/releases/tag/v1.23) of **@ui5/webcomponents**.",
 			"default": "Button",
-			"x-typescriptType": "'Button' | ButtonAccessibleRole | 'Link'"
+			"x-typescriptType": "ButtonAccessibleRole | 'Button' | 'Link'"
 		},
 		"badge": {
 			"description": "Adds a badge to the button.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"badge\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents**.\n\n__Supported Node Type/s:__ `Array<ButtonBadge>`",
@@ -45,7 +45,7 @@
 		"design": {
 			"description": "Defines the component design.",
 			"default": "Default",
-			"x-typescriptType": "'Transparent' | ButtonDesign | 'Default' | 'Positive' | 'Negative' | 'Emphasized' | 'Attention'"
+			"x-typescriptType": "'Transparent' | 'Positive' | 'Negative' | ButtonDesign | 'Default' | 'Emphasized' | 'Attention'"
 		},
 		"disabled": {
 			"description": "Defines whether the component is disabled.\nA disabled component can't be pressed or\nfocused, and it is not in the tab chain.",
@@ -105,7 +105,7 @@
 		"type": {
 			"description": "Defines whether the button has special form-related functionality.\n\n**Note:** This property is only applicable within the context of an HTML Form element.\n\n**Note:** Available since [v1.15.0](https://github.com/UI5/webcomponents/releases/tag/v1.15.0) of **@ui5/webcomponents**.",
 			"default": "Button",
-			"x-typescriptType": "ButtonType | 'Button' | 'Submit' | 'Reset'"
+			"x-typescriptType": "'Button' | ButtonType | 'Submit' | 'Reset'"
 		},
 		"waitForDefine": {
 			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",

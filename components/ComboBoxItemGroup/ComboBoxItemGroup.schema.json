@@ -1,0 +1,55 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "ComboBoxItemGroupProps",
+	"x-component": "ComboBoxItemGroup",
+	"type": "object",
+	"properties": {
+		"children": {
+			"description": "Defines the items of the <code>ui5-cb-item-group</code>.\n\n__Supported Node Type/s:__ `Array<ComboBoxItem>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"header": {
+			"description": "Defines the header of the component.\n\n**Note:** Using this slot, the default header text of group and the value of `headerText` property will be overwritten.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"header\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<ListItemBase>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"headerAccessibleName": {
+			"description": "Defines the accessible name of the header.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"headerText": {
+			"description": "Defines the header text of the <code>ui5-li-group</code>.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onMove": {
+			"description": "Fired when a movable list item is dropped onto a drop target.\n\n**Note:** `move` event is fired only if there was a preceding `move-over` with prevented default action.\n\n**Note:** Available since [v2.1.0](https://github.com/UI5/webcomponents/releases/tag/v2.1.0) of **@ui5/webcomponents**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ComboBoxItemGroupDomRef, ListItemGroupMoveEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ComboBoxItemGroupDomRef, ListItemGroupMoveEventDetail>) => void"
+		},
+		"onMoveOver": {
+			"description": "Fired when a movable list item is moved over a potential drop target during a dragging operation.\n\nIf the new position is valid, prevent the default action of the event using `preventDefault()`.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n**Note:** Available since [v2.1.0](https://github.com/UI5/webcomponents/releases/tag/v2.1.0) of **@ui5/webcomponents**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ComboBoxItemGroupDomRef, ListItemGroupMoveEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ComboBoxItemGroupDomRef, ListItemGroupMoveEventDetail>) => void"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"wrappingType": {
+			"description": "Defines if the text of the component should wrap when it's too long.\nWhen set to \"Normal\", the content (title, description) will be wrapped\nusing the `ExpandableText` component.<br/>\n\nThe text can wrap up to 100 characters on small screens (size S) and\nup to 300 characters on larger screens (size M and above). When text exceeds\nthese limits, it truncates with an ellipsis followed by a text expansion trigger.\n\nAvailable options are:\n- `None` (default) - The text will truncate with an ellipsis.\n- `Normal` - The text will wrap (without truncation).\n\n**Note:** Available since [v2.15.0](https://github.com/UI5/webcomponents/releases/tag/v2.15.0) of **@ui5/webcomponents**.",
+			"default": "None",
+			"x-typescriptType": "'None' | WrappingType | 'Normal'"
+		}
+	}
+}

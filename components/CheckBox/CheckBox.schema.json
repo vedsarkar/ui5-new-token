@@ -83,7 +83,7 @@
 		"valueState": {
 			"description": "Defines the value state of the component.",
 			"default": "None",
-			"x-typescriptType": "'None' | 'Positive' | 'Negative' | ValueState | 'Critical' | 'Information'"
+			"x-typescriptType": "'None' | ValueState | 'Positive' | 'Critical' | 'Negative' | 'Information'"
 		},
 		"waitForDefine": {
 			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",

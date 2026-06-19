@@ -1,0 +1,41 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as ToolbarSeparatorStories from "./ToolbarSeparator.stories";
+import schema from "./ToolbarSeparator.schema.json";
+
+<Meta of={ToolbarSeparatorStories} />
+
+# ToolbarSeparator
+
+```tsx
+import { ToolbarSeparator } from "@reltio/design/components";
+```
+
+`ToolbarSeparator` draws a vertical divider between groups in a `Toolbar`.
+
+`ToolbarSeparator` is re-exported 1:1 from `@ui5/webcomponents-react/ToolbarSeparator`; its props, slots, and behavior are exactly the UI5 component's. The Reltio layer adds curation (the endorsed surface), pinned versioning, and documentation.
+
+### Usage
+
+Place between `Toolbar` items.
+
+### See also
+
+- [UI5 React documentation](https://ui5.github.io/webcomponents-react/v2/?path=/docs/layouts-floorplans-toolbar--docs)
+- `Toolbar` — the parent component
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

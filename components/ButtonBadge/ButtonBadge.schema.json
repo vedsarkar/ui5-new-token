@@ -1,0 +1,32 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "ButtonBadgeProps",
+	"x-component": "ButtonBadge",
+	"type": "object",
+	"properties": {
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"design": {
+			"description": "Defines the badge placement and appearance.\n- **InlineText** - displayed inside the button after its text, and recommended for **compact** density.\n- **OverlayText** - displayed at the top-end corner of the button, and recommended for **cozy** density.\n- **AttentionDot** - displayed at the top-end corner of the button as a dot, and suitable for both **cozy** and **compact** densities.\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents**.",
+			"default": "AttentionDot",
+			"x-typescriptType": "ButtonBadgeDesign | 'InlineText' | 'OverlayText' | 'AttentionDot'"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"text": {
+			"description": "Defines the text of the component.\n\n**Note:** Text is not applied when the `design` property is set to `AttentionDot`.\n\n**Note:** The badge component only accepts numeric values and the \"+\" symbol. Using other characters or formats may result in unpredictable behavior, which is not guaranteed or supported.\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

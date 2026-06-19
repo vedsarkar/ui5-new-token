@@ -22,7 +22,7 @@
 		"design": {
 			"description": "Defines the component type.",
 			"default": "Information",
-			"x-typescriptType": "'Positive' | 'Negative' | 'Critical' | 'Information' | MessageStripDesign | 'ColorSet1' | 'ColorSet2'"
+			"x-typescriptType": "'Positive' | 'Critical' | 'Negative' | 'Information' | MessageStripDesign | 'ColorSet1' | 'ColorSet2'"
 		},
 		"hideCloseButton": {
 			"description": "Defines whether the MessageStrip renders close button.",

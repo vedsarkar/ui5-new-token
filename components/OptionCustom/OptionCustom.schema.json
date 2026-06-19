@@ -1,0 +1,47 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "OptionCustomProps",
+	"x-component": "OptionCustom",
+	"type": "object",
+	"properties": {
+		"children": {
+			"description": "Defines the content of the component.\n\n__Supported Node Type/s:__ `Array<Node>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"displayText": {
+			"description": "Defines the text, displayed inside the `Select` input filed\nwhen the option gets selected.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"selected": {
+			"description": "Defines the selected state of the component.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"tooltip": {
+			"description": "Defines the tooltip of the option.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"value": {
+			"description": "Defines the value of the `Select` inside an HTML Form element when this component is selected.\nFor more information on HTML Form support, see the `name` property of `Select`.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

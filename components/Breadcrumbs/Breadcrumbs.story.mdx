@@ -1,0 +1,45 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as BreadcrumbsStories from "./Breadcrumbs.stories";
+import schema from "./Breadcrumbs.schema.json";
+
+<Meta of={BreadcrumbsStories} />
+
+# Breadcrumbs
+
+```tsx
+import { Breadcrumbs } from "@reltio/design/components";
+```
+
+`Breadcrumbs` is the SAP Fiori breadcrumb trail, re-exported from `@ui5/webcomponents-react/Breadcrumbs` as the canonical Reltio entry point. Use it to show the user's location in a hierarchy and let them navigate back up — from a drilled-in entity to its list, from a sub-view to the parent screen. Compose the trail from `BreadcrumbsItem` children.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Breadcrumbs`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### Composition
+
+- Children are **`BreadcrumbsItem`** entries; each takes `href`/`target` for real navigation or is handled via the breadcrumbs' `onItemClick`.
+- The **last item** is the current page. With `design="Standard"` (default) it renders as plain text; with `design="NoCurrentPage"` the trail ends at the parent and the current page is omitted.
+- **`separators`** — the glyph between items (`Slash` default, `GreaterThan`, `BackSlash`, …).
+
+Long trails automatically collapse overflow items into a dropdown.
+
+### See also
+
+- [UI5 Breadcrumbs reference](https://ui5.github.io/webcomponents-react/v2/?path=/docs/layouts-floorplans-breadcrumbs--docs) — full underlying API
+- `Link` — for standalone navigation links
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

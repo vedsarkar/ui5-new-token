@@ -1,0 +1,62 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "TimelineItemProps",
+	"x-component": "TimelineItem",
+	"type": "object",
+	"properties": {
+		"children": {
+			"description": "Defines the content of the `TimelineItem`.\n\n__Supported Node Type/s:__ `Array<Node>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"icon": {
+			"description": "Defines the icon to be displayed as graphical element within the `TimelineItem`.\nSAP-icons font provides numerous options.\n\nSee all the available icons in the [Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"name": {
+			"description": "Defines the name of the item, displayed before the `title-text`.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"nameClickable": {
+			"description": "Defines if the `name` is clickable.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"onNameClick": {
+			"description": "Fired when the item name is pressed either with a\nclick/tap or by using the Enter or Space key.\n\n**Note:** The event will not be fired if the `name-clickable`\nattribute is not set.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TimelineItemDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TimelineItemDomRef>) => void"
+		},
+		"state": {
+			"description": "Defines the state of the icon displayed in the `TimelineItem`.\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents-fiori**.",
+			"default": "None",
+			"x-typescriptType": "'None' | ValueState | 'Positive' | 'Critical' | 'Negative' | 'Information'"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"subtitleText": {
+			"description": "Defines the subtitle text of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"titleText": {
+			"description": "Defines the title text of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

@@ -1,0 +1,41 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as AvatarBadgeStories from "./AvatarBadge.stories";
+import schema from "./AvatarBadge.schema.json";
+
+<Meta of={AvatarBadgeStories} />
+
+# AvatarBadge
+
+```tsx
+import { AvatarBadge } from "@reltio/design/components";
+```
+
+`AvatarBadge` overlays a small status indicator on an `Avatar` — a presence dot, a verification check, an alert.
+
+`AvatarBadge` is re-exported 1:1 from `@ui5/webcomponents-react/AvatarBadge`; its props, slots, and behavior are exactly the UI5 component's. The Reltio layer adds curation (the endorsed surface), pinned versioning, and documentation.
+
+### Usage
+
+Place it in the `badge` slot of an `Avatar`.
+
+### See also
+
+- [UI5 React documentation](https://ui5.github.io/webcomponents-react/v2/?path=/docs/data-display-avatar--docs)
+- `Avatar` — the parent component
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

@@ -1,0 +1,24 @@
+# MessageBox
+
+`MessageBox` is the SAP Fiori message dialog, re-exported from `@ui5/webcomponents-react/MessageBox` as the canonical Reltio entry point. Use it for a modal prompt that requires acknowledgement or a decision — confirming a destructive action, warning about unsaved changes, reporting an error or success. It is a preset `Dialog` with a standard icon, title, and action buttons per `type`.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/MessageBox`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### Type presets
+
+`type` selects the icon and default actions: `Confirm` (OK/Cancel), `Information`, `Warning`, `Error`, `Success`. Override the buttons with `actions` and mark the primary one with `emphasizedAction`.
+
+### Handling the result
+
+`MessageBox` is controlled via `open`. `onClose(action)` reports which action the user chose (or that Esc was pressed); update your own state to close it.
+
+### When to use `MessageBox` vs `Dialog` vs `MessageStrip`
+
+- **`MessageBox`** — a standard modal prompt with preset semantics.
+- **`Dialog`** — a custom modal with arbitrary content.
+- **`MessageStrip`** — a non-blocking inline message.
+
+### See also
+
+- [UI5 MessageBox reference](https://ui5.github.io/webcomponents-react/v2/?path=/docs/modals-popovers-messagebox--docs) — full underlying API
+- `Dialog` — for custom modals · `MessageStrip` — for inline messages

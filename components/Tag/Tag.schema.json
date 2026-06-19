@@ -22,7 +22,7 @@
 		"design": {
 			"description": "Defines the design type of the component.\n\n**Note:** Available since [v1.22.0](https://github.com/UI5/webcomponents/releases/tag/v1.22.0) of **@ui5/webcomponents**.",
 			"default": "Neutral",
-			"x-typescriptType": "'Positive' | 'Negative' | 'Critical' | 'Information' | 'Neutral' | TagDesign | 'Set1' | 'Set2'"
+			"x-typescriptType": "'Positive' | 'Critical' | 'Negative' | 'Information' | 'Neutral' | TagDesign | 'Set1' | 'Set2'"
 		},
 		"hideStateIcon": {
 			"description": "Defines if the default state icon is shown.\n\n**Note:** Available since [v1.22.0](https://github.com/UI5/webcomponents/releases/tag/v1.22.0) of **@ui5/webcomponents**.",

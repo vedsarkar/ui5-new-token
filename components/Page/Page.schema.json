@@ -1,0 +1,57 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "PageProps",
+	"x-component": "Page",
+	"type": "object",
+	"properties": {
+		"backgroundDesign": {
+			"description": "Defines the background color of the `Page`.\n\n**Note:** When a ui5-list is placed inside the page, we recommend using “List” to ensure better color contrast.",
+			"default": "Solid",
+			"x-typescriptType": "'Transparent' | 'Solid' | 'List' | PageBackgroundDesign"
+		},
+		"children": {
+			"description": "Defines the content HTML Element.\n\n__Supported Node Type/s:__ `Array<Node>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"fixedFooter": {
+			"description": "Defines if the footer is fixed at the very bottom of the page.\n\n**Note:** When set to true the footer is fixed at the very bottom of the page, otherwise it floats over the content with a slight offset from the bottom.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"footer": {
+			"description": "Defines the footer HTML Element.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"footer\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"header": {
+			"description": "Defines the header HTML Element.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"header\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"hideFooter": {
+			"description": "Defines the footer visibility.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"noScrolling": {
+			"description": "Disables vertical scrolling of page content.\nIf set to true, there will be no vertical scrolling at all.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

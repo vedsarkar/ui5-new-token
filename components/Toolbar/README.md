@@ -1,0 +1,23 @@
+# Toolbar
+
+`Toolbar` is the SAP Fiori toolbar, re-exported from `@ui5/webcomponents-react/Toolbar` as the canonical Reltio entry point. Use it as a horizontal bar of actions and controls above a list, table, or content area — add/sort/filter buttons, a view selector, a search field. It manages alignment, spacing, and automatic overflow into a "more" menu when space runs out.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Toolbar`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### Composition
+
+- **`ToolbarButton`** — an action; uses `text`, `icon`, `design`, `tooltip` (not children).
+- **`ToolbarSelect`** (+ **`ToolbarSelectOption`**) — an inline dropdown selector.
+- **`ToolbarSpacer`** — flexible space that pushes following items to the end.
+- **`ToolbarSeparator`** — a vertical divider between groups.
+
+Each item's `overflowPriority` controls whether it moves into the overflow menu first when the bar is crowded.
+
+### Toolbar vs FlexBox
+
+Use `Toolbar` for action bars that need overflow handling and SAP toolbar semantics. Use `FlexBox` for general one-dimensional layout that isn't an action bar.
+
+### See also
+
+- [UI5 Toolbar reference](https://ui5.github.io/webcomponents-react/v2/?path=/docs/layouts-floorplans-toolbar--docs) — full underlying API
+- `Button` — standalone actions · `ShellBar` — top app chrome

@@ -1,0 +1,68 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "TabProps",
+	"x-component": "Tab",
+	"type": "object",
+	"properties": {
+		"additionalText": {
+			"description": "Represents the \"additionalText\" text, which is displayed in the tab. In the cases when in the same time there are tabs with icons and tabs without icons, if a tab has no icon the \"additionalText\" is displayed larger.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"children": {
+			"description": "Holds the content associated with this tab.\n\n__Supported Node Type/s:__ `Array<Node>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"design": {
+			"description": "Defines the component's design color.\n\nThe design is applied to:\n\n- the component icon\n- the `text` when the component overflows\n- the tab selection line\n\nAvailable designs are: `\"Default\"`, `\"Neutral\"`, `\"Positive\"`, `\"Critical\"` and `\"Negative\"`.\n\n**Note:** The design depends on the current theme.",
+			"default": "Default",
+			"x-typescriptType": "'Positive' | 'Critical' | 'Negative' | 'Default' | 'Neutral' | SemanticColor"
+		},
+		"disabled": {
+			"description": "Disabled tabs can't be selected.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"icon": {
+			"description": "Defines the icon source URI to be displayed as graphical element within the component.\nThe SAP-icons font provides numerous built-in icons.\nSee all the available icons in the [Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"items": {
+			"description": "Defines hierarchies with nested sub tabs.\n\n**Note:** Use `Tab` and `TabSeparator` for the intended design.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"items\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<ITab>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"movable": {
+			"description": "Defines if the tab is movable.\n\n**Note:** Available since [v2.0.0](https://github.com/UI5/webcomponents/releases/tag/v2.0.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"selected": {
+			"description": "Specifies if the component is selected.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"text": {
+			"description": "The text to be displayed for the item.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

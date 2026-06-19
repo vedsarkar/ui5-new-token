@@ -1,0 +1,55 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "FlexBoxProps",
+	"x-component": "FlexBox",
+	"type": "object",
+	"properties": {
+		"alignItems": {
+			"description": "Controls the alignment of items on the Cross Axis.\n\n__Note:__ Corresponds to `align-items`.",
+			"x-typescriptType": "'Center' | 'Start' | 'End' | 'Stretch' | FlexBoxAlignItems | 'Baseline'"
+		},
+		"as": {
+			"description": "Sets the components outer HTML tag.\n\n__Note:__ For TypeScript the types of `ref` are bound to the default tag name, if you change it you are responsible to set the respective types yourself.",
+			"x-typescriptType": "keyof HTMLElementTagNameMap"
+		},
+		"children": {
+			"description": "Content of the `FlexBox`.",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"direction": {
+			"description": "Controls how the items are placed in the `FlexBox`.\n\n__Note:__ Corresponds to `flex-direction`.",
+			"x-typescriptType": "FlexBoxDirection | 'Column' | 'ColumnReverse' | 'Row' | 'RowReverse'"
+		},
+		"displayInline": {
+			"description": "Determines whether the `FlexBox` is in `flex` or `inline-flex` mode.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"fitContainer": {
+			"description": "Determines whether the `FlexBox` will be sized to completely fill its container.\n\n__Note:__ `fitContainer` only works if the height of the containing block is specified (i.e. it doesn't depend on content height)",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"gap": {
+			"description": "Define the gap (gutters) between flex items and flex lines.\n\n__Note:__ Corresponds to the `gap` CSS Property.",
+			"x-typescriptType": "Property.Gap<string | number>"
+		},
+		"justifyContent": {
+			"description": "Defines how the browser distributes space between and around items along the main-axis.\n\n__Note:__ Corresponds to `justify-content`.",
+			"x-typescriptType": "'Center' | 'Start' | 'End' | FlexBoxJustifyContent | 'SpaceAround' | 'SpaceBetween'"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"wrap": {
+			"description": "Determines whether the `FlexBox` should wrap, when there is not enough space to display all items in one line.\n\n__Note:__ Corresponds to `flex-wrap`.",
+			"x-typescriptType": "FlexBoxWrap | 'NoWrap' | 'Wrap' | 'WrapReverse'"
+		}
+	}
+}

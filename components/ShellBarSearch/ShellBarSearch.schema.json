@@ -1,0 +1,132 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "ShellBarSearchProps",
+	"x-component": "ShellBarSearch",
+	"type": "object",
+	"properties": {
+		"accessibleDescription": {
+			"description": "Defines the accessible ARIA description of the field.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"action": {
+			"description": "Defines the popup footer action button.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"action\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<Button>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"autoOpen": {
+			"description": "Indicates whether the suggestions popover should be opened on focus.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"children": {
+			"description": "Defines the Search suggestion items.\n\n__Supported Node Type/s:__ `Array<SearchItem | SearchItemGroup>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"fieldLoading": {
+			"description": "Indicates whether a loading indicator should be shown in the input field.\n\n**Note:** Available since [v2.19.0](https://github.com/UI5/webcomponents/releases/tag/v2.19.0) of **@ui5/webcomponents-fiori**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"filterButton": {
+			"description": "Defines the filter button slot, used to display an additional filtering button.\nThis slot is intended for passing a `ui5-button` with a filter icon to provide extended filtering options.\n\n**Note:** Scope button and Filter button are mutually exclusive.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"filterButton\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v2.11.0](https://github.com/UI5/webcomponents/releases/tag/v2.11.0) of **@ui5/webcomponents-fiori**.\n\n__Supported Node Type/s:__ `Array<Button>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"illustration": {
+			"description": "Defines the illustrated message to be shown in the popup.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"illustration\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<IllustratedMessage>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"loading": {
+			"description": "Indicates whether a loading indicator should be shown in the popup.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"messageArea": {
+			"description": "Defines the illustrated message to be shown in the popup.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"messageArea\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<SearchMessageArea>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"noTypeahead": {
+			"description": "Defines whether the value will be autcompleted to match an item.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"onClose": {
+			"description": "Fired when the popup is closed.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|❌|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarSearchDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarSearchDomRef>) => void"
+		},
+		"onInput": {
+			"description": "Fired when typing in input or clear icon is pressed.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarSearchDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarSearchDomRef>) => void"
+		},
+		"onOpen": {
+			"description": "Fired when the popup is opened.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|❌|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarSearchDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarSearchDomRef>) => void"
+		},
+		"onScopeChange": {
+			"description": "Fired when the scope has changed.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarSearchDomRef, SearchFieldScopeSelectionChangeDetails>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarSearchDomRef, SearchFieldScopeSelectionChangeDetails>) => void"
+		},
+		"onSearch": {
+			"description": "Fired when the user has triggered search with Enter key or Search Button press.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarSearchDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarSearchDomRef>) => void"
+		},
+		"open": {
+			"description": "Indicates whether the items picker is open.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"placeholder": {
+			"description": "Defines a short hint intended to aid the user with data entry when the\ncomponent has no value.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"scopes": {
+			"description": "Defines the component scope options.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"scopes\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<ISearchScope>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"scopeValue": {
+			"description": "Defines the value of the component:\n\nApplications are responsible for setting the correct scope value.\n\n**Note:** If the given value does not match any existing scopes,\nno scope will be selected and the SearchField scope component will be displayed as empty.\n\n**Note:** Available since [v2.18.0](https://github.com/UI5/webcomponents/releases/tag/v2.18.0) of **@ui5/webcomponents-fiori**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"showClearIcon": {
+			"description": "Defines whether the clear icon of the search will be shown.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"value": {
+			"description": "Defines the value of the component.\n\n**Note:** The property is updated upon typing.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

@@ -1,0 +1,43 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "TableRowActionProps",
+	"x-component": "TableRowAction",
+	"type": "object",
+	"properties": {
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"icon": {
+			"description": "Defines the icon of the row action.\n\n**Note:** For row actions to work properly, this property is mandatory.\n\n**Note:** SAP-icons font provides numerous built-in icons. To find all the available icons, see the\n[Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"invisible": {
+			"description": "Defines the visibility of the row action.\n\n**Note:** Invisible row actions still take up space, allowing to hide the action while maintaining its position.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"onClick": {
+			"description": "Fired when a row action is clicked.\n\n**Note:** Available since [v2.9.0](https://github.com/UI5/webcomponents/releases/tag/v2.9.0) of **@ui5/webcomponents**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TableRowActionDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TableRowActionDomRef>) => void"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"text": {
+			"description": "Defines the text of the row action.\n\n**Note:** For row actions to work properly, this property is mandatory.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

@@ -1,0 +1,122 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "ToggleButtonProps",
+	"x-component": "ToggleButton",
+	"type": "object",
+	"properties": {
+		"accessibilityAttributes": {
+			"description": "Defines the additional accessibility attributes that will be applied to the component.\nThe following fields are supported:\n\n- **expanded**: Indicates whether the button, or another grouping element it controls, is currently expanded or collapsed.\nAccepts the following string values: `true` or `false`\n\n- **hasPopup**: Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by the button.\nAccepts the following string values: `dialog`, `grid`, `listbox`, `menu` or `tree`.\n\n- **ariaLabel**: Defines the accessible ARIA name of the component.\nAccepts any string value.\n\n - **ariaKeyShortcuts**: Defines keyboard shortcuts that activate or give focus to the button.\n\n- **controls**: Identifies the element (or elements) whose contents or presence are controlled by the button element.\nAccepts a lowercase string value.\n\n**Note:** Available since [v1.2.0](https://github.com/UI5/webcomponents/releases/tag/v1.2.0) of **@ui5/webcomponents**.",
+			"default": {},
+			"x-typescriptType": "ButtonAccessibilityAttributes"
+		},
+		"accessibleDescription": {
+			"description": "Defines the accessible description of the component.\n\n**Note:** Available since [v2.5.0](https://github.com/UI5/webcomponents/releases/tag/v2.5.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleNameRef": {
+			"description": "Receives id(or many ids) of the elements that label the component.\n\n**Note:** Available since [v1.1.0](https://github.com/UI5/webcomponents/releases/tag/v1.1.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"accessibleRole": {
+			"description": "Describes the accessibility role of the button.\n\n**Note:** Use <code>ButtonAccessibleRole.Link</code> role only with a press handler, which performs a navigation. In all other scenarios the default button semantics are recommended.\n\n**Note:** Available since [v1.23](https://github.com/UI5/webcomponents/releases/tag/v1.23) of **@ui5/webcomponents**.",
+			"default": "Button",
+			"x-typescriptType": "ButtonAccessibleRole | 'Button' | 'Link'"
+		},
+		"badge": {
+			"description": "Adds a badge to the button.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"badge\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents**.\n\n__Supported Node Type/s:__ `Array<ButtonBadge>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"children": {
+			"description": "Defines the text of the component.\n\n**Note:** Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.\n\n__Supported Node Type/s:__ `Array<Node>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"design": {
+			"description": "Defines the component design.",
+			"default": "Default",
+			"x-typescriptType": "'Transparent' | 'Positive' | 'Negative' | ButtonDesign | 'Default' | 'Emphasized' | 'Attention'"
+		},
+		"disabled": {
+			"description": "Defines whether the component is disabled.\nA disabled component can't be pressed or\nfocused, and it is not in the tab chain.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"endIcon": {
+			"description": "Defines the icon, displayed as graphical element within the component after the button text.\n\n**Note:** It is highly recommended to use `endIcon` property only together with `icon` and/or `text` properties.\nUsage of `endIcon` only should be avoided.\n\nThe SAP-icons font provides numerous options.\n\nExample:\nSee all the available icons within the [Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"form": {
+			"description": "Associates the button with a form element by the form's `id` attribute.\nWhen set, the button can submit or reset the specified form even if the button\nis not a descendant of that form.\n\n**Note:** This property takes effect only when the button's \"type\" property is set to \"Submit\" or \"Reset\".\n\n**Note:** Available since [v2.21.0](https://github.com/UI5/webcomponents/releases/tag/v2.21.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"icon": {
+			"description": "Defines the icon, displayed as graphical element within the component.\nThe SAP-icons font provides numerous options.\n\nExample:\nSee all the available icons within the [Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"loading": {
+			"description": "Defines whether the button shows a loading indicator.\n\n**Note:** If set to `true`, a busy indicator component will be displayed on the related button.\n\n**Note:** Available since [v2.13.0](https://github.com/UI5/webcomponents/releases/tag/v2.13.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"loadingDelay": {
+			"description": "Specifies the delay in milliseconds before the loading indicator appears within the associated button.\n\n**Note:** Available since [v2.13.0](https://github.com/UI5/webcomponents/releases/tag/v2.13.0) of **@ui5/webcomponents**.",
+			"default": 1000,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"onClick": {
+			"description": "Fired when the component is activated either with a mouse/tap or by using the Enter or Space key.\n\n**Note:** The event will not be fired if the `disabled` property is set to `true`.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n**Note:** Available since [v2.10.0](https://github.com/UI5/webcomponents/releases/tag/v2.10.0) of **@ui5/webcomponents**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ToggleButtonDomRef, ButtonClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ToggleButtonDomRef, ButtonClickEventDetail>) => void"
+		},
+		"pressed": {
+			"description": "Determines whether the component is displayed as pressed.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"submits": {
+			"description": "When set to `true`, the component will\nautomatically submit the nearest HTML form element on `press`.\n\n**Note:** This property is only applicable within the context of an HTML Form element.`",
+			"default": false,
+			"deprecated": true,
+			"x-deprecationReason": "Set the \"type\" property to \"Submit\" to achieve the same result. The \"submits\" property is ignored if \"type\" is set to any value other than \"Button\".",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"tooltip": {
+			"description": "Defines the tooltip of the component.\n\n**Note:** A tooltip attribute should be provided for icon-only buttons, in order to represent their exact meaning/function.\n\n**Note:** Available since [v1.2.0](https://github.com/UI5/webcomponents/releases/tag/v1.2.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"type": {
+			"description": "Defines whether the button has special form-related functionality.\n\n**Note:** This property is only applicable within the context of an HTML Form element.\n\n**Note:** Available since [v1.15.0](https://github.com/UI5/webcomponents/releases/tag/v1.15.0) of **@ui5/webcomponents**.",
+			"default": "Button",
+			"x-typescriptType": "'Button' | ButtonType | 'Submit' | 'Reset'"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

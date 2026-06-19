@@ -1,0 +1,37 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "MessageViewProps",
+	"x-component": "MessageView",
+	"type": "object",
+	"properties": {
+		"children": {
+			"description": "A list with message items. If only one item is provided, the initial page will be the details page for the item.\n\n* __Note:__ Although this prop accepts all HTML Elements, it is strongly recommended that you only use `Message` in order to preserve the intended design.",
+			"x-typescriptType": "ReactNode | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"groupItems": {
+			"description": "Defines whether the messages are grouped or not.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"onItemSelect": {
+			"description": "Event is fired when the details of a message are shown.",
+			"x-typescriptType": "(event: Ui5CustomEvent<ListDomRef, ListItemClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ListDomRef, ListItemClickEventDetail>) => void"
+		},
+		"showDetailsPageHeader": {
+			"description": "Defines whether the header of the details page will be shown.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		}
+	},
+	"required": ["children"]
+}

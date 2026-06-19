@@ -1,0 +1,32 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "CalendarLegendItemProps",
+	"x-component": "CalendarLegendItem",
+	"type": "object",
+	"properties": {
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"text": {
+			"description": "Defines the text content of the Calendar Legend Item.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"type": {
+			"description": "Defines the type of the Calendar Legend Item.",
+			"default": "None",
+			"x-typescriptType": "'None' | CalendarLegendItemType | 'Today' | 'Selected' | 'Working' | 'NonWorking' | 'Type01' | 'Type02' | 'Type03' | 'Type04' | 'Type05' | 'Type06' | 'Type07' | 'Type08' | 'Type09' | 'Type10' | 'Type11' | 'Type12' | 'Type13' | 'Type14' | 'Type15' | 'Type16' | 'Type17' | 'Type18' | 'Type19' | 'Type20'"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

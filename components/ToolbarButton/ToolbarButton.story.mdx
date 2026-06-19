@@ -1,0 +1,41 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as ToolbarButtonStories from "./ToolbarButton.stories";
+import schema from "./ToolbarButton.schema.json";
+
+<Meta of={ToolbarButtonStories} />
+
+# ToolbarButton
+
+```tsx
+import { ToolbarButton } from "@reltio/design/components";
+```
+
+`ToolbarButton` is an action button inside a `Toolbar`.
+
+`ToolbarButton` is re-exported 1:1 from `@ui5/webcomponents-react/ToolbarButton`; its props, slots, and behavior are exactly the UI5 component's. The Reltio layer adds curation (the endorsed surface), pinned versioning, and documentation.
+
+### Usage
+
+Use as children of `Toolbar`; set `text`, `icon`, `design`.
+
+### See also
+
+- [UI5 React documentation](https://ui5.github.io/webcomponents-react/v2/?path=/docs/layouts-floorplans-toolbar--docs)
+- `Toolbar` — the parent component
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

@@ -1,0 +1,37 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "NumericSideIndicatorProps",
+	"x-component": "NumericSideIndicator",
+	"type": "object",
+	"properties": {
+		"number": {
+			"description": "The numeric value",
+			"x-typescriptType": "string | number"
+		},
+		"titleText": {
+			"description": "The title of the indicator",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"state": {
+			"description": "The semantic color which represents the state of the side indicator.",
+			"default": "`\"None\"`",
+			"x-typescriptType": "ValueColor"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"unit": {
+			"description": "Defines the unit of measurement (scaling prefix) for the numeric value",
+			"x-typescriptType": "string",
+			"type": "string"
+		}
+	},
+	"required": ["number", "titleText"]
+}

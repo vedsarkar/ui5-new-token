@@ -1,0 +1,32 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "AvatarBadgeProps",
+	"x-component": "AvatarBadge",
+	"type": "object",
+	"properties": {
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"icon": {
+			"description": "Defines the icon name to be displayed inside the badge.\n\n**Note:** You should import the desired icon first, then use its name as \"icon\".\n\n`import \"@ui5/webcomponents-icons/dist/{icon_name}.js\"`",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"state": {
+			"description": "Defines the state of the badge, which determines its styling.\n\nAvailable options:\n- `None` (default) - Standard appearance\n- `Positive` - Green, used for success/approved states\n- `Critical` - Orange, used for warning states\n- `Negative` - Red, used for error/rejected states\n- `Information` - Blue, used for informational states",
+			"default": "None",
+			"x-typescriptType": "'None' | ValueState | 'Positive' | 'Critical' | 'Negative' | 'Information'"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

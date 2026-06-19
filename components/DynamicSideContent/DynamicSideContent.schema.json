@@ -1,0 +1,73 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "DynamicSideContentProps",
+	"x-component": "DynamicSideContent",
+	"type": "object",
+	"properties": {
+		"accessibilityAttributes": {
+			"description": "Defines additional accessibility attributes on different areas of the component.\n\nThe accessibilityAttributes object has the following fields:\n\n - **mainContent**: `mainContent.ariaLabel` defines the aria-label of the main content area. Accepts any string.\n - **sideContent**: `sideContent.ariaLabel` defines the aria-label of the side content area. Accepts any string.\n\n**Note:** Available since [v2.6.0](https://github.com/UI5/webcomponents/releases/tag/v2.6.0) of **@ui5/webcomponents-fiori**.",
+			"default": {},
+			"x-typescriptType": "DynamicSideContentAccessibilityAttributes"
+		},
+		"children": {
+			"description": "Defines the main content.\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"equalSplit": {
+			"description": "Defines whether the component is in equal split mode. In this mode, the side and\nthe main content take 50:50 percent of the container on all screen sizes\nexcept for phone, where the main and side contents are switching visibility\nusing the toggle method.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"hideMainContent": {
+			"description": "Defines the visibility of the main content.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"hideSideContent": {
+			"description": "Defines the visibility of the side content.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"onLayoutChange": {
+			"description": "Fires when the current breakpoint has been changed.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<DynamicSideContentDomRef, DynamicSideContentLayoutChangeEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<DynamicSideContentDomRef, DynamicSideContentLayoutChangeEventDetail>) => void"
+		},
+		"sideContent": {
+			"description": "Defines the side content.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"sideContent\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"sideContentFallDown": {
+			"description": "Defines on which breakpoints the side content falls down below the main content.",
+			"default": "OnMinimumWidth",
+			"x-typescriptType": "SideContentFallDown | 'BelowXL' | 'BelowL' | 'BelowM' | 'OnMinimumWidth'"
+		},
+		"sideContentPosition": {
+			"description": "Defines whether the side content is positioned before the main content (left side\nin LTR mode), or after the the main content (right side in LTR mode).",
+			"default": "End",
+			"x-typescriptType": "'Start' | 'End' | SideContentPosition"
+		},
+		"sideContentVisibility": {
+			"description": "Defines on which breakpoints the side content is visible.",
+			"default": "ShowAboveS",
+			"x-typescriptType": "SideContentVisibility | 'AlwaysShow' | 'ShowAboveL' | 'ShowAboveM' | 'ShowAboveS' | 'NeverShow'"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

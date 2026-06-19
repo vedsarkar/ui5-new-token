@@ -1,0 +1,32 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "CalendarDateRangeProps",
+	"x-component": "CalendarDateRange",
+	"type": "object",
+	"properties": {
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"endValue": {
+			"description": "End of date range formatted according to the `formatPattern` property\nof the `Calendar` that hosts the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"startValue": {
+			"description": "Start of date range formatted according to the `formatPattern` property\nof the `Calendar` that hosts the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

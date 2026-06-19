@@ -1,0 +1,45 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "MultiComboBoxItemProps",
+	"x-component": "MultiComboBoxItem",
+	"type": "object",
+	"properties": {
+		"additionalText": {
+			"description": "Defines the additional text of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"selected": {
+			"description": "Defines the selected state of the component.",
+			"default": false,
+			"deprecated": true,
+			"x-deprecationReason": "Set the `value` property on items and use the `selectedValues` property on the parent `ui5-multi-combobox` instead for programmatic selection.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"text": {
+			"description": "Defines the text of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"value": {
+			"description": "Defines the value of the component.\n\nUse this property to associate a unique identifier with the item,\nseparate from the display text. This enables selecting items\nprogrammatically via `selectedValues` on the parent MultiComboBox.\n\n**Note:** Available since [v2.20.0](https://github.com/UI5/webcomponents/releases/tag/v2.20.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

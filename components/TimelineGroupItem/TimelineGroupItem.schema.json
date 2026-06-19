@@ -1,0 +1,42 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "TimelineGroupItemProps",
+	"x-component": "TimelineGroupItem",
+	"type": "object",
+	"properties": {
+		"children": {
+			"description": "Determines the content of the `TimelineGroupItem`.\n\n__Supported Node Type/s:__ `Array<ITimelineItem>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"collapsed": {
+			"description": "Determines if the group is collapsed or expanded.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"groupName": {
+			"description": "Defines the text of the button that expands and collapses the group.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onToggle": {
+			"description": "Fired when the group item is expanded or collapsed.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TimelineGroupItemDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TimelineGroupItemDomRef>) => void"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

@@ -1,0 +1,18 @@
+# UploadCollection
+
+`UploadCollection` is the SAP Fiori upload collection, re-exported from `@ui5/webcomponents-react/UploadCollection` as the canonical Reltio entry point. Use it to list and manage files attached to an entity or process — supporting documents, source extracts, evidence — with drag-and-drop, per-item metadata, and delete actions. Compose entries from `UploadCollectionItem`.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/UploadCollection`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### Composition
+
+- **`UploadCollectionItem`** — one file row: `fileName`, an optional `file` object, body children for metadata (size, date, status), and a delete button (`disableDeleteButton` to suppress).
+- **`noDataText`** / **`noDataDescription`** — empty-state copy.
+- **`hideDragOverlay`** — disable the drag-and-drop overlay when uploads happen elsewhere.
+
+The component manages the list and drag interactions; wire actual upload/delete to your own handlers.
+
+### See also
+
+- [UI5 UploadCollection reference](https://ui5.github.io/webcomponents-react/v2/?path=/docs/inputs-uploadcollection--docs) — full underlying API
+- `FileUploader` — the lower-level file input control

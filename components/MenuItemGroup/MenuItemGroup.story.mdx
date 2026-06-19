@@ -1,0 +1,41 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as MenuItemGroupStories from "./MenuItemGroup.stories";
+import schema from "./MenuItemGroup.schema.json";
+
+<Meta of={MenuItemGroupStories} />
+
+# MenuItemGroup
+
+```tsx
+import { MenuItemGroup } from "@reltio/design/components";
+```
+
+`MenuItemGroup` groups `MenuItem`s with a selection mode (single/multiple).
+
+`MenuItemGroup` is re-exported 1:1 from `@ui5/webcomponents-react/MenuItemGroup`; its props, slots, and behavior are exactly the UI5 component's. The Reltio layer adds curation (the endorsed surface), pinned versioning, and documentation.
+
+### Usage
+
+Use as children of `Menu`; set `checkMode` and nest `MenuItem`s.
+
+### See also
+
+- [UI5 React documentation](https://ui5.github.io/webcomponents-react/v2/?path=/docs/modals-popovers-menu--docs)
+- `Menu` — the parent component
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

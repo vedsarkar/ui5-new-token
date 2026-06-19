@@ -1,0 +1,43 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as MediaGalleryStories from "./MediaGallery.stories";
+import schema from "./MediaGallery.schema.json";
+
+<Meta of={MediaGalleryStories} />
+
+# MediaGallery
+
+```tsx
+import { MediaGallery } from "@reltio/design/components";
+```
+
+`MediaGallery` is the SAP Fiori media gallery, re-exported from `@ui5/webcomponents-react/MediaGallery` as the canonical Reltio entry point. Use it to browse a set of images or media with a large display area and a thumbnail strip — entity attachments, document previews, product imagery. Compose items from `MediaGalleryItem`.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/MediaGallery`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### Composition
+
+- **`MediaGalleryItem`** — one media entry; put the thumbnail in the `thumbnail` slot and the full-size content as children.
+- **`layout`** — `Auto` (default), `Vertical`, or `Horizontal` thumbnail placement.
+- **`showAllThumbnails`** — show every thumbnail instead of collapsing into an overflow.
+
+### See also
+
+- [UI5 MediaGallery reference](https://ui5.github.io/webcomponents-react/v2/?path=/docs/layouts-floorplans-mediagallery--docs) — full underlying API
+- `Carousel` — for paging through equally-sized items
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

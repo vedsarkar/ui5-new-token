@@ -179,8 +179,8 @@ const UI5_PARENT = {
 	ObjectPageTitle: "ObjectPage",
 	DynamicPageHeader: "DynamicPage",
 	DynamicPageTitle: "DynamicPage",
-	SplitterElement: "Splitter",
-	SplitterLayout: "Splitter",
+	Splitter: "SplitterLayout",
+	SplitterElement: "SplitterLayout",
 	FilterGroupItem: "FilterBar",
 	FilterItem: "FilterBar",
 	FilterItemOption: "FilterBar",
@@ -237,6 +237,34 @@ const RELTIO_DIR = {
 	TreeItemCustom: "TreeItem",
 	UserMenuAccount: "UserMenu",
 	UserMenuItem: "UserMenu",
+	UserMenuItemGroup: "UserMenu",
+	AvatarBadge: "Avatar",
+	AvatarGroup: "Avatar",
+	ButtonBadge: "Button",
+	ShellBarSpacer: "ShellBar",
+	TabSeparator: "TabContainer",
+	BreadcrumbsItem: "Breadcrumbs",
+	MenuItem: "Menu",
+	MenuItemGroup: "Menu",
+	MenuSeparator: "Menu",
+	ToolbarButton: "Toolbar",
+	ToolbarItem: "Toolbar",
+	ToolbarSelect: "Toolbar",
+	ToolbarSelectOption: "Toolbar",
+	ToolbarSeparator: "Toolbar",
+	ToolbarSpacer: "Toolbar",
+	TimelineItem: "Timeline",
+	TimelineGroupItem: "Timeline",
+	MediaGalleryItem: "MediaGallery",
+	ColorPaletteItem: "ColorPalette",
+	ColorPalettePopover: "ColorPalette",
+	NotificationListItem: "NotificationList",
+	NotificationListGroupItem: "NotificationList",
+	UploadCollectionItem: "UploadCollection",
+	MessageItem: "MessageView",
+	MessageViewButton: "MessageView",
+	Splitter: "SplitterLayout",
+	SplitterElement: "SplitterLayout",
 };
 
 const readPkgComponentTags = () => {
@@ -434,12 +462,15 @@ const main = async () => {
 				let mode = "1:1";
 				if (name in RENAMED) mode = "renamed";
 				else if (WRAPPERS.has(name)) mode = "wrapper";
+				// Prefer the component's own documented page; fall back to the
+				// curated parent dir (renamed surfaces, internal sub-items).
+				const reltioDir = docDirs.has(name) ? name : (RELTIO_DIR[name] ?? name);
 				return {
 					name,
 					category,
 					relationship: "endorsed",
 					ui5: ui5Side,
-					reltio: { mode, url: reltioUrlFor(RELTIO_DIR[name] ?? name) },
+					reltio: { mode, url: reltioUrlFor(reltioDir) },
 				};
 			}
 			// Unendorsed UI5 component. The Reltio status reflects our stance, not

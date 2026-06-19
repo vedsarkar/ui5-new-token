@@ -1,0 +1,46 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as ColorPickerStories from "./ColorPicker.stories";
+import schema from "./ColorPicker.schema.json";
+
+<Meta of={ColorPickerStories} />
+
+# ColorPicker
+
+```tsx
+import { ColorPicker } from "@reltio/design/components";
+```
+
+`ColorPicker` is the SAP Fiori color selection control, re-exported from `@ui5/webcomponents-react/ColorPicker` as the canonical Reltio entry point. Use it where a user picks an arbitrary color value — theming a workspace, color-coding a segment or tag category, configuring a chart series.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/ColorPicker`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### Value and modes
+
+- **`value`** — the current color; accepts CSS color strings (`"#1873b4"`, `"rgba(24,115,180,1)"`). Read the resulting value from `onChange`.
+- **`simplified`** — a compact picker without the full HSL/alpha sliders, for quick selection from a smaller surface.
+
+### Note on app theming
+
+For Reltio product UI, prefer the SAP Horizon `--sap*` tokens for component colors. `ColorPicker` is for user-chosen data colors (categories, charts, labels), not for overriding the design system.
+
+### See also
+
+- [UI5 ColorPicker reference](https://ui5.github.io/webcomponents-react/v2/?path=/docs/inputs-colorpicker--docs) — full underlying API
+- `Tag` — `colorScheme` for predefined category colors
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

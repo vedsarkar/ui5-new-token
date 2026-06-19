@@ -1,0 +1,58 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "TimelineProps",
+	"x-component": "Timeline",
+	"type": "object",
+	"properties": {
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.\n\n**Note:** Available since [v1.2.0](https://github.com/UI5/webcomponents/releases/tag/v1.2.0) of **@ui5/webcomponents-fiori**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"children": {
+			"description": "Determines the content of the `Timeline`.\n\n__Supported Node Type/s:__ `Array<ITimelineItem>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"growing": {
+			"description": "Defines whether the Timeline will have growing capability either by pressing a \"More\" button,\nor via user scroll. In both cases a `load-more` event is fired.\n\nAvailable options:\n\n`Button` - Displays a button at the end of the Timeline, which when pressed triggers the `load-more` event.\n\n`Scroll` -Triggers the `load-more` event when the user scrolls to the end of the Timeline.\n\n`None` (default) - The growing functionality is off.\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents-fiori**.",
+			"default": "None",
+			"x-typescriptType": "'None' | 'Button' | 'Scroll' | TimelineGrowingMode"
+		},
+		"layout": {
+			"description": "Defines the items orientation.",
+			"default": "Vertical",
+			"x-typescriptType": "'Vertical' | 'Horizontal' | TimelineLayout"
+		},
+		"loading": {
+			"description": "Defines if the component should display a loading indicator over the Timeline.\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents-fiori**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"loadingDelay": {
+			"description": "Defines the delay in milliseconds, after which the loading indicator will show up for this component.",
+			"default": 1000,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"onLoadMore": {
+			"description": "Fired when the user presses the `More` button or scrolls to the Timeline's end.\n\n**Note:** The event will be fired if `growing` is set to `Button` or `Scroll`.\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents-fiori**.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<TimelineDomRef>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<TimelineDomRef>) => void"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

@@ -32,7 +32,7 @@
 		"design": {
 			"description": "Defines the component design.",
 			"default": "Default",
-			"x-typescriptType": "'Transparent' | ButtonDesign | 'Default' | 'Positive' | 'Negative' | 'Emphasized' | 'Attention'"
+			"x-typescriptType": "'Transparent' | 'Positive' | 'Negative' | ButtonDesign | 'Default' | 'Emphasized' | 'Attention'"
 		},
 		"disabled": {
 			"description": "Defines whether the component is disabled.\nA disabled component can't be pressed or\nfocused, and it is not in the tab chain.",

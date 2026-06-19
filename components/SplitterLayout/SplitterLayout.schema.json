@@ -1,0 +1,35 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "SplitterLayoutProps",
+	"x-component": "SplitterLayout",
+	"type": "object",
+	"properties": {
+		"children": {
+			"description": "The content areas (optional) to be split. The control will show n-1 splitter bars between n controls in this aggregation.",
+			"x-typescriptType": "false | ReactElement<SplitterElementPropTypes, string | JSXElementConstructor<any>> | Array<SplitterLayoutChild>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onResize": {
+			"description": "Fired when contents are resized.\n\n__Note:__\n- Resize events can fire many times in quick succession, it’s therefore strongly recommended to debounce your handler if you’re updating React state or causing other expensive operations.\n- The `areas` array reflects the logical position of the `SplitterElement`s relative to the \"Splitter\".",
+			"x-typescriptType": "(e: OnResizeParam) => void",
+			"x-functionSignature": "(e: OnResizeParam) => void"
+		},
+		"options": {
+			"description": "Defines options to customize the behavior of the SplitterLayout.",
+			"x-typescriptType": "SplitterLayoutOptions"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"vertical": {
+			"description": "Controls if a vertical or horizontal `SplitterLayout` is rendered.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

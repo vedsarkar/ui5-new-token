@@ -1,0 +1,50 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as SelectDialogStories from "./SelectDialog.stories";
+import schema from "./SelectDialog.schema.json";
+
+<Meta of={SelectDialogStories} />
+
+# SelectDialog
+
+```tsx
+import { SelectDialog } from "@reltio/design/components";
+```
+
+`SelectDialog` is the SAP Fiori select dialog, re-exported from `@ui5/webcomponents-react/SelectDialog` as the canonical Reltio entry point. Use it to pick one or several items from a longer, searchable list in a modal — choosing a source system, assigning an owner, adding entities to a group. It bundles a search field, selection state, and confirm/cancel actions around a list.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/SelectDialog`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### Composition and selection
+
+- **children** — list rows (`ListItem`); the dialog renders them in a searchable list.
+- **`selectionMode`** — `Single` (default) or `Multiple`; multi-select shows a count and a confirm button (`confirmButtonText`).
+- **`rememberSelections`** — keep selections across filtering.
+- Controlled via `open`; handle `onConfirm` for the chosen item(s) and `onClose` to reset state.
+
+### When to use `SelectDialog` vs `Select` vs `ComboBox`
+
+- **`SelectDialog`** — a long or searchable list, single or multi-select, in a focused modal.
+- **`Select`** — a short, fixed set of options inline.
+- **`ComboBox`** — type-ahead selection with free text.
+
+### See also
+
+- [UI5 SelectDialog reference](https://ui5.github.io/webcomponents-react/v2/?path=/docs/modals-popovers-selectdialog--docs) — full underlying API
+- `Select` · `ComboBox` · `ViewSettingsDialog` (not yet endorsed)
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

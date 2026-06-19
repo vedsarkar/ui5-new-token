@@ -1,0 +1,59 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "WizardStepProps",
+	"x-component": "WizardStep",
+	"type": "object",
+	"properties": {
+		"branching": {
+			"description": "When `branching` is enabled a dashed line would be displayed after the step,\nmeant to indicate that the next step is not yet known and depends on user choice in the current step.\n\n**Note:** It is recommended to use `branching` on the last known step\nand later add new steps when it becomes clear how the wizard flow should continue.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"children": {
+			"description": "Defines the step content.\n\n__Supported Node Type/s:__ `Array<Node>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"disabled": {
+			"description": "Defines if the step is `disabled`. When disabled the step is displayed,\nbut the user can't select the step by clicking or navigate to it with scrolling.\n\n**Note:** Step can't be `selected` and `disabled` at the same time.\nIn this case the `selected` property would take precedence.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"icon": {
+			"description": "Defines the `icon` of the step.\n\n**Note:** The icon is displayed in the `Wizard` navigation header.\n\nThe SAP-icons font provides numerous options.\nSee all the available icons in the [Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html).",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"selected": {
+			"description": "Defines the step's `selected` state - the step that is currently active.\n\n**Note:** Step can't be `selected` and `disabled` at the same time.\nIn this case the `selected` property would take precedence.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"subtitleText": {
+			"description": "Defines the `subtitleText` of the step.\n\n**Note:** the text is displayed in the `Wizard` navigation header.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"titleText": {
+			"description": "Defines the `titleText` of the step.\n\n**Note:** The text is displayed in the `Wizard` navigation header.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

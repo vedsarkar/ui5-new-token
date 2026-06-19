@@ -1,0 +1,62 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "ExpandableTextProps",
+	"x-component": "ExpandableText",
+	"type": "object",
+	"properties": {
+		"children": {
+			"description": "Text of the component.",
+			"deprecated": true,
+			"x-deprecationReason": ": Please use `text` instead.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"emptyIndicatorMode": {
+			"description": "Specifies if an empty indicator should be displayed when there is no text.",
+			"default": "Off",
+			"x-typescriptType": "TextEmptyIndicatorMode | 'Off' | 'On'"
+		},
+		"maxCharacters": {
+			"description": "Maximum number of characters to be displayed initially. If the text length exceeds this limit, the text will be truncated with an ellipsis, and the \"More\" link will be displayed.",
+			"default": 100,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"overflowMode": {
+			"description": "Determines how the full text will be displayed.",
+			"default": "InPlace",
+			"x-typescriptType": "ExpandableTextOverflowMode | 'InPlace' | 'Popover'"
+		},
+		"renderWhitespace": {
+			"description": "Defines how white-space inside <code>Text</code> is handled. If set to true, sequences of white space are preserved.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"showOverflowInPopover": {
+			"description": "Determines if the full text should be displayed inside a `ResponsivePopover` or in-place.",
+			"deprecated": true,
+			"x-deprecationReason": ": Please use `overflowMode` instead.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"text": {
+			"description": "Text of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

@@ -1,0 +1,71 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "UploadCollectionProps",
+	"x-component": "UploadCollection",
+	"type": "object",
+	"properties": {
+		"accessibleName": {
+			"description": "Defines the accessible ARIA name of the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"children": {
+			"description": "Defines the items of the `UploadCollection`.\n\n**Note:** Use `UploadCollectionItem` for the intended design.\n\n__Supported Node Type/s:__ `Array<UploadCollectionItem>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"header": {
+			"description": "Defines the `UploadCollection` header.\n\n**Note:** If `header` slot is provided,\nthe labelling of the `UploadCollection` is a responsibility of the application developer.\n`accessibleName` should be used.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"header\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"hideDragOverlay": {
+			"description": "By default there will be drag and drop overlay shown over the `UploadCollection` when files\nare dragged. If you don't intend to use drag and drop, set this property.\n\n**Note:** It is up to the application developer to add handler for `drop` event and handle it.\n`UploadCollection` only displays an overlay.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"noDataDescription": {
+			"description": "Allows you to set your own text for the 'No data' description.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"noDataHeaderLevel": {
+			"description": "Defines the header level of the 'No data' text.\n\n**Note:** Available since [v2.16.0](https://github.com/UI5/webcomponents/releases/tag/v2.16.0) of **@ui5/webcomponents-fiori**.",
+			"default": "H2",
+			"x-typescriptType": "TitleLevel | 'H1' | 'H2' | 'H3' | 'H4' | 'H5' | 'H6'"
+		},
+		"noDataText": {
+			"description": "Allows you to set your own text for the 'No data' text.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onItemDelete": {
+			"description": "Fired when an element is dropped inside the drag and drop overlay.\n\n**Note:** The `drop` event is fired only when elements are dropped within the drag and drop overlay and ignored for the other parts of the `UploadCollection`.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<UploadCollectionDomRef, UploadCollectionItemDeleteEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<UploadCollectionDomRef, UploadCollectionItemDeleteEventDetail>) => void"
+		},
+		"onSelectionChange": {
+			"description": "Fired when selection is changed by user interaction\nin `Single` and `Multiple` modes.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ❌|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<UploadCollectionDomRef, UploadCollectionSelectionChangeEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<UploadCollectionDomRef, UploadCollectionSelectionChangeEventDetail>) => void"
+		},
+		"selectionMode": {
+			"description": "Defines the selection mode of the `UploadCollection`.",
+			"default": "None",
+			"x-typescriptType": "'None' | 'Single' | 'Multiple' | 'SingleStart' | 'SingleEnd' | 'SingleAuto' | UploadCollectionSelectionMode"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

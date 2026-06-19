@@ -17,7 +17,7 @@
 		"accessibleRole": {
 			"description": "Specifies the ARIA role applied to the component for accessibility purposes.\n\n**Note:**\n\n- Set accessibleRole to \"toolbar\" only when the component contains two or more active, interactive elements (such as buttons, links, or input fields) within the bar.\n\n- If there is only one or no active element, it is recommended to avoid using the \"toolbar\" role, as it implies a grouping of multiple interactive controls.\n\n**Note:** Available since [v2.10.0](https://github.com/UI5/webcomponents/releases/tag/v2.10.0) of **@ui5/webcomponents**.",
 			"default": "Toolbar",
-			"x-typescriptType": "BarAccessibleRole | 'Toolbar' | 'None'"
+			"x-typescriptType": "'None' | BarAccessibleRole | 'Toolbar'"
 		},
 		"children": {
 			"description": "Defines the content in the middle of the bar.\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",

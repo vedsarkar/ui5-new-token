@@ -27,7 +27,7 @@
 		"accessibleRole": {
 			"description": "Allows setting a custom role.\n\n**Note:** Available since [v1.10.0](https://github.com/UI5/webcomponents/releases/tag/v1.10.0) of **@ui5/webcomponents**.",
 			"default": "Dialog",
-			"x-typescriptType": "'None' | PopupAccessibleRole | 'Dialog' | 'AlertDialog'"
+			"x-typescriptType": "PopupAccessibleRole | 'None' | 'Dialog' | 'AlertDialog'"
 		},
 		"allowTargetOverlap": {
 			"description": "Determines if there is no enough space, the component can be placed\nover the target.",
@@ -112,7 +112,7 @@
 		"placement": {
 			"description": "Determines on which side the component is placed at.",
 			"default": "End",
-			"x-typescriptType": "'Top' | 'Bottom' | 'Start' | 'End' | PopoverPlacement"
+			"x-typescriptType": "'Start' | 'End' | PopoverPlacement | 'Top' | 'Bottom'"
 		},
 		"preventFocusRestore": {
 			"description": "Defines if the focus should be returned to the previously focused element,\nwhen the popup closes.",
@@ -139,7 +139,7 @@
 		"verticalAlign": {
 			"description": "Determines the vertical alignment of the component.",
 			"default": "Center",
-			"x-typescriptType": "'Top' | 'Bottom' | 'Center' | 'Stretch' | PopoverVerticalAlign"
+			"x-typescriptType": "'Center' | 'Stretch' | 'Top' | 'Bottom' | PopoverVerticalAlign"
 		},
 		"waitForDefine": {
 			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",

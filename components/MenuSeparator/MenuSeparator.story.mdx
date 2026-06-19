@@ -1,0 +1,41 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as MenuSeparatorStories from "./MenuSeparator.stories";
+import schema from "./MenuSeparator.schema.json";
+
+<Meta of={MenuSeparatorStories} />
+
+# MenuSeparator
+
+```tsx
+import { MenuSeparator } from "@reltio/design/components";
+```
+
+`MenuSeparator` draws a divider between logical groups of `MenuItem`s.
+
+`MenuSeparator` is re-exported 1:1 from `@ui5/webcomponents-react/MenuSeparator`; its props, slots, and behavior are exactly the UI5 component's. The Reltio layer adds curation (the endorsed surface), pinned versioning, and documentation.
+
+### Usage
+
+Place between `MenuItem`s inside a `Menu`.
+
+### See also
+
+- [UI5 React documentation](https://ui5.github.io/webcomponents-react/v2/?path=/docs/modals-popovers-menu--docs)
+- `Menu` — the parent component
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

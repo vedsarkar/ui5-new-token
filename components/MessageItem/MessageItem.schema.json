@@ -1,0 +1,54 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "MessageItemProps",
+	"x-component": "MessageItem",
+	"type": "object",
+	"properties": {
+		"titleText": {
+			"description": "Specifies the title of the message\n\n__Note:__ Although this prop accepts all HTML Elements, it is strongly recommended that you only use text or `Link` (with `wrappingType=\"None\"`) in order to preserve the intended design.",
+			"x-typescriptType": "ReactNode"
+		},
+		"accessibleName": {
+			"description": "Defines the text alternative of the component.\n\n**Note**: If not provided a default text alternative will be set, if present.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"children": {
+			"description": "Specifies detailed description of the message",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"counter": {
+			"description": "Defines the number of messages for a given message type.",
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"groupName": {
+			"description": "Name of a message group the current item belongs to.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"subtitleText": {
+			"description": "Specifies the subtitle of the message\n\n__Note:__ Although this prop accepts all HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal"
+		},
+		"tooltip": {
+			"description": "Defines the text of the tooltip that would be displayed for the list item.\n\n**Note:** Available since [v1.23.0](https://github.com/UI5/webcomponents/releases/tag/v1.23.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"type": {
+			"description": "Specifies the type of the message",
+			"x-typescriptType": "'None' | ValueState | 'Positive' | 'Critical' | 'Negative' | 'Information'"
+		}
+	},
+	"required": ["titleText"]
+}

@@ -1,0 +1,44 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as NumericSideIndicatorStories from "./NumericSideIndicator.stories";
+import schema from "./NumericSideIndicator.schema.json";
+
+<Meta of={NumericSideIndicatorStories} />
+
+# NumericSideIndicator
+
+```tsx
+import { NumericSideIndicator } from "@reltio/design/components";
+```
+
+`NumericSideIndicator` is the SAP Fiori secondary-KPI element, re-exported from `@ui5/webcomponents-react/NumericSideIndicator` as the canonical Reltio entry point. Use it for the smaller supporting figures shown beside a headline number — a target, a deviation, a previous-period value — typically inside a KPI card or an object header.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/NumericSideIndicator`. The Reltio layer adds curation, pinned versioning, and richer documentation.
+
+### Props
+
+- **`titleText`** — the label for the figure (required).
+- **`number`** — the value (required).
+- **`unit`** — optional unit suffix (`%`, `K`, currency code).
+- **`state`** — semantic color (`None`, `Good`, `Critical`, `Error`, `Neutral`). Map it to real meaning; don't use color decoratively.
+
+### See also
+
+- [UI5 NumericSideIndicator reference](https://ui5.github.io/webcomponents-react/v2/) — full underlying API
+- `ObjectStatus` — for textual status · `Card` — common container for KPIs
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

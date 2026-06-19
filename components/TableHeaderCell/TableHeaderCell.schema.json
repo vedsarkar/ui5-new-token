@@ -1,0 +1,66 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "TableHeaderCellProps",
+	"x-component": "TableHeaderCell",
+	"type": "object",
+	"properties": {
+		"action": {
+			"description": "Defines the action of the column.\n\n**Note:** While multiple actions are technically possible, this is not supported.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"action\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v2.8.0](https://github.com/UI5/webcomponents/releases/tag/v2.8.0) of **@ui5/webcomponents**.\n\n__Supported Node Type/s:__ `Array<TableHeaderCellActionBase>`",
+			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
+		},
+		"children": {
+			"description": "Defines the content of the component.\n\n__Supported Node Type/s:__ `Array<Node>`",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"horizontalAlign": {
+			"description": "Determines the horizontal alignment of table cells.",
+			"x-typescriptType": "'Center' | 'Start' | 'End' | 'Left' | 'Right' | TableCellHorizontalAlign"
+		},
+		"importance": {
+			"description": "Defines the importance of the column.\n\nThis property affects the popin behaviour.\nColumns with higher importance will move into the popin area later then less important\ncolumns.",
+			"default": 0,
+			"x-typescriptType": "number",
+			"type": "number"
+		},
+		"minWidth": {
+			"description": "Defines the minimum width of the column.\n\nIf the table is in `Popin` mode and the minimum width does not fit anymore,\nthe column will move into the popin.\n\nBy default, the table prevents the column from becoming too small.\nChanging this value to a small value might lead to accessibility issues.\n\n**Note:** This property only takes effect for columns with a [\\<percentage\\>](https://developer.mozilla.org/en-US/docs/Web/CSS/percentage) value\nor the default width.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"popinHidden": {
+			"description": "Defines if the column is hidden in the popin.\n\n**Note:** Please be aware that hiding the column in the popin might lead to accessibility issues as\nusers might not be able to access the content of the column on small screens.\n\n**Note:** Available since [v2.8.0](https://github.com/UI5/webcomponents/releases/tag/v2.8.0) of **@ui5/webcomponents**.",
+			"default": false,
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"popinText": {
+			"description": "The text for the column when it pops in.\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents**.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"sortIndicator": {
+			"description": "Defines the sort indicator of the column.\n\n**Note:** Available since [v2.8.0](https://github.com/UI5/webcomponents/releases/tag/v2.8.0) of **@ui5/webcomponents**.",
+			"default": "None",
+			"x-typescriptType": "'None' | SortOrder | 'Ascending' | 'Descending'"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
+		"width": {
+			"description": "Defines the width of the column.\n\nBy default, the column will grow and shrink according to the available space.\nThis will distribute the space proportionally among all columns with no specific width set.\n\nSee [\\<length\\>](https://developer.mozilla.org/en-US/docs/Web/CSS/length) and\n[\\<percentage\\>](https://developer.mozilla.org/en-US/docs/Web/CSS/percentage) for possible width values.",
+			"x-typescriptType": "string",
+			"type": "string"
+		}
+	}
+}

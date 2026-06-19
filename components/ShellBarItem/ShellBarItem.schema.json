@@ -1,0 +1,47 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "ShellBarItemProps",
+	"x-component": "ShellBarItem",
+	"type": "object",
+	"properties": {
+		"accessibilityAttributes": {
+			"description": "Defines additional accessibility attributes on Shellbar Items.\n\nThe accessibility attributes support the following values:\n\n- **expanded**: Indicates whether the button, or another grouping element it controls,\nis currently expanded or collapsed.\nAccepts the following string values: `true` or `false`.\n\n- **hasPopup**: Indicates the availability and type of interactive popup element,\nsuch as menu or dialog, that can be triggered by the button.\n\n- **controls**: Identifies the element (or elements) whose contents\nor presence are controlled by the component.\nAccepts a lowercase string value, referencing the ID of the element it controls.\n\n**Note:** Available since [v2.9.0](https://github.com/UI5/webcomponents/releases/tag/v2.9.0) of **@ui5/webcomponents-fiori**.",
+			"default": {},
+			"x-typescriptType": "ShellBarItemAccessibilityAttributes"
+		},
+		"className": {
+			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"count": {
+			"description": "Defines the count displayed in badge.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"icon": {
+			"description": "Defines the item's icon.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"onClick": {
+			"description": "Fired when the item is clicked.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<ShellBarItemDomRef, ShellBarItemClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<ShellBarItemDomRef, ShellBarItemClickEventDetail>) => void"
+		},
+		"style": {
+			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
+			"x-typescriptType": "CSSProperties"
+		},
+		"text": {
+			"description": "Defines the item text.\n\n**Note:** The text is only displayed inside the overflow popover list view.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"waitForDefine": {
+			"description": "Defines whether the component should wait for the underlying custom element of the web component to be defined. This can be useful, for example, for using instance methods when mounting the component.\n\n__Note:__ This adds a rendering cycle to your component.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		}
+	}
+}

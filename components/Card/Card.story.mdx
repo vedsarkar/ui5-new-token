@@ -1,0 +1,48 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as CardStories from "./Card.stories";
+import schema from "./Card.schema.json";
+
+<Meta of={CardStories} />
+
+# Card
+
+```tsx
+import { Card } from "@reltio/design/components";
+```
+
+`Card` is the SAP Fiori card container, re-exported from `@ui5/webcomponents-react/Card` as the canonical Reltio entry point. Use it to group related content into a self-contained, elevated surface — an entity summary, a KPI tile, a list of recent activity, a chart panel. It provides the frame, optional header, and loading state; you supply the body as children.
+
+There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Card`. The Reltio layer adds curation (this is the endorsed card surface), pinned versioning, and richer documentation.
+
+### Composition
+
+- **`header`** — pass a `CardHeader` (title, subtitle, counter, avatar, action). Make it `interactive` when the whole header navigates.
+- **children** — the card body. Compose freely: a `List`, a `Table`, a chart, or arbitrary content.
+- **`loading`** — shows a placeholder skeleton; `loadingDelay` (default 1000ms) avoids flicker on fast loads.
+
+### Sizing
+
+`Card` fills its container width by default. Constrain it via `style`/CSS in the parent layout (e.g. inside a `Grid` cell) rather than hard-coding widths on the card itself.
+
+### See also
+
+- [SAP Fiori Card design guideline](https://experience.sap.com/fiori-design-web/card/) — semantic guidance
+- [UI5 Card reference](https://ui5.github.io/webcomponents-react/v2/?path=/docs/layouts-floorplans-card--docs) — full underlying API
+- `CardHeader` — the header slot entity
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>

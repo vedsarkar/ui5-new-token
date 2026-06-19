@@ -1,0 +1,41 @@
+{/*
+  AUTO-GENERATED — do not edit by hand.
+  Sources: README.md, <Component>.types.ts, <Component>.stories.tsx
+  Resolved prop types: TypeScript Compiler API walks generics + intersections + cross-package imports
+  Run: npm run build-component-docs
+*/}
+
+import { Meta, Stories } from "@storybook/addon-docs/blocks";
+import { JsonSchema } from "@/.storybook/blocks/JsonSchema";
+import { SectionHeading } from "@/.storybook/blocks/SectionHeading";
+import * as SuggestionItemCustomStories from "./SuggestionItemCustom.stories";
+import schema from "./SuggestionItemCustom.schema.json";
+
+<Meta of={SuggestionItemCustomStories} />
+
+# SuggestionItemCustom
+
+```tsx
+import { SuggestionItemCustom } from "@reltio/design/components";
+```
+
+`SuggestionItemCustom` is an `Input` suggestion with fully custom content.
+
+`SuggestionItemCustom` is re-exported 1:1 from `@ui5/webcomponents-react/SuggestionItemCustom`; its props, slots, and behavior are exactly the UI5 component's. The Reltio layer adds curation (the endorsed surface), pinned versioning, and documentation.
+
+### Usage
+
+Use as children of `Input` with `showSuggestions` when a suggestion needs rich layout.
+
+### See also
+
+- [UI5 React documentation](https://ui5.github.io/webcomponents-react/v2/?path=/docs/inputs-input--docs)
+- `Input` — the parent component
+
+<SectionHeading>Prop types</SectionHeading>
+
+<JsonSchema schema={schema} />
+
+<div style={{ marginTop: 32 }}>
+	<Stories />
+</div>
