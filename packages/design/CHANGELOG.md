@@ -1,5 +1,16 @@
 # @reltio/design
 
+## 1.6.0
+
+### Minor Changes
+
+- 75ea608: Endorse the SAP Fiori display, color, notification, and upload families from `@reltio/design/components` as 1:1 re-exports (doc-only directories with README, prop-type schema, and variant stories): `Timeline` (+`TimelineItem`, `TimelineGroupItem`), `MediaGallery` (+`MediaGalleryItem`), `ColorPalette` (+`ColorPaletteItem`, `ColorPalettePopover`), `NotificationList` (+`NotificationListItem`, `NotificationListGroupItem`), and `UploadCollection` (+`UploadCollectionItem`). Sub-items are documented on their parent component pages.
+- 75ea608: Endorse six SAP Fiori sub-components that extend already-endorsed families, as 1:1 re-exports from `@reltio/design/components`: `AvatarBadge`, `AvatarGroup` (Avatar), `ButtonBadge` (Button), `ShellBarSpacer` (ShellBar), `TabSeparator` (TabContainer), and `UserMenuItemGroup` (UserMenu). They are documented on their parent component pages.
+- 75ea608: Endorse 12 SAP Fiori primitives from `@reltio/design/components` as 1:1 re-exports (doc-only directories with README, prop-type schema, and variant stories): `FlexBox`, `Grid`, `Card`, `CardHeader`, `ExpandableText`, `RatingIndicator`, `NumericSideIndicator`, `ToggleButton`, `ColorPicker`, `Page`, `Carousel`, and `DynamicSideContent`. These cover common layout containers, card surfaces, and small display/input controls so apps no longer reach for them via direct UI5 imports.
+- 75ea608: Endorse the SAP Fiori menu, toolbar, and breadcrumb families from `@reltio/design/components` as 1:1 re-exports (doc-only directories with README, prop-type schema, and variant stories): `Breadcrumbs` (+`BreadcrumbsItem`), `Menu` (+`MenuItem`, `MenuItemGroup`, `MenuSeparator`), `ActionSheet`, and `Toolbar` (+`ToolbarButton`, `ToolbarItem`, `ToolbarSelect`, `ToolbarSelectOption`, `ToolbarSeparator`, `ToolbarSpacer`). Sub-items are documented on their parent component pages.
+- 75ea608: Endorse the SAP Fiori messaging, dialog, and splitter components from `@reltio/design/components` as 1:1 re-exports (doc-only directories with README, prop-type schema, and variant stories): `MessageView` (+`MessageItem`, `MessageViewButton`), `MessageBox`, `SelectDialog`, and `SplitterLayout` (+`Splitter`, `SplitterElement`). Sub-items are documented on their parent component pages.
+- 96794a8: Endorse five SAP Fiori content primitives from `@reltio/design/components`: `Text`, `Title`, `Link`, `Tag`, and `ObjectStatus`. Each is a 1:1 re-export of the corresponding `@ui5/webcomponents-react` component — no Reltio wrapping or prop renaming — added as a documentation-only directory with a README, prop-type schema, and stories covering every visual variant. These cover the most common typography and status surfaces (body copy, headings, hyperlinks, classification pills, and inline status text) so apps no longer reach for them via direct UI5 imports.
+
 ## 1.5.0
 
 ### Minor Changes
