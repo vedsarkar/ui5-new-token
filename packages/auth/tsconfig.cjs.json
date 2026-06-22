@@ -2,7 +2,8 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"module": "commonjs",
-		"moduleResolution": "bundler",
+		"moduleResolution": "node10",
+		"ignoreDeprecations": "5.0",
 		"outDir": "dist/cjs",
 		"declaration": false,
 		"verbatimModuleSyntax": false

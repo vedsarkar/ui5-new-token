@@ -32,8 +32,12 @@
  *      `out.length`, regardless of what the prefix said. The try/catch
  *      returns `null` on that throw.
  *
- * Both memory and CPU are bounded at `MAX_DECOMPRESSED_SIZE` (plus its
- * base64 expansion) regardless of what the attacker declares.
+ * Memory is bounded at `MAX_DECOMPRESSED_SIZE` per decode (one transient
+ * output buffer); CPU is bounded at `MAX_COMPRESSED_SIZE` (one zstd parse
+ * over a stream of at most this many bytes). Both ceilings hold regardless
+ * of what the attacker declares — the gates short-circuit before any large
+ * allocation, and the bounded output buffer turns "lying prefix" attacks
+ * into a single `ZstdError` throw.
  *
  * Returns `null` when the token is not a Reltio JWT (e.g. an opaque UUID),
  * decodes to a non-object payload, or encounters any error during decoding.
@@ -53,35 +57,35 @@ import { base64urlDecode } from "./base64url";
 export type AccessTokenClaims = Record<string, unknown>;
 
 /**
- * Hard ceiling for the decompressed JSON claims payload. Browser cookies are
- * capped at ~4 KB, and a typical Reltio JWT compresses to ~200–400 B and
- * decompresses to ~500–1500 B of JSON. 8 KB is generous for legitimate
- * tokens and rejects oversized inputs before any memory is allocated.
+ * Hard ceiling for the decompressed JSON claims payload. Permission-rich
+ * Reltio tokens (multi-tenant admins, federated accounts) embed a
+ * flattened resource × privilege × tenant map that decompresses to
+ * 20–30 KB of JSON — observed at 24 KB in production. 128 KiB is generous
+ * (~5× that worst case) and still a tight per-decode memory bound. Cookie
+ * limits are irrelevant here: the on-wire form is the *compressed* token
+ * (~1–2 KB), this ceiling only bounds the transient decompressed buffer.
  */
-const MAX_DECOMPRESSED_SIZE = 8_192;
+const MAX_DECOMPRESSED_SIZE = 131_072;
 
 /**
- * Hard ceiling for the compressed input stream. Aliased to the
- * decompressed ceiling — legitimate Reltio JWTs compress to a few hundred
- * bytes, so any honest compressed input is also well under 8 KB. Capping
- * here closes the CPU-exhaustion vector where an attacker pairs a tiny
- * lying `declaredSize` with a multi-KB compressed stream, which would
- * otherwise keep `fzstd` busy parsing blocks until the bounded output
- * buffer filled. Defined as a separate name so the two ceilings can be
- * tuned independently if the compression ratio ever shifts.
+ * Hard ceiling for the compressed input stream. Closes the CPU-exhaustion
+ * vector where an attacker pairs a tiny lying `declaredSize` with a
+ * multi-KB stream that would keep `fzstd` parsing blocks until the
+ * bounded output buffer filled. Sized off the worst-case compression
+ * ratio (~15–20× under zstd for repetitive JSON), with headroom for
+ * pathological inputs. Tuned independently of `MAX_DECOMPRESSED_SIZE`.
  */
-const MAX_COMPRESSED_SIZE = 8_192;
+const MAX_COMPRESSED_SIZE = 16_384;
 
 /**
- * Hard ceiling for the encoded payload segment, derived from the
- * decompressed-size ceiling above. Base64url expands binary 3 → 4, so an
- * 8 KiB-compressed payload + 4-byte length prefix encodes to at most
- * `ceil((8192 + 4) * 4 / 3)` ≈ 10 928 chars. Checked BEFORE `base64urlDecode`
- * so a multi-megabyte middle segment can't force a large `Uint8Array`
- * allocation at the first decode step (memory-amplification DoS vector).
+ * Hard ceiling for the encoded payload segment. Derived from
+ * `MAX_COMPRESSED_SIZE` (the on-wire form is base64url over the
+ * compressed bytes, not the decompressed ones), checked BEFORE
+ * `base64urlDecode` so a multi-megabyte segment can't amplify into a
+ * proportional `Uint8Array` allocation (memory-amplification DoS vector).
  */
 const MAX_ENCODED_PAYLOAD_SIZE = Math.ceil(
-	((MAX_DECOMPRESSED_SIZE + 4) * 4) / 3,
+	((MAX_COMPRESSED_SIZE + 4) * 4) / 3,
 );
 
 export function decodeAccessToken(token: string): AccessTokenClaims | null {

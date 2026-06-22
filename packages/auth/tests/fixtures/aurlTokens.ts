@@ -45,11 +45,13 @@ export const TOKEN_WITHOUT_AURL =
 
 /**
  * Hand-crafted bomb-defence fixture — the 4-byte big-endian prefix declares
- * 8211 (> the 8 KB ceiling), so `decodeAccessToken` must reject it at the
- * declared-size gate (Guard 1) before any memory is allocated.
+ * 200 000 (> the 128 KiB `MAX_DECOMPRESSED_SIZE` ceiling), so
+ * `decodeAccessToken` must reject it at the declared-size gate (Guard 1)
+ * before any memory is allocated. Regenerate with the recipe at the top of
+ * this file and a `writeUInt32BE` value comfortably above the current cap.
  */
 export const TOKEN_OVERSIZED_PREFIX =
-	"s.AAAgEyi1L_1gEx9FAQAEAnsiYXVybCI6Imh0dHBzOi8vZXhhbXBsZS5jb20veCJ9AQDCfw-c.fakesig";
+	"s.AAMNQCi1L_0gIAEBAHsiYXVybCI6Imh0dHBzOi8vZXhhbXBsZS5jb20veCJ9.fakesig";
 
 /**
  * Hand-crafted bomb-defence fixture — the 4-byte big-endian prefix declares

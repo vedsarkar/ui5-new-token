@@ -440,10 +440,12 @@ describe("Express adapter — GET /callback", () => {
 			"a decompression-bomb token (lying prefix, oversized stream)",
 			TOKEN_LYING_PREFIX,
 		],
-		[
-			"a token whose encoded payload segment exceeds the size ceiling",
-			`s.${"A".repeat(11_000)}.fakesig`,
-		],
+		// No fixture for `segments[1].length > MAX_ENCODED_PAYLOAD_SIZE`:
+		// after the cap was raised that gate sits above 21 KB, and a token
+		// that large cannot survive a Set-Cookie round-trip — HTTP parsers
+		// in the test runner (and every real client) reject the header
+		// before `decodeAccessToken` runs. The gate stays in the decoder
+		// as defence-in-depth but is unreachable from the public boundary.
 		[
 			"a Reltio-shaped token with an undecodable payload",
 			"s.!!!not-base64!!!.fakesig",
