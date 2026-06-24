@@ -2,6 +2,8 @@ import { faker } from "@faker-js/faker";
 import { Avatar } from "@ui5/webcomponents-react/Avatar";
 import { expect, fn, userEvent, waitFor } from "storybook/test";
 import preview from "../../.storybook/preview";
+import { AppNavigation } from "../AppNavigation";
+import { AppSelector } from "../AppSelector";
 import { SideNavigation } from "../SideNavigation";
 import { SideNavigationGroup } from "../SideNavigationGroup";
 import { SideNavigationItem } from "../SideNavigationItem";
@@ -106,6 +108,90 @@ export const WithNavigation = meta.story({
 				<p>
 					Use the hamburger in the top-left corner to open the navigation
 					drawer. It slides in from the left and dims this content.
+				</p>
+			</div>
+		</>
+	),
+});
+
+// Application catalog as returned by the Reltio Config Service. `AppNavigation`
+// reads only `name` and `url` and resolves each icon internally.
+const appCatalog = [
+	{
+		name: "Configuration",
+		items: [
+			{ name: "UI Modeler", url: "https://console.reltio.com/uimodeler" },
+			{ name: "Data Modeler", url: "https://console.reltio.com/datamodeler" },
+			{
+				name: "Workflow Modeler",
+				url: "https://console.reltio.com/bpmnmodeler",
+			},
+		],
+	},
+	{
+		name: "Tenant Management",
+		items: [
+			{ name: "Data Loader", url: "https://console.reltio.com/dataloader" },
+			{ name: "Export", url: "https://console.reltio.com/export" },
+			{
+				name: "Performance Monitoring",
+				url: "https://console.reltio.com/monitoring",
+			},
+		],
+	},
+	{
+		name: "Security",
+		items: [
+			{
+				name: "User Management",
+				url: "https://console.reltio.com/userManagement",
+			},
+			{ name: "SSO Configuration", url: "https://console.reltio.com/sso" },
+		],
+	},
+];
+
+// The same catalog flattened into the `AppSelector` shape (flat list with a
+// `category` per app and `uri` instead of `url`), so the popup grid mirrors the
+// left-drawer list driven by `AppNavigation`. Unlike `AppNavigation` (which
+// resolves a monochrome Reltio icon internally), `AppSelector` shows the real
+// full-color app artwork served from `reltio.design/apps/icons/<slug>.svg`.
+const appSelectorApps = appCatalog.flatMap((group) =>
+	(group.items ?? []).map((item) => ({
+		name: item.name,
+		uri: item.url,
+		category: group.name,
+		icon: `https://reltio.design/apps/icons/${item.name
+			.toLowerCase()
+			.replace(/\s+/g, "-")}.svg`,
+	})),
+);
+
+export const WithAppNavigation = meta.story({
+	args: {
+		primaryTitle: "Console",
+		userMenu: (
+			<UserMenu onSignOut={fn()} user={shellBarUser} appVersion="2.21.3" />
+		),
+		children: <AppSelector apps={appSelectorApps} positionArea="bottom" />,
+		sideNavigation: (
+			<AppNavigation
+				apps={appCatalog}
+				homeUrl="https://console.reltio.com/home"
+			/>
+		),
+	},
+	render: (args) => (
+		<>
+			<ShellBar {...args} />
+			<div style={{ padding: "24px 32px" }}>
+				<h2 style={{ margin: 0 }}>Console</h2>
+				<p>
+					Two views of the same app catalog: the left drawer (open it from the
+					top-left hamburger) is built by <code>AppNavigation</code> as a
+					persistent grouped menu, while the grid button in the header opens the{" "}
+					<code>AppSelector</code> popup for quick switching. Both are fed by
+					the same Config Service data.
 				</p>
 			</div>
 		</>

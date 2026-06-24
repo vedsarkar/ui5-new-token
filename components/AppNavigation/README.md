@@ -1,0 +1,25 @@
+# AppNavigation
+
+`AppNavigation` renders the Reltio application catalog as a left-hand side menu. It is a business component built on top of [`SideNavigation`](/?path=/docs/components-sidenavigation--docs): it takes the apps returned by the Reltio Config Service and turns each category into a `SideNavigationGroup` of `SideNavigationItem` links — no manual menu wiring required.
+
+### Data contract — only `name` and `url`
+
+The `apps` prop accepts the raw Config Service shape: an array of `{ name, items }` categories, where each app carries `{ name, url, … }`. `AppNavigation` reads **only** `name` and `url` from each app and ignores every other field the API returns (`icon`, `bannerImage`, `description`). Groups without a title and apps missing a `name` or `url` are skipped, so a partial payload never breaks the menu.
+
+### Icons are resolved internally
+
+The icon for each app is **not** taken from the API. Instead it is resolved from an internal configuration (`appIcons.json`) that maps each known app name to a curated [Reltio icon](/?path=/story/icons--docs) (`reltio/*`). Apps with no mapping fall back to the generic `reltio/generic` glyph. This keeps the navigation visually consistent with the rest of the platform regardless of which icon URL the backend happens to return. To support a new app, add a `"App Name": "icon-name"` entry to `appIcons.json` and register the icon's side-effect import in `AppNavigation.tsx`.
+
+### Home entry
+
+Pass `homeUrl` to render a **Home** entry as the first item, above all groups. It uses the SAP Fiori `home` icon and, unlike the app entries, navigates in place (it points at the current application's home page rather than a standalone app). Omit `homeUrl` to start the menu directly with the first app group.
+
+### URL templates
+
+App URLs from the Config Service contain `${environment}` and `${tenant}` placeholders. Pass `env` and `tenant` to substitute them; the resolved URL is used as each item's `href`. Items open in a new tab and are marked `unselectable`, since they navigate to standalone Reltio applications.
+
+### See also
+
+- [SideNavigation](/?path=/docs/components-sidenavigation--docs) — the underlying menu primitive
+- [AppSelector](/?path=/docs/components-appselector--docs) — the popover-based app switcher that consumes the same Config Service payload
+- [Reltio Icons](/?path=/story/icons--docs) — the custom icon set used to render app glyphs

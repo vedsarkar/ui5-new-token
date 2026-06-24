@@ -218,8 +218,6 @@ const RELTIO_DIR = {
 	OptionCustom: "Select",
 	SegmentedButtonItem: "SegmentedButton",
 	ShellBarItem: "ShellBar",
-	ShellBarBranding: "ShellBar",
-	ShellBarSearch: "ShellBar",
 	SuggestionItem: "Input",
 	SuggestionItemCustom: "Input",
 	SuggestionItemGroup: "Input",

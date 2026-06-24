@@ -1,0 +1,108 @@
+[
+	{
+		"name": "Configuration",
+		"items": [
+			{
+				"bannerImage": "https://cdn.reltio.com/images/uimodeller.svg",
+				"name": "UI Modeler",
+				"icon": "https://cdn.reltio.com/images/ui-config.svg",
+				"description": "Configure your tenant's layout based on your data model",
+				"url": "https://idev-01-console.reltio.com/uimodeler?env=${environment}&tenant=${tenant}"
+			},
+			{
+				"bannerImage": "https://cdn.reltio.com/images/datamodeller.svg",
+				"icon": "https://cdn.reltio.com/images/datamodeller-sm.svg",
+				"name": "Data Modeler",
+				"description": "View your tenant's data model",
+				"url": "https://idev-01-console.reltio.com/datamodeler?env=${environment}&tenant=${tenant}"
+			},
+			{
+				"bannerImage": "https://cdn.reltio.com/images/workflowmodeller.svg",
+				"icon": "https://cdn.reltio.com/images/workflow.svg",
+				"name": "Workflow Modeler",
+				"description": "View, create and edit your BPMN diagrams",
+				"url": "https://idev-01-console.reltio.com/bpmnmodeler?env=${environment}&tenant=${tenant}"
+			},
+			{
+				"bannerImage": "https://cdn.reltio.com/images/Notification-management.svg",
+				"icon": "https://cdn.reltio.com/images/notification-management-icon.svg",
+				"name": "Notification Management",
+				"description": "View and manage notification for services",
+				"url": "https://idev-01-console.reltio.com/notificationMgmt?env=${environment}&tenant=${tenant}"
+			},
+			{
+				"bannerImage": "https://cdn.reltio.com/images/DataOut.svg",
+				"icon": "https://cdn.reltio.com/images/DataOut-icon.svg",
+				"name": "Data Sharing",
+				"description": "Share data from Reltio to your cloud data warehouses using Data Share or Data Pipelines.",
+				"url": "https://idev-01-console.reltio.com/data-out/data-share/?env=${environment}&tenant=${tenant}"
+			}
+		]
+	},
+	{
+		"name": "Tenant Management",
+		"items": [
+			{
+				"bannerImage": "https://cdn.reltio.com/images/env-banner.svg",
+				"icon": "https://cdn.reltio.com/images/env-icon.svg",
+				"name": "Tenant Management",
+				"description": "View Tenant statistics and execute tenant management jobs",
+				"url": "https://idev-01-console.reltio.com/env/statistics?env=${environment}&tenant=${tenant}"
+			},
+			{
+				"bannerImage": "https://cdn.reltio.com/images/DataLoader.svg",
+				"name": "Data Loader",
+				"icon": "https://cdn.reltio.com/images/DataLoader-icon.svg",
+				"description": "Load data into the Reltio Platform",
+				"url": "https://idev-01-console.reltio.com/dataloader/projects?env=${environment}&tenant=${tenant}"
+			},
+			{
+				"bannerImage": "https://cdn.reltio.com/images/export-ui.svg",
+				"name": "Export",
+				"icon": "https://cdn.reltio.com/images/export-ui-icon.svg",
+				"description": "UI for Exporting entities and relationships",
+				"url": "https://idev-01-console.reltio.com/export?env=${environment}&tenant=${tenant}"
+			},
+			{
+				"bannerImage": "https://cdn.reltio.com/images/ExternalMatch.svg",
+				"icon": "https://cdn.reltio.com/images/externalMatchLogo.svg",
+				"name": "External Match",
+				"description": "Match external data with Reltio entities",
+				"url": "https://idev-01-console.reltio.com/externalMatch/?env=${environment}&tenant=${tenant}"
+			},
+			{
+				"bannerImage": "https://cdn.reltio.com/images/performance-monitoring.svg",
+				"name": "Performance Monitoring",
+				"icon": "https://cdn.reltio.com/images/performance-monitoring-icon.svg",
+				"description": "View performance and statistics of your tenant",
+				"url": "https://idev-01-console.reltio.com/monitoring?env=${environment}&tenant=${tenant}"
+			}
+		]
+	},
+	{
+		"name": "Security",
+		"items": [
+			{
+				"bannerImage": "https://cdn.reltio.com/images/user-management.svg",
+				"name": "SSO Configuration",
+				"icon": "https://cdn.reltio.com/images/user-management-icon.svg",
+				"description": "UI for SAML and OIDC based SSO Configuration",
+				"url": "https://idev-01-console.reltio.com/sso?env=${environment}&tenant=${tenant}"
+			},
+			{
+				"bannerImage": "https://cdn.reltio.com/images/um.svg",
+				"name": "User Management",
+				"icon": "https://cdn.reltio.com/images/um-icon.svg",
+				"description": "User Management application",
+				"url": "https://idev-01-console.reltio.com/userManagement/?env=${environment}&tenant=${tenant}"
+			},
+			{
+				"bannerImage": "https://cdn.reltio.com/images/client-credentials.svg",
+				"name": "Client Credentials",
+				"icon": "https://cdn.reltio.com/images/client-credentials.svg",
+				"description": "Manage credentials for API authentication",
+				"url": "https://idev-01-console.reltio.com/client-credentials?env=${environment}&tenant=${tenant}"
+			}
+		]
+	}
+]

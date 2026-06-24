@@ -1,0 +1,15 @@
+{
+	"UI Modeler": "ui-modeler",
+	"Data Modeler": "data-modeler",
+	"Workflow Modeler": "workflow-modeler",
+	"Notification Management": "inbox",
+	"Data Sharing": "data-cloud-warehouse-pipeline",
+	"Tenant Management": "tenant-management",
+	"Data Loader": "data-loader",
+	"Export": "export",
+	"External Match": "external-match",
+	"Performance Monitoring": "performance",
+	"SSO Configuration": "security-configuration",
+	"User Management": "user-management",
+	"Client Credentials": "shield-encryption"
+}

@@ -84,9 +84,7 @@ const MAX_COMPRESSED_SIZE = 16_384;
  * `base64urlDecode` so a multi-megabyte segment can't amplify into a
  * proportional `Uint8Array` allocation (memory-amplification DoS vector).
  */
-const MAX_ENCODED_PAYLOAD_SIZE = Math.ceil(
-	((MAX_COMPRESSED_SIZE + 4) * 4) / 3,
-);
+const MAX_ENCODED_PAYLOAD_SIZE = Math.ceil(((MAX_COMPRESSED_SIZE + 4) * 4) / 3);
 
 export function decodeAccessToken(token: string): AccessTokenClaims | null {
 	try {

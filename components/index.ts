@@ -90,9 +90,7 @@ export { SegmentedButton } from "@ui5/webcomponents-react/SegmentedButton";
 export { SegmentedButtonItem } from "@ui5/webcomponents-react/SegmentedButtonItem";
 export { Select } from "@ui5/webcomponents-react/Select";
 export { SelectDialog } from "@ui5/webcomponents-react/SelectDialog";
-export { ShellBarBranding } from "@ui5/webcomponents-react/ShellBarBranding";
 export { ShellBarItem } from "@ui5/webcomponents-react/ShellBarItem";
-export { ShellBarSearch } from "@ui5/webcomponents-react/ShellBarSearch";
 export { ShellBarSpacer } from "@ui5/webcomponents-react/ShellBarSpacer";
 export { Slider } from "@ui5/webcomponents-react/Slider";
 export { SpecialCalendarDate } from "@ui5/webcomponents-react/SpecialCalendarDate";
@@ -144,6 +142,7 @@ export { Wizard } from "@ui5/webcomponents-react/Wizard";
 export { WizardStep } from "@ui5/webcomponents-react/WizardStep";
 
 // Reltio business components & primitives.
+export * from "./AppNavigation";
 export * from "./AppSelector";
 export * from "./Chat";
 export * from "./Details";
