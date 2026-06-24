@@ -1,5 +1,32 @@
 # @reltio/design
 
+## 1.7.0
+
+### Minor Changes
+
+- 17f77b5: Add the Reltio custom icon set (application, entity-type, and product glyphs), registered into UI5's global registry under the `reltio/*` namespace so they work by name in `<Icon name="reltio/<name>" />` and any UI5 `icon` prop. Two import forms, mirroring SAP Fiori icons:
+
+  ```tsx
+  // Per icon — tree-shakable, bundles only what you import (recommended)
+  import "@reltio/design/icons/data-quality";
+
+  // Whole set — convenience, registers every icon
+  import "@reltio/design/icons";
+
+  import { Icon } from "@reltio/design/components";
+  <Icon name="reltio/data-quality" />;
+  ```
+
+  The same SVGs are also served as static assets at `https://reltio.design/icons/<name>.svg`. Icons are monochrome and inherit `currentColor`, so they honor `design`/`color` and re-theme in light/dark.
+
+- 02de7de: Add `AppNavigation` component — a side-navigation menu for the Reltio application catalog.
+
+  - New `apps` prop accepts the grouped catalog returned by the Reltio Config Service (`{ name, items }[]`); only each app's `name` and `url` are used
+  - Each app's icon is resolved internally from the curated Reltio icon set (falling back to `reltio/generic`), so the menu stays visually consistent regardless of the icon URL the backend returns
+  - Optional `homeUrl` renders a "Home" entry with the SAP `home` icon as the first item
+  - Optional `env` / `tenant` substitute `${environment}` / `${tenant}` placeholders in app URLs
+  - Designed to drop into the `ShellBar` `sideNavigation` slot
+
 ## 1.6.0
 
 ### Minor Changes
