@@ -27,6 +27,7 @@
 	"license": "Apache-2.0",
 	"author": "",
 	"scripts": {
+		"prepare": "node scripts/setup-git-hooks.mjs",
 		"test": "vitest run",
 		"coverage": "vitest run --coverage",
 		"dev": "storybook dev -p 6006",

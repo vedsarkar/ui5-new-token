@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+#
+# Ensures every commit message carries a Jira issue key so it satisfies
+# Bitbucket Cloud's "Require issue keys in commit messages" rule, which rejects
+# key-less commits at push time (on any branch, not just main).
+#
+# We prepend a static placeholder key — DESIGN-1, the same one the release
+# pipeline already uses in bitbucket-pipelines.yml. This works on every branch
+# (including experimental/throwaway ones and main), needs no branch-name
+# parsing, and always passes the check. Because the repo squash-merges feature
+# branches, the individual messages never reach main anyway, so a placeholder
+# loses nothing in the final history.
+#
+# The hook is a no-op when the message already contains a real Jira key, so a
+# developer who deliberately references a ticket (e.g. RP-12345) is left alone.
+
+COMMIT_MSG_FILE=$1
+
+DEFAULT_ISSUE_KEY="DESIGN-1"
+
+# Already carries some Jira-style key (RP-12345, DESIGN-1, ...) — leave it.
+if grep -qE '(^|[^A-Z0-9])[A-Z][A-Z0-9]+-[0-9]+([^0-9]|$)' "$COMMIT_MSG_FILE"; then
+	exit 0
+fi
+
+tmp=$(mktemp)
+printf '%s: ' "$DEFAULT_ISSUE_KEY" >"$tmp"
+cat "$COMMIT_MSG_FILE" >>"$tmp"
+mv "$tmp" "$COMMIT_MSG_FILE"
