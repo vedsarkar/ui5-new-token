@@ -1,0 +1,926 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "ReltioDesignComponentIndex",
+	"generatedBy": "scripts/build-component-index.mjs",
+	"count": 153,
+	"components": [
+		{
+			"name": "ActionSheet",
+			"import": "@reltio/design/components",
+			"description": "ActionSheet is the SAP Fiori action sheet, re-exported from @ui5/webcomponents-react/ActionSheet as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "AppSelector",
+			"import": "@reltio/design/components",
+			"description": "AppSelector is a thin Reltio business wrapper around the SAP Fiori ProductSwitch from @ui5/webcomponents-react.",
+			"hasSchema": true
+		},
+		{
+			"name": "Avatar",
+			"import": "@reltio/design/components",
+			"description": "Avatar is the SAP Fiori avatar element, re-exported from @ui5/webcomponents-react/Avatar as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "AvatarBadge",
+			"import": "@reltio/design/components",
+			"description": "AvatarBadge overlays a small status indicator on an Avatar — a presence dot, a verification check, an alert.",
+			"hasSchema": true
+		},
+		{
+			"name": "AvatarGroup",
+			"import": "@reltio/design/components",
+			"description": "AvatarGroup displays a collection of Avatars as an overlapping or grouped set, with overflow handling.",
+			"hasSchema": true
+		},
+		{
+			"name": "Bar",
+			"import": "@reltio/design/components",
+			"description": "Bar is the SAP Fiori toolbar container, re-exported from @ui5/webcomponents-react/Bar as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "BarChart",
+			"import": "@reltio/design/charts",
+			"description": "BarChart renders a vertical-bar comparison of one or more series across a categorical X axis.",
+			"hasSchema": true
+		},
+		{
+			"name": "Breadcrumbs",
+			"import": "@reltio/design/components",
+			"description": "Breadcrumbs is the SAP Fiori breadcrumb trail, re-exported from @ui5/webcomponents-react/Breadcrumbs as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "BreadcrumbsItem",
+			"import": "@reltio/design/components",
+			"description": "BreadcrumbsItem is a single step in a Breadcrumbs trail, optionally a link via href.",
+			"hasSchema": true
+		},
+		{
+			"name": "BusyIndicator",
+			"import": "@reltio/design/components",
+			"description": "BusyIndicator is the SAP Fiori indeterminate loading spinner, re-exported from @ui5/webcomponents-react/BusyIndicator as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Button",
+			"import": "@reltio/design/components",
+			"description": "Button is the SAP Fiori push-button, re-exported from @ui5/webcomponents-react/Button as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "ButtonBadge",
+			"import": "@reltio/design/components",
+			"description": "ButtonBadge shows a count or status marker on a Button — unread items, pending actions.",
+			"hasSchema": true
+		},
+		{
+			"name": "Calendar",
+			"import": "@reltio/design/components",
+			"description": "Calendar is the SAP Fiori standalone calendar grid, re-exported from @ui5/webcomponents-react/Calendar as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "CalendarDate",
+			"import": "@reltio/design/components",
+			"description": "CalendarDate marks a selected date inside a Calendar.",
+			"hasSchema": true
+		},
+		{
+			"name": "CalendarDateRange",
+			"import": "@reltio/design/components",
+			"description": "CalendarDateRange marks a selected start/end range inside a range-mode Calendar.",
+			"hasSchema": true
+		},
+		{
+			"name": "CalendarLegend",
+			"import": "@reltio/design/components",
+			"description": "CalendarLegend explains the color coding used by a Calendar's special dates.",
+			"hasSchema": true
+		},
+		{
+			"name": "CalendarLegendItem",
+			"import": "@reltio/design/components",
+			"description": "CalendarLegendItem is one entry in a CalendarLegend, pairing a label with a date type.",
+			"hasSchema": true
+		},
+		{
+			"name": "Card",
+			"import": "@reltio/design/components",
+			"description": "Card is the SAP Fiori card container, re-exported from @ui5/webcomponents-react/Card as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "CardHeader",
+			"import": "@reltio/design/components",
+			"description": "CardHeader is the SAP Fiori card header, re-exported from @ui5/webcomponents-react/CardHeader as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Carousel",
+			"import": "@reltio/design/components",
+			"description": "Carousel is the SAP Fiori carousel, re-exported from @ui5/webcomponents-react/Carousel as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Chat",
+			"import": "@reltio/design/components",
+			"description": "Chat is a scrollable conversation surface that renders an ordered list of user / assistant messages.",
+			"hasSchema": true
+		},
+		{
+			"name": "CheckBox",
+			"import": "@reltio/design/components",
+			"description": "CheckBox is the SAP Fiori binary-choice control, re-exported from @ui5/webcomponents-react/CheckBox as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "ColorPalette",
+			"import": "@reltio/design/components",
+			"description": "ColorPalette is the SAP Fiori color palette, re-exported from @ui5/webcomponents-react/ColorPalette as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "ColorPaletteItem",
+			"import": "@reltio/design/components",
+			"description": "ColorPaletteItem is a single selectable swatch in a ColorPalette.",
+			"hasSchema": true
+		},
+		{
+			"name": "ColorPalettePopover",
+			"import": "@reltio/design/components",
+			"description": "ColorPalettePopover opens a ColorPalette from a trigger for compact placements.",
+			"hasSchema": true
+		},
+		{
+			"name": "ColorPicker",
+			"import": "@reltio/design/components",
+			"description": "ColorPicker is the SAP Fiori color selection control, re-exported from @ui5/webcomponents-react/ColorPicker as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "ComboBox",
+			"import": "@reltio/design/components",
+			"description": "ComboBox is the SAP Fiori single-select autocomplete input, re-exported from @ui5/webcomponents-react/ComboBox as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "ComboBoxItem",
+			"import": "@reltio/design/components",
+			"description": "ComboBoxItem is a selectable option in a ComboBox.",
+			"hasSchema": true
+		},
+		{
+			"name": "ComboBoxItemGroup",
+			"import": "@reltio/design/components",
+			"description": "ComboBoxItemGroup groups related ComboBoxItems under a header.",
+			"hasSchema": true
+		},
+		{
+			"name": "DatePicker",
+			"import": "@reltio/design/components",
+			"description": "DatePicker is the SAP Fiori inline date input with a calendar popup, re-exported from @ui5/webcomponents-react/DatePicker as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "DateRangePicker",
+			"import": "@reltio/design/components",
+			"description": "DateRangePicker is the SAP Fiori inline date-range input, re-exported from @ui5/webcomponents-react/DateRangePicker as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "DateTimePicker",
+			"import": "@reltio/design/components",
+			"description": "DateTimePicker is the SAP Fiori inline date + time input, re-exported from @ui5/webcomponents-react/DateTimePicker as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Details",
+			"import": "@reltio/design/components",
+			"description": "Details is a styled wrapper around the native HTML <details> element with a chevron toggle, hover state, and consistent typography aligned with the SAP Horizon design system.",
+			"hasSchema": true
+		},
+		{
+			"name": "Diagram",
+			"import": "@reltio/design/charts",
+			"description": "Diagram renders a **node-edge diagram with auto-layout** — best suited for hierarchical or pipeline-shaped graphs (DAG, workflow, lineage, decision tree).",
+			"hasSchema": true
+		},
+		{
+			"name": "Dialog",
+			"import": "@reltio/design/components",
+			"description": "Dialog is the SAP Fiori modal overlay, re-exported from @ui5/webcomponents-react/Dialog as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "DonutChart",
+			"import": "@reltio/design/charts",
+			"description": "DonutChart renders a segmented ring showing each item's share of the total.",
+			"hasSchema": true
+		},
+		{
+			"name": "DynamicDateRange",
+			"import": "@reltio/design/components",
+			"description": "DynamicDateRange is the SAP Fiori semantic date-range picker, re-exported from @ui5/webcomponents-react/DynamicDateRange as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "DynamicSideContent",
+			"import": "@reltio/design/components",
+			"description": "DynamicSideContent is the SAP Fiori responsive side-content layout, re-exported from @ui5/webcomponents-react/DynamicSideContent as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "ErrorBoundary",
+			"import": "@reltio/design/components",
+			"description": "ErrorBoundary is a thin React class component that catches render-time errors thrown by its descendants and renders a fallback instead of crashing the surrounding tree.",
+			"hasSchema": true
+		},
+		{
+			"name": "ExpandableText",
+			"import": "@reltio/design/components",
+			"description": "ExpandableText is the SAP Fiori expandable text element, re-exported from @ui5/webcomponents-react/ExpandableText as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "FileUploader",
+			"import": "@reltio/design/components",
+			"description": "FileUploader is the SAP Fiori file-input control, re-exported from @ui5/webcomponents-react/FileUploader as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "FlexBox",
+			"import": "@reltio/design/components",
+			"description": "FlexBox is the SAP Fiori flexbox layout container, re-exported from @ui5/webcomponents-react/FlexBox as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Form",
+			"import": "@reltio/design/components",
+			"description": "Form is the SAP Fiori form floorplan for configuration, entity-edit, and settings screens — it lays out labelled fields in a consistent, responsive grid instead of hand-rolled label/field markup wh…",
+			"hasSchema": true
+		},
+		{
+			"name": "GaugeChart",
+			"import": "@reltio/design/charts",
+			"description": "GaugeChart is a single-value progress dial — a half-circle showing how far value is along the 0…max range.",
+			"hasSchema": true
+		},
+		{
+			"name": "GeoChart",
+			"import": "@reltio/design/charts",
+			"description": "GeoChart is a **choropleth map** — colored regions over an arbitrary geography.",
+			"hasSchema": true
+		},
+		{
+			"name": "GraphChart",
+			"import": "@reltio/design/charts",
+			"description": "GraphChart renders a **node-link graph** — circles for entities, lines for relationships between them.",
+			"hasSchema": true
+		},
+		{
+			"name": "Grid",
+			"import": "@reltio/design/components",
+			"description": "Grid is the SAP Fiori responsive grid layout, re-exported from @ui5/webcomponents-react/Grid as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Icon",
+			"import": "@reltio/design/components",
+			"description": "Icon is the SAP Fiori icon element, re-exported from @ui5/webcomponents-react/Icon as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "IllustratedMessage",
+			"import": "@reltio/design/components",
+			"description": "IllustratedMessage is the SAP Fiori page-level status component, re-exported from @ui5/webcomponents-react/IllustratedMessage as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Input",
+			"import": "@reltio/design/components",
+			"description": "Input is the SAP Fiori single-line text field, re-exported from @ui5/webcomponents-react/Input as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Label",
+			"import": "@reltio/design/components",
+			"description": "Label is the SAP Fiori form label component, re-exported from @ui5/webcomponents-react/Label as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "LineChart",
+			"import": "@reltio/design/charts",
+			"description": "LineChart renders one or more time-series / cartesian lines from row-of-objects data.",
+			"hasSchema": true
+		},
+		{
+			"name": "Link",
+			"import": "@reltio/design/components",
+			"description": "Link is the SAP Fiori hyperlink element, re-exported from @ui5/webcomponents-react/Link as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "List",
+			"import": "@reltio/design/components",
+			"description": "List is the SAP Fiori vertical list surface, re-exported from @ui5/webcomponents-react/List as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "ListItem",
+			"import": "@reltio/design/components",
+			"description": "ListItem is the single endorsed row entity for List.",
+			"hasSchema": true
+		},
+		{
+			"name": "ListItemGroup",
+			"import": "@reltio/design/components",
+			"description": "ListItemGroup groups related list rows under a header inside a List.",
+			"hasSchema": true
+		},
+		{
+			"name": "Markdown",
+			"import": "@reltio/design/components",
+			"description": "Markdown is a safe Markdown renderer for content authored at runtime — AI assistant replies, user-supplied notes, audit-trail entries.",
+			"hasSchema": true
+		},
+		{
+			"name": "MediaGallery",
+			"import": "@reltio/design/components",
+			"description": "MediaGallery is the SAP Fiori media gallery, re-exported from @ui5/webcomponents-react/MediaGallery as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "MediaGalleryItem",
+			"import": "@reltio/design/components",
+			"description": "MediaGalleryItem is one media entry (thumbnail + full view) in a MediaGallery.",
+			"hasSchema": true
+		},
+		{
+			"name": "Menu",
+			"import": "@reltio/design/components",
+			"description": "Menu is the SAP Fiori menu, re-exported from @ui5/webcomponents-react/Menu as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "MenuItem",
+			"import": "@reltio/design/components",
+			"description": "MenuItem is a single action in a Menu, with optional icon and submenu.",
+			"hasSchema": true
+		},
+		{
+			"name": "MenuItemGroup",
+			"import": "@reltio/design/components",
+			"description": "MenuItemGroup groups MenuItems with a selection mode (single/multiple).",
+			"hasSchema": true
+		},
+		{
+			"name": "MenuSeparator",
+			"import": "@reltio/design/components",
+			"description": "MenuSeparator draws a divider between logical groups of MenuItems.",
+			"hasSchema": true
+		},
+		{
+			"name": "MessageBox",
+			"import": "@reltio/design/components",
+			"description": "MessageBox is the SAP Fiori message dialog, re-exported from @ui5/webcomponents-react/MessageBox as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "MessageItem",
+			"import": "@reltio/design/components",
+			"description": "MessageItem is one message (with severity) in a MessageView.",
+			"hasSchema": true
+		},
+		{
+			"name": "MessageStrip",
+			"import": "@reltio/design/components",
+			"description": "MessageStrip is the SAP Fiori inline notification bar, re-exported from @ui5/webcomponents-react/MessageStrip as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "MessageView",
+			"import": "@reltio/design/components",
+			"description": "MessageView is the SAP Fiori message view, re-exported from @ui5/webcomponents-react/MessageView as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "MessageViewButton",
+			"import": "@reltio/design/components",
+			"description": "MessageViewButton is a button showing the aggregate message count/severity that opens a MessageView.",
+			"hasSchema": true
+		},
+		{
+			"name": "MultiComboBox",
+			"import": "@reltio/design/components",
+			"description": "MultiComboBox is the SAP Fiori multi-select autocomplete input, re-exported from @ui5/webcomponents-react/MultiComboBox as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "MultiComboBoxItem",
+			"import": "@reltio/design/components",
+			"description": "MultiComboBoxItem is a selectable, checkable option in a MultiComboBox.",
+			"hasSchema": true
+		},
+		{
+			"name": "MultiComboBoxItemGroup",
+			"import": "@reltio/design/components",
+			"description": "MultiComboBoxItemGroup groups related MultiComboBoxItems under a header.",
+			"hasSchema": true
+		},
+		{
+			"name": "MultiInput",
+			"import": "@reltio/design/components",
+			"description": "MultiInput is the SAP Fiori multi-token text field, re-exported from @ui5/webcomponents-react/MultiInput as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "NotificationList",
+			"import": "@reltio/design/components",
+			"description": "NotificationList is the SAP Fiori notification list, re-exported from @ui5/webcomponents-react/NotificationList as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "NotificationListGroupItem",
+			"import": "@reltio/design/components",
+			"description": "NotificationListGroupItem is a collapsible group of notifications in a NotificationList.",
+			"hasSchema": true
+		},
+		{
+			"name": "NotificationListItem",
+			"import": "@reltio/design/components",
+			"description": "NotificationListItem is one actionable notification in a NotificationList.",
+			"hasSchema": true
+		},
+		{
+			"name": "NumericSideIndicator",
+			"import": "@reltio/design/components",
+			"description": "NumericSideIndicator is the SAP Fiori secondary-KPI element, re-exported from @ui5/webcomponents-react/NumericSideIndicator as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "ObjectStatus",
+			"import": "@reltio/design/components",
+			"description": "ObjectStatus is the SAP Fiori status element, re-exported from @ui5/webcomponents-react/ObjectStatus as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Option",
+			"import": "@reltio/design/components",
+			"description": "Option is a single choice in a Select.",
+			"hasSchema": true
+		},
+		{
+			"name": "OptionCustom",
+			"import": "@reltio/design/components",
+			"description": "OptionCustom is a Select option whose content is fully custom (icons, rich layout).",
+			"hasSchema": true
+		},
+		{
+			"name": "Page",
+			"import": "@reltio/design/components",
+			"description": "Page is the SAP Fiori page container, re-exported from @ui5/webcomponents-react/Page as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Panel",
+			"import": "@reltio/design/components",
+			"description": "Panel is the SAP Fiori collapsible section, re-exported from @ui5/webcomponents-react/Panel as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Popover",
+			"import": "@reltio/design/components",
+			"description": "Popover is the SAP Fiori floating overlay anchored to a target element, re-exported from @ui5/webcomponents-react/Popover as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "ProgressIndicator",
+			"import": "@reltio/design/components",
+			"description": "ProgressIndicator is the SAP Fiori horizontal progress bar, re-exported from @ui5/webcomponents-react/ProgressIndicator as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "RadarChart",
+			"import": "@reltio/design/charts",
+			"description": "RadarChart renders a multi-axis polygon plot for **comparing several entities across the same set of metrics**.",
+			"hasSchema": true
+		},
+		{
+			"name": "RadioButton",
+			"import": "@reltio/design/components",
+			"description": "RadioButton is the SAP Fiori single-select control for small, mutually-exclusive option sets, re-exported from @ui5/webcomponents-react/RadioButton as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "RangeSlider",
+			"import": "@reltio/design/components",
+			"description": "RangeSlider is the SAP Fiori dual-thumb numeric range slider, re-exported from @ui5/webcomponents-react/RangeSlider as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "RatingIndicator",
+			"import": "@reltio/design/components",
+			"description": "RatingIndicator is the SAP Fiori rating control, re-exported from @ui5/webcomponents-react/RatingIndicator as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "ResponsivePopover",
+			"import": "@reltio/design/components",
+			"description": "ResponsivePopover is the SAP Fiori adaptive overlay, re-exported from @ui5/webcomponents-react/ResponsivePopover as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "SankeyChart",
+			"import": "@reltio/design/charts",
+			"description": "SankeyChart renders a flow diagram where each labeled **node** is connected to other nodes by **ribbons** whose width is proportional to the flow value.",
+			"hasSchema": true
+		},
+		{
+			"name": "SegmentedButton",
+			"import": "@reltio/design/components",
+			"description": "SegmentedButton is the SAP Fiori inline option-bar, re-exported from @ui5/webcomponents-react/SegmentedButton as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "SegmentedButtonItem",
+			"import": "@reltio/design/components",
+			"description": "SegmentedButtonItem is one option in a SegmentedButton group.",
+			"hasSchema": true
+		},
+		{
+			"name": "Select",
+			"import": "@reltio/design/components",
+			"description": "Select is the SAP Fiori closed-list dropdown, re-exported from @ui5/webcomponents-react/Select as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "SelectDialog",
+			"import": "@reltio/design/components",
+			"description": "SelectDialog is the SAP Fiori select dialog, re-exported from @ui5/webcomponents-react/SelectDialog as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "SetOverlapChart",
+			"import": "@reltio/design/charts",
+			"description": "SetOverlapChart is an **UpSet-style** diagram for visualizing how records overlap across multiple sets — typically source systems contributing to the same entity.",
+			"hasSchema": true
+		},
+		{
+			"name": "ShellBar",
+			"import": "@reltio/design/components",
+			"description": "ShellBar is the Reltio top navigation chrome, built on top of @ui5/webcomponents-react/ShellBar.",
+			"hasSchema": true
+		},
+		{
+			"name": "ShellBarBranding",
+			"import": "@reltio/design/components",
+			"description": "ShellBarBranding renders the product brand mark/logo in the ShellBar.",
+			"hasSchema": true
+		},
+		{
+			"name": "ShellBarItem",
+			"import": "@reltio/design/components",
+			"description": "ShellBarItem is a custom action button in the ShellBar.",
+			"hasSchema": true
+		},
+		{
+			"name": "ShellBarSearch",
+			"import": "@reltio/design/components",
+			"description": "ShellBarSearch is the search field used inside the ShellBar.",
+			"hasSchema": true
+		},
+		{
+			"name": "ShellBarSpacer",
+			"import": "@reltio/design/components",
+			"description": "ShellBarSpacer adds flexible space to push following ShellBar content to the end.",
+			"hasSchema": true
+		},
+		{
+			"name": "SideNavigation",
+			"import": "@reltio/design/components",
+			"description": "SideNavigation is the Reltio entry point for application navigation — a thin wrapper over the SAP Fiori SideNavigation (@ui5/webcomponents-react/SideNavigation) that renders a vertical menu of link…",
+			"hasSchema": true
+		},
+		{
+			"name": "SideNavigationGroup",
+			"import": "@reltio/design/components",
+			"description": "SideNavigationGroup is a titled section of navigation entries inside a SideNavigation.",
+			"hasSchema": true
+		},
+		{
+			"name": "SideNavigationItem",
+			"import": "@reltio/design/components",
+			"description": "SideNavigationItem is a top-level entry in a SideNavigation menu.",
+			"hasSchema": true
+		},
+		{
+			"name": "SideNavigationSubItem",
+			"import": "@reltio/design/components",
+			"description": "SideNavigationSubItem is a second-level entry nested inside a SideNavigationItem.",
+			"hasSchema": true
+		},
+		{
+			"name": "Skeleton",
+			"import": "@reltio/design/components",
+			"description": "Skeleton is a loading placeholder that shows N rectangular bars with a horizontal shimmer animation.",
+			"hasSchema": true
+		},
+		{
+			"name": "Slider",
+			"import": "@reltio/design/components",
+			"description": "Slider is the SAP Fiori single-thumb numeric slider, re-exported from @ui5/webcomponents-react/Slider as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "SpecialCalendarDate",
+			"import": "@reltio/design/components",
+			"description": "SpecialCalendarDate highlights a specific date in a Calendar (holiday, milestone, deadline).",
+			"hasSchema": true
+		},
+		{
+			"name": "SplitButton",
+			"import": "@reltio/design/components",
+			"description": "SplitButton is the SAP Fiori dual-action button — a main click target plus a small arrow that opens a related menu — re-exported from @ui5/webcomponents-react/SplitButton as the canonical Reltio en…",
+			"hasSchema": true
+		},
+		{
+			"name": "SplitterElement",
+			"import": "@reltio/design/components",
+			"description": "SplitterElement is one resizable pane inside a SplitterLayout.",
+			"hasSchema": true
+		},
+		{
+			"name": "SplitterLayout",
+			"import": "@reltio/design/components",
+			"description": "SplitterLayout is the SAP Fiori splitter container, re-exported from @ui5/webcomponents-react/SplitterLayout as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "StepInput",
+			"import": "@reltio/design/components",
+			"description": "StepInput is the SAP Fiori discrete-numeric input with + / - step buttons, re-exported from @ui5/webcomponents-react/StepInput as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "SuggestionItem",
+			"import": "@reltio/design/components",
+			"description": "SuggestionItem is a type-ahead suggestion shown under an Input.",
+			"hasSchema": true
+		},
+		{
+			"name": "SuggestionItemCustom",
+			"import": "@reltio/design/components",
+			"description": "SuggestionItemCustom is an Input suggestion with fully custom content.",
+			"hasSchema": true
+		},
+		{
+			"name": "SuggestionItemGroup",
+			"import": "@reltio/design/components",
+			"description": "SuggestionItemGroup groups Input suggestions under a header.",
+			"hasSchema": true
+		},
+		{
+			"name": "Switch",
+			"import": "@reltio/design/components",
+			"description": "Switch is the SAP Fiori binary on/off toggle, re-exported from @ui5/webcomponents-react/Switch as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Tab",
+			"import": "@reltio/design/components",
+			"description": "Tab is one tab (header + content) in a TabContainer.",
+			"hasSchema": true
+		},
+		{
+			"name": "TabContainer",
+			"import": "@reltio/design/components",
+			"description": "TabContainer is the SAP Fiori tab strip, re-exported from @ui5/webcomponents-react/TabContainer as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Table",
+			"import": "@reltio/design/components",
+			"description": "Table is the SAP Fiori grid for tabular data, re-exported from @ui5/webcomponents-react/Table as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "TableCell",
+			"import": "@reltio/design/components",
+			"description": "TableCell is a single cell in a TableRow.",
+			"hasSchema": true
+		},
+		{
+			"name": "TableGrowing",
+			"import": "@reltio/design/components",
+			"description": "TableGrowing adds load-more / scroll-growing behavior to a Table.",
+			"hasSchema": true
+		},
+		{
+			"name": "TableHeaderCell",
+			"import": "@reltio/design/components",
+			"description": "TableHeaderCell is a single column header in a TableHeaderRow.",
+			"hasSchema": true
+		},
+		{
+			"name": "TableHeaderRow",
+			"import": "@reltio/design/components",
+			"description": "TableHeaderRow is the header row of a Table, holding TableHeaderCells.",
+			"hasSchema": true
+		},
+		{
+			"name": "TableRow",
+			"import": "@reltio/design/components",
+			"description": "TableRow is a data row in a Table, holding TableCells.",
+			"hasSchema": true
+		},
+		{
+			"name": "TableRowAction",
+			"import": "@reltio/design/components",
+			"description": "TableRowAction is a per-row action button shown in a TableRow's actions slot.",
+			"hasSchema": true
+		},
+		{
+			"name": "TableSelectionMulti",
+			"import": "@reltio/design/components",
+			"description": "TableSelectionMulti enables multi-row selection in a Table.",
+			"hasSchema": true
+		},
+		{
+			"name": "TableSelectionSingle",
+			"import": "@reltio/design/components",
+			"description": "TableSelectionSingle enables single-row selection in a Table.",
+			"hasSchema": true
+		},
+		{
+			"name": "TabSeparator",
+			"import": "@reltio/design/components",
+			"description": "TabSeparator draws a divider between tabs in a TabContainer.",
+			"hasSchema": true
+		},
+		{
+			"name": "Tag",
+			"import": "@reltio/design/components",
+			"description": "Tag is the SAP Fiori tag element, re-exported from @ui5/webcomponents-react/Tag as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "TenantSelector",
+			"import": "@reltio/design/components",
+			"description": "TenantSelector is the Reltio header tenant picker.",
+			"hasSchema": true
+		},
+		{
+			"name": "Text",
+			"import": "@reltio/design/components",
+			"description": "Text is the SAP Fiori text element, re-exported from @ui5/webcomponents-react/Text as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "TextArea",
+			"import": "@reltio/design/components",
+			"description": "TextArea is a SAP Fiori-styled multi-line text input.",
+			"hasSchema": true
+		},
+		{
+			"name": "Timeline",
+			"import": "@reltio/design/components",
+			"description": "Timeline is the SAP Fiori timeline, re-exported from @ui5/webcomponents-react/Timeline as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "TimelineGroupItem",
+			"import": "@reltio/design/components",
+			"description": "TimelineGroupItem groups TimelineItems under a heading on a Timeline.",
+			"hasSchema": true
+		},
+		{
+			"name": "TimelineItem",
+			"import": "@reltio/design/components",
+			"description": "TimelineItem is one event on a Timeline.",
+			"hasSchema": true
+		},
+		{
+			"name": "TimePicker",
+			"import": "@reltio/design/components",
+			"description": "TimePicker is the SAP Fiori inline time input with a clock popup, re-exported from @ui5/webcomponents-react/TimePicker as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Title",
+			"import": "@reltio/design/components",
+			"description": "Title is the SAP Fiori heading element, re-exported from @ui5/webcomponents-react/Title as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Toast",
+			"import": "@reltio/design/components",
+			"description": "Toast is the SAP Fiori transient overlay notification, re-exported from @ui5/webcomponents-react/Toast as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "ToggleButton",
+			"import": "@reltio/design/components",
+			"description": "ToggleButton is the SAP Fiori two-state button, re-exported from @ui5/webcomponents-react/ToggleButton as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "Token",
+			"import": "@reltio/design/components",
+			"description": "Token is a removable chip representing one selected value in a MultiInput.",
+			"hasSchema": true
+		},
+		{
+			"name": "Toolbar",
+			"import": "@reltio/design/components",
+			"description": "Toolbar is the SAP Fiori toolbar, re-exported from @ui5/webcomponents-react/Toolbar as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "ToolbarButton",
+			"import": "@reltio/design/components",
+			"description": "ToolbarButton is an action button inside a Toolbar.",
+			"hasSchema": true
+		},
+		{
+			"name": "ToolbarItem",
+			"import": "@reltio/design/components",
+			"description": "ToolbarItem wraps an arbitrary UI5 component so it participates in Toolbar overflow.",
+			"hasSchema": true
+		},
+		{
+			"name": "ToolbarSelect",
+			"import": "@reltio/design/components",
+			"description": "ToolbarSelect is an inline dropdown selector inside a Toolbar.",
+			"hasSchema": true
+		},
+		{
+			"name": "ToolbarSelectOption",
+			"import": "@reltio/design/components",
+			"description": "ToolbarSelectOption is one option in a ToolbarSelect.",
+			"hasSchema": true
+		},
+		{
+			"name": "ToolbarSeparator",
+			"import": "@reltio/design/components",
+			"description": "ToolbarSeparator draws a vertical divider between groups in a Toolbar.",
+			"hasSchema": true
+		},
+		{
+			"name": "ToolbarSpacer",
+			"import": "@reltio/design/components",
+			"description": "ToolbarSpacer adds flexible space that pushes following Toolbar items to the end.",
+			"hasSchema": true
+		},
+		{
+			"name": "Tree",
+			"import": "@reltio/design/components",
+			"description": "Tree is the SAP Fiori component for displaying hierarchically structured data, re-exported from @ui5/webcomponents-react/Tree as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "TreeItem",
+			"import": "@reltio/design/components",
+			"description": "TreeItem is the single node entity for Tree.",
+			"hasSchema": true
+		},
+		{
+			"name": "UploadCollection",
+			"import": "@reltio/design/components",
+			"description": "UploadCollection is the SAP Fiori upload collection, re-exported from @ui5/webcomponents-react/UploadCollection as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "UploadCollectionItem",
+			"import": "@reltio/design/components",
+			"description": "UploadCollectionItem is one file row in an UploadCollection.",
+			"hasSchema": true
+		},
+		{
+			"name": "UserMenu",
+			"import": "@reltio/design/components",
+			"description": "UserMenu is the Reltio header user menu.",
+			"hasSchema": true
+		},
+		{
+			"name": "UserMenuItemGroup",
+			"import": "@reltio/design/components",
+			"description": "UserMenuItemGroup groups items inside a UserMenu.",
+			"hasSchema": true
+		},
+		{
+			"name": "Wizard",
+			"import": "@reltio/design/components",
+			"description": "Wizard is the SAP Fiori multi-step flow, re-exported from @ui5/webcomponents-react/Wizard as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "WizardStep",
+			"import": "@reltio/design/components",
+			"description": "WizardStep is one step in a multi-step Wizard flow.",
+			"hasSchema": true
+		}
+	]
+}

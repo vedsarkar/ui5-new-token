@@ -128,6 +128,37 @@ import "@ui5/webcomponents-icons/dist/save.js";
 <Button icon="save">Save</Button>;
 ```
 
+## CLI — component discovery
+
+`@reltio/design` ships a small CLI so humans and AI agents can discover the
+endorsed surface straight from the installed package (offline, version-matched):
+
+```bash
+# List every endorsed component with a one-line description
+npx @reltio/design components
+
+# Show one component's resolved props + defaults
+npx @reltio/design components Button
+```
+
+`components` reads a bundled inventory + JSON-Schema prop tables, so it always
+matches the version of `@reltio/design` your app has installed — no network and
+no separate catalog to maintain.
+
+### Agent skill
+
+The migration skill that teaches an agent (Cursor, Claude, Codex) how to adopt
+these components ships separately as
+[`@reltio/skills`](https://www.npmjs.com/package/@reltio/skills):
+
+```bash
+npx @reltio/skills install adopt-reltio-design
+```
+
+It pairs with the `components` CLI above so the agent always reads the exact
+inventory and props of the version your app uses. See the
+[Adopt Reltio Design guide](https://reltio.design/?path=/docs/guides-adopt-reltio-design--docs).
+
 ## Target Audience
 
 The library is designed for Reltio internal teams developing applications.

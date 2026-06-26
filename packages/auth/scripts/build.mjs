@@ -14,11 +14,19 @@
 
 import { spawnSync } from "node:child_process";
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const pkgDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = join(pkgDir, "dist");
+
+// Resolve `tsc` from the TypeScript version this package declares, not whatever
+// got hoisted to the repo root. Node resolution walks up from the package, so a
+// package-local typescript wins and the root copy is the fallback — keeping the
+// compiler version deterministic and aligned with the declared devDependency
+// across local builds and CI.
+const tscBin = createRequire(import.meta.url).resolve("typescript/bin/tsc");
 
 function step(name, fn) {
 	process.stdout.write(`• ${name}... `);
@@ -30,11 +38,7 @@ function step(name, fn) {
 function runTsc(configFile) {
 	const result = spawnSync(
 		process.execPath,
-		[
-			join(pkgDir, "..", "..", "node_modules", "typescript", "bin", "tsc"),
-			"--project",
-			configFile,
-		],
+		[tscBin, "--project", configFile],
 		{ cwd: pkgDir, stdio: "inherit" },
 	);
 	if (result.status !== 0) {

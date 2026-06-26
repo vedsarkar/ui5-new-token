@@ -1,0 +1,89 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { Markdown } from "@/components/Markdown";
+import skillSource from "../packages/skills/skills/adopt-reltio-design/SKILL.md?raw";
+import playbookSource from "../packages/skills/skills/adopt-reltio-design/playbook.md?raw";
+
+export const skillBody = skillSource.replace(/^---[\s\S]*?---\s*/, "");
+
+<Meta title="Guides/Adopt Reltio Design" />
+
+# Adopt Reltio Design
+
+This guide is for **teams migrating an existing Reltio application** to the
+standardized `@reltio/design` components. It ships an agent skill that any AI
+agent (Cursor, Claude, Codex) can follow to replace ad-hoc UI primitives — MUI of
+any version, bespoke components, or raw HTML — with the endorsed Reltio surface.
+
+> **🎯 Key principle:** The installed `@reltio/design` package is the live source
+> of truth. Agents discover what exists and its exact API from the package itself,
+> so a migration always matches the version your app uses.
+
+## 1. Install `@reltio/design`
+
+If your application doesn't depend on `@reltio/design` yet, install it in the app
+repository first:
+
+```bash
+npm install @reltio/design
+```
+
+Everything else (UI5, icons, fonts, the discovery CLI, and the skill) comes
+bundled with this single package — see the [README](https://www.npmjs.com/package/@reltio/design).
+
+## 2. Install the skill
+
+The skill ships in its own package, [`@reltio/skills`](https://www.npmjs.com/package/@reltio/skills).
+From your application's repository root:
+
+```bash
+npx @reltio/skills install adopt-reltio-design
+```
+
+To see everything available, run `npx @reltio/skills list`; `npx @reltio/skills install`
+(no name) installs all bundled skills.
+
+This writes the `adopt-reltio-design` skill into `.agents/skills/` and links it
+into `.claude/skills/`. It never edits your `AGENTS.md` / `CLAUDE.md` — it prints
+a suggested pointer line you can add manually. Re-running is safe and
+non-destructive (it cleanly updates an existing install); pass `--force` only to
+replace a conflicting link.
+
+## 3. Discover components
+
+The package is self-describing — no MCP required for the inventory and props:
+
+```bash
+npx @reltio/design components          # list every endorsed component + one-liner
+npx @reltio/design components Button   # one component's resolved props + defaults
+```
+
+For richer narrative (variant guidance, accessibility, gotchas), optionally use
+the [Reltio Design MCP](?path=/docs/guides-reltio-design-mcp--docs) at
+`https://reltio.design/mcp`, or browse this Storybook.
+
+## 4. Let the agent migrate
+
+Ask your agent to adopt Reltio Design components in a **small, focused scope** (a
+single screen or component family). The skill enforces the workflow below and
+keeps changes reviewable.
+
+> **⚠️ Keep PRs small.** The skill caps changes at roughly 1000 lines per PR and
+> requires a split plan before any bulk replacement. Big-bang migrations are
+> unreviewable — migrate iteratively.
+
+## The skill
+
+This is the full skill an agent follows when migrating your app — read it to
+understand the workflow, principles, and guardrails it applies.
+
+<Markdown>{skillBody}</Markdown>
+
+## The conversion playbook
+
+<Markdown>{playbookSource}</Markdown>
+
+## Resources
+
+- [Reltio Design MCP](?path=/docs/guides-reltio-design-mcp--docs) — optional richer documentation channel for agents
+- [UI Architecture](?path=/docs/guides-ui-architecture--docs) — why `@reltio/design` is the single endorsed entry point
+- [Design Tokens](?path=/docs/design-tokens--docs) — the `--sap*` token surface for color mapping

@@ -15,6 +15,9 @@
 	"publishConfig": {
 		"access": "public"
 	},
+	"bin": {
+		"design": "./bin/cli.mjs"
+	},
 	"peerDependencies": {
 		"react": "^18 || ^19",
 		"react-dom": "^18 || ^19"
@@ -33,7 +36,7 @@
 	},
 	"scripts": {
 		"build": "tsc && tsc-alias",
-		"postbuild": "cp package.json dist/ && cp README.md dist/ && cp ../../LICENSE dist/ && cp ../../NOTICE dist/ && cp ../../public/variables.css dist/ && cp ../../public/fonts.css dist/"
+		"postbuild": "cp package.json dist/ && cp README.md dist/ && cp ../../LICENSE dist/ && cp ../../NOTICE dist/ && cp ../../public/variables.css dist/ && cp ../../public/fonts.css dist/ && node ../../scripts/bundle-design-assets.mjs"
 	},
 	"devDependencies": {
 		"tsc-alias": "^1.8.10",

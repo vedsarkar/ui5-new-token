@@ -1,0 +1,35 @@
+{
+	"name": "@reltio/skills",
+	"version": "1.0.0",
+	"description": "Reltio agent skills — installable AI-agent skills (Cursor, Claude, Codex) for adopting the Reltio Design Platform.",
+	"license": "Apache-2.0",
+	"homepage": "https://reltio.design",
+	"bugs": {
+		"url": "https://bitbucket.org/reltio-ondemand/reltio-design/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@bitbucket.org/reltio-ondemand/reltio-design.git",
+		"directory": "packages/skills"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"type": "module",
+	"engines": {
+		"node": ">=20"
+	},
+	"bin": {
+		"skills": "./bin/cli.mjs"
+	},
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE",
+		"NOTICE"
+	],
+	"scripts": {
+		"build": "node scripts/build.mjs",
+		"postbuild": "cp README.md dist/ && cp ../../LICENSE dist/ && cp ../../NOTICE dist/"
+	}
+}
