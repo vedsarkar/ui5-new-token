@@ -22,6 +22,17 @@ const PKG_ROOT = path.resolve(
 
 const readJson = (file) => JSON.parse(fs.readFileSync(file, "utf8"));
 
+/** Collapse a multi-line markdown description into one scannable line, trimmed
+ * to a sane length. The CLI is a discovery aid, not full docs — agents follow
+ * the footer pointer to the package types for exhaustive detail. */
+const MAX_DESCRIPTION = 220;
+const compact = (text) => {
+	const oneLine = text.replace(/\s+/g, " ").trim();
+	return oneLine.length > MAX_DESCRIPTION
+		? `${oneLine.slice(0, MAX_DESCRIPTION - 1).trimEnd()}…`
+		: oneLine;
+};
+
 const loadIndex = () => {
 	const indexPath = path.join(PKG_ROOT, "components.index.json");
 	if (!fs.existsSync(indexPath)) {
@@ -84,8 +95,21 @@ const printComponent = (name) => {
 			prop.default !== undefined
 				? `  (default: ${JSON.stringify(prop.default)})`
 				: "";
-		console.log(`  ${propName.padEnd(width)}  ${type}${dflt}`);
+		const deprecated = prop.deprecated
+			? `  [deprecated${
+					prop["x-deprecationReason"]
+						? `: ${compact(prop["x-deprecationReason"])}`
+						: ""
+				}]`
+			: "";
+		console.log(`  ${propName.padEnd(width)}  ${type}${dflt}${deprecated}`);
+		if (prop.description) {
+			console.log(`  ${" ".repeat(width)}  ${compact(prop.description)}`);
+		}
 	}
+	console.log(
+		'\nTypes shown are the resolved TypeScript signatures. For the full shape of named types (enums, `*AccessibilityAttributes`, event payloads), read the bundled declarations in node_modules/@reltio/design or use the Reltio Design MCP.',
+	);
 };
 
 const componentsCommand = (args) => {
