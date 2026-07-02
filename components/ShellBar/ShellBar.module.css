@@ -72,10 +72,12 @@
 	display: block;
 }
 
+:global([data-theme="sap-reltio-dark"]) .lightLogo,
 :global([data-theme="horizon-dark"]) .lightLogo {
 	display: block;
 }
 
+:global([data-theme="sap-reltio-dark"]) .darkLogo,
 :global([data-theme="horizon-dark"]) .darkLogo {
 	display: none;
 }

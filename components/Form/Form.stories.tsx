@@ -18,13 +18,14 @@ import preview from "../../.storybook/preview";
 faker.seed(11);
 
 // The dual-theme decorator renders each story twice (light + dark containers),
-// so interaction tests scope their queries to the light panel to target a
-// single rendered instance instead of disabling dual-theme coverage.
+// so interaction tests scope their queries to the first rendered panel to target
+// a single instance instead of disabling dual-theme coverage. Selecting the
+// first `[data-theme]` container (rather than a specific theme name) keeps this
+// robust to theme renames.
 const lightCanvas = (canvasElement: HTMLElement) =>
 	within(
-		(canvasElement.querySelector(
-			'[data-theme="horizon-light"]',
-		) as HTMLElement) ?? canvasElement,
+		(canvasElement.querySelector("[data-theme]") as HTMLElement) ??
+			canvasElement,
 	);
 
 const person = {
