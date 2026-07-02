@@ -2,13 +2,20 @@
   Reltio Design Platform — Storybook preview head.
 
   Design tokens (variables.css) and SAP 72 font-face rules (fonts.css) are
-  loaded here. The light Horizon theme applies via the `:root` defaults in
-  variables.css; individual stories can opt into dark mode by setting
-  `data-theme="horizon-dark"` on a wrapper element.
+  loaded here. variables.css only carries the Reltio-customized token values —
+  the full SAP Horizon defaults are injected at runtime by the UI5 web
+  components — so `data-theme` is REQUIRED (light is not an attribute-less
+  default). The script below sets `sap-reltio-light` on the document root as the
+  preview's default theme, matching how a real app opts in; the
+  DualThemeDecorator overrides it per half, and individual stories can set
+  `data-theme="sap-reltio-dark"` on a wrapper element.
 -->
 <link rel="stylesheet" href="/variables.css" />
 <link rel="stylesheet" href="/fonts.css" />
 <link rel="stylesheet" href="/global.css" />
+<script>
+  document.documentElement.setAttribute("data-theme", "sap-reltio-light");
+</script>
 
 <style>
   /*

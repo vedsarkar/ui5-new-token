@@ -5,6 +5,7 @@
 		sans-serif !important;
 }
 
+[data-theme="sap-reltio-dark"],
 [data-theme="horizon-dark"] {
 	background-color: var(--sapBackgroundColor);
 	color: var(--sapTextColor);

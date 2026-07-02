@@ -46,8 +46,8 @@ const DOCS_HORIZONTAL_HEIGHT = 320;
 const DOCS_VERTICAL_HEIGHT = 480;
 
 /**
- * Renders the wrapped story twice — once inside a `data-theme="horizon-light"`
- * container and once inside a `data-theme="horizon-dark"` container — so a
+ * Renders the wrapped story twice — once inside a `data-theme="sap-reltio-light"`
+ * container and once inside a `data-theme="sap-reltio-dark"` container — so a
  * single Chromatic snapshot and a single addon-vitest a11y test cover both
  * themes. Per-story behaviour is controlled via `parameters.dualTheme`:
  *
@@ -105,10 +105,10 @@ export const DualThemeDecorator: Decorator = (Story, context) => {
 
 	return (
 		<div data-dual-theme="true" style={containerStyle}>
-			<div data-theme="horizon-light" style={halfStyle}>
+			<div data-theme="sap-reltio-light" style={halfStyle}>
 				<Story />
 			</div>
-			<div data-theme="horizon-dark" style={halfStyle}>
+			<div data-theme="sap-reltio-dark" style={halfStyle}>
 				<Story />
 			</div>
 		</div>

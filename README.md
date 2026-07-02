@@ -98,14 +98,14 @@ Load the platform's static CSS files in `<head>` and set the `data-theme` attrib
 <link rel="stylesheet" href="https://reltio.design/variables.css" />
 <link rel="stylesheet" href="https://reltio.design/fonts.css" />
 
-<div data-theme="horizon-light">
+<div data-theme="sap-reltio-light">
   <!-- UI5 components and Reltio components both read the active theme here -->
 </div>
 ```
 
-Switch the theme by toggling `data-theme="horizon-light"` or `data-theme="horizon-dark"` on any ancestor element. Nested theming is supported.
+Set `data-theme="sap-reltio-light"` or `data-theme="sap-reltio-dark"` on an ancestor element — this is **required** (`variables.css` ships only the Reltio delta over UI5's stock defaults). The legacy `horizon-light` / `horizon-dark` values still work as a deprecated alias. Nested theming is supported.
 
-The two themes are branded **SAP Reltio** (light) and **SAP Reltio Dark** — a Reltio-branded customisation of SAP Horizon. These are display names; the technical identifiers stay SAP Horizon's (`data-theme="horizon-light"` / `horizon-dark`). Official SAP `themeId` registration is planned.
+The two themes are branded **SAP Reltio** (light) and **SAP Reltio Dark** — a Reltio-branded customisation of SAP Horizon. The `data-theme` values are `sap-reltio-light` / `sap-reltio-dark`; this is separate from UI5's own `sapSapThemeId` (`sap_horizon` / `sap_horizon_dark`). Official SAP registration of a dedicated Reltio `themeId` is planned.
 
 ### Using endorsed UI5 components
 
@@ -155,7 +155,7 @@ import { Chat, type ChatProps } from "@reltio/design/components";
 1. Start Storybook: `npm run dev`
 2. Open http://localhost:6006
 3. Browse the **Welcome**, **Design Tokens**, **Guides**, and **Components** sections
-4. Use the theme toolbar (top right) to preview every story under `horizon-light` and `horizon-dark`
+4. Use the theme toolbar (top right) to preview every story under `sap-reltio-light` and `sap-reltio-dark`
 
 ### Working with design mockups
 
@@ -307,7 +307,7 @@ Storybook is the single workspace for components, design tokens, guides, and API
 - **Canvas** — interactive component development
 - **Docs** — auto-generated documentation per component
 - **Controls** — live prop modification
-- **Theme toolbar** — switch between `horizon-light` and `horizon-dark`
+- **Theme toolbar** — switch between `sap-reltio-light` and `sap-reltio-dark`
 
 ### Adding stories
 
@@ -352,7 +352,7 @@ npm run lint     # check without fixes
 
 ## Visual Testing
 
-The project uses **Chromatic** for visual regression testing. Every story is captured under both `horizon-light` and `horizon-dark`.
+The project uses **Chromatic** for visual regression testing. Every story is captured under both `sap-reltio-light` and `sap-reltio-dark`.
 
 ```bash
 npm run deploy
@@ -374,7 +374,7 @@ npm run deploy
 - [ ] UI5 components used directly when possible; Reltio wrappers only for real Reltio product value
 - [ ] Code follows project structure (`.tsx` + `.types.ts` + `.module.css` + `.stories.tsx` + `index.ts`)
 - [ ] Stories added/updated in Storybook (one variant per story)
-- [ ] Component verified under both `horizon-light` and `horizon-dark`
+- [ ] Component verified under both `sap-reltio-light` and `sap-reltio-dark`
 - [ ] No hardcoded hex colors — all colors reference `--sap*` tokens
 - [ ] `npm run format` executed
 - [ ] `npm run lint` passes

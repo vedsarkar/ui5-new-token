@@ -474,7 +474,7 @@ Check that you've loaded the design tokens stylesheet and set the active theme o
 <link rel="stylesheet" href="https://reltio.design/variables.css" />
 <link rel="stylesheet" href="https://reltio.design/fonts.css" />
 
-<div data-theme="horizon-light">
+<div data-theme="sap-reltio-light">
   <!-- Your app -->
 </div>
 \`\`\`
