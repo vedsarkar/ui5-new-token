@@ -1,10 +1,12 @@
 import { Button } from "@ui5/webcomponents-react/Button";
 import { ShellBar as Ui5ShellBar } from "@ui5/webcomponents-react/ShellBar";
+import { ShellBarItem } from "@ui5/webcomponents-react/ShellBarItem";
 import { isValidElement, useEffect, useState } from "react";
 import { classNames } from "@/utils/classNames";
 import styles from "./ShellBar.module.css";
 import type { ShellBarProps } from "./ShellBar.types";
 import "@ui5/webcomponents-icons/dist/menu2.js";
+import "@ui5/webcomponents-icons/dist/bell.js";
 
 const lightLogoUrl = "https://reltio.design/logo/sap-reltio-light.svg";
 const darkLogoUrl = "https://reltio.design/logo/sap-reltio-dark.svg";
@@ -30,6 +32,7 @@ export const ShellBar = ({
 	tenantSelector,
 	children,
 	userMenu,
+	notificationsUrl,
 	...rest
 }: ShellBarProps) => {
 	const hasSideNavigation = isValidElement(sideNavigation);
@@ -76,6 +79,15 @@ export const ShellBar = ({
 				{...rest}
 			>
 				{children}
+				{notificationsUrl && (
+					<ShellBarItem
+						icon="bell"
+						text="Notifications"
+						onClick={() =>
+							window.open(notificationsUrl, "_blank", "noopener,noreferrer")
+						}
+					/>
+				)}
 				{userMenu}
 			</Ui5ShellBar>
 			{hasSideNavigation && (

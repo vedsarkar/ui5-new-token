@@ -77,6 +77,17 @@ extra.
 />
 ```
 
+### Notifications
+
+Pass `notificationsUrl` to surface a bell icon in the right actions cluster. Clicking it opens the given URL in a new browser tab (`target="_blank"` with `noopener,noreferrer`). Omit the prop to hide the bell entirely — the wrapper intentionally does not expose the UI5 `showNotifications` / `notificationsCount` / `onNotificationsClick` surface, favoring this single link-based prop.
+
+```tsx
+<ShellBar
+  primaryTitle="Console"
+  notificationsUrl="https://console.reltio.com/notifications"
+/>
+```
+
 ### Accessibility
 
 The default Reltio brand mark `<img>` has `alt="Reltio"` so screen readers announce the brand. The hidden dark `<img>` is `aria-hidden` to avoid duplicate announcements. When you pass a custom `logo`, set `alt` (or `aria-label`) on the inner logo image.

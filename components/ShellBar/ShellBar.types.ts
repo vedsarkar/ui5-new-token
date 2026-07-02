@@ -14,6 +14,8 @@ type Ui5ShellBarProps = ComponentPropsWithoutRef<typeof Ui5ShellBar>;
  * - `logo` override prop (the recommended customization path) for sub-apps
  *   that want their own mark
  * - `tenantSelector` / `userMenu` Reltio slot props (see below)
+ * - `notificationsUrl` prop that renders a bell icon linking to a
+ *   notifications page (see below)
  * - `data-test-id` forwarding to the rendered light-DOM host
  *
  * The wrapper deliberately exposes a minimal surface. The remaining UI5
@@ -86,4 +88,10 @@ export type ShellBarProps = Omit<
 	 * intentionally not exposed.
 	 */
 	userMenu?: ReactElement;
+	/**
+	 * URL of the notifications page. When provided, `ShellBar` renders a bell
+	 * icon in the right actions cluster; clicking it opens the given URL in a
+	 * new browser tab. When omitted, no bell icon is shown.
+	 */
+	notificationsUrl?: string;
 };

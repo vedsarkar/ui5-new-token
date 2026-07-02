@@ -225,6 +225,16 @@ export const WithTenantSelector = meta.story({
 	},
 });
 
+export const WithNotifications = meta.story({
+	args: {
+		primaryTitle: "Console",
+		notificationsUrl: "https://console.reltio.com/notifications",
+		userMenu: (
+			<UserMenu onSignOut={fn()} user={shellBarUser} appVersion="2.21.3" />
+		),
+	},
+});
+
 export const WithUserMenu = meta.story({
 	play: async ({ canvasElement }) => {
 		const avatar = canvasElement.querySelector("ui5-avatar") as HTMLElement;

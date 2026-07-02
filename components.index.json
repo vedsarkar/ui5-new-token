@@ -2,12 +2,18 @@
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "ReltioDesignComponentIndex",
 	"generatedBy": "scripts/build-component-index.mjs",
-	"count": 153,
+	"count": 152,
 	"components": [
 		{
 			"name": "ActionSheet",
 			"import": "@reltio/design/components",
 			"description": "ActionSheet is the SAP Fiori action sheet, re-exported from @ui5/webcomponents-react/ActionSheet as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "AppNavigation",
+			"import": "@reltio/design/components",
+			"description": "AppNavigation renders the Reltio application catalog as a left-hand side menu.",
 			"hasSchema": true
 		},
 		{
@@ -575,21 +581,9 @@
 			"hasSchema": true
 		},
 		{
-			"name": "ShellBarBranding",
-			"import": "@reltio/design/components",
-			"description": "ShellBarBranding renders the product brand mark/logo in the ShellBar.",
-			"hasSchema": true
-		},
-		{
 			"name": "ShellBarItem",
 			"import": "@reltio/design/components",
 			"description": "ShellBarItem is a custom action button in the ShellBar.",
-			"hasSchema": true
-		},
-		{
-			"name": "ShellBarSearch",
-			"import": "@reltio/design/components",
-			"description": "ShellBarSearch is the search field used inside the ShellBar.",
 			"hasSchema": true
 		},
 		{
