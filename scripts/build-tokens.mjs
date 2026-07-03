@@ -4,26 +4,35 @@
  *
  * Reads SAP Horizon design tokens from the repo-local token files
  * (`utils/sap_horizon.tokens.json`, `utils/sap_horizon_dark.tokens.json`) and
- * emits `public/variables.css` — but ONLY the tokens whose value differs from
- * the stock SAP Horizon theme. The rest are left to UI5.
+ * emits `public/variables.css`, carrying — for both themes — only the tokens
+ * that are NOT identical to UI5's stock light theme in both themes. The rest are
+ * left to UI5.
  *
- * ── Why we emit only the deltas ────────────────────────────────────────────
+ * ── What UI5 gives us, and what it does not ────────────────────────────────
  * The UI5 web components ship their own copy of the stock SAP Horizon theme and
  * inject it at runtime as a *constructable* stylesheet appended to
  * `document.adoptedStyleSheets` (see `@ui5/webcomponents-base` → `applyTheme` /
- * `ManagedStyles`). That sheet puts the FULL upstream token set on `:root`
- * (`:root { --sapBrandColor: #0070f2; … }`). So the stock values are already in
- * the document — there is no point shipping them again. `variables.css` only
- * needs to carry the tokens Reltio actually re-values; everything else inherits
- * UI5's defaults, and tracks UI5 automatically when it upgrades.
+ * `ManagedStyles`). Crucially UI5 injects only its ACTIVE theme — the default is
+ * `sap_horizon` (light) and this platform never calls `setTheme`, so what lands
+ * on `:root` is always the stock LIGHT token set (`:root { --sapBrandColor:
+ * #0070f2; … }`). UI5 does NOT read our `data-theme` attribute and injects no
+ * dark token set.
  *
- * The "custom" set is computed at build time by diffing our token files against
- * UI5's injected bundles (`@ui5/webcomponents-theming/.../parameters-bundle.css.json`
- * for `sap_horizon` and `sap_horizon_dark`). A token is emitted when it is absent
- * from the bundle, or when its value differs after formatting normalization
- * (so `1.0` vs `1` or `#00c` vs `#0000cc` are NOT treated as customizations).
- * The comparison is deliberately conservative: emitting a redundant override is
- * harmless, silently dropping a real one is not.
+ * Consequences for what `variables.css` must carry:
+ *   • A token equal to stock light in BOTH themes → omit; UI5 supplies it.
+ *   • Any other token → emit in BOTH `[data-theme]` blocks (each with its own
+ *     theme's value). We cannot lean on UI5 for dark values (it injects none),
+ *     and both blocks must cover the SAME key set so that entering a
+ *     `[data-theme]` subtree re-applies every non-constant token — otherwise a
+ *     dark panel nested under a light one (Storybook's dual-theme decorator, or
+ *     any nested theming) would inherit stale light values.
+ *
+ * The key set is computed at build time by diffing our token files against UI5's
+ * injected light bundle (`@ui5/webcomponents-theming/.../sap_horizon/
+ * parameters-bundle.css.json`). Comparison uses formatting normalization (so
+ * `1.0` vs `1` or `#00c` vs `#0000cc` are not treated as differences) and is
+ * deliberately conservative: emitting a redundant override is harmless, silently
+ * dropping a real one is not.
  *
  * ── Selectors & the theming contract ───────────────────────────────────────
  * Because the stock light values now come from UI5 (not from a `:root` block in
@@ -77,9 +86,7 @@ const DARK_REL = "utils/sap_horizon_dark.tokens.json";
 const UI5_THEMES_REL =
 	"node_modules/@ui5/webcomponents-theming/dist/generated/assets/themes";
 const LIGHT_BUNDLE_REL = `${UI5_THEMES_REL}/sap_horizon/parameters-bundle.css.json`;
-const DARK_BUNDLE_REL = `${UI5_THEMES_REL}/sap_horizon_dark/parameters-bundle.css.json`;
 const LIGHT_BUNDLE = join(ROOT, LIGHT_BUNDLE_REL);
-const DARK_BUNDLE = join(ROOT, DARK_BUNDLE_REL);
 
 // Theme attribute values. `sap-reltio-*` is the canonical, brand-explicit name;
 // `horizon-*` is kept as a deprecated alias so existing consumers keep working.
@@ -203,32 +210,36 @@ function normalizeValue(value) {
 }
 
 /**
- * A token is a Reltio customization for a theme when it is absent from the stock
- * bundle, or its (normalized) value differs from the stock value.
+ * The set of tokens the stylesheet must carry. UI5 injects only its ACTIVE theme
+ * (the default `sap_horizon`, i.e. light) globally on `:root`, so that is the one
+ * — and only — baseline we can lean on. A token can therefore be omitted (left to
+ * UI5) only when it equals UI5's stock light value in BOTH the light and the dark
+ * theme; otherwise at least one theme needs to override it explicitly.
+ *
+ * Both `[data-theme]` blocks emit the SAME key set (each with its own theme's
+ * value). That symmetry is what makes nested / sibling theming correct: entering
+ * a `[data-theme]` subtree re-applies every non-constant token, so a dark panel
+ * nested under a light one (or vice versa) never inherits the wrong value.
  */
-function isCustomization(key, ourTokens, stockMap) {
-	if (!(key in stockMap)) {
-		return true;
-	}
-	return normalizeValue(ourTokens[key]) !== normalizeValue(stockMap[key]);
+function computeVaryingKeys(lightTokens, darkTokens, stockLight) {
+	return Object.keys(lightTokens).filter((key) => {
+		if (!(key in stockLight)) {
+			return true;
+		}
+		const stock = normalizeValue(stockLight[key]);
+		return (
+			normalizeValue(lightTokens[key]) !== stock ||
+			normalizeValue(darkTokens[key]) !== stock
+		);
+	});
 }
 
 // ── CSS generator ────────────────────────────────────────────────────────
 
-function themeDeclarations(ourTokens, stockMap) {
-	return Object.keys(ourTokens)
-		.filter((key) => isCustomization(key, ourTokens, stockMap))
-		.map((key) => `\t--${key}: ${ourTokens[key]};`);
-}
-
-function generateVariablesCss({
-	lightTokens,
-	darkTokens,
-	stockLight,
-	stockDark,
-}) {
-	const lightDecls = themeDeclarations(lightTokens, stockLight);
-	const darkDecls = themeDeclarations(darkTokens, stockDark);
+function generateVariablesCss({ lightTokens, darkTokens, stockLight }) {
+	const keys = computeVaryingKeys(lightTokens, darkTokens, stockLight);
+	const lightDecls = keys.map((key) => `\t--${key}: ${lightTokens[key]};`);
+	const darkDecls = keys.map((key) => `\t--${key}: ${darkTokens[key]};`);
 
 	const sections = [
 		`${themeSelector("light")} {\n${lightDecls.join("\n")}\n}`,
@@ -236,7 +247,7 @@ function generateVariablesCss({
 	];
 
 	const css = `${autoGeneratedHeader([LIGHT_REL, DARK_REL])}\n${sections.join("\n\n")}\n`;
-	return { css, lightCount: lightDecls.length, darkCount: darkDecls.length };
+	return { css, count: keys.length };
 }
 
 // ── Main ─────────────────────────────────────────────────────────────────
@@ -246,21 +257,19 @@ async function main() {
 	const darkTokens = (await readTokensJson(DARK_JSON, DARK_REL)).root;
 
 	const stockLight = await loadStockBundle(LIGHT_BUNDLE, LIGHT_BUNDLE_REL);
-	const stockDark = await loadStockBundle(DARK_BUNDLE, DARK_BUNDLE_REL);
 
-	const { css, lightCount, darkCount } = generateVariablesCss({
+	const { css, count } = generateVariablesCss({
 		lightTokens,
 		darkTokens,
 		stockLight,
-		stockDark,
 	});
 
 	await writeFile(join(PUBLIC_DIR, "variables.css"), css);
 
 	console.log(
 		"Generated:\n" +
-			`  public/variables.css (Reltio deltas only — ${lightCount} light, ${darkCount} dark; ` +
-			"stock values come from UI5 at runtime)",
+			`  public/variables.css (${count} tokens per theme; tokens identical to UI5's ` +
+			"stock light theme in both themes are omitted and inherited from UI5 at runtime)",
 	);
 }
 

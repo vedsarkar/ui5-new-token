@@ -7,21 +7,28 @@ public overview lives in Storybook → **Design Tokens**
 
 ## The one thing to understand first
 
-We do **not** ship a full theme. The UI5 web components already inject the
-complete stock **SAP Horizon** token set on `:root` at runtime, so
-`public/variables.css` carries **only the tokens whose value we changed** — the
-delta against stock — grouped under `[data-theme="sap-reltio-light"]` and
-`[data-theme="sap-reltio-dark"]` (the legacy `horizon-light` / `horizon-dark`
-values are also emitted as a deprecated alias). Everything else inherits UI5's
-defaults (and tracks UI5 automatically on upgrade).
+We don't re-ship values that UI5 already provides. The UI5 web components inject
+their **active** theme at runtime — the default is `sap_horizon` (light), and we
+never call `setTheme`, so the stock **light** token set always lands on `:root`.
+UI5 does **not** read our `data-theme` attribute and injects **no** dark set.
+
+So `public/variables.css` omits a token only when it equals the stock light value
+in **both** themes (UI5 supplies those); every other token is emitted for **both**
+themes under `[data-theme="sap-reltio-light"]` and `[data-theme="sap-reltio-dark"]`
+(plus the legacy `horizon-light` / `horizon-dark` alias). Both blocks carry the
+**same** key set so switching themes — including a dark panel nested inside a
+light one — always re-applies every non-constant token.
 
 Consequences you must keep in mind:
 
 - **`data-theme` is required.** An element with no `data-theme` ancestor renders
-  with UI5's stock values, not the Reltio palette.
-- **"Custom" is computed, not curated.** `build-tokens` decides what to emit by
-  diffing our token files against UI5's stock bundles. You never maintain a list
-  of custom tokens — you just set values.
+  with UI5's stock light values, not the Reltio palette.
+- **The dark block is not small.** Dark differs from stock light in most tokens
+  and UI5 injects no dark values, so the dark block carries them all — that's
+  expected, not a bug.
+- **The emitted set is computed, not curated.** `build-tokens` decides what to
+  emit by diffing our token files against UI5's stock light bundle. You never
+  maintain a list — you just set values.
 
 ## The files
 
@@ -29,7 +36,7 @@ Consequences you must keep in mind:
 |------|------|
 | `utils/sap_horizon.tokens.json` | Source values for the **light** theme (full SAP Horizon key set, Reltio-tuned values) |
 | `utils/sap_horizon_dark.tokens.json` | Source values for the **dark** theme |
-| `scripts/build-tokens.mjs` | Generator — diffs the source files against UI5's stock bundles and writes the delta |
+| `scripts/build-tokens.mjs` | Generator — diffs the source files against UI5's stock light bundle and writes the emitted set |
 | `public/variables.css` | **Generated output.** Never edit by hand |
 
 The stock baseline the generator compares against (useful when you need a SAP
@@ -37,7 +44,6 @@ default value):
 
 ```
 node_modules/@ui5/webcomponents-theming/dist/generated/assets/themes/sap_horizon/parameters-bundle.css.json
-node_modules/@ui5/webcomponents-theming/dist/generated/assets/themes/sap_horizon_dark/parameters-bundle.css.json
 ```
 
 ## Add or change a custom token
@@ -56,24 +62,27 @@ node_modules/@ui5/webcomponents-theming/dist/generated/assets/themes/sap_horizon
    Commit both the edited `*.tokens.json` **and** the regenerated
    `public/variables.css`.
 
-Light and dark are independent. A token you customize only in light appears only
-in the `[data-theme="sap-reltio-light"]` block, and vice versa. If a token should
-be customized in both themes, edit it in both files.
+Edit the light and dark values independently in their respective files. A token
+is emitted for **both** themes whenever it varies in either — and each block then
+carries that theme's own value — so you don't need to touch both files unless
+both values change.
 
 ## Remove a customization (revert to the SAP default)
 
-Because the output is delta-only, "removing" a customization just means making
-our value equal the stock value — the generator then drops it from
-`variables.css` automatically.
+The generator omits a token only when it equals UI5's stock **light** value in
+**both** themes. So "removing" means making both theme values match stock light.
 
-1. Find the stock value in the matching `parameters-bundle.css.json` (paths
-   above) — e.g. `--sapBrandColor: #0070f2;`.
-2. Set that value back in the token file(s).
+1. Find the stock value in `sap_horizon/parameters-bundle.css.json` (path above)
+   — e.g. `--sapBrandColor: #0070f2;`.
+2. Set that value in **both** `sap_horizon.tokens.json` and
+   `sap_horizon_dark.tokens.json`.
 3. Run `npm run build-tokens` and commit. The token disappears from
-   `variables.css`; at runtime it now falls back to UI5's default.
+   `variables.css`; at runtime it falls back to UI5's stock value.
 
-Do **not** delete the key from the token files — keep the full key surface; only
-values change.
+If the two themes should keep different values (e.g. a dark-mode background), the
+token stays in the output — that is correct, not a leftover customization. Do
+**not** delete keys from the token files — keep the full key surface; only values
+change.
 
 ## Good to know
 
