@@ -1,0 +1,23 @@
+{
+	"name": "@reltio/app",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start"
+	},
+	"dependencies": {
+		"@reltio/auth": "^1.4.1",
+		"@reltio/design": "^1.9.0",
+		"next": "^16.2.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	},
+	"devDependencies": {
+		"@types/node": "^22.0.0",
+		"@types/react": "^18.3.1",
+		"@types/react-dom": "^18.3.1",
+		"typescript": "^5.7.2"
+	}
+}

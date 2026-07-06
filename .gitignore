@@ -51,3 +51,12 @@ api/*/*.story.mdx
 # IDE via VSCode multi-root workspaces; if a developer clones an app into
 # `apps/<name>/src/` for local cross-app analysis, those files stay untracked.
 apps/*/src/
+
+# @reltio/app — local-run lockfile (its own .gitignore covers the rest)
+app-template/package-lock.json
+
+# @reltio/create-app — app-template/ is generated from the root app-template/
+# at prepack, and the LICENSE/NOTICE copies are staged there at prepack too.
+packages/create-app/app-template/
+packages/create-app/LICENSE
+packages/create-app/NOTICE

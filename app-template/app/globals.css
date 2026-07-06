@@ -1,0 +1,21 @@
+:root {
+	color-scheme: light;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: "72", "72full", -apple-system, "Segoe UI", Arial, sans-serif;
+	background-color: var(--sapBackgroundColor);
+	color: var(--sapTextColor);
+	font-size: 14px;
+	line-height: 1.5;
+}

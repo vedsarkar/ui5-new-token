@@ -11,7 +11,9 @@
 			"**",
 			"!public/mockServiceWorker.js",
 			"!.claude",
-			"!public/fonts.css"
+			"!public/fonts.css",
+			"!app-template",
+			"!packages/create-app/app-template"
 		]
 	},
 	"formatter": {
