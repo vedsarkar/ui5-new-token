@@ -36,7 +36,7 @@ function App() {
 export default App;
 ```
 
-> **Always use a subpath.** This package exposes only `/components`, `/charts`, `/hooks`, and `/utils` entries — there is no `main`/`exports` target for the bare package name. A `import { X } from "@reltio/design"` resolves to nothing and breaks at install time.
+> **Always use a subpath.** The bare package name has no root entry (no `main`), so `import { X } from "@reltio/design"` does not resolve — always import through a subpath (`/components`, `/charts`, `/hooks`, `/utils`, `/icons`). The package intentionally ships **without an `exports` lock**, so the whole file tree stays importable: you can deep-import a nested file (e.g. `@reltio/design/components/SideNavigation`) when you need to, though the curated subpath barrels above are the recommended entry. Consume through a bundler (Next/Vite/webpack); if an SSR or tooling path throws a module-resolution error, transpile the package (e.g. Next `transpilePackages: ["@reltio/design"]`).
 
 | Subpath | What's in it |
 |---|---|

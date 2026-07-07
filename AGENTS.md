@@ -185,7 +185,7 @@ The platform exposes a **single distribution package** to apps — `@reltio/desi
 | Reltio component author (this repo, building wrappers) | Direct UI5 imports allowed inside `components/` to wrap UI5 with Reltio product logic | `import { Button } from "@ui5/webcomponents-react/Button"` (only inside `components/SaveEntityButton/SaveEntityButton.tsx` etc.) |
 | Stories / docs (READMEs, MDX, snippets) | `@reltio/design/components` (MCP rewrites snippets to this path automatically) | `import { Button } from "@reltio/design/components"` |
 
-> **Why the `/components` subpath is mandatory.** The published `packages/design/package.json` exposes only subpath entries (`./components`, `./charts`, `./hooks`, `./utils`) — there is no `main`/`exports` target for the bare package name. A `import { X } from "@reltio/design"` resolves to nothing and breaks at install time. Storybook MCP and the Manifest Debugger automatically rewrite generated snippets to the subpath via `.storybook/reltioManifestPreset.ts`, so AI agents always see the correct path. This is a platform-wide rule — see [Module Conventions](#module-conventions-mandatory-for-packages-code) below; every `@reltio/*` package follows it.
+> **Why you import via the `/components` subpath.** Platform packages **intentionally ship without an `exports` map**, so the full built file tree is importable at any depth (see [Open package surface](#open-package-surface-no-exports-lock) below) — nothing blocks a deep import like `@reltio/design/components/SideNavigation`. The **recommended** entry is still the curated subpath barrels (`./components`, `./charts`, `./hooks`, `./utils`, `./icons`), which is what every snippet and doc uses. What does **not** work is the bare package name: `import { X } from "@reltio/design"` has no root entry (no `main`) and fails, so always include a subpath. Storybook MCP and the Manifest Debugger automatically rewrite generated snippets to the subpath via `.storybook/reltioManifestPreset.ts`, so AI agents always see the correct path. This is a platform-wide rule — see [Module Conventions](#module-conventions-mandatory-for-packages-code) below; every `@reltio/*` package follows it.
 
 ### When to use an endorsed UI5 component vs. build a Reltio component
 
@@ -254,8 +254,9 @@ export * from "./getAccessToken";
 export * from "./getBasicToken";
 export * from "./getRefreshToken";
 // cookies.ts, state.ts, readHeader.ts, validateRedirectUrl.ts are
-// intentionally absent — they are internal and unreachable from the
-// package's public surface.
+// intentionally absent — they stay out of the recommended (barrelled)
+// surface. See "Open package surface" below: this is curation by
+// convention, not a hard import lock.
 ```
 
 Subpath entry files at the workspace root (e.g. `packages/design/components.ts`, `packages/auth/src/<sub>/index.ts`) are thin `export *` pass-throughs:
@@ -265,23 +266,18 @@ Subpath entry files at the workspace root (e.g. `packages/design/components.ts`,
 export * from "@/components";
 ```
 
-Files NOT listed in any `index.ts` along the chain to a public subpath are internal by construction. This is how `@reltio/auth` hides `createOAuthClient` from the public API even though it ships in the same bundle — no other mechanism is needed.
+Files NOT listed in any `index.ts` along the chain stay out of the **recommended** (barrelled) surface. This is how `@reltio/auth` keeps `createOAuthClient` out of its public API. Note this is a curation / intent signal, **not** a hard boundary — because packages ship without an `exports` lock (see below), a determined consumer can still deep-import a non-barrelled file. To make something genuinely hard to reach, nest it deeper and leave it out of every `index.ts`.
 
-### Subpath-only package exports (MANDATORY)
+### Open package surface (no `exports` lock)
 
-Every workspace in `packages/*` declares its `package.json` `exports` field with **named subpaths only**. There is no `.` (bare) entry. Consumers always import from a named subpath:
+Platform packages **intentionally ship without an `exports` map**. The entire built file tree is importable at any nesting depth — `@reltio/design/components/SideNavigation`, `@reltio/design/utils/classNames`, deeper still. This is a deliberate honesty-with-consumers choice: a bundler resolves any file or folder (directory imports fall back to `index.js`), so nobody has to invent workarounds to reach a nested file. Empirically, adding a wildcard `exports` map (`"./*": "./*"`) would *break* that directory→`index` resolution, so we do not add one.
 
-```ts
-// correct
-import { Button } from "@reltio/design/components";
-import { createNextAuth } from "@reltio/auth/next";
+Keep these consequences in mind:
 
-// resolves to ERR_PACKAGE_PATH_NOT_EXPORTED
-import { Button } from "@reltio/design";
-import { createNextAuth } from "@reltio/auth";
-```
-
-Why: the subpath signals intent at the import line (`@reltio/auth/next` clearly means "Next.js adapter"), avoids confusion between equivalent paths to the same exports, and makes the package surface uniform across all platform packages. The `exports` map also enforces module isolation — consumers cannot reach into internal paths like `@reltio/<pkg>/src/...`.
+- **Recommended entry = the curated subpath barrels** — `@reltio/design/components`, `./charts`, `./hooks`, `./utils`, `./icons`. Import from those unless you have a concrete reason to reach a nested file. MCP snippets and docs always use them.
+- **Bare package name fails** — there is no root entry (no `main`), so `import { X } from "@reltio/design"` does not resolve. Always include a subpath. The same holds for every platform package (e.g. `@reltio/auth/next`, not bare `@reltio/auth`).
+- **Privacy is by convention, not enforced** — the `index.ts` barrels curate the recommended surface, but nothing physically prevents a deep import of a non-barrelled file. To keep something out of reach, nest it deeper (e.g. `components/MyTable/internals/…`) and leave it out of every `index.ts`; treat this as intent, not a lock.
+- **Consumption is bundler-first** (webpack/Vite/Next). The raw Node ESM resolver will not load these files directly — the emitted code uses extensionless relative imports and CSS-module imports that only a bundler resolves. Consumers running SSR or tooling paths outside the bundler must transpile the package (e.g. Next `transpilePackages: ["@reltio/design"]`).
 
 ## Architectural Requirements
 
