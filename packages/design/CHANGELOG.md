@@ -1,5 +1,21 @@
 # @reltio/design
 
+## 1.10.0
+
+### Minor Changes
+
+- 00b27e6: Re-export SAP Fiori icons from `@reltio/design/icons/sap/<kebab-name>` so consumer apps never import `@ui5/webcomponents-icons` directly. Reltio custom icons publish under `@reltio/design/icons/reltio/<kebab-name>` so both families can share kebab names without module collisions.
+
+  Every per-icon module shares the same contract: tree-shakable side-effect registration plus an optional PascalCase React component from the same path (`import { Decline } from "@reltio/design/icons/sap/decline"`, `import { ReltioDataQuality } from "@reltio/design/icons/reltio/data-quality"`). Render SAP icons by bare registry name (`<Icon name="save" />`); Reltio icons by `reltio/<name>`.
+
+  SAP modules compile into `dist/icons/sap/`; Reltio modules compile into `dist/icons/reltio/`. Reltio aggregate: `import "@reltio/design/icons/reltio"` only.
+
+### Patch Changes
+
+- acdb0c7: Drop the stray `dist/packages` directory from the published package.
+
+  `tsc` infers `rootDir` as the common ancestor of every compiled file, which spans both the repo-root code folders (`components/`, `charts/`, …) and the workspace entry files (`packages/design/*.ts`) — so the entry files were emitted into `dist/packages/design/`. Those files only re-export `../../components` (i.e. `dist/components`, which is what `@reltio/design/components` already resolves to) and nothing references them, so they are now pruned during `postbuild`. No public API or import-path change.
+
 ## 1.9.1
 
 ### Patch Changes
