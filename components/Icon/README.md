@@ -2,7 +2,7 @@
 
 ```tsx
 import { Icon } from "@reltio/design/components";
-import "@ui5/webcomponents-icons/dist/save.js";
+import "@reltio/design/icons/sap/save";
 
 <Icon name="save" />;
 ```
@@ -13,21 +13,30 @@ There is no Reltio wrapping or default override: the props, slots, and runtime b
 
 ### Loading icons — side-effect imports
 
-Each icon is loaded individually as a side-effect import — only the icons you actually `import` end up in your bundle:
+Each icon is loaded individually as a side-effect import — SAP from `@reltio/design/icons/sap/<kebab-name>`, Reltio from `@reltio/design/icons/reltio/<kebab-name>`. Only the icons you actually `import` end up in your bundle:
 
 ```tsx
-import "@ui5/webcomponents-icons/dist/save.js";
-import "@ui5/webcomponents-icons/dist/edit.js";
-import "@ui5/webcomponents-icons/dist/delete.js";
+import "@reltio/design/icons/sap/save";
+import "@reltio/design/icons/reltio/data-quality";
+import { Icon } from "@reltio/design/components";
 
 <Icon name="save" />;
-<Icon name="edit" />;
-<Icon name="delete" />;
+<Icon name="reltio/data-quality" />;
 ```
 
-Browse the full set in the [SAP Fiori Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html). Use kebab-case names (`navigation-right-arrow`, not `navigationRightArrow`).
+Optional PascalCase component export from the same path:
 
-> **No need to install `@ui5/webcomponents-icons` separately** — it arrives transitively via `@reltio/design`. Just write the side-effect import.
+```tsx
+import { Save } from "@reltio/design/icons/sap/save";
+import { ReltioDataQuality } from "@reltio/design/icons/reltio/data-quality";
+
+<Save design="Positive" accessibleName="Saved" />
+<ReltioDataQuality accessibleName="Data quality" />
+```
+
+**Render names by family:** SAP Fiori icons use the bare kebab name (`save`, `navigation-right-arrow`). Reltio icons use the `reltio/` prefix (`reltio/data-quality`). Browse SAP names in the [SAP Fiori Icon Explorer](https://sdk.openui5.org/test-resources/sap/m/demokit/iconExplorer/webapp/index.html); browse Reltio icons on the [Icons](/docs/icons--docs) docs page.
+
+> **No need to install `@ui5/webcomponents-icons` separately** — it arrives transitively via `@reltio/design`. Register SAP icons through `@reltio/design/icons/sap/<kebab-name>` and Reltio icons through `@reltio/design/icons/reltio/<kebab-name>`, not `@ui5/webcomponents-icons/dist/...`.
 
 See the [Icon Library guide](?path=/docs/guides-icon-library--docs) for icon discovery and Reltio-specific picking guidance.
 

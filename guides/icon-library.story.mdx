@@ -4,9 +4,9 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Icon Library Guide
 
-Reltio Design uses the SAP Fiori icon set distributed by [`@ui5/webcomponents-icons`](https://sap.github.io/ui5-webcomponents/), rendered in the Horizon visual style. Icons are rendered by UI5 React's `<Icon>` component. There is no Reltio-specific icon component — we consume UI5's set directly so that every Reltio surface stays visually aligned with the rest of the SAP ecosystem.
+Reltio applications render icons through `@reltio/design` — the SAP Fiori icon set in the Horizon visual style, plus Reltio product glyphs. SAP icons register at `@reltio/design/icons/sap/<kebab-name>`; Reltio icons at `@reltio/design/icons/reltio/<kebab-name>`. Render with `<Icon name="…" />` from `@reltio/design/components`.
 
-> **🎯 Key Principle:** Use `<Icon name="..." />` from `@ui5/webcomponents-react`, and import the icon's data module from `@ui5/webcomponents-icons` to register it on demand.
+> **🎯 Key Principle:** Use `<Icon name="..." />` from `@reltio/design/components`. Register SAP icons with `import "@reltio/design/icons/sap/<kebab-name>"` and Reltio icons with `import "@reltio/design/icons/reltio/<kebab-name>"`.
 
 ## Overview
 
@@ -20,15 +20,15 @@ Reltio Design uses the SAP Fiori icon set distributed by [`@ui5/webcomponents-ic
 	<tbody>
 		<tr>
 			<td>🎨 <strong>SAP Fiori Iconography</strong></td>
-			<td>Sourced from <code>@ui5/webcomponents-icons</code> and rendered in the Horizon visual style; same iconography that UI5 components themselves use</td>
+			<td>SAP Fiori standard library, shipped as per-icon modules at <code>@reltio/design/icons/&lt;kebab-name&gt;</code>; same iconography as other SAP Fiori surfaces</td>
 		</tr>
 		<tr>
 			<td>📦 <strong>One renderer</strong></td>
-			<td>Render any icon with <code>&lt;Icon name="..." /&gt;</code> from <code>@ui5/webcomponents-react</code></td>
+			<td>Render any icon with <code>&lt;Icon name="..." /&gt;</code> from <code>@reltio/design/components</code></td>
 		</tr>
 		<tr>
 			<td>🌳 <strong>Tree-shakable</strong></td>
-			<td>Only the icon data modules you import are bundled; unused icons are stripped</td>
+			<td>Only the icon modules you import are bundled (<code>icons/&lt;name&gt;</code> or <code>icons/reltio/&lt;name&gt;</code>)</td>
 		</tr>
 		<tr>
 			<td>🔧 <strong>CSS-driven sizing & color</strong></td>
@@ -61,7 +61,7 @@ Reltio Design uses the SAP Fiori icon set distributed by [`@ui5/webcomponents-ic
 		<tr>
 			<td><code>SAP-icons</code> (default)</td>
 			<td>General-purpose UI icons (navigation, actions, status)</td>
-			<td><code>@ui5/webcomponents-icons/dist/&lt;name&gt;.js</code></td>
+			<td><code>@reltio/design/icons/&lt;name&gt;</code></td>
 		</tr>
 		<tr>
 			<td><code>tnt</code></td>
@@ -78,24 +78,42 @@ Reltio Design uses the SAP Fiori icon set distributed by [`@ui5/webcomponents-ic
 
 \* The `tnt` and `business-suite` collections are separate npm packages — install them on demand.
 
+> **Finding SAP icon names:** Browse the full default collection (~700 icons) in the [UI5 Web Components Icons explorer](https://ui5.github.io/webcomponents/icons/) — then import `@reltio/design/icons/sap/<kebab-name>`.
+
 Browse the full visual catalog in the [UI5 Web Components Icons explorer](https://ui5.github.io/webcomponents/icons/).
 
 ## Usage
 
 ### 1. Register the icon (tree-shakable side-effect import)
 
+Separate import paths per family — register only the icons you use:
+
 ```ts
-import "@ui5/webcomponents-icons/dist/save.js";
-import "@ui5/webcomponents-icons/dist/navigation-down-arrow.js";
+import "@reltio/design/icons/sap/save";
+import "@reltio/design/icons/reltio/data-quality";
 ```
 
-Each side-effect import registers a single icon's SVG data with UI5's icon registry. Only the icons you import end up in the bundle.
+Each side-effect import registers a single icon in the global icon registry. Only the icons you import end up in the bundle.
 
 ### 2. Render with `<Icon>`
 
+The render `name` depends on the family:
+
 ```tsx
-import { Icon } from "@ui5/webcomponents-react/Icon";
-import "@ui5/webcomponents-icons/dist/save.js";
+import { Icon } from "@reltio/design/components";
+import "@reltio/design/icons/sap/save";
+import "@reltio/design/icons/reltio/data-quality";
+
+// SAP Fiori — bare kebab name
+<Icon name="save" />
+
+// Reltio icons — reltio/ prefix
+<Icon name="reltio/data-quality" />
+```
+
+```tsx
+import { Icon } from "@reltio/design/components";
+import "@reltio/design/icons/sap/save";
 
 function SaveButton() {
 	return (
@@ -107,13 +125,25 @@ function SaveButton() {
 }
 ```
 
-### 3. Use icons inside UI5 components by name
+### 3. Optional PascalCase component export
 
-Most UI5 components that accept an icon (e.g. `Button`, `MessageStrip`, `ListItem`) expose an `icon` prop that takes the same name string. As long as the icon module is imported once anywhere in the app, the name resolves globally.
+Every per-icon module exports a named component from the same path:
 
 ```tsx
-import { Button } from "@ui5/webcomponents-react/Button";
-import "@ui5/webcomponents-icons/dist/save.js";
+import { Decline } from "@reltio/design/icons/sap/decline";
+import { ReltioDataQuality } from "@reltio/design/icons/reltio/data-quality";
+
+<Decline design="Negative" accessibleName="Close" />
+<ReltioDataQuality accessibleName="Data quality" />
+```
+
+### 4. Use icons inside other components by name
+
+Most `@reltio/design` components that accept an icon (e.g. `Button`, `MessageStrip`, `ListItem`) expose an `icon` prop that takes the same name string. As long as the icon module is imported once anywhere in the app, the name resolves globally.
+
+```tsx
+import { Button } from "@reltio/design/components";
+import "@reltio/design/icons/sap/save";
 
 <Button icon="save" design="Emphasized">Save</Button>;
 ```
@@ -123,11 +153,13 @@ import "@ui5/webcomponents-icons/dist/save.js";
 Prefix the icon `name` with the collection identifier:
 
 ```tsx
-import { Icon } from "@ui5/webcomponents-react/Icon";
+import { Icon } from "@reltio/design/components";
 import "@ui5/webcomponents-icons-tnt/dist/network.js";
 
 <Icon name="tnt/network" />;
 ```
+
+> Non-default collections (`tnt`, `business-suite`) are not re-exported from `@reltio/design` in v1 — install `@ui5/webcomponents-icons-tnt` or `@ui5/webcomponents-icons-business-suite` and import their modules directly, as shown above.
 
 ## Sizing
 
@@ -152,7 +184,7 @@ By default `<Icon>` paints with `currentColor`, so it inherits the parent's text
 <Icon name="status-critical" style={{ color: "var(--sapCriticalColor)" }} />
 ```
 
-UI5 also exposes a small set of semantic `design` values on `<Icon>` that map to standard SAP token combinations (e.g. `Negative`, `Positive`, `Critical`, `Information`, `Neutral`, `Contrast`, `Default`):
+`<Icon>` also supports semantic `design` values that map to standard SAP token combinations (e.g. `Negative`, `Positive`, `Critical`, `Information`, `Neutral`, `Contrast`, `Default`):
 
 ```tsx
 <Icon name="status-positive" design="Positive" />
@@ -173,11 +205,11 @@ Icons automatically follow the active SAP theme through the `data-theme` cascade
 </div>
 ```
 
-See the [Design Tokens guide](./?path=/docs/design-tokens--docs) for how the cascade reaches UI5's Shadow DOM.
+See the [Design Tokens guide](./?path=/docs/design-tokens--docs) for how the cascade reaches components through Shadow DOM.
 
 ## Accessibility
 
-Icons are decorative by default — UI5 hides them from assistive tech.
+Icons are decorative by default — they are hidden from assistive tech unless you opt in.
 
 **Decorative icons** (default) — when the icon accompanies visible text or surrounding context conveys the meaning:
 
@@ -196,7 +228,7 @@ Icons are decorative by default — UI5 hides them from assistive tech.
 </button>
 ```
 
-For icon-only UI5 buttons, the equivalent prop is `accessibleName` on the `Button` itself:
+For icon-only buttons, set `accessibleName` on the `Button` itself:
 
 ```tsx
 <Button icon="save" accessibleName="Save" />
@@ -204,37 +236,36 @@ For icon-only UI5 buttons, the equivalent prop is `accessibleName` on the `Butto
 
 ## Updating the Icon Set
 
-The icon set is shipped by `@ui5/webcomponents-icons`. To pull in newer SAP icons, bump the package alongside the rest of the UI5 stack:
+SAP Fiori icons ship through `@reltio/design` at the version the CoE has tested. To pick up new SAP icons, bump `@reltio/design` — do not install or import `@ui5/webcomponents-icons` directly in application code.
 
-```bash
-npm update @ui5/webcomponents @ui5/webcomponents-react @ui5/webcomponents-icons
-```
-
-For non-default collections:
-
-```bash
-npm install @ui5/webcomponents-icons-tnt
-npm install @ui5/webcomponents-icons-business-suite
-```
-
-There is no in-repo "source" folder for icons — every SVG comes from the installed package at runtime.
+For non-default collections (`tnt`, `business-suite`), install the separate npm packages and import their modules directly — these are not yet re-exported from `@reltio/design` in v1.
 
 ## Best Practices
 
-**✅ Do:** Register icons via side-effect import at the call site
+**✅ Do:** Register icons via `@reltio/design/icons/sap/<kebab-name>`
 
 ```ts
-import { Icon } from "@ui5/webcomponents-react/Icon";
-import "@ui5/webcomponents-icons/dist/save.js";
+import { Icon } from "@reltio/design/components";
+import "@reltio/design/icons/sap/save";
 
 <Icon name="save" />;
 ```
 
-**❌ Don't:** Import every icon globally at the app root — defeats tree-shaking
+**❌ Don't:** Import `@ui5/webcomponents-icons` in application code
 
 ```ts
-// Bundles every icon in the package
-import "@ui5/webcomponents-icons/dist/AllIcons.js";
+import "@ui5/webcomponents-icons/dist/save.js";
+```
+
+**❌ Don't:** Import every icon globally at the app root — defeats tree-shaking
+
+`@reltio/design` ships SAP Fiori icons only as per-icon modules (`@reltio/design/icons/sap/<kebab-name>`). There is no all-SAP-icons aggregate import.
+
+For the Reltio custom set, a convenience barrel exists — use it only when you genuinely need most icons (prototypes, tooling):
+
+```ts
+// Bundles every Reltio icon in the package
+import "@reltio/design/icons/reltio";
 ```
 
 **✅ Do:** Use semantic colors via `--sap*` tokens or `<Icon design="...">`
@@ -266,10 +297,10 @@ import "@ui5/webcomponents-icons/dist/AllIcons.js";
 	<tbody>
 		<tr>
 			<td>Render an icon</td>
-			<td><code>&lt;Icon name="save" /&gt;</code> + <code>import "@ui5/webcomponents-icons/dist/save.js"</code></td>
+			<td><code>&lt;Icon name="save" /&gt;</code> + <code>import "@reltio/design/icons/sap/save"</code></td>
 		</tr>
 		<tr>
-			<td>Use inside a UI5 button</td>
+			<td>Use inside a <code>Button</code></td>
 			<td><code>&lt;Button icon="save" /&gt;</code></td>
 		</tr>
 		<tr>
@@ -289,8 +320,12 @@ import "@ui5/webcomponents-icons/dist/AllIcons.js";
 			<td>Install <code>@ui5/webcomponents-icons-tnt</code> or <code>...-business-suite</code>; prefix the name (<code>tnt/network</code>)</td>
 		</tr>
 		<tr>
-			<td>Browse all icons</td>
-			<td><a href="https://ui5.github.io/webcomponents/icons/">UI5 Web Components Icons explorer</a></td>
+			<td>Browse all SAP icons (default collection)</td>
+			<td><a href="https://ui5.github.io/webcomponents/icons/">UI5 Icons explorer</a> — full SAP Fiori default collection (~700 icons)</td>
+		</tr>
+		<tr>
+			<td>Browse all Reltio icons</td>
+			<td><a href="/?path=/docs/icons--docs">Icons</a> docs + <a href="/?path=/docs/icons-reltio-icons-catalog--docs">Reltio Icons Catalog</a></td>
 		</tr>
 	</tbody>
 </table>

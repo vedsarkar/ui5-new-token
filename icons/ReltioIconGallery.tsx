@@ -3,10 +3,10 @@
  * Run: npm run build-icons
  * Source: public/icons/*.svg
  * Gallery of every Reltio icon — rendered in icons.story.mdx (the Overview
- * docs page). Imports ./index so the whole set is registered when shown.
+ * docs page). Imports ./reltio so the whole set is registered when shown.
  */
 import { Icon } from "@ui5/webcomponents-react/Icon";
-import { RELTIO_ICON_COLLECTION, reltioIcons } from "./index";
+import { RELTIO_ICON_COLLECTION, reltioIcons } from "./reltio";
 
 /** Grid of every Reltio icon rendered through the UI5 Icon component. */
 export function ReltioIconGallery() {

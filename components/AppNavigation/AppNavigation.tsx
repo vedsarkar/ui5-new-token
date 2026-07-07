@@ -1,4 +1,4 @@
-import { RELTIO_ICON_COLLECTION } from "@/icons";
+import { RELTIO_ICON_COLLECTION } from "@/icons/reltio";
 import { SideNavigation } from "../SideNavigation";
 import { SideNavigationGroup } from "../SideNavigationGroup";
 import { SideNavigationItem } from "../SideNavigationItem";
@@ -13,20 +13,20 @@ import appIcons from "./appIcons.json";
 import "@ui5/webcomponents-icons/dist/home.js";
 // Register every Reltio icon referenced by the internal config (plus the
 // generic fallback) as tree-shakable side-effect imports.
-import "@/icons/data-cloud-warehouse-pipeline";
-import "@/icons/data-loader";
-import "@/icons/data-modeler";
-import "@/icons/export";
-import "@/icons/external-match";
-import "@/icons/generic";
-import "@/icons/inbox";
-import "@/icons/performance";
-import "@/icons/security-configuration";
-import "@/icons/shield-encryption";
-import "@/icons/tenant-management";
-import "@/icons/ui-modeler";
-import "@/icons/user-management";
-import "@/icons/workflow-modeler";
+import "@/icons/reltio/data-cloud-warehouse-pipeline";
+import "@/icons/reltio/data-loader";
+import "@/icons/reltio/data-modeler";
+import "@/icons/reltio/export";
+import "@/icons/reltio/external-match";
+import "@/icons/reltio/generic";
+import "@/icons/reltio/inbox";
+import "@/icons/reltio/performance";
+import "@/icons/reltio/security-configuration";
+import "@/icons/reltio/shield-encryption";
+import "@/icons/reltio/tenant-management";
+import "@/icons/reltio/ui-modeler";
+import "@/icons/reltio/user-management";
+import "@/icons/reltio/workflow-modeler";
 
 const ICON_BY_APP_NAME: Record<string, string> = appIcons;
 const FALLBACK_ICON = "generic";

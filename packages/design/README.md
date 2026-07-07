@@ -119,14 +119,20 @@ See the [UI Architecture](https://reltio.design/?path=/docs/guides-ui-architectu
 
 ### Icons
 
-Icons are loaded as side-effect imports — the SAP icon set ships through `@ui5/webcomponents-icons` (a transitive dependency of `@reltio/design`):
+SAP Fiori icons: `import "@reltio/design/icons/sap/<kebab-name>"` → `<Icon name="<kebab-name>" />`.
+
+Reltio custom icons: `import "@reltio/design/icons/reltio/<kebab-name>"` → `<Icon name="reltio/<kebab-name>" />`.
 
 ```tsx
 import { Button } from "@reltio/design/components";
-import "@ui5/webcomponents-icons/dist/save.js";
+import "@reltio/design/icons/sap/save";
+import "@reltio/design/icons/reltio/data-quality";
 
 <Button icon="save">Save</Button>;
+<Button icon="reltio/data-quality">Quality</Button>;
 ```
+
+SAP icons render as `save`; Reltio icons as `reltio/data-quality`. See the [Icons](https://reltio.design/?path=/docs/icons--docs) docs page.
 
 ## CLI — component discovery
 

@@ -1,12 +1,12 @@
 import { Icon } from "@ui5/webcomponents-react/Icon";
 import { fn } from "storybook/test";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/accept.js";
-import "@ui5/webcomponents-icons/dist/alert.js";
-import "@ui5/webcomponents-icons/dist/decline.js";
-import "@ui5/webcomponents-icons/dist/edit.js";
-import "@ui5/webcomponents-icons/dist/information.js";
-import "@ui5/webcomponents-icons/dist/save.js";
+import "@/icons/sap/accept";
+import "@/icons/sap/alert";
+import "@/icons/sap/decline";
+import "@/icons/sap/edit";
+import "@/icons/sap/information";
+import "@/icons/sap/save";
 
 const meta = preview.meta({
 	component: Icon,

@@ -9,10 +9,10 @@ import { Stories, Title } from "@storybook/addon-docs/blocks";
 import { Icon } from "@ui5/webcomponents-react/Icon";
 import preview from "../.storybook/preview";
 // Side-effect import: registers every reltio/* icon into UI5's registry.
-import "./index";
+import "./reltio";
 
 const meta = preview.meta({
-	title: "Icons/Catalog",
+	title: "Icons/Reltio Icons Catalog",
 	component: Icon,
 	parameters: {
 		layout: "centered",
@@ -78,547 +78,547 @@ function showcase(name: string) {
 	);
 }
 
-export const AcoLabel = meta.story({
+export const ReltioAcoLabel = meta.story({
 	name: "aco-label",
 	render: showcase("reltio/aco-label"),
 });
 
-export const Aco = meta.story({
+export const ReltioAco = meta.story({
 	name: "aco",
 	render: showcase("reltio/aco"),
 });
 
-export const ActivityLog = meta.story({
+export const ReltioActivityLog = meta.story({
 	name: "activity-log",
 	render: showcase("reltio/activity-log"),
 });
 
-export const AllRequest = meta.story({
+export const ReltioAllRequest = meta.story({
 	name: "all-request",
 	render: showcase("reltio/all-request"),
 });
 
-export const AnalyzeMatchRules = meta.story({
+export const ReltioAnalyzeMatchRules = meta.story({
 	name: "analyze-match-rules",
 	render: showcase("reltio/analyze-match-rules"),
 });
 
-export const Anomaly = meta.story({
+export const ReltioAnomaly = meta.story({
 	name: "anomaly",
 	render: showcase("reltio/anomaly"),
 });
 
-export const AreaLocation = meta.story({
+export const ReltioAreaLocation = meta.story({
 	name: "area-location",
 	render: showcase("reltio/area-location"),
 });
 
-export const Area = meta.story({
+export const ReltioArea = meta.story({
 	name: "area",
 	render: showcase("reltio/area"),
 });
 
-export const BarChart = meta.story({
+export const ReltioBarChart = meta.story({
 	name: "bar-chart",
 	render: showcase("reltio/bar-chart"),
 });
 
-export const BubbleChart = meta.story({
+export const ReltioBubbleChart = meta.story({
 	name: "bubble-chart",
 	render: showcase("reltio/bubble-chart"),
 });
 
-export const Cart = meta.story({
+export const ReltioCart = meta.story({
 	name: "cart",
 	render: showcase("reltio/cart"),
 });
 
-export const Chart = meta.story({
+export const ReltioChart = meta.story({
 	name: "chart",
 	render: showcase("reltio/chart"),
 });
 
-export const ChemicalSubstance = meta.story({
+export const ReltioChemicalSubstance = meta.story({
 	name: "chemical-substance",
 	render: showcase("reltio/chemical-substance"),
 });
 
-export const CompareAction = meta.story({
+export const ReltioCompareAction = meta.story({
 	name: "compare-action",
 	render: showcase("reltio/compare-action"),
 });
 
-export const Compare = meta.story({
+export const ReltioCompare = meta.story({
 	name: "compare",
 	render: showcase("reltio/compare"),
 });
 
-export const ConsumptionMetrics = meta.story({
+export const ReltioConsumptionMetrics = meta.story({
 	name: "consumption-metrics",
 	render: showcase("reltio/consumption-metrics"),
 });
 
-export const Contact = meta.story({
+export const ReltioContact = meta.story({
 	name: "contact",
 	render: showcase("reltio/contact"),
 });
 
-export const ContractDocument = meta.story({
+export const ReltioContractDocument = meta.story({
 	name: "contract-document",
 	render: showcase("reltio/contract-document"),
 });
 
-export const Course = meta.story({
+export const ReltioCourse = meta.story({
 	name: "course",
 	render: showcase("reltio/course"),
 });
 
-export const Crosswalk = meta.story({
+export const ReltioCrosswalk = meta.story({
 	name: "crosswalk",
 	render: showcase("reltio/crosswalk"),
 });
 
-export const Dashboard = meta.story({
+export const ReltioDashboard = meta.story({
 	name: "dashboard",
 	render: showcase("reltio/dashboard"),
 });
 
-export const DataCloudWarehousePipeline = meta.story({
+export const ReltioDataCloudWarehousePipeline = meta.story({
 	name: "data-cloud-warehouse-pipeline",
 	render: showcase("reltio/data-cloud-warehouse-pipeline"),
 });
 
-export const DataGraph = meta.story({
+export const ReltioDataGraph = meta.story({
 	name: "data-graph",
 	render: showcase("reltio/data-graph"),
 });
 
-export const DataIntegration = meta.story({
+export const ReltioDataIntegration = meta.story({
 	name: "data-integration",
 	render: showcase("reltio/data-integration"),
 });
 
-export const DataLineage = meta.story({
+export const ReltioDataLineage = meta.story({
 	name: "data-lineage",
 	render: showcase("reltio/data-lineage"),
 });
 
-export const DataLoader = meta.story({
+export const ReltioDataLoader = meta.story({
 	name: "data-loader",
 	render: showcase("reltio/data-loader"),
 });
 
-export const DataModeler = meta.story({
+export const ReltioDataModeler = meta.story({
 	name: "data-modeler",
 	render: showcase("reltio/data-modeler"),
 });
 
-export const DataQuality1 = meta.story({
+export const ReltioDataQuality1 = meta.story({
 	name: "data-quality-1",
 	render: showcase("reltio/data-quality-1"),
 });
 
-export const DataQuality = meta.story({
+export const ReltioDataQuality = meta.story({
 	name: "data-quality",
 	render: showcase("reltio/data-quality"),
 });
 
-export const Deployment = meta.story({
+export const ReltioDeployment = meta.story({
 	name: "deployment",
 	render: showcase("reltio/deployment"),
 });
 
-export const Dollar = meta.story({
+export const ReltioDollar = meta.story({
 	name: "dollar",
 	render: showcase("reltio/dollar"),
 });
 
-export const Entities = meta.story({
+export const ReltioEntities = meta.story({
 	name: "entities",
 	render: showcase("reltio/entities"),
 });
 
-export const EntityType = meta.story({
+export const ReltioEntityType = meta.story({
 	name: "entity-type",
 	render: showcase("reltio/entity-type"),
 });
 
-export const Estate = meta.story({
+export const ReltioEstate = meta.story({
 	name: "estate",
 	render: showcase("reltio/estate"),
 });
 
-export const ExportConfiguration = meta.story({
+export const ReltioExportConfiguration = meta.story({
 	name: "export-configuration",
 	render: showcase("reltio/export-configuration"),
 });
 
-export const ExportData = meta.story({
+export const ReltioExportData = meta.story({
 	name: "export-data",
 	render: showcase("reltio/export-data"),
 });
 
-export const Export = meta.story({
+export const ReltioExport = meta.story({
 	name: "export",
 	render: showcase("reltio/export"),
 });
 
-export const ExternalMatch = meta.story({
+export const ReltioExternalMatch = meta.story({
 	name: "external-match",
 	render: showcase("reltio/external-match"),
 });
 
-export const FacetAttributes = meta.story({
+export const ReltioFacetAttributes = meta.story({
 	name: "facet-attributes",
 	render: showcase("reltio/facet-attributes"),
 });
 
-export const Film = meta.story({
+export const ReltioFilm = meta.story({
 	name: "film",
 	render: showcase("reltio/film"),
 });
 
-export const Generator = meta.story({
+export const ReltioGenerator = meta.story({
 	name: "generator",
 	render: showcase("reltio/generator"),
 });
 
-export const Generic = meta.story({
+export const ReltioGeneric = meta.story({
 	name: "generic",
 	render: showcase("reltio/generic"),
 });
 
-export const GpoLabel = meta.story({
+export const ReltioGpoLabel = meta.story({
 	name: "gpo-label",
 	render: showcase("reltio/gpo-label"),
 });
 
-export const Gpo = meta.story({
+export const ReltioGpo = meta.story({
 	name: "gpo",
 	render: showcase("reltio/gpo"),
 });
 
-export const Group = meta.story({
+export const ReltioGroup = meta.story({
 	name: "group",
 	render: showcase("reltio/group"),
 });
 
-export const HcosFacility = meta.story({
+export const ReltioHcosFacility = meta.story({
 	name: "hcos-facility",
 	render: showcase("reltio/hcos-facility"),
 });
 
-export const HealthStatus = meta.story({
+export const ReltioHealthStatus = meta.story({
 	name: "health-status",
 	render: showcase("reltio/health-status"),
 });
 
-export const Hierarchy = meta.story({
+export const ReltioHierarchy = meta.story({
 	name: "hierarchy",
 	render: showcase("reltio/hierarchy"),
 });
 
-export const Homepage = meta.story({
+export const ReltioHomepage = meta.story({
 	name: "homepage",
 	render: showcase("reltio/homepage"),
 });
 
-export const IdnLabel = meta.story({
+export const ReltioIdnLabel = meta.story({
 	name: "idn-label",
 	render: showcase("reltio/idn-label"),
 });
 
-export const Idn = meta.story({
+export const ReltioIdn = meta.story({
 	name: "idn",
 	render: showcase("reltio/idn"),
 });
 
-export const ImportConfiguration = meta.story({
+export const ReltioImportConfiguration = meta.story({
 	name: "import-configuration",
 	render: showcase("reltio/import-configuration"),
 });
 
-export const InboxRequest = meta.story({
+export const ReltioInboxRequest = meta.story({
 	name: "inbox-request",
 	render: showcase("reltio/inbox-request"),
 });
 
-export const Inbox = meta.story({
+export const ReltioInbox = meta.story({
 	name: "inbox",
 	render: showcase("reltio/inbox"),
 });
 
-export const Indivudual = meta.story({
+export const ReltioIndivudual = meta.story({
 	name: "indivudual",
 	render: showcase("reltio/indivudual"),
 });
 
-export const IntegrationHub = meta.story({
+export const ReltioIntegrationHub = meta.story({
 	name: "integration-hub",
 	render: showcase("reltio/integration-hub"),
 });
 
-export const InteractionTypes = meta.story({
+export const ReltioInteractionTypes = meta.story({
 	name: "interaction-types",
 	render: showcase("reltio/interaction-types"),
 });
 
-export const Interaction = meta.story({
+export const ReltioInteraction = meta.story({
 	name: "interaction",
 	render: showcase("reltio/interaction"),
 });
 
-export const Jobs = meta.story({
+export const ReltioJobs = meta.story({
 	name: "jobs",
 	render: showcase("reltio/jobs"),
 });
 
-export const LandRight = meta.story({
+export const ReltioLandRight = meta.story({
 	name: "land-right",
 	render: showcase("reltio/land-right"),
 });
 
-export const LineChart = meta.story({
+export const ReltioLineChart = meta.story({
 	name: "line-chart",
 	render: showcase("reltio/line-chart"),
 });
 
-export const Location = meta.story({
+export const ReltioLocation = meta.story({
 	name: "location",
 	render: showcase("reltio/location"),
 });
 
-export const Lot = meta.story({
+export const ReltioLot = meta.story({
 	name: "lot",
 	render: showcase("reltio/lot"),
 });
 
-export const MapArea = meta.story({
+export const ReltioMapArea = meta.story({
 	name: "map-area",
 	render: showcase("reltio/map-area"),
 });
 
-export const MatchIq = meta.story({
+export const ReltioMatchIq = meta.story({
 	name: "match-iq",
 	render: showcase("reltio/match-iq"),
 });
 
-export const MatchingInsights = meta.story({
+export const ReltioMatchingInsights = meta.story({
 	name: "matching-insights",
 	render: showcase("reltio/matching-insights"),
 });
 
-export const MedicalPill = meta.story({
+export const ReltioMedicalPill = meta.story({
 	name: "medical-pill",
 	render: showcase("reltio/medical-pill"),
 });
 
-export const MedicalProductGroup = meta.story({
+export const ReltioMedicalProductGroup = meta.story({
 	name: "medical-product-group",
 	render: showcase("reltio/medical-product-group"),
 });
 
-export const MedicalProducts = meta.story({
+export const ReltioMedicalProducts = meta.story({
 	name: "medical-products",
 	render: showcase("reltio/medical-products"),
 });
 
-export const NoEntity = meta.story({
+export const ReltioNoEntity = meta.story({
 	name: "no-entity",
 	render: showcase("reltio/no-entity"),
 });
 
-export const OperationalReports = meta.story({
+export const ReltioOperationalReports = meta.story({
 	name: "operational-reports",
 	render: showcase("reltio/operational-reports"),
 });
 
-export const Opportunity = meta.story({
+export const ReltioOpportunity = meta.story({
 	name: "opportunity",
 	render: showcase("reltio/opportunity"),
 });
 
-export const OrganizationChart = meta.story({
+export const ReltioOrganizationChart = meta.story({
 	name: "organization-chart",
 	render: showcase("reltio/organization-chart"),
 });
 
-export const Organization = meta.story({
+export const ReltioOrganization = meta.story({
 	name: "organization",
 	render: showcase("reltio/organization"),
 });
 
-export const OverviewProduct = meta.story({
+export const ReltioOverviewProduct = meta.story({
 	name: "overview-product",
 	render: showcase("reltio/overview-product"),
 });
 
-export const Performance = meta.story({
+export const ReltioPerformance = meta.story({
 	name: "performance",
 	render: showcase("reltio/performance"),
 });
 
-export const PieChart = meta.story({
+export const ReltioPieChart = meta.story({
 	name: "pie-chart",
 	render: showcase("reltio/pie-chart"),
 });
 
-export const Predefined = meta.story({
+export const ReltioPredefined = meta.story({
 	name: "predefined",
 	render: showcase("reltio/predefined"),
 });
 
-export const ProductBarcode = meta.story({
+export const ReltioProductBarcode = meta.story({
 	name: "product-barcode",
 	render: showcase("reltio/product-barcode"),
 });
 
-export const ProductSell = meta.story({
+export const ReltioProductSell = meta.story({
 	name: "product-sell",
 	render: showcase("reltio/product-sell"),
 });
 
-export const Product = meta.story({
+export const ReltioProduct = meta.story({
 	name: "product",
 	render: showcase("reltio/product"),
 });
 
-export const Project = meta.story({
+export const ReltioProject = meta.story({
 	name: "project",
 	render: showcase("reltio/project"),
 });
 
-export const PromotionalGroup = meta.story({
+export const ReltioPromotionalGroup = meta.story({
 	name: "promotional-group",
 	render: showcase("reltio/promotional-group"),
 });
 
-export const PromotionalItem = meta.story({
+export const ReltioPromotionalItem = meta.story({
 	name: "promotional-item",
 	render: showcase("reltio/promotional-item"),
 });
 
-export const ProteinSubstance = meta.story({
+export const ReltioProteinSubstance = meta.story({
 	name: "protein-substance",
 	render: showcase("reltio/protein-substance"),
 });
 
-export const Queues = meta.story({
+export const ReltioQueues = meta.story({
 	name: "queues",
 	render: showcase("reltio/queues"),
 });
 
-export const Relationships = meta.story({
+export const ReltioRelationships = meta.story({
 	name: "relationships",
 	render: showcase("reltio/relationships"),
 });
 
-export const ReltioInsights = meta.story({
+export const ReltioReltioInsights = meta.story({
 	name: "reltio-insights",
 	render: showcase("reltio/reltio-insights"),
 });
 
-export const Ria = meta.story({
+export const ReltioRia = meta.story({
 	name: "ria",
 	render: showcase("reltio/ria"),
 });
 
-export const RoductGroup = meta.story({
+export const ReltioRoductGroup = meta.story({
 	name: "roduct-group",
 	render: showcase("reltio/roduct-group"),
 });
 
-export const SearchResult = meta.story({
+export const ReltioSearchResult = meta.story({
 	name: "search-result",
 	render: showcase("reltio/search-result"),
 });
 
-export const SecurityConfiguration = meta.story({
+export const ReltioSecurityConfiguration = meta.story({
 	name: "security-configuration",
 	render: showcase("reltio/security-configuration"),
 });
 
-export const Sent = meta.story({
+export const ReltioSent = meta.story({
 	name: "sent",
 	render: showcase("reltio/sent"),
 });
 
-export const ShieldEncryption = meta.story({
+export const ReltioShieldEncryption = meta.story({
 	name: "shield-encryption",
 	render: showcase("reltio/shield-encryption"),
 });
 
-export const Skill = meta.story({
+export const ReltioSkill = meta.story({
 	name: "skill",
 	render: showcase("reltio/skill"),
 });
 
-export const Sources = meta.story({
+export const ReltioSources = meta.story({
 	name: "sources",
 	render: showcase("reltio/sources"),
 });
 
-export const StratigraphicUnit = meta.story({
+export const ReltioStratigraphicUnit = meta.story({
 	name: "stratigraphic-unit",
 	render: showcase("reltio/stratigraphic-unit"),
 });
 
-export const SupportTicket = meta.story({
+export const ReltioSupportTicket = meta.story({
 	name: "support-ticket",
 	render: showcase("reltio/support-ticket"),
 });
 
-export const Tags = meta.story({
+export const ReltioTags = meta.story({
 	name: "tags",
 	render: showcase("reltio/tags"),
 });
 
-export const TeamRequest = meta.story({
+export const ReltioTeamRequest = meta.story({
 	name: "team-request",
 	render: showcase("reltio/team-request"),
 });
 
-export const TenantManagement = meta.story({
+export const ReltioTenantManagement = meta.story({
 	name: "tenant-management",
 	render: showcase("reltio/tenant-management"),
 });
 
-export const Trust = meta.story({
+export const ReltioTrust = meta.story({
 	name: "trust",
 	render: showcase("reltio/trust"),
 });
 
-export const UiModeler = meta.story({
+export const ReltioUiModeler = meta.story({
 	name: "ui-modeler",
 	render: showcase("reltio/ui-modeler"),
 });
 
-export const Usage = meta.story({
+export const ReltioUsage = meta.story({
 	name: "usage",
 	render: showcase("reltio/usage"),
 });
 
-export const UserManagement = meta.story({
+export const ReltioUserManagement = meta.story({
 	name: "user-management",
 	render: showcase("reltio/user-management"),
 });
 
-export const ViewRule = meta.story({
+export const ReltioViewRule = meta.story({
 	name: "view-rule",
 	render: showcase("reltio/view-rule"),
 });
 
-export const WellComponent = meta.story({
+export const ReltioWellComponent = meta.story({
 	name: "well-component",
 	render: showcase("reltio/well-component"),
 });
 
-export const WellLicense = meta.story({
+export const ReltioWellLicense = meta.story({
 	name: "well-license",
 	render: showcase("reltio/well-license"),
 });
 
-export const WorkflowModeler = meta.story({
+export const ReltioWorkflowModeler = meta.story({
 	name: "workflow-modeler",
 	render: showcase("reltio/workflow-modeler"),
 });

@@ -1,4 +1,9 @@
 {
+	"include": ["*.ts", "../../icons/**/*.ts", "../../icons/**/*.tsx"],
+	"exclude": [
+		"../../icons/icons.stories.tsx",
+		"../../icons/ReltioIconGallery.tsx"
+	],
 	"compilerOptions": {
 		"baseUrl": "../../",
 		"outDir": "./dist",
@@ -13,7 +18,8 @@
 		"esModuleInterop": true,
 		"declaration": true,
 		"paths": {
-			"@/*": ["./*"]
+			"@/*": ["./*"],
+			"@reltio/design/components": ["components/index.ts"]
 		}
 	}
 }

@@ -140,7 +140,6 @@ export { UploadCollectionItem } from "@ui5/webcomponents-react/UploadCollectionI
 export { UserMenuItemGroup } from "@ui5/webcomponents-react/UserMenuItemGroup";
 export { Wizard } from "@ui5/webcomponents-react/Wizard";
 export { WizardStep } from "@ui5/webcomponents-react/WizardStep";
-
 // Reltio business components & primitives.
 export * from "./AppNavigation";
 export * from "./AppSelector";
@@ -152,6 +151,7 @@ export * from "./ErrorBoundary";
 // callback that serializes the form-associated UI5 fields. `FormGroup` and
 // `FormItem` remain 1:1 UI5 re-exports. See `components/Form/README.md`.
 export * from "./Form";
+export type { IconProps } from "./Icon/Icon.types";
 export * from "./Markdown";
 export * from "./ShellBar";
 export * from "./SideNavigation";
