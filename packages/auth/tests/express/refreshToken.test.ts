@@ -6,7 +6,6 @@
  * success.
  */
 
-import { createExpressAuth } from "@reltio/auth/express";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
 import {
@@ -16,6 +15,7 @@ import {
 import {
 	createTestApp,
 	DEFAULT_CONFIG,
+	MULTIAUTH_CONFIG,
 	mswServer,
 	parseSetCookies,
 	TEST_HOST,
@@ -70,7 +70,9 @@ describe("Express adapter — POST /refreshToken", () => {
 		expect(cookies.refresh_token.value).toBe("refreshed_refresh_888");
 	});
 
-	it("sets Max-Age on the access_token cookie from the upstream expires_in", async () => {
+	it("keeps the access_token cookie co-terminal with refresh_token (no Max-Age) so its aurl survives to the next refresh", async () => {
+		// The next /refreshToken routes by the access token's aurl (the refresh
+		// token is opaque), so both cookies share one session lifetime.
 		mockOAuthTokenRefresh({
 			access_token: "a",
 			refresh_token: "r",
@@ -84,7 +86,10 @@ describe("Express adapter — POST /refreshToken", () => {
 			.set("Cookie", ["refresh_token=token"]);
 
 		const cookies = parseSetCookies(res.headers["set-cookie"]);
-		expect(cookies.access_token.attributes.join("; ")).toContain("Max-Age=600");
+		expect(cookies.access_token.attributes.join("; ")).not.toContain("Max-Age");
+		expect(cookies.refresh_token.attributes.join("; ")).not.toContain(
+			"Max-Age",
+		);
 	});
 
 	it("sends grant_type=refresh_token and Basic auth in the upstream call", async () => {
@@ -208,32 +213,35 @@ describe("Express adapter — POST /refreshToken", () => {
 		expect(res.headers.pragma).toBe("no-cache");
 	});
 
-	it("re-mints reltio_aurl from the refreshed token's aurl claim (verifies via resolveAuthPath)", async () => {
-		// The refreshed access token may belong to a different cluster than
-		// the previous one, so the handler re-derives the routing cookie from
-		// the NEW token. Drive the writer through the public refresh endpoint
-		// and the reader through the public adapter resolveAuthPath.
-		mockOAuthTokenRefresh({ access_token: TOKEN_WITH_AURL });
-		const app = createTestApp();
+	it("routes the token exchange to the cluster named by the access token's aurl, with that cluster's credentials", async () => {
+		// The refresh must go to the same cluster that issued the access token,
+		// selected from the allowlist by the token's aurl claim — never the
+		// primary when a trusted additional cluster matches.
+		let clusterAuth: string | null = null;
+		let staticCalled = false;
+		mswServer.use(
+			http.post(`${TOKEN_WITH_AURL_ORIGIN}/oauth/token`, ({ request }) => {
+				clusterAuth = request.headers.get("authorization");
+				return HttpResponse.json({ access_token: "a", refresh_token: "r" });
+			}),
+			http.post(`${TEST_OAUTH_HOST}/oauth/token`, () => {
+				staticCalled = true;
+				return HttpResponse.json({ access_token: "a", refresh_token: "r" });
+			}),
+		);
+		const app = createTestApp({
+			config: { authEnvironments: MULTIAUTH_CONFIG.authEnvironments },
+		});
 
 		const res = await app
 			.post("/api/auth/refreshToken")
 			.set("Host", TEST_HOST)
-			.set("Cookie", ["refresh_token=token"]);
+			.set("Cookie", [`access_token=${TOKEN_WITH_AURL}; refresh_token=token`]);
 
-		const reltioAurl = parseSetCookies(res.headers["set-cookie"]).reltio_aurl
-			?.value;
-		expect(reltioAurl).toBeTruthy();
-
-		const { resolveAuthPath } = createExpressAuth({
-			...DEFAULT_CONFIG,
-			oauthPath: "https://fallback.example.com",
-		});
-		const request = new Request("https://app.test/", {
-			headers: { Cookie: `reltio_aurl=${reltioAurl}` },
-		});
-		expect(await resolveAuthPath(request)).toBe(
-			`${TOKEN_WITH_AURL_ORIGIN}/oauth`,
+		expect(res.statusCode).toBe(201);
+		expect(clusterAuth).toBe(
+			`Basic ${btoa("additional_client_id:additional_client_secret")}`,
 		);
+		expect(staticCalled).toBe(false);
 	});
 });

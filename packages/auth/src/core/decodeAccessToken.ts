@@ -14,30 +14,9 @@
  * purely as a routing hint by the BFF; the Auth server remains
  * responsible for signature verification.
  *
- * Decompression-bomb defence runs in four cheap layers, each closing a
- * different attack vector:
- *
- *   1. Encoded-segment cap (`segments[1].length > MAX_ENCODED_PAYLOAD_SIZE`)
- *      — runs BEFORE `base64urlDecode` so a multi-megabyte middle segment
- *      can't amplify into a proportional Uint8Array allocation at decode
- *      time. The first true allocation site.
- *   2. Declared-size gate (prefix > `MAX_DECOMPRESSED_SIZE`) — rejects
- *      honest oversized payloads before any decompression allocation.
- *   3. Compressed-input cap (`compressed.length > MAX_COMPRESSED_SIZE`)
- *      — closes the CPU-exhaustion vector where an attacker pairs a tiny
- *      lying prefix with a huge compressed stream so `fzstd` keeps
- *      parsing blocks until the bounded output fills.
- *   4. Bounded output buffer (`new Uint8Array(declaredSize)`) — `fzstd`
- *      throws `ZstdError` if the actual stream would write past
- *      `out.length`, regardless of what the prefix said. The try/catch
- *      returns `null` on that throw.
- *
- * Memory is bounded at `MAX_DECOMPRESSED_SIZE` per decode (one transient
- * output buffer); CPU is bounded at `MAX_COMPRESSED_SIZE` (one zstd parse
- * over a stream of at most this many bytes). Both ceilings hold regardless
- * of what the attacker declares — the gates short-circuit before any large
- * allocation, and the bounded output buffer turns "lying prefix" attacks
- * into a single `ZstdError` throw.
+ * Decompression-bomb defence runs in four layers, documented inline at each
+ * gate. Together they bound memory at `MAX_DECOMPRESSED_SIZE` and CPU at
+ * `MAX_COMPRESSED_SIZE` per decode, regardless of what the token declares.
  *
  * Returns `null` when the token is not a Reltio JWT (e.g. an opaque UUID),
  * decodes to a non-object payload, or encounters any error during decoding.

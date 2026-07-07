@@ -20,6 +20,9 @@ import type { Handler } from "./types";
 
 export const loginHandler: Handler = async (options) => {
 	const { request, config } = options;
+	if (!config.loginPath) {
+		return new Response("loginPath is not configured", { status: 500 });
+	}
 	const secure = config.secure !== false;
 
 	const redirectParams = resolveRedirectParams(request);

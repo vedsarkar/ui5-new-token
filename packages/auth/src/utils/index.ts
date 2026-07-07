@@ -12,8 +12,8 @@
  * The per-session Auth-server routing resolver is NOT exported here.
  * It lives on the value returned by the framework adapters —
  * `createNextAuth(config).resolveAuthPath` and
- * `createExpressAuth(config).resolveAuthPath` — so the HMAC key is
- * derived exactly once, alongside the router, and the resolver shares it.
+ * `createExpressAuth(config).resolveAuthPath` — so the multiauth allowlist
+ * is built exactly once, alongside the router, and the resolver shares it.
  *
  * v1 intentionally does NOT export a `createSigningHandler` /
  * `signingHandler` middleware. The legacy middleware mutated the incoming
@@ -22,9 +22,8 @@
  * proxy or fetch.
  *
  * Everything under `utils/` is public API. Private implementation
- * (the HMAC / JWT primitives `aurlCookie`, `decodeAccessToken`,
- * `base64url`, the routing resolver, the OAuth calls, …) lives in
- * `src/core/`, which has no
+ * (the JWT primitives `decodeAccessToken`, `base64url`, the allowlist
+ * routing resolver, the OAuth calls, …) lives in `src/core/`, which has no
  * public subpath — see the package `AGENTS.md` for the boundary rule. Do
  * NOT place private code here unexported; put it in `core/`.
  */

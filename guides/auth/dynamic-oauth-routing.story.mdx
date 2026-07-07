@@ -6,23 +6,48 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 The Reltio OAuth server is moving from a single monolithic endpoint to a multi-environment topology — `auth.reltio.com`, `auth-idev-02.reltio.com`, `auth-test.reltio.com`, and more. Each user's access token is issued by a specific cluster, and only that cluster can introspect or refresh it. A single static `oauthPath` cannot route per session.
 
-This guide explains how `@reltio/auth` solves that automatically for Backend for Frontend (BFF) mounted endpoints (`/checkToken`, `/refreshToken`) and how to opt in for application code that bypasses the BFF.
+This guide explains how `@reltio/auth` solves that with an **allowlist** of trusted clusters, both for Backend for Frontend (BFF) mounted endpoints (`/checkToken`, `/refreshToken`) and for application code that bypasses the BFF.
 
 ## TL;DR
 
-- **Apps using the BFF** (`/auth/checkToken`, `/auth/refreshToken`): no changes needed. The router routes per session automatically.
-- **Apps that call the Auth server directly**: replace your hardcoded `oauthPath` with the `resolveAuthPath` function exposed on the value returned by `createExpressAuth(config)` / `createNextAuth(config)`. It shares the router's once-derived HMAC key, so there is no extra setup.
-- **No new configuration** — no new environment variables, no new operator step. The existing `clientSecret` powers the cookie's HMAC signature.
+- **Configure the allowlist**: list every additional trusted cluster in `AuthConfig.authEnvironments`. Each entry carries that cluster's own `oauthPath` / `clientId` / `clientSecret`. The same config serves BFFs and standalone API services (which introspect via `auth.checkToken` and may omit `loginPath`).
+- **Apps using the BFF** (`/auth/checkToken`, `/auth/refreshToken`): no per-request code needed. The router reads the access token's `aurl` claim and routes to the matching allowlisted cluster automatically.
+- **Apps that call the Auth server directly**: use the `resolveAuthPath` function exposed on the value returned by `createExpressAuth(config)` / `createNextAuth(config)` — the same allowlist resolution the router uses internally.
 
 ## How it works
 
-1. **At login time**, the Reltio access token returned by `/callback` carries a non-standard `aurl` claim — the URL of the cluster that issued it (e.g. `https://auth-idev-02.reltio.com`).
-2. `callbackHandler` decodes the claim, signs it with HMAC-SHA256 (key derived from `AuthConfig.clientSecret`), and writes a third `HttpOnly` cookie alongside `access_token` and `refresh_token`, named `reltio_aurl`.
-3. **Every subsequent `/checkToken` and `/refreshToken` request** through the BFF reads `reltio_aurl`, verifies the MAC, and routes the upstream call to that exact cluster — fail-closed to `AuthConfig.oauthPath` on any failure.
-4. **After a successful refresh**, the handler re-derives the cookie from the new access token. If the cluster changed (session was migrated), the cookie tracks. If the new token has no `aurl` claim, the cookie is cleared.
-5. **`logout`** clears `reltio_aurl` alongside the existing three cookies.
+1. The Reltio access token carries a non-standard `aurl` claim — the URL of the cluster that issued it (e.g. `https://auth-idev-02.reltio.com`).
+2. On every `/checkToken` and `/refreshToken` request, the router reads the access token (from `Authorization: Bearer` or the `access_token` cookie), **decodes** its `aurl` claim, and matches it — by normalized origin, trailing-slash insensitive — against the allowlist (the primary `oauthPath` plus every `authEnvironments[].oauthPath`).
+3. On a match, the upstream call goes to **that cluster's** auth server, authenticated with **that cluster's** `clientId` / `clientSecret`.
+4. An `aurl` that is absent, undecodable, or **not in the allowlist** falls back to the primary cluster (`oauthPath`).
 
-The cookie is `HttpOnly` + `Secure` + `SameSite=Lax` + `Path=/`. The HMAC key never leaves the BFF.
+> **🎯 Key Principle:** The `aurl` claim can only ever *select* a pre-configured cluster from the allowlist — it can never introduce an arbitrary outbound origin. A forged token cannot steer the BFF to an attacker-controlled URL.
+
+## Configuration — the allowlist
+
+Add every additional trusted cluster to `authEnvironments`. The primary cluster is always the top-level `oauthPath` + `clientId` / `clientSecret`; each additional environment shares the same `{ oauthPath, clientId, clientSecret }` shape.
+
+```ts
+import { createExpressAuth } from "@reltio/auth/express";
+
+export const auth = createExpressAuth({
+	oauthPath: "https://auth.reltio.com",
+	loginPath: "https://login.reltio.com",
+	clientId: process.env.CLIENT_ID!,
+	clientSecret: process.env.CLIENT_SECRET!,
+	authEnvironments: [
+		{
+			oauthPath: "https://auth-idev-02.reltio.com",
+			clientId: process.env.IDEV02_CLIENT_ID!,
+			clientSecret: process.env.IDEV02_CLIENT_SECRET!,
+		},
+	],
+});
+```
+
+- Omit `authEnvironments` for a single-cluster deployment — every request routes to `oauthPath` as before.
+- A malformed `authEnvironments[].oauthPath` throws at construction time (fail-fast), so a misconfiguration surfaces at boot rather than silently on a request.
+- If an additional service duplicates the primary origin, the primary's credentials win.
 
 ## Public API — `resolveAuthPath`
 
@@ -31,9 +56,9 @@ const auth = createExpressAuth(config); // or createNextAuth(config)
 auth.resolveAuthPath: (request: Request) => Promise<string>;
 ```
 
-`createAuth` (and therefore both adapters) derives the HMAC key once at construction time and exposes `resolveAuthPath` on its return value — the **same** function the router uses internally for `/checkToken` and `/refreshToken`. There is no separate factory to construct and no extra key derivation:
+`createAuth` (and therefore both adapters) builds the allowlist once at construction time and exposes `resolveAuthPath` on its return value — the **same** resolution the router uses internally for `/checkToken` and `/refreshToken`:
 
-- **On request**: reads `reltio_aurl` from the `Cookie` header, runs HMAC verify, and returns the recovered URL. Falls back to `config.oauthPath` on absence, parse failure, tampering, or any other verify failure.
+- **On request**: reads the access token, decodes its `aurl` claim, and returns the matching allowlisted cluster's `/oauth` path. Falls back to `config.oauthPath` when the token is absent, undecodable, or its `aurl` is not in the allowlist.
 - **Accepts** Express `Request`, Next.js `NextRequest`, or Web `Request` uniformly — same shape used by `getAccessToken` and `getRefreshToken`.
 
 The Express adapter attaches `resolveAuthPath` to the returned `Router`; the Next.js adapter returns it alongside `handlers`. Build the auth value once at server boot (as you already do to mount the router) and reuse `resolveAuthPath` on every request.
@@ -57,10 +82,17 @@ Use `resolveAuthPath` in application code that calls the Auth server **directly*
 import { createExpressAuth } from "@reltio/auth/express";
 
 export const auth = createExpressAuth({
-	oauthPath: process.env.OAUTH_PATH!,
-	loginPath: process.env.LOGIN_PATH!,
+	oauthPath: "https://auth.reltio.com",
+	loginPath: "https://login.reltio.com",
 	clientId: process.env.CLIENT_ID!,
 	clientSecret: process.env.CLIENT_SECRET!,
+	authEnvironments: [
+		{
+			oauthPath: "https://auth-idev-02.reltio.com",
+			clientId: process.env.IDEV02_CLIENT_ID!,
+			clientSecret: process.env.IDEV02_CLIENT_SECRET!,
+		},
+	],
 });
 
 app.use("/auth", auth); // mounts the router
@@ -91,10 +123,17 @@ app.post("/api/internal/checkToken", async (req, res, next) => {
 import { createNextAuth } from "@reltio/auth/next";
 
 export const { handlers, resolveAuthPath } = createNextAuth({
-	oauthPath: process.env.OAUTH_PATH!,
-	loginPath: process.env.LOGIN_PATH!,
+	oauthPath: "https://auth.reltio.com",
+	loginPath: "https://login.reltio.com",
 	clientId: process.env.CLIENT_ID!,
 	clientSecret: process.env.CLIENT_SECRET!,
+	authEnvironments: [
+		{
+			oauthPath: "https://auth-idev-02.reltio.com",
+			clientId: process.env.IDEV02_CLIENT_ID!,
+			clientSecret: process.env.IDEV02_CLIENT_SECRET!,
+		},
+	],
 });
 ```
 
@@ -117,7 +156,7 @@ export async function POST(request: Request) {
 }
 ```
 
-The module-level `createNextAuth(...)` runs once per server boot, so the HMAC key is derived once and `resolveAuthPath` is reused across the stateless Route Handler invocations.
+The module-level `createNextAuth(...)` runs once per server boot, so the allowlist is built once and `resolveAuthPath` is reused across the stateless Route Handler invocations.
 
 ### Next.js Edge Middleware
 
@@ -126,10 +165,17 @@ The module-level `createNextAuth(...)` runs once per server boot, so the HMAC ke
 import { createNextAuth } from "@reltio/auth/next";
 
 export const { resolveAuthPath } = createNextAuth({
-	oauthPath: process.env.OAUTH_PATH!,
-	loginPath: process.env.LOGIN_PATH!,
+	oauthPath: "https://auth.reltio.com",
+	loginPath: "https://login.reltio.com",
 	clientId: process.env.CLIENT_ID!,
 	clientSecret: process.env.CLIENT_SECRET!,
+	authEnvironments: [
+		{
+			oauthPath: "https://auth-idev-02.reltio.com",
+			clientId: process.env.IDEV02_CLIENT_ID!,
+			clientSecret: process.env.IDEV02_CLIENT_SECRET!,
+		},
+	],
 });
 ```
 
@@ -149,7 +195,7 @@ export async function middleware(request: NextRequest) {
 
 ## Gating routes with `checkToken`
 
-`resolveAuthPath` gives you the cluster URL; if all you need is to **introspect the current request's token** and act on the parsed result (role / permission checks), use `checkToken` instead. It is the programmatic sibling of the BFF's `POST /checkToken` route — it reads the access token from the request, routes per session via `resolveAuthPath`, calls the Auth server's introspection endpoint with the once-derived Basic credential, and returns the parsed payload. You no longer hand-roll the wire contract (form encoding, Basic header, `serviceId` / `tenantId`, cluster routing, error normalisation).
+`resolveAuthPath` gives you the cluster URL; if all you need is to **introspect the current request's token** and act on the parsed result (role / permission checks), use `checkToken` instead. It is the programmatic sibling of the BFF's `POST /checkToken` route — it reads the access token from the request, resolves the issuing cluster from the token's `aurl` claim + allowlist, calls that cluster's introspection endpoint with that cluster's Basic credential, and returns the parsed payload. You no longer hand-roll the wire contract (form encoding, Basic header, `serviceId` / `tenantId`, cluster routing, error normalisation).
 
 ```ts
 const auth = createExpressAuth(config); // or createNextAuth(config)
@@ -227,11 +273,11 @@ export async function GET(request: Request) {
 }
 ```
 
-Like `resolveAuthPath`, `checkToken` shares the router's once-derived Basic credential and HMAC key — build the auth value once at server boot and reuse it.
+Like `resolveAuthPath`, `checkToken` shares the router's once-built allowlist — build the auth value once at server boot and reuse it.
 
-## Fail-closed behaviour
+## Fail-open-to-primary behaviour
 
-Every failure mode falls back silently to `config.oauthPath`. No throws, no error logs, no response codes — the routing decision is invisible from the application layer.
+Every routing miss falls back silently to `config.oauthPath`. No throws, no error logs, no response codes — the routing decision is invisible from the application layer.
 
 <table>
 	<thead>
@@ -242,37 +288,36 @@ Every failure mode falls back silently to `config.oauthPath`. No throws, no erro
 	</thead>
 	<tbody>
 		<tr>
-			<td>No <code>reltio_aurl</code> cookie</td>
+			<td>No access token on the request</td>
 			<td><code>config.oauthPath</code></td>
 		</tr>
 		<tr>
-			<td>Cookie present but malformed (missing dot, non-base64url chars)</td>
+			<td>Token has no <code>aurl</code> claim (legacy / main-cluster token)</td>
 			<td><code>config.oauthPath</code></td>
 		</tr>
 		<tr>
-			<td>Cookie signed by a different <code>clientSecret</code></td>
+			<td>Token undecodable (opaque, malformed, or a decompression bomb)</td>
 			<td><code>config.oauthPath</code></td>
 		</tr>
 		<tr>
-			<td>HMAC tag mismatch (tampered <code>aurl</code> or tampered MAC)</td>
+			<td><code>aurl</code> decoded but not in the allowlist</td>
 			<td><code>config.oauthPath</code></td>
 		</tr>
 		<tr>
-			<td>Cookie verifies successfully</td>
-			<td>The recovered <code>aurl</code></td>
+			<td><code>aurl</code> matches an allowlisted cluster</td>
+			<td>that cluster's <code>/oauth</code> path</td>
 		</tr>
 	</tbody>
 </table>
 
-Apps without multi-cluster Auth servers (most apps today) keep working byte-for-byte unchanged — the fallback path is the existing static-routing behaviour.
+Apps without multi-cluster Auth servers (most apps today) keep working byte-for-byte unchanged — with no `authEnvironments` configured, every request resolves to `oauthPath`.
 
 ## Security model
 
-- **HMAC key**: SHA-256 of the ASCII concatenation `"reltio-auth-routing-v1:" + clientSecret`. The salt prefix scopes the key to this exact use, so a future feature deriving a different key from `clientSecret` cannot collide with it.
-- **MAC length**: full 32-byte HMAC-SHA-256 tag. Verification goes through `crypto.subtle.verify`, which is constant-time by Web Crypto spec — no hand-rolled comparison code to own.
-- **Cookie attributes**: byte-identical to `access_token` and `refresh_token` — `HttpOnly`, `Secure` (when `AuthConfig.secure === true`), `SameSite=Lax`, `Path=/`.
-- **Bounded decompression in `decodeAurl`** — four layered guards anchored to a single 8 KiB ceiling (encoded-segment cap before base64url decode, declared-size gate, compressed-input cap, bounded output buffer).
-- **No SSRF surface**: the signed cookie is the only routing input. A forged JWT in the `access_token` cookie cannot influence routing — `decodeAurl` runs ONLY at `/callback` (mint) and `/refreshToken` (re-mint) write time, never on the hot path.
+- **Allowlist is the trust boundary.** The `aurl` claim only *selects* an entry from the operator-configured allowlist (the primary `oauthPath` + `authEnvironments`). It can never introduce an origin the operator did not configure, so a forged or attacker-controlled `aurl` closes off the SSRF surface entirely — the worst case is a fallback to the primary cluster.
+- **Credentials are per-cluster.** Each allowlisted cluster introspects and refreshes with its own `clientId` / `clientSecret`; a token routed to a cluster is authenticated with that cluster's credentials, never a shared one.
+- **No local signature verification (this version).** `aurl` is trusted purely through allowlist membership — the token signature is not verified locally. Because the allowlist bounds every possible outbound origin, an unverified `aurl` cannot escalate beyond selecting a pre-approved cluster. Local signature verification (to remove the per-service allowlist) is a possible future addition.
+- **Bounded decompression in `decodeAccessToken`** — layered guards (encoded-segment cap before base64url decode, declared-size gate, compressed-input cap, bounded output buffer) ensure a hostile token cannot amplify into a decompression bomb while its `aurl` is extracted.
 
 ## Sources and References
 
@@ -280,8 +325,6 @@ This guide is grounded in the following internal documentation and external stan
 
 - [Setup → Express](?path=/docs/guides-auth-setup-express--docs) — companion setup guide for wiring `@reltio/auth` into an Express BFF. Shows the mount point that produces the `/callback`, `/refreshToken`, and `/logout` routes referenced throughout this guide.
 - [Setup → Next.js App Router](?path=/docs/guides-auth-setup-next-js-app-router--docs) — companion setup guide for the Next.js Route Handler / Edge Middleware adapter, the runtime used in this guide's Next.js snippets.
-- [RFC 6265 — HTTP State Management Mechanism](https://datatracker.ietf.org/doc/html/rfc6265) — the cookie spec that defines the `HttpOnly`, `Secure`, `SameSite`, and `Path` attributes the `reltio_aurl` cookie uses, and the parsing rules `parseCookies` implements.
-- [RFC 2104 — HMAC: Keyed-Hashing for Message Authentication](https://datatracker.ietf.org/doc/html/rfc2104) — the IETF specification of the HMAC construction used by `signAurl` / `verifyAurl` (HMAC-SHA-256, full 32-byte tag).
-- [MDN — SubtleCrypto](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto) — the Web Crypto API that backs `deriveHmacKey`, `signAurl`, and `verifyAurl`. `@reltio/auth` uses only this surface (no `node:crypto`) so the same code runs in Node, Bun, Deno, and Edge runtimes.
-- [OWASP — Server-Side Request Forgery Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html) — context for the SSRF threat model that the HMAC-signed cookie closes (the BFF can only ever route to a cluster whose URL it itself minted into the cookie at `/callback`).
-- `resolveAuthPath` on the adapter return value (`createExpressAuth(config).resolveAuthPath` / `createNextAuth(config).resolveAuthPath`), plus `@reltio/auth/utils` token readers (`getAccessToken`, `getRefreshToken`, `getBasicToken`). Browse the source under `packages/auth/src/` for the canonical contracts.
+- [MDN — SubtleCrypto](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto) — the Web Crypto API surface `@reltio/auth` uses (no `node:crypto`), so the same code runs in Node, Bun, Deno, and Edge runtimes.
+- [OWASP — Server-Side Request Forgery Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html) — context for the SSRF threat model that the allowlist closes: the BFF can only ever route to a cluster the operator pre-configured.
+- `resolveAuthPath` and `checkToken` on the adapter return value (`createExpressAuth(config)` / `createNextAuth(config)`), plus `@reltio/auth/utils` token readers (`getAccessToken`, `getRefreshToken`, `getBasicToken`). Browse the source under `packages/auth/src/` for the canonical contracts.

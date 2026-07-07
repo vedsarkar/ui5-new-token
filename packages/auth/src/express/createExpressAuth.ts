@@ -14,11 +14,11 @@
  * The returned router also carries a `resolveAuthPath` method (the same
  * one `createAuth` exposes) so Express apps that call the Auth server
  * directly — bypassing the router's `/checkToken` and `/refreshToken`
- * endpoints — can resolve the per-session cluster URL without re-deriving
- * the HMAC key. It additionally carries a `checkToken` method — the
- * programmatic sibling of the `POST /checkToken` route — that introspects
- * the request's access token server-side and returns the parsed
- * `CheckTokenResponse` payload (throwing `RequestError` on failure).
+ * endpoints — can resolve the request's cluster URL from the access token's
+ * `aurl` claim (matched against the allowlist). It additionally carries a
+ * `checkToken` method — the programmatic sibling of the `POST /checkToken`
+ * route — that introspects the request's access token server-side and returns
+ * the parsed `CheckTokenResponse` payload (throwing `RequestError` on failure).
  */
 
 import express, {

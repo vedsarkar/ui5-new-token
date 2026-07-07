@@ -12,7 +12,6 @@
 
 import {
 	ACCESS_TOKEN_COOKIE,
-	AUTH_URL_COOKIE,
 	clearCookie,
 	defaultCookieOptions,
 	REFRESH_TOKEN_COOKIE,
@@ -28,6 +27,9 @@ import type { Handler } from "./types";
 
 export const logoutHandler: Handler = async (options) => {
 	const { request, config } = options;
+	if (!config.loginPath) {
+		return new Response("loginPath is not configured", { status: 500 });
+	}
 	const secure = config.secure !== false;
 
 	const redirectParams = resolveRedirectParams(request);
@@ -71,10 +73,6 @@ export const logoutHandler: Handler = async (options) => {
 	response.headers.append(
 		"Set-Cookie",
 		clearCookie(REFRESH_TOKEN_COOKIE, cookieOptions),
-	);
-	response.headers.append(
-		"Set-Cookie",
-		clearCookie(AUTH_URL_COOKIE, cookieOptions),
 	);
 	response.headers.append(
 		"Set-Cookie",

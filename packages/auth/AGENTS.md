@@ -13,13 +13,13 @@ A file under a public directory ships in the bundle and is reachable — leaving
 **❌ Don't** — "private" file parked in a public dir, unexported:
 
 ```text
-src/utils/signAurl.ts   // absent from utils/index.ts, but still public surface
+src/utils/checkAccessToken.ts   // absent from utils/index.ts, but still public surface
 ```
 
 **✅ Do** — private code in `core/`:
 
 ```text
-src/core/signAurl.ts    // unreachable by consumers
+src/core/checkAccessToken.ts    // unreachable by consumers
 ```
 
 ## 3. Public exports are curated through the barrel
@@ -61,12 +61,12 @@ Tests live in `tests/` and drive the package **only** through its public subpath
 
 ```ts
 // ❌ pins a private internal — breaks on any core refactor
-import { signAurl } from "../../src/core/aurlCookie";
-const cookie = await signAurl(url, key);
+import { checkAccessToken } from "../../src/core/checkAccessToken";
+const data = await checkAccessToken({ allowlist, request });
 
-// ✅ mint through the public callback round-trip; read via the public resolver
-const cookie = await mintAurlCookie(app, TOKEN_WITH_AURL);
-const { resolveAuthPath } = createExpressAuth(config);
+// ✅ drive introspection + cluster routing through the public adapter surface
+const { checkToken, resolveAuthPath } = createExpressAuth(config);
+const data = await checkToken(request);
 ```
 
 **Cover every state an external actor can construct at the public boundary** — the boundary is the HTTP request (headers, cookies, query) **and** the upstream response. That explicitly includes negative/adversarial paths: tampered cookies, bomb tokens, malformed upstream `200` bodies, unreachable upstream. Reachability — not "positive vs negative" — is the test.
@@ -77,17 +77,17 @@ http.post(`${OAUTH}/oauth/checkToken`, () => new HttpResponse("<<not json>>", { 
 expect(res.statusCode).toBe(500); // propagates, never a fake 200/401/502
 ```
 
-**Do NOT test states the boundary cannot produce.** A branch reachable only by holding the signing key (forged HMAC), by violating a TS type, or only after a constant changes is defence-in-depth, not a public contract — leave it uncovered rather than reaching into `core` or asserting an impossible scenario.
+**Do NOT test states the boundary cannot produce.** A branch reachable only by violating a TS type, or only after a constant changes, is defence-in-depth, not a public contract — leave it uncovered rather than reaching into `core` or asserting an impossible scenario.
 
 ```ts
-// ❌ only reachable with the secret → not a public test, just delete the urge
-// verifyAurl's non-UTF-8 branch, signAurl's .catch, shadowed size gates …
+// ❌ not reachable from the public boundary → not a public test, just delete the urge
+// decodeAccessToken's shadowed size gates, a constant-guarded branch …
 ```
 
 **Close every large change with `npm run test:coverage -w @reltio/auth`.** All tests must pass, and every reachable public scenario must be covered. For each remaining uncovered line, do one of two things — never leave it unexamined:
 
 1. **Delete it** if it is dead code (no caller, an unused capability/overload).
-2. **Document it as unreachable** with a one-line comment saying why the public boundary cannot reach it (defence-in-depth against forged HMAC, a TS-forbidden state, a constant-shadowed gate, …).
+2. **Document it as unreachable** with a one-line comment saying why the public boundary cannot reach it (a TS-forbidden state, a constant-shadowed gate, defence-in-depth against a hostile token, …).
 
 ## Discovering the public surface
 

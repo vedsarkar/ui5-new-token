@@ -19,11 +19,8 @@
  */
 
 import type { AuthConfig, CheckTokenResponse } from "../types";
-import { RequestError } from "../utils/errors";
-import { getAccessToken } from "../utils/getAccessToken";
-import { getBasicToken } from "../utils/getBasicToken";
 import type { AnyRequest } from "../utils/readHeader";
-import { deriveHmacKey } from "./aurlCookie";
+import { buildAllowlist } from "./allowlist";
 import { checkAccessToken } from "./checkAccessToken";
 import { callbackHandler } from "./handlers/callbackHandler";
 import { checkTokenHandler } from "./handlers/checkTokenHandler";
@@ -42,12 +39,7 @@ export type CheckTokenOptions = {
 const CACHE_CONTROL = "no-store, no-cache, max-age=0, must-revalidate, private";
 const PRAGMA = "no-cache";
 
-/**
- * Routing table. Path matching is suffix-based — the last URL segment
- * selects the handler, which makes the router mount-point agnostic
- * (`/auth/login`, `/api/auth/login`, and `/anything/login` all dispatch
- * to `loginHandler`).
- */
+/** Route table — matched by HTTP method plus the request's last path segment. */
 const ROUTES: ReadonlyArray<{
 	method: string;
 	suffix: string;
@@ -64,19 +56,19 @@ const ROUTES: ReadonlyArray<{
  * Returned object — the single composition root of the package.
  *
  * - `handle(request)` is the per-request router entry point.
- * - `resolveAuthPath(request)` resolves the per-session Auth Server URL
- *   from the signed `reltio_aurl` cookie (falling back to the static
- *   `oauthPath`). Exposed for app code that calls the Auth server directly,
- *   bypassing the router's `/checkToken` and `/refreshToken` endpoints.
- *   Framework adapters re-surface it on their own return values.
+ * - `resolveAuthPath(request)` resolves the Auth Server URL for the request's
+ *   session from the access token's `aurl` claim (matched against the
+ *   configured allowlist, falling back to the primary cluster). Exposed for
+ *   app code that calls the Auth server directly, bypassing the router's
+ *   `/checkToken` and `/refreshToken` endpoints. Framework adapters re-surface
+ *   it on their own return values.
  * - `checkToken(request, opts?)` is the programmatic sibling of the
  *   `POST /checkToken` route: it reads the access token from the request,
- *   routes per-session via `resolveAuthPath`, introspects it upstream, and
- *   returns the parsed `CheckTokenResponse` payload. Unlike the route, it
- *   returns the parsed payload (not a `Response`) and signals failure by
- *   throwing `RequestError`: a missing request token → `statusCode` 401,
- *   an upstream 4xx → the upstream status, upstream 5xx / network failure →
- *   502. Reuses the once-derived Basic header and HMAC key. Framework
+ *   introspects it against the cluster named by its `aurl` claim, and returns
+ *   the parsed `CheckTokenResponse` payload. Unlike the route, it returns the
+ *   parsed payload (not a `Response`) and signals failure by throwing
+ *   `RequestError`: a missing request token → `statusCode` 401, an upstream
+ *   4xx → the upstream status, upstream 5xx / network failure → 502. Framework
  *   adapters re-surface it on their own return values.
  */
 export type AuthHandler = {
@@ -91,16 +83,15 @@ export type AuthHandler = {
 /**
  * Builds the auth router — the ONLY factory in the package.
  *
- * Call this ONCE per application. Every "derive-once" value (the Basic auth
- * header and the HMAC routing key) is computed here and captured in a single
- * `deps` record shared by the route table and the pure OAuth/routing
- * functions. Building per request would re-derive the HMAC key on every call.
+ * Call this ONCE per application. The multiauth allowlist (each cluster's
+ * origin and precomputed Basic header) is built here from `config` and
+ * captured in a single `deps` record shared by the route table and the pure
+ * OAuth/routing functions.
  */
 export function createAuth(config: AuthConfig): AuthHandler {
 	const deps: AuthDeps = {
 		config,
-		authHeader: `Basic ${getBasicToken(config.clientId, config.clientSecret)}`,
-		keyPromise: deriveHmacKey(config.clientSecret),
+		allowlist: buildAllowlist(config),
 	};
 
 	return {
@@ -116,21 +107,13 @@ export function createAuth(config: AuthConfig): AuthHandler {
 			return withCacheHeaders(await route.handler({ ...deps, request }));
 		},
 		resolveAuthPath: (request) => resolveAuthPath({ ...deps, request }),
-		async checkToken(request, opts) {
-			const accessToken = getAccessToken(request);
-			if (!accessToken) {
-				throw new RequestError("No access token on request", {
-					statusCode: 401,
-				});
-			}
-			return checkAccessToken({
-				...deps,
+		checkToken: (request, opts) =>
+			checkAccessToken({
+				allowlist: deps.allowlist,
 				request,
-				accessToken,
 				serviceId: opts?.serviceId,
 				tenantId: opts?.tenantId,
-			});
-		},
+			}),
 	};
 }
 

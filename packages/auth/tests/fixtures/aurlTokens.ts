@@ -44,6 +44,14 @@ export const TOKEN_WITHOUT_AURL =
 	"s.AAAAJSi1L_0gJSkBAHsic3ViIjoidGVzdC11c2VyIiwidCI6InRlc3QtdGVuYW50In0.fakesig";
 
 /**
+ * Reltio JWT that decodes cleanly but whose `aurl` claim is `"not-a-url"` (a
+ * string `new URL()` rejects) — exercises the present-but-unparseable `aurl`
+ * fallback to the primary. Payload: `{"aurl":"not-a-url","sub":"test-user","t":"test-tenant"}`.
+ */
+export const TOKEN_WITH_NON_URL_AURL =
+	"s.AAAAOCi1L_0gOMEBAHsiYXVybCI6Im5vdC1hLXVybCIsInN1YiI6InRlc3QtdXNlciIsInQiOiJ0ZXN0LXRlbmFudCJ9.fakesig";
+
+/**
  * Hand-crafted bomb-defence fixture — the 4-byte big-endian prefix declares
  * 200 000 (> the 128 KiB `MAX_DECOMPRESSED_SIZE` ceiling), so
  * `decodeAccessToken` must reject it at the declared-size gate (Guard 1)

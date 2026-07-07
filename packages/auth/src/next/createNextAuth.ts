@@ -30,10 +30,10 @@ export function createNextAuth(config: AuthConfig): {
 		POST: (req: Request) => Promise<Response>;
 	};
 	/**
-	 * Resolves the per-session Auth Server URL from the signed `reltio_aurl`
-	 * cookie (falling back to the static `oauthPath`). Use in route handlers
-	 * that call the Auth server directly, bypassing the BFF's `/checkToken`
-	 * and `/refreshToken` endpoints.
+	 * Resolves the Auth Server URL for the request's session from the access
+	 * token's `aurl` claim (matched against the allowlist, falling back to the
+	 * primary cluster). Use in route handlers that call the Auth server
+	 * directly, bypassing the BFF's `/checkToken` and `/refreshToken` endpoints.
 	 */
 	resolveAuthPath: (req: AnyRequest) => Promise<string>;
 	/**
