@@ -1,0 +1,78 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { Markdown } from "@/components/Markdown";
+import skillSource from "../packages/skills/skills/container-vuln-check/SKILL.md?raw";
+
+export const skillBody = skillSource.replace(/^---[\s\S]*?---\s*/, "");
+
+<Meta title="Guides/Container Vulnerability Check" />
+
+# Container Vulnerability Check
+
+This guide is for **teams triaging and remediating open vulnerabilities** in a
+Reltio application's container image. It ships an agent skill that any AI agent
+(Cursor, Claude, Codex) can follow to go from a container/app name to a verified,
+remediated set of findings — and a clear report of what was fixed.
+
+> **🎯 Key principle:** The scanner is a pluggable **source adapter**. Everything
+> after fetching findings (classify → verify → remediate → report) is
+> tool-independent, so the same workflow applies whether you scan with Wiz, Snyk,
+> Trivy, Grype, or Dependabot.
+
+## 1. Install the skill
+
+The skill ships in its own package, [`@reltio/skills`](https://www.npmjs.com/package/@reltio/skills).
+From your application's repository root:
+
+```bash
+npx @reltio/skills install container-vuln-check
+```
+
+To see everything available, run `npx @reltio/skills list`; `npx @reltio/skills install`
+(no name) installs all bundled skills.
+
+This writes the `container-vuln-check` skill into `.agents/skills/` and links it
+into `.claude/skills/`. It never edits your `AGENTS.md` / `CLAUDE.md` — it prints
+a suggested pointer line you can add manually. Re-running is safe and
+non-destructive (it cleanly updates an existing install); pass `--force` only to
+replace a conflicting link.
+
+## 2. Connect a scanner (the agent will guide you)
+
+The skill fetches findings through a scanner **source adapter**. The **Wiz**
+adapter (via the `user-wiz` MCP) is the one implemented today — if it isn't
+connected yet, the agent detects that and walks you through the one-time setup
+when you run the skill, so there's nothing to prepare up front.
+
+> **💡 Tip:** When prompted, the setup is quick — add the Wiz endpoint to your
+> `.cursor/mcp.json` and authenticate the `wiz` server via the usual Wiz OAuth
+> login. The skill includes the exact snippet and steps at the point you need
+> them.
+
+Prefer a different tool? Any scanner (Snyk, Trivy, Prisma/Twistlock, Grype,
+GitHub/Dependabot, …) can be plugged in by mapping its fields onto the normalized
+finding contract — the rest of the pipeline stays identical. The skill documents
+that contract below.
+
+## 3. Let the agent run the pipeline
+
+Ask your agent to check a container image's vulnerabilities (by app name, or let
+it derive and confirm the image name from your deploy artifacts). The skill drives
+a five-step pipeline: derive the container name, fetch findings, classify them
+(app Node.js deps vs base-image npm vs OS packages), verify the Node.js findings
+against the repository, remediate, and report.
+
+> **💡 Tip:** The skill prefers **upgrades over overrides** — it refreshes parent
+> subtrees to move the tree forward rather than pinning versions, and audits
+> existing `overrides` that may be holding a vulnerable version in place.
+
+## The skill
+
+This is the full skill an agent follows — read it to understand the pipeline, the
+adapter contract, and the remediation guardrails it applies.
+
+<Markdown>{skillBody}</Markdown>
+
+## Resources
+
+- [Adopt Reltio Design](?path=/docs/guides-adopt-reltio-design--docs) — the other bundled `@reltio/skills` workflow
+- [@reltio/skills](https://www.npmjs.com/package/@reltio/skills) — the package that distributes this skill
