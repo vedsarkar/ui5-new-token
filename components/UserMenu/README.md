@@ -29,10 +29,28 @@ look; pass `colorScheme` to override.
 ### Internal popover and modal state
 
 Both the popover and the About modal own their open/close state internally — there
-are no `open` props. Clicking the avatar toggles the popover; clicking the About
-item opens the modal and closes the popover; the popover and modal each close on
+are no `open` props. Clicking the avatar toggles the popover; clicking the built-in
+About item opens the modal and closes the popover; custom menu items close the
+popover without opening the About modal. The popover and modal each close on
 `Escape`, backdrop click, or their respective actions. This matches the
 `TenantSelector` / `AppSelector` precedent for ephemeral interaction state.
+
+### Custom menu items
+
+Pass optional `children` as one or more `UserMenuItem` elements from
+`@reltio/design/components`. Items render after the built-in About entry and
+before Sign Out. The About item, About modal content, and Sign Out behavior stay
+inside `UserMenu` — consumers cannot remove, reorder, or replace them.
+`UserMenuItemGroup` and nested sub-menu trees are not part of the supported
+children contract for this version; `children` is typed as `ReactNode` and is
+not validated at runtime.
+
+Handle custom-item activation with optional `onItemClick` on `UserMenu` (UI5's
+`item-click` event). Put identifying metadata on each item via `data-*`
+attributes, and read them from `event.detail.item`.
+`onItemClick` is not called for the built-in About item. Do not put
+`data-reltio-user-menu` on consumer items — that attribute is reserved for the
+built-in About entry.
 
 ### Sign out is fire-and-forget
 
@@ -58,5 +76,6 @@ modal inherit UI5's focus and `Escape` handling.
 ### See also
 
 - [UI5 UserMenu reference](https://ui5.github.io/webcomponents/components/fiori/UserMenu/) — popover slots, accounts, Sign Out
+- `UserMenuItem` — menu entries passed as `children`
 - [UI5 Avatar reference](https://ui5.github.io/webcomponents/components/Avatar/) — initials, image, color schemes
 - [SAP Fiori — Shell Bar](https://www.sap.com/design-system/fiori-design-web/v1-145/ui-elements/shell-bar) — the profile/user area of the canonical header

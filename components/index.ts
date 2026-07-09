@@ -137,6 +137,7 @@ export { ToolbarSpacer } from "@ui5/webcomponents-react/ToolbarSpacer";
 export { Tree } from "@ui5/webcomponents-react/Tree";
 export { UploadCollection } from "@ui5/webcomponents-react/UploadCollection";
 export { UploadCollectionItem } from "@ui5/webcomponents-react/UploadCollectionItem";
+export { UserMenuItem } from "@ui5/webcomponents-react/UserMenuItem";
 export { UserMenuItemGroup } from "@ui5/webcomponents-react/UserMenuItemGroup";
 export { Wizard } from "@ui5/webcomponents-react/Wizard";
 export { WizardStep } from "@ui5/webcomponents-react/WizardStep";
