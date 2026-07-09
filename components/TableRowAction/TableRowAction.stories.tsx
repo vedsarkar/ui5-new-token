@@ -4,8 +4,8 @@ import { TableHeaderCell } from "@ui5/webcomponents-react/TableHeaderCell";
 import { TableHeaderRow } from "@ui5/webcomponents-react/TableHeaderRow";
 import { TableRow } from "@ui5/webcomponents-react/TableRow";
 import { TableRowAction } from "@ui5/webcomponents-react/TableRowAction";
+import editIcon from "@/icons/sap/edit";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/edit.js";
 
 const meta = preview.meta({
 	component: TableRowAction,
@@ -24,7 +24,10 @@ export const Default = meta.story(() => (
 				<span>Entity</span>
 			</TableHeaderCell>
 		</TableHeaderRow>
-		<TableRow rowKey="1" actions={<TableRowAction icon="edit" text="Edit" />}>
+		<TableRow
+			rowKey="1"
+			actions={<TableRowAction icon={editIcon} text="Edit" />}
+		>
 			<TableCell>Acme Corp</TableCell>
 		</TableRow>
 	</Table>

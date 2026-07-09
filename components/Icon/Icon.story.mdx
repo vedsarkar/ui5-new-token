@@ -21,26 +21,26 @@ import { Icon } from "@reltio/design/components";
 
 ```tsx
 import { Icon } from "@reltio/design/components";
-import "@reltio/design/icons/sap/save";
+import saveIcon from "@reltio/design/icons/sap/save";
 
-<Icon name="save" />;
+<Icon name={saveIcon} />;
 ```
 
 `Icon` is the SAP Fiori icon element, re-exported from `@ui5/webcomponents-react/Icon` as the canonical Reltio entry point. Use it for inline glyphs, status indicators, navigation cues, and decorative accents — anywhere a single visual symbol communicates intent.
 
 There is no Reltio wrapping or default override: the props, slots, and runtime behavior are exactly those of `@ui5/webcomponents-react/Icon`. The Reltio layer adds curation (this is the endorsed icon-rendering surface), pinned versioning, and Reltio-specific guidance.
 
-### Loading icons — side-effect imports
+### Loading icons
 
-Each icon is loaded individually as a side-effect import — SAP from `@reltio/design/icons/sap/<kebab-name>`, Reltio from `@reltio/design/icons/reltio/<kebab-name>`. Only the icons you actually `import` end up in your bundle:
+The package is `sideEffects: false`, so bare side-effect imports are dropped. Import each icon's **name** (the `default` export) — SAP from `@reltio/design/icons/sap/<kebab-name>`, Reltio from `@reltio/design/icons/reltio/<kebab-name>`. The import registers the icon and returns its registry-name string, so only the icons you actually `import` end up in your bundle:
 
 ```tsx
-import "@reltio/design/icons/sap/save";
-import "@reltio/design/icons/reltio/data-quality";
 import { Icon } from "@reltio/design/components";
+import saveIcon from "@reltio/design/icons/sap/save";                   // "save"
+import dataQualityIcon from "@reltio/design/icons/reltio/data-quality"; // "reltio/data-quality"
 
-<Icon name="save" />;
-<Icon name="reltio/data-quality" />;
+<Icon name={saveIcon} />;
+<Icon name={dataQualityIcon} />;
 ```
 
 Optional PascalCase component export from the same path:

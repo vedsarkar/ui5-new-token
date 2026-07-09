@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { fn } from "storybook/test";
 import { Tree, TreeItem } from "@/components";
+import documentIcon from "@/icons/sap/document";
+import folderIcon from "@/icons/sap/folder";
 import preview from "../../.storybook/preview";
 import type { TreeProps } from "../Tree/Tree.types";
-import "@ui5/webcomponents-icons/dist/folder.js";
-import "@ui5/webcomponents-icons/dist/document.js";
 
 const meta = preview.meta({
 	component: TreeItem,
@@ -41,15 +41,15 @@ export const Default = meta.story({
 export const WithIcon = meta.story({
 	args: {
 		content: "Organizations",
-		icon: "folder",
+		icon: folderIcon,
 	},
 });
 
 export const WithChildren = meta.story({
 	render: (args) => (
-		<TreeItem {...args} content="Organizations" icon="folder" expanded>
-			<TreeItem content="Acme Corp" icon="document" />
-			<TreeItem content="Globex" icon="document" />
+		<TreeItem {...args} content="Organizations" icon={folderIcon} expanded>
+			<TreeItem content="Acme Corp" icon={documentIcon} />
+			<TreeItem content="Globex" icon={documentIcon} />
 		</TreeItem>
 	),
 });
@@ -57,7 +57,7 @@ export const WithChildren = meta.story({
 export const WithAdditionalText = meta.story({
 	args: {
 		content: "Organizations",
-		icon: "folder",
+		icon: folderIcon,
 		additionalText: "128",
 		additionalTextState: "Information",
 	},
@@ -66,7 +66,7 @@ export const WithAdditionalText = meta.story({
 export const Selected = meta.story({
 	args: {
 		content: "Organizations",
-		icon: "folder",
+		icon: folderIcon,
 		selected: true,
 	},
 });
@@ -95,7 +95,7 @@ export const Loading = meta.story({
 	},
 	render: () => (
 		<Tree style={{ width: "320px" }}>
-			<TreeItem content="Organizations" icon="folder" expanded loading />
+			<TreeItem content="Organizations" icon={folderIcon} expanded loading />
 		</Tree>
 	),
 });
@@ -109,7 +109,7 @@ export const LazyLoading = meta.story({
 		standalone: true,
 	},
 	args: {
-		icon: "folder",
+		icon: folderIcon,
 	},
 	render: (args) => {
 		const [status, setStatus] = useState<"idle" | "loading" | "loaded">("idle");
@@ -136,9 +136,9 @@ export const LazyLoading = meta.story({
 				>
 					{status === "loaded" ? (
 						<>
-							<TreeItem content="Acme Corp" icon="document" />
-							<TreeItem content="Globex" icon="document" />
-							<TreeItem content="SAP Reltio" icon="document" />
+							<TreeItem content="Acme Corp" icon={documentIcon} />
+							<TreeItem content="Globex" icon={documentIcon} />
+							<TreeItem content="SAP Reltio" icon={documentIcon} />
 						</>
 					) : null}
 				</TreeItem>

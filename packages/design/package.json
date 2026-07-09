@@ -3,6 +3,7 @@
 	"version": "1.10.0",
 	"description": "Reltio Design Platform",
 	"license": "Apache-2.0",
+	"sideEffects": false,
 	"homepage": "https://reltio.design",
 	"bugs": {
 		"url": "https://bitbucket.org/reltio-ondemand/reltio-design/issues"

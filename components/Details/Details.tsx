@@ -1,13 +1,11 @@
 import { Icon } from "@ui5/webcomponents-react/Icon";
 import React, { useEffect, useState } from "react";
+import navigationDownArrowIcon from "@/icons/sap/navigation-down-arrow";
+import navigationUpArrowIcon from "@/icons/sap/navigation-up-arrow";
+import sourceCodeIcon from "@/icons/sap/source-code";
 import { classNames } from "@/utils/classNames";
-
 import styles from "./Details.module.css";
-
 import type { DetailsProps } from "./Details.types";
-import "@ui5/webcomponents-icons/dist/navigation-up-arrow.js";
-import "@ui5/webcomponents-icons/dist/navigation-down-arrow.js";
-import "@ui5/webcomponents-icons/dist/source-code.js";
 
 /** Styled wrapper around the native HTML `<details>` element with a chevron toggle and SAP Horizon typography. */
 export const Details = ({
@@ -51,16 +49,16 @@ export const Details = ({
 		>
 			<summary className={classNames(styles.summary)}>
 				<span className={classNames(styles.icon)} aria-hidden="true">
-					<Icon name="source-code" />
+					<Icon name={sourceCodeIcon} />
 				</span>
 				<span className={classNames(styles.summaryText)}>{summary}</span>
 				<span
 					className={classNames(styles.chevron, isOpen && styles.chevronOpen)}
 				>
 					{isOpen ? (
-						<Icon name="navigation-up-arrow" aria-hidden="true" />
+						<Icon name={navigationUpArrowIcon} aria-hidden="true" />
 					) : (
-						<Icon name="navigation-down-arrow" aria-hidden="true" />
+						<Icon name={navigationDownArrowIcon} aria-hidden="true" />
 					)}
 				</span>
 			</summary>

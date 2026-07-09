@@ -7,7 +7,7 @@ import { ReltioIconGallery } from "./ReltioIconGallery";
 
 The Reltio Design Platform ships two icon families — SAP Fiori icons and Reltio icons.
 
-> **🎯 Key Principle:** Import the icons you use (per icon for tree-shaking), then render any of them by name with <code>&lt;Icon name="&lt;name&gt;" /&gt;</code> for SAP Fiori icons or <code>&lt;Icon name="reltio/&lt;name&gt;" /&gt;</code> for Reltio icons — or pass that same name to any Reltio Design Platform component's <code>icon</code> prop.
+> **🎯 Key Principle:** Import each icon you use — its <code>default</code> export (the registry name) or its React component — which registers it (the package is <code>sideEffects: false</code>, so only imported icons ship). Then render the component, or pass the imported name to the <code>&lt;Icon&gt;</code> component's <code>name</code> prop or any Reltio Design Platform component's <code>icon</code> prop.
 
 ## SAP Fiori icons
 
@@ -31,7 +31,7 @@ Custom, Reltio-branded icon set (application icons, entity-type icons, and produ
 	<tbody>
 		<tr>
 			<td><strong>Inside a Reltio app (recommended)</strong> — buttons, navigation, lists, anywhere a Reltio Design Platform component takes an icon</td>
-			<td>Register the set via a side-effect import, then reference icons by <code>&lt;name&gt;</code> for SAP Fiori icons or <code>reltio/&lt;name&gt;</code> for Reltio icons</td>
+			<td>Import each icon (its <code>default</code> name export or its React component — either registers it), then render the component or pass the name to an <code>icon</code> prop</td>
 		</tr>
 		<tr>
 			<td><strong>Outside the app</strong> — emails, external sites, <code>&lt;img&gt;</code>/CSS, non-React surfaces</td>
@@ -42,70 +42,66 @@ Custom, Reltio-branded icon set (application icons, entity-type icons, and produ
 
 ## 1. In your app (recommended)
 
-### Step 1 — register the icons you use
+### Step 1 — import the icons you use
 
-Registering an icon is a side-effect import. There are two options — pick based on how much you care about bundle size.
+Each per-icon module registers its icon **when you consume one of its exports** — its name (the `default` export) or its React component. There are no bare side-effect imports: the package is `sideEffects: false`, so importing only what you use is what keeps the icon registered *and* lets the bundler drop every icon you don't.
 
-**Per icon (recommended) — tree-shakable.** Import only the icons you use; your bundle includes only those modules:
-
-```tsx
-import "@reltio/design/icons/sap/save";
-import "@reltio/design/icons/reltio/data-quality";
-import "@reltio/design/icons/reltio/compare";
-```
-
-**The whole Reltio set — convenience.** A single import registers all `reltio/*` icons. Simplest to wire up, but pulls every icon into your bundle (use only when you genuinely need most of them, or in tooling/prototypes):
+**Default export — the icon name (recommended for `icon` props).** The default export is the registry name string (`"save"`, `"reltio/data-quality"`), and importing it registers the icon:
 
 ```tsx
-import "@reltio/design/icons/reltio";
+import saveIcon from "@reltio/design/icons/sap/save";
+import dataQualityIcon from "@reltio/design/icons/reltio/data-quality";
 ```
 
-Either form is a one-time side effect — do it once, as early as possible (e.g. your root entry or layout). The icon stays registered globally for the rest of the app.
-
-**✅ Do:** import per icon in app code
-
-```tsx
-import "@reltio/design/icons/reltio/contact";
-```
-
-**❌ Don't:** import the whole Reltio set in a size-sensitive app just to use a few icons
-
-```tsx
-import "@reltio/design/icons/reltio"; // bundles all 100+ Reltio icons
-```
-
-### Step 2 — render by name
-
-Use the icon name (`<name>` for SAP Fiori icons or `reltio/<name>` for Reltio icons) with the `<Icon>` component, or pass it to any Reltio Design Platform component that accepts an `icon` prop:
-
-```tsx
-import { Icon, Button, SideNavigationItem } from "@reltio/design/components";
-
-// SAP Fiori icons — bare kebab name
-<Icon name="save" />
-<Button icon="decline" design="Transparent" accessibleName="Close" />
-
-// Reltio icons — reltio/ prefix
-<Icon name="reltio/data-quality" />
-<Button icon="reltio/compare">Compare</Button>
-<SideNavigationItem icon="reltio/homepage" text="Home" />
-```
-
-The `<name>` is always the lowercase, kebab-case file name (see the [catalog](/?path=/docs/icons-reltio-icons-catalog--docs) for the full list of Reltio icons or [SAP Fiori Icons explorer](https://ui5.github.io/webcomponents/icons/) for SAP Fiori icon).
-
-### Optional — PascalCase component export
-
-Every per-icon module also exports a named React component from the same path:
+**Component export — for standalone icons.** Every module also exports a PascalCase React component from the same path (importing it registers the icon too):
 
 ```tsx
 import { Save } from "@reltio/design/icons/sap/save";
 import { ReltioDataQuality } from "@reltio/design/icons/reltio/data-quality";
-
-<Save design="Positive" />
-<ReltioDataQuality accessibleName="Data quality" />
 ```
 
-Importing the component registers the icon (same module evaluation as the side-effect import).
+**The whole Reltio set — namespace import.** When you need every Reltio icon by name (e.g. a data-driven picker where the names aren't known at build time), import the barrel as a namespace and read the names off it; iterating it registers the whole set (and pulls every icon into your bundle — use only when you truly need them all):
+
+```tsx
+import * as reltioIcons from "@reltio/design/icons/reltio";
+
+// e.g. reltioIcons.dataQuality === "reltio/data-quality"
+const allReltioNames = Object.values(reltioIcons);
+```
+
+**✅ Do:** import just the icons you use
+
+```tsx
+import contactIcon from "@reltio/design/icons/reltio/contact";
+```
+
+**❌ Don't:** namespace-import the whole set in a size-sensitive app just to use a few icons
+
+```tsx
+import * as reltioIcons from "@reltio/design/icons/reltio"; // can bundle all 100+ icons
+```
+
+### Step 2 — render
+
+Render the component directly, or pass the imported name to `<Icon>` / any Reltio Design Platform component that accepts an `icon` prop:
+
+```tsx
+import { Icon, Button, SideNavigationItem } from "@reltio/design/components";
+import saveIcon from "@reltio/design/icons/sap/save";
+import { ReltioDataQuality } from "@reltio/design/icons/reltio/data-quality";
+import compareIcon from "@reltio/design/icons/reltio/compare";
+import homepageIcon from "@reltio/design/icons/reltio/homepage";
+
+// Component export — standalone icon
+<ReltioDataQuality accessibleName="Data quality" />
+
+// Name export — for the `icon` prop or <Icon name>
+<Icon name={saveIcon} />
+<Button icon={compareIcon}>Compare</Button>
+<SideNavigationItem icon={homepageIcon} text="Home" />
+```
+
+The underlying name is always the lowercase, kebab-case file name (`save`, `reltio/data-quality`) — see the [catalog](/?path=/docs/icons-reltio-icons-catalog--docs) for the full list of Reltio icons or the [SAP Fiori Icons explorer](https://ui5.github.io/webcomponents/icons/) for SAP Fiori icons.
 
 ### Sizing
 

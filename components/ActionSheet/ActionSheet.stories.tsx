@@ -2,10 +2,10 @@ import { ActionSheet } from "@ui5/webcomponents-react/ActionSheet";
 import { Button } from "@ui5/webcomponents-react/Button";
 import { useId, useState } from "react";
 import { fn } from "storybook/test";
+import deleteIcon from "@/icons/sap/delete";
+import editIcon from "@/icons/sap/edit";
+import shareIcon from "@/icons/sap/share";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/edit.js";
-import "@ui5/webcomponents-icons/dist/share.js";
-import "@ui5/webcomponents-icons/dist/delete.js";
 
 const meta = preview.meta({
 	component: ActionSheet,
@@ -46,9 +46,9 @@ export const Default = meta.story({
 		<SheetTrigger>
 			{(openerId, open, close) => (
 				<ActionSheet {...args} opener={openerId} open={open} onClose={close}>
-					<Button icon="edit">Edit</Button>
-					<Button icon="share">Share</Button>
-					<Button icon="delete" design="Negative">
+					<Button icon={editIcon}>Edit</Button>
+					<Button icon={shareIcon}>Share</Button>
+					<Button icon={deleteIcon} design="Negative">
 						Delete
 					</Button>
 				</ActionSheet>
@@ -68,8 +68,8 @@ export const WithHeader = meta.story({
 					onClose={close}
 					headerText="Manage entity"
 				>
-					<Button icon="edit">Edit</Button>
-					<Button icon="share">Share</Button>
+					<Button icon={editIcon}>Edit</Button>
+					<Button icon={shareIcon}>Share</Button>
 				</ActionSheet>
 			)}
 		</SheetTrigger>

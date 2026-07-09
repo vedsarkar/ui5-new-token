@@ -3,10 +3,10 @@
  * Run: npm run build-icons
  * Source: public/icons/*.svg
  * Gallery of every Reltio icon — rendered in icons.story.mdx (the Overview
- * docs page). Imports ./reltio so the whole set is registered when shown.
+ * docs page). A namespace import of the barrel registers the whole set.
  */
 import { Icon } from "@ui5/webcomponents-react/Icon";
-import { RELTIO_ICON_COLLECTION, reltioIcons } from "./reltio";
+import * as reltioIcons from "./reltio";
 
 /** Grid of every Reltio icon rendered through the UI5 Icon component. */
 export function ReltioIconGallery() {
@@ -19,38 +19,35 @@ export function ReltioIconGallery() {
 				fontFamily: "var(--sapFontFamily)",
 			}}
 		>
-			{reltioIcons.map((icon) => {
-				const fullName = `${RELTIO_ICON_COLLECTION}/${icon.name}`;
-				return (
-					<div
-						key={icon.name}
+			{Object.values(reltioIcons).map((fullName) => (
+				<div
+					key={fullName}
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						gap: "10px",
+						padding: "16px 8px",
+						border:
+							"1px solid var(--sapTile_BorderColor, var(--sapList_BorderColor))",
+						borderRadius: "8px",
+						background: "var(--sapTile_Background)",
+						color: "var(--sapTextColor)",
+						textAlign: "center",
+					}}
+				>
+					<Icon name={fullName} style={{ width: "28px", height: "28px" }} />
+					<code
 						style={{
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							gap: "10px",
-							padding: "16px 8px",
-							border:
-								"1px solid var(--sapTile_BorderColor, var(--sapList_BorderColor))",
-							borderRadius: "8px",
-							background: "var(--sapTile_Background)",
-							color: "var(--sapTextColor)",
-							textAlign: "center",
+							fontSize: "11px",
+							color: "var(--sapContent_LabelColor)",
+							wordBreak: "break-word",
 						}}
 					>
-						<Icon name={fullName} style={{ width: "28px", height: "28px" }} />
-						<code
-							style={{
-								fontSize: "11px",
-								color: "var(--sapContent_LabelColor)",
-								wordBreak: "break-word",
-							}}
-						>
-							{fullName}
-						</code>
-					</div>
-				);
-			})}
+						{fullName}
+					</code>
+				</div>
+			))}
 		</div>
 	);
 }

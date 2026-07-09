@@ -1,17 +1,15 @@
+import activityItemsIcon from "@/icons/sap/activity-items";
+import addIcon from "@/icons/sap/add";
+import businessObjectsExperienceIcon from "@/icons/sap/business-objects-experience";
+import groupIcon from "@/icons/sap/group";
+import homeIcon from "@/icons/sap/home";
+import logIcon from "@/icons/sap/log";
+import orgChartIcon from "@/icons/sap/org-chart";
 import preview from "../../.storybook/preview";
 import { SideNavigationGroup } from "../SideNavigationGroup";
 import { SideNavigationItem } from "../SideNavigationItem";
 import { SideNavigationSubItem } from "../SideNavigationSubItem";
 import { SideNavigation } from "./SideNavigation";
-import "@ui5/webcomponents-icons/dist/home.js";
-import "@ui5/webcomponents-icons/dist/group.js";
-import "@ui5/webcomponents-icons/dist/org-chart.js";
-import "@ui5/webcomponents-icons/dist/activity-items.js";
-import "@ui5/webcomponents-icons/dist/business-objects-experience.js";
-import "@ui5/webcomponents-icons/dist/settings.js";
-import "@ui5/webcomponents-icons/dist/add.js";
-import "@ui5/webcomponents-icons/dist/sys-help.js";
-import "@ui5/webcomponents-icons/dist/log.js";
 
 const meta = preview.meta({
 	component: SideNavigation,
@@ -35,10 +33,13 @@ export default meta;
 export const Default = meta.story({
 	render: (args) => (
 		<SideNavigation {...args}>
-			<SideNavigationItem text="Home" icon="home" selected />
-			<SideNavigationItem text="Entities" icon="business-objects-experience" />
-			<SideNavigationItem text="Relationships" icon="org-chart" />
-			<SideNavigationItem text="Activity" icon="activity-items" />
+			<SideNavigationItem text="Home" icon={homeIcon} selected />
+			<SideNavigationItem
+				text="Entities"
+				icon={businessObjectsExperienceIcon}
+			/>
+			<SideNavigationItem text="Relationships" icon={orgChartIcon} />
+			<SideNavigationItem text="Activity" icon={activityItemsIcon} />
 		</SideNavigation>
 	),
 });
@@ -46,17 +47,17 @@ export const Default = meta.story({
 export const WithSubItems = meta.story({
 	render: (args) => (
 		<SideNavigation {...args}>
-			<SideNavigationItem text="Home" icon="home" selected />
+			<SideNavigationItem text="Home" icon={homeIcon} selected />
 			<SideNavigationItem
 				text="Data Model"
-				icon="business-objects-experience"
+				icon={businessObjectsExperienceIcon}
 				expanded
 			>
 				<SideNavigationSubItem text="Entity Types" />
 				<SideNavigationSubItem text="Relationship Types" />
 				<SideNavigationSubItem text="Attributes" />
 			</SideNavigationItem>
-			<SideNavigationItem text="Stewardship" icon="group">
+			<SideNavigationItem text="Stewardship" icon={groupIcon}>
 				<SideNavigationSubItem text="Match Groups" />
 				<SideNavigationSubItem text="Merge Queue" />
 			</SideNavigationItem>
@@ -68,16 +69,16 @@ export const WithGroups = meta.story({
 	render: (args) => (
 		<SideNavigation {...args}>
 			<SideNavigationGroup text="Explore" expanded>
-				<SideNavigationItem text="Home" icon="home" selected />
+				<SideNavigationItem text="Home" icon={homeIcon} selected />
 				<SideNavigationItem
 					text="Entities"
-					icon="business-objects-experience"
+					icon={businessObjectsExperienceIcon}
 				/>
-				<SideNavigationItem text="Relationships" icon="org-chart" />
+				<SideNavigationItem text="Relationships" icon={orgChartIcon} />
 			</SideNavigationGroup>
 			<SideNavigationGroup text="Operate" expanded>
-				<SideNavigationItem text="Activity" icon="activity-items" />
-				<SideNavigationItem text="Stewardship" icon="group" />
+				<SideNavigationItem text="Activity" icon={activityItemsIcon} />
+				<SideNavigationItem text="Stewardship" icon={groupIcon} />
 			</SideNavigationGroup>
 		</SideNavigation>
 	),
@@ -89,20 +90,20 @@ export const Collapsable = meta.story({
 	},
 	render: (args) => (
 		<SideNavigation {...args}>
-			<SideNavigationItem text="Home" icon="home" tooltip="Home" selected />
+			<SideNavigationItem text="Home" icon={homeIcon} tooltip="Home" selected />
 			<SideNavigationItem
 				text="Entities"
-				icon="business-objects-experience"
+				icon={businessObjectsExperienceIcon}
 				tooltip="Entities"
 			/>
 			<SideNavigationItem
 				text="Relationships"
-				icon="org-chart"
+				icon={orgChartIcon}
 				tooltip="Relationships"
 			/>
 			<SideNavigationItem
 				text="Activity"
-				icon="activity-items"
+				icon={activityItemsIcon}
 				tooltip="Activity"
 			/>
 		</SideNavigation>
@@ -112,19 +113,19 @@ export const Collapsable = meta.story({
 export const ItemStates = meta.story({
 	render: (args) => (
 		<SideNavigation {...args}>
-			<SideNavigationItem text="Selected" icon="home" selected />
-			<SideNavigationItem text="Default" icon="business-objects-experience" />
-			<SideNavigationItem text="Disabled" icon="org-chart" disabled />
+			<SideNavigationItem text="Selected" icon={homeIcon} selected />
+			<SideNavigationItem text="Default" icon={businessObjectsExperienceIcon} />
+			<SideNavigationItem text="Disabled" icon={orgChartIcon} disabled />
 			<SideNavigationItem
 				text="External link"
-				icon="log"
+				icon={logIcon}
 				href="https://www.reltio.com"
 				target="_blank"
 				unselectable
 			/>
 			<SideNavigationItem
 				text="Action"
-				icon="add"
+				icon={addIcon}
 				design="Action"
 				unselectable
 			/>

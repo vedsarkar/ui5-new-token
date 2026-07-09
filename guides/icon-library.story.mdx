@@ -6,7 +6,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 Reltio applications render icons through `@reltio/design` — the SAP Fiori icon set in the Horizon visual style, plus Reltio product glyphs. SAP icons register at `@reltio/design/icons/sap/<kebab-name>`; Reltio icons at `@reltio/design/icons/reltio/<kebab-name>`. Render with `<Icon name="…" />` from `@reltio/design/components`.
 
-> **🎯 Key Principle:** Use `<Icon name="..." />` from `@reltio/design/components`. Register SAP icons with `import "@reltio/design/icons/sap/<kebab-name>"` and Reltio icons with `import "@reltio/design/icons/reltio/<kebab-name>"`.
+> **🎯 Key Principle:** Import each icon you use — its `default` export (the registry name) or its PascalCase component — which registers it. The package is `sideEffects: false`, so a bare `import "@reltio/design/icons/sap/<kebab-name>"` is dropped: import the name (`import saveIcon from "@reltio/design/icons/sap/save"`) and render `<Icon name={saveIcon} />` from `@reltio/design/components`.
 
 ## Overview
 
@@ -20,7 +20,7 @@ Reltio applications render icons through `@reltio/design` — the SAP Fiori icon
 	<tbody>
 		<tr>
 			<td>🎨 <strong>SAP Fiori Iconography</strong></td>
-			<td>SAP Fiori standard library, shipped as per-icon modules at <code>@reltio/design/icons/&lt;kebab-name&gt;</code>; same iconography as other SAP Fiori surfaces</td>
+			<td>SAP Fiori standard library, shipped as per-icon modules at <code>@reltio/design/icons/sap/&lt;kebab-name&gt;</code>; same iconography as other SAP Fiori surfaces</td>
 		</tr>
 		<tr>
 			<td>📦 <strong>One renderer</strong></td>
@@ -28,7 +28,7 @@ Reltio applications render icons through `@reltio/design` — the SAP Fiori icon
 		</tr>
 		<tr>
 			<td>🌳 <strong>Tree-shakable</strong></td>
-			<td>Only the icon modules you import are bundled (<code>icons/&lt;name&gt;</code> or <code>icons/reltio/&lt;name&gt;</code>)</td>
+			<td>Only the icon modules you import are bundled (<code>icons/sap/&lt;name&gt;</code> or <code>icons/reltio/&lt;name&gt;</code>)</td>
 		</tr>
 		<tr>
 			<td>🔧 <strong>CSS-driven sizing & color</strong></td>
@@ -61,7 +61,7 @@ Reltio applications render icons through `@reltio/design` — the SAP Fiori icon
 		<tr>
 			<td><code>SAP-icons</code> (default)</td>
 			<td>General-purpose UI icons (navigation, actions, status)</td>
-			<td><code>@reltio/design/icons/&lt;name&gt;</code></td>
+			<td><code>@reltio/design/icons/sap/&lt;name&gt;</code></td>
 		</tr>
 		<tr>
 			<td><code>tnt</code></td>
@@ -84,41 +84,41 @@ Browse the full visual catalog in the [UI5 Web Components Icons explorer](https:
 
 ## Usage
 
-### 1. Register the icon (tree-shakable side-effect import)
+### 1. Import the icons you use
 
-Separate import paths per family — register only the icons you use:
+The package is `sideEffects: false`, so bare side-effect imports are dropped. Import each icon's **name** (the `default` export): the import registers the icon *and* gives you its registry-name string. Separate import paths per family — import only the icons you use:
 
 ```ts
-import "@reltio/design/icons/sap/save";
-import "@reltio/design/icons/reltio/data-quality";
+import saveIcon from "@reltio/design/icons/sap/save";                   // saveIcon === "save"
+import dataQualityIcon from "@reltio/design/icons/reltio/data-quality"; // "reltio/data-quality"
 ```
 
-Each side-effect import registers a single icon in the global icon registry. Only the icons you import end up in the bundle.
+Only the icons you import end up in the bundle.
 
 ### 2. Render with `<Icon>`
 
-The render `name` depends on the family:
+Pass the imported name to `<Icon>` — the value already carries the correct family prefix:
 
 ```tsx
 import { Icon } from "@reltio/design/components";
-import "@reltio/design/icons/sap/save";
-import "@reltio/design/icons/reltio/data-quality";
+import saveIcon from "@reltio/design/icons/sap/save";
+import dataQualityIcon from "@reltio/design/icons/reltio/data-quality";
 
-// SAP Fiori — bare kebab name
-<Icon name="save" />
+// SAP Fiori — bare kebab name (saveIcon === "save")
+<Icon name={saveIcon} />
 
-// Reltio icons — reltio/ prefix
-<Icon name="reltio/data-quality" />
+// Reltio icons — reltio/ prefix (dataQualityIcon === "reltio/data-quality")
+<Icon name={dataQualityIcon} />
 ```
 
 ```tsx
 import { Icon } from "@reltio/design/components";
-import "@reltio/design/icons/sap/save";
+import saveIcon from "@reltio/design/icons/sap/save";
 
 function SaveButton() {
 	return (
 		<button type="button">
-			<Icon name="save" />
+			<Icon name={saveIcon} />
 			Save
 		</button>
 	);
@@ -139,13 +139,13 @@ import { ReltioDataQuality } from "@reltio/design/icons/reltio/data-quality";
 
 ### 4. Use icons inside other components by name
 
-Most `@reltio/design` components that accept an icon (e.g. `Button`, `MessageStrip`, `ListItem`) expose an `icon` prop that takes the same name string. As long as the icon module is imported once anywhere in the app, the name resolves globally.
+Most `@reltio/design` components that accept an icon (e.g. `Button`, `MessageStrip`, `ListItem`) expose an `icon` prop that takes the same name string. Import the icon name and pass it to the prop — the import both registers the icon and gives you the value:
 
 ```tsx
 import { Button } from "@reltio/design/components";
-import "@reltio/design/icons/sap/save";
+import saveIcon from "@reltio/design/icons/sap/save";
 
-<Button icon="save" design="Emphasized">Save</Button>;
+<Button icon={saveIcon} design="Emphasized">Save</Button>;
 ```
 
 ### Icons from non-default collections
@@ -242,13 +242,13 @@ For non-default collections (`tnt`, `business-suite`), install the separate npm 
 
 ## Best Practices
 
-**✅ Do:** Register icons via `@reltio/design/icons/sap/<kebab-name>`
+**✅ Do:** Import each icon's name from `@reltio/design/icons/sap/<kebab-name>`
 
 ```ts
 import { Icon } from "@reltio/design/components";
-import "@reltio/design/icons/sap/save";
+import saveIcon from "@reltio/design/icons/sap/save";
 
-<Icon name="save" />;
+<Icon name={saveIcon} />;
 ```
 
 **❌ Don't:** Import `@ui5/webcomponents-icons` in application code
@@ -257,15 +257,22 @@ import "@reltio/design/icons/sap/save";
 import "@ui5/webcomponents-icons/dist/save.js";
 ```
 
+**❌ Don't:** Rely on a bare side-effect import — `sideEffects: false` drops it
+
+```ts
+import "@reltio/design/icons/sap/save"; // dropped by the bundler; the icon never registers
+```
+
 **❌ Don't:** Import every icon globally at the app root — defeats tree-shaking
 
 `@reltio/design` ships SAP Fiori icons only as per-icon modules (`@reltio/design/icons/sap/<kebab-name>`). There is no all-SAP-icons aggregate import.
 
-For the Reltio custom set, a convenience barrel exists — use it only when you genuinely need most icons (prototypes, tooling):
+For the Reltio custom set, a namespace import registers every icon at once — use it only when you genuinely need most of them (prototypes, tooling, data-driven pickers):
 
 ```ts
-// Bundles every Reltio icon in the package
-import "@reltio/design/icons/reltio";
+// Iterating the namespace registers — and bundles — every Reltio icon
+import * as reltioIcons from "@reltio/design/icons/reltio";
+const allReltioNames = Object.values(reltioIcons);
 ```
 
 **✅ Do:** Use semantic colors via `--sap*` tokens or `<Icon design="...">`
@@ -297,7 +304,7 @@ import "@reltio/design/icons/reltio";
 	<tbody>
 		<tr>
 			<td>Render an icon</td>
-			<td><code>&lt;Icon name="save" /&gt;</code> + <code>import "@reltio/design/icons/sap/save"</code></td>
+			<td><code>import saveIcon from "@reltio/design/icons/sap/save"</code> + <code>&lt;Icon name={saveIcon} /&gt;</code></td>
 		</tr>
 		<tr>
 			<td>Use inside a <code>Button</code></td>

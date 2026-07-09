@@ -33,13 +33,13 @@ Always wire `onClose` when dismissible — track the dismissal in app state so t
 
 ### Custom icon
 
-Override the design's default icon via the `icon` slot. Pair with a side-effect import of the icon name. Use sparingly — a custom icon weakens the screen-reader role mapping that `design` provides.
+Override the design's default icon via the `icon` slot. Import the icon's name from `@reltio/design/icons/sap/<kebab-name>` (which registers it) and pass it to `<Icon>`. Use sparingly — a custom icon weakens the screen-reader role mapping that `design` provides.
 
 ```tsx
-import "@ui5/webcomponents-icons/dist/sys-help-2.js";
 import { Icon } from "@reltio/design/components";
+import sysHelp2Icon from "@reltio/design/icons/sap/sys-help-2";
 
-<MessageStrip design="Information" icon={<Icon name="sys-help-2" />}>
+<MessageStrip design="Information" icon={<Icon name={sysHelp2Icon} />}>
   Need help? Check the documentation.
 </MessageStrip>
 ```

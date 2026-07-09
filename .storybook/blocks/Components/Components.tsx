@@ -1,6 +1,3 @@
-import "@ui5/webcomponents-icons/dist/search.js";
-import "@ui5/webcomponents-icons/dist/alert.js";
-import "@ui5/webcomponents-icons/dist/lab.js";
 import { useMemo, useState } from "react";
 import {
 	Icon,
@@ -16,6 +13,9 @@ import {
 	Tag,
 	Text,
 } from "@/components";
+import alertIcon from "@/icons/sap/alert";
+import labIcon from "@/icons/sap/lab";
+import searchIcon from "@/icons/sap/search";
 import styles from "./Components.module.css";
 import type {
 	ComponentEntry,
@@ -143,7 +143,7 @@ export const Components = () => {
 				</Select>
 				<Input
 					className={styles.search}
-					icon={<Icon name="search" />}
+					icon={<Icon name={searchIcon} />}
 					placeholder="Search component…"
 					value={query}
 					onInput={(e) => setQuery(e.target.value)}
@@ -196,14 +196,14 @@ export const Components = () => {
 								<Text className={styles.muted}>—</Text>
 							) : c.ui5.status === "deprecated" ? (
 								<span className={styles.ui5Cell}>
-									<Icon name="alert" className={styles.deprecatedIcon} />
+									<Icon name={alertIcon} className={styles.deprecatedIcon} />
 									<Link href={c.ui5.url} target="_blank" design="Subtle">
 										Deprecated
 									</Link>
 								</span>
 							) : c.ui5.status === "experimental" ? (
 								<span className={styles.ui5Cell}>
-									<Icon name="lab" className={styles.experimentalIcon} />
+									<Icon name={labIcon} className={styles.experimentalIcon} />
 									<Link href={c.ui5.url} target="_blank" design="Subtle">
 										Experimental
 									</Link>

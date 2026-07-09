@@ -6,10 +6,10 @@ import { ToolbarSelect } from "@ui5/webcomponents-react/ToolbarSelect";
 import { ToolbarSelectOption } from "@ui5/webcomponents-react/ToolbarSelectOption";
 import { ToolbarSeparator } from "@ui5/webcomponents-react/ToolbarSeparator";
 import { ToolbarSpacer } from "@ui5/webcomponents-react/ToolbarSpacer";
+import addIcon from "@/icons/sap/add";
+import filterIcon from "@/icons/sap/filter";
+import sortIcon from "@/icons/sap/sort";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/add.js";
-import "@ui5/webcomponents-icons/dist/sort.js";
-import "@ui5/webcomponents-icons/dist/filter.js";
 
 const meta = preview.meta({
 	component: Toolbar,
@@ -27,9 +27,9 @@ export default meta;
 export const Default = meta.story({
 	render: (args) => (
 		<Toolbar {...args}>
-			<ToolbarButton icon="add" text="Add" design="Emphasized" />
-			<ToolbarButton icon="sort" text="Sort" />
-			<ToolbarButton icon="filter" text="Filter" />
+			<ToolbarButton icon={addIcon} text="Add" design="Emphasized" />
+			<ToolbarButton icon={sortIcon} text="Sort" />
+			<ToolbarButton icon={filterIcon} text="Filter" />
 		</Toolbar>
 	),
 });
@@ -37,9 +37,9 @@ export const Default = meta.story({
 export const WithSpacer = meta.story({
 	render: (args) => (
 		<Toolbar {...args}>
-			<ToolbarButton icon="add" text="Add" design="Emphasized" />
+			<ToolbarButton icon={addIcon} text="Add" design="Emphasized" />
 			<ToolbarSpacer />
-			<ToolbarButton icon="sort" text="Sort" />
+			<ToolbarButton icon={sortIcon} text="Sort" />
 		</Toolbar>
 	),
 });
@@ -47,7 +47,7 @@ export const WithSpacer = meta.story({
 export const WithSelectAndSeparator = meta.story({
 	render: (args) => (
 		<Toolbar {...args}>
-			<ToolbarButton icon="add" text="Add" />
+			<ToolbarButton icon={addIcon} text="Add" />
 			<ToolbarSeparator />
 			<ToolbarSelect>
 				<ToolbarSelectOption selected>All sources</ToolbarSelectOption>
@@ -61,7 +61,7 @@ export const WithSelectAndSeparator = meta.story({
 export const WithCustomItem = meta.story({
 	render: (args) => (
 		<Toolbar {...args}>
-			<ToolbarButton icon="add" text="Add" />
+			<ToolbarButton icon={addIcon} text="Add" />
 			<ToolbarSpacer />
 			<ToolbarItem>
 				<CheckBox text="Only verified" />

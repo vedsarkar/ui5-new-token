@@ -1,10 +1,10 @@
-import "@ui5/webcomponents-icons/dist/copy.js";
-import "@ui5/webcomponents-icons/dist/accept.js";
 import { Button } from "@ui5/webcomponents-react/Button";
 import { MessageStrip } from "@ui5/webcomponents-react/MessageStrip";
 import { useEffect, useRef, useState } from "react";
 import { Markdown } from "@/components/Markdown";
 import { Skeleton } from "@/components/Skeleton";
+import acceptIcon from "@/icons/sap/accept";
+import copyIcon from "@/icons/sap/copy";
 import { classNames } from "@/utils/classNames";
 import { JsonTree } from "../JsonTree";
 import styles from "./Fetcher.module.css";
@@ -217,7 +217,7 @@ export const Fetcher = ({
 				<div className={classNames(styles.actions)}>
 					<Button
 						design={isCurlCopied ? "Positive" : "Default"}
-						icon={isCurlCopied ? "accept" : "copy"}
+						icon={isCurlCopied ? acceptIcon : copyIcon}
 						onClick={copyCurl}
 						accessibleName={isCurlCopied ? "Copied" : "Copy curl command"}
 					>

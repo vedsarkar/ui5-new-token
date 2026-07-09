@@ -1,13 +1,11 @@
 import { Button } from "@ui5/webcomponents-react/Button";
 import { fn } from "storybook/test";
+import deleteIcon from "@/icons/sap/delete";
+import editIcon from "@/icons/sap/edit";
+import navigationRightArrowIcon from "@/icons/sap/navigation-right-arrow";
+import refreshIcon from "@/icons/sap/refresh";
+import saveIcon from "@/icons/sap/save";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/add.js";
-import "@ui5/webcomponents-icons/dist/decline.js";
-import "@ui5/webcomponents-icons/dist/delete.js";
-import "@ui5/webcomponents-icons/dist/edit.js";
-import "@ui5/webcomponents-icons/dist/navigation-right-arrow.js";
-import "@ui5/webcomponents-icons/dist/refresh.js";
-import "@ui5/webcomponents-icons/dist/save.js";
 
 const meta = preview.meta({
 	component: Button,
@@ -29,7 +27,7 @@ export const Emphasized = meta.story({
 	args: {
 		design: "Emphasized",
 		children: "Save",
-		icon: "save",
+		icon: saveIcon,
 	},
 });
 
@@ -44,7 +42,7 @@ export const Negative = meta.story({
 	args: {
 		design: "Negative",
 		children: "Delete entity",
-		icon: "delete",
+		icon: deleteIcon,
 	},
 });
 
@@ -64,21 +62,21 @@ export const Transparent = meta.story({
 
 export const WithIcon = meta.story({
 	args: {
-		icon: "edit",
+		icon: editIcon,
 		children: "Edit",
 	},
 });
 
 export const WithEndIcon = meta.story({
 	args: {
-		endIcon: "navigation-right-arrow",
+		endIcon: navigationRightArrowIcon,
 		children: "Continue",
 	},
 });
 
 export const IconOnly = meta.story({
 	args: {
-		icon: "refresh",
+		icon: refreshIcon,
 		children: undefined,
 		accessibleName: "Refresh data",
 		tooltip: "Refresh data",
@@ -123,7 +121,7 @@ export const LongLabelOverflow = meta.story({
 	args: {
 		children:
 			"Reconcile the cross-source profile with the latest survivorship rules",
-		icon: "save",
+		icon: saveIcon,
 	},
 	decorators: [
 		(Story) => (
@@ -140,11 +138,11 @@ export const InToolbarRow = meta.story({
 	},
 	render: () => (
 		<div style={{ display: "flex", gap: "8px" }}>
-			<Button design="Emphasized" icon="save">
+			<Button design="Emphasized" icon={saveIcon}>
 				Save
 			</Button>
 			<Button design="Transparent">Discard</Button>
-			<Button design="Negative" icon="delete">
+			<Button design="Negative" icon={deleteIcon}>
 				Delete
 			</Button>
 		</div>

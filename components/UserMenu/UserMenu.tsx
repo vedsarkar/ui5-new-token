@@ -7,10 +7,10 @@ import { UserMenuAccount } from "@ui5/webcomponents-react/UserMenuAccount";
 import { UserMenuItem } from "@ui5/webcomponents-react/UserMenuItem";
 import { type ComponentRef, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import hintIcon from "@/icons/sap/hint";
 import { classNames } from "@/utils/classNames";
 import styles from "./UserMenu.module.css";
 import type { UserMenuProps } from "./UserMenu.types";
-import "@ui5/webcomponents-icons/dist/hint.js";
 
 const deriveInitials = (name: string): string =>
 	name
@@ -84,7 +84,7 @@ export const UserMenu = ({
 			>
 				<UserMenuItem
 					text={ABOUT_TITLE}
-					icon="hint"
+					icon={hintIcon}
 					data-reltio-user-menu={ABOUT_ITEM_VALUE}
 				/>
 				{children}

@@ -14,7 +14,7 @@ There is no Reltio wrapping or default override on `List` itself: the props, slo
 </List>
 ```
 
-`ListItem` accepts an `icon` prop (load via side-effect import like every UI5 icon), a `description` prop for secondary text, an `additionalText` prop for right-aligned metadata, and arbitrary `children` for custom formatted content. See the [ListItem docs](?path=/docs/components-listitem--docs) for the full row API.
+`ListItem` accepts an `icon` prop (import the icon's name from `@reltio/design/icons/sap/<kebab-name>` and pass the binding), a `description` prop for secondary text, an `additionalText` prop for right-aligned metadata, and arbitrary `children` for custom formatted content. See the [ListItem docs](?path=/docs/components-listitem--docs) for the full row API.
 
 ### Selection modes
 

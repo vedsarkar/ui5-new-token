@@ -1,6 +1,11 @@
 import { faker } from "@faker-js/faker";
 import { Avatar } from "@ui5/webcomponents-react/Avatar";
 import { expect, fn, userEvent, waitFor } from "storybook/test";
+import databaseIcon from "@/icons/sap/database";
+import employeeIcon from "@/icons/sap/employee";
+import homeIcon from "@/icons/sap/home";
+import productIcon from "@/icons/sap/product";
+import shieldIcon from "@/icons/sap/shield";
 import preview from "../../.storybook/preview";
 import { AppNavigation } from "../AppNavigation";
 import { AppSelector } from "../AppSelector";
@@ -11,11 +16,6 @@ import type { TenantEntry } from "../TenantSelector";
 import { TenantSelector } from "../TenantSelector";
 import { UserMenu } from "../UserMenu";
 import { ShellBar } from "./ShellBar";
-import "@ui5/webcomponents-icons/dist/home.js";
-import "@ui5/webcomponents-icons/dist/product.js";
-import "@ui5/webcomponents-icons/dist/database.js";
-import "@ui5/webcomponents-icons/dist/employee.js";
-import "@ui5/webcomponents-icons/dist/shield.js";
 
 faker.seed(7);
 
@@ -72,28 +72,28 @@ export const WithNavigation = meta.story({
 		),
 		sideNavigation: (
 			<SideNavigation accessibleName="Main navigation">
-				<SideNavigationItem text="Home" icon="home" href="/home" selected />
+				<SideNavigationItem text="Home" icon={homeIcon} href="/home" selected />
 				<SideNavigationGroup text="Configuration" expanded>
 					<SideNavigationItem
 						text="UI Modeler"
-						icon="product"
+						icon={productIcon}
 						href="/ui-modeler"
 					/>
 					<SideNavigationItem
 						text="Data Modeler"
-						icon="database"
+						icon={databaseIcon}
 						href="/data-modeler"
 					/>
 				</SideNavigationGroup>
 				<SideNavigationGroup text="Security" expanded>
 					<SideNavigationItem
 						text="User Management"
-						icon="employee"
+						icon={employeeIcon}
 						href="/users"
 					/>
 					<SideNavigationItem
 						text="SSO Configuration"
-						icon="shield"
+						icon={shieldIcon}
 						href="/sso"
 					/>
 				</SideNavigationGroup>

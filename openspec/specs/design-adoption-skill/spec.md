@@ -65,8 +65,9 @@ hand-curated source-to-target mapping table.
 The skill SHALL document portable rules for migrating to the UI5-based surface:
 text passed via `children` (not a `label` prop), native event handling,
 `sx`/`styled`/`makeStyles` converted to CSS Modules with `--sap*` color tokens,
-theme palette replaced by `data-theme`, and icons imported from
-`@ui5/webcomponents-icons` as side-effect imports.
+theme palette replaced by `data-theme`, and icons registered by importing their
+name from `@reltio/design/icons/sap/<kebab-name>` (never `@ui5/webcomponents-icons`
+directly).
 
 #### Scenario: Converting MUI styling
 

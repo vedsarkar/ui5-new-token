@@ -119,20 +119,22 @@ See the [UI Architecture](https://reltio.design/?path=/docs/guides-ui-architectu
 
 ### Icons
 
-SAP Fiori icons: `import "@reltio/design/icons/sap/<kebab-name>"` → `<Icon name="<kebab-name>" />`.
+The package is `sideEffects: false`, so import each icon's **name** (the `default` export) — the import registers the icon and returns its registry-name string. Bare side-effect imports (`import "@reltio/design/icons/sap/save"`) are dropped by the bundler.
 
-Reltio custom icons: `import "@reltio/design/icons/reltio/<kebab-name>"` → `<Icon name="reltio/<kebab-name>" />`.
+SAP Fiori icons: `import saveIcon from "@reltio/design/icons/sap/<kebab-name>"` (`saveIcon === "<kebab-name>"`).
+
+Reltio custom icons: `import dataQualityIcon from "@reltio/design/icons/reltio/<kebab-name>"` (`=== "reltio/<kebab-name>"`).
 
 ```tsx
 import { Button } from "@reltio/design/components";
-import "@reltio/design/icons/sap/save";
-import "@reltio/design/icons/reltio/data-quality";
+import saveIcon from "@reltio/design/icons/sap/save";
+import dataQualityIcon from "@reltio/design/icons/reltio/data-quality";
 
-<Button icon="save">Save</Button>;
-<Button icon="reltio/data-quality">Quality</Button>;
+<Button icon={saveIcon}>Save</Button>;
+<Button icon={dataQualityIcon}>Quality</Button>;
 ```
 
-SAP icons render as `save`; Reltio icons as `reltio/data-quality`. See the [Icons](https://reltio.design/?path=/docs/icons--docs) docs page.
+SAP icons resolve to `save`; Reltio icons to `reltio/data-quality`. See the [Icons](https://reltio.design/?path=/docs/icons--docs) docs page.
 
 ## CLI — component discovery
 

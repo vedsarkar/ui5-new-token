@@ -1,8 +1,8 @@
+import businessObjectsExperienceIcon from "@/icons/sap/business-objects-experience";
 import preview from "../../.storybook/preview";
 import { SideNavigation } from "../SideNavigation";
 import { SideNavigationItem } from "../SideNavigationItem";
 import { SideNavigationSubItem } from "./SideNavigationSubItem";
-import "@ui5/webcomponents-icons/dist/business-objects-experience.js";
 
 const meta = preview.meta({
 	component: SideNavigationSubItem,
@@ -18,7 +18,7 @@ const meta = preview.meta({
 				<SideNavigation accessibleName="Main navigation">
 					<SideNavigationItem
 						text="Data Model"
-						icon="business-objects-experience"
+						icon={businessObjectsExperienceIcon}
 						expanded
 					>
 						<Story />

@@ -27,7 +27,7 @@ This is a deliberate Reltio decision. UI5 ships two row components — `ListItem
 
 A row is shaped entirely through props — no wrapper choice required:
 
-- `icon` — leading SAP icon (load via side-effect import, e.g. `import "@ui5/webcomponents-icons/dist/inbox.js"`). Use `iconEnd` to move it to the end.
+- `icon` — leading SAP icon. Import its name from `@reltio/design/icons/sap/<kebab-name>` (which registers it) and pass the binding, e.g. `import inboxIcon from "@reltio/design/icons/sap/inbox"` → `icon={inboxIcon}`. Use `iconEnd` to move it to the end.
 - `description` — secondary text under the title.
 - `additionalText` / `additionalTextState` — right-aligned metadata with an optional value state (`Positive`, `Critical`, `Information`, `Negative`).
 - `type` — `Active` (default), `Inactive`, `Navigation` (chevron), or `Detail`.

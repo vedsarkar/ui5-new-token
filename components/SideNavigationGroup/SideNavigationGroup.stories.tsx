@@ -1,12 +1,12 @@
+import activityItemsIcon from "@/icons/sap/activity-items";
+import businessObjectsExperienceIcon from "@/icons/sap/business-objects-experience";
+import groupIcon from "@/icons/sap/group";
+import homeIcon from "@/icons/sap/home";
+import orgChartIcon from "@/icons/sap/org-chart";
 import preview from "../../.storybook/preview";
 import { SideNavigation } from "../SideNavigation";
 import { SideNavigationItem } from "../SideNavigationItem";
 import { SideNavigationGroup } from "./SideNavigationGroup";
-import "@ui5/webcomponents-icons/dist/home.js";
-import "@ui5/webcomponents-icons/dist/org-chart.js";
-import "@ui5/webcomponents-icons/dist/activity-items.js";
-import "@ui5/webcomponents-icons/dist/group.js";
-import "@ui5/webcomponents-icons/dist/business-objects-experience.js";
 
 const meta = preview.meta({
 	component: SideNavigationGroup,
@@ -33,9 +33,12 @@ export default meta;
 export const Expanded = meta.story({
 	render: (args) => (
 		<SideNavigationGroup {...args}>
-			<SideNavigationItem text="Home" icon="home" selected />
-			<SideNavigationItem text="Entities" icon="business-objects-experience" />
-			<SideNavigationItem text="Relationships" icon="org-chart" />
+			<SideNavigationItem text="Home" icon={homeIcon} selected />
+			<SideNavigationItem
+				text="Entities"
+				icon={businessObjectsExperienceIcon}
+			/>
+			<SideNavigationItem text="Relationships" icon={orgChartIcon} />
 		</SideNavigationGroup>
 	),
 });
@@ -46,9 +49,12 @@ export const Collapsed = meta.story({
 	},
 	render: (args) => (
 		<SideNavigationGroup {...args}>
-			<SideNavigationItem text="Home" icon="home" selected />
-			<SideNavigationItem text="Entities" icon="business-objects-experience" />
-			<SideNavigationItem text="Relationships" icon="org-chart" />
+			<SideNavigationItem text="Home" icon={homeIcon} selected />
+			<SideNavigationItem
+				text="Entities"
+				icon={businessObjectsExperienceIcon}
+			/>
+			<SideNavigationItem text="Relationships" icon={orgChartIcon} />
 		</SideNavigationGroup>
 	),
 });
@@ -57,16 +63,16 @@ export const MultipleGroups = meta.story({
 	render: (args) => (
 		<>
 			<SideNavigationGroup {...args}>
-				<SideNavigationItem text="Home" icon="home" selected />
+				<SideNavigationItem text="Home" icon={homeIcon} selected />
 				<SideNavigationItem
 					text="Entities"
-					icon="business-objects-experience"
+					icon={businessObjectsExperienceIcon}
 				/>
-				<SideNavigationItem text="Relationships" icon="org-chart" />
+				<SideNavigationItem text="Relationships" icon={orgChartIcon} />
 			</SideNavigationGroup>
 			<SideNavigationGroup text="Operate" expanded>
-				<SideNavigationItem text="Activity" icon="activity-items" />
-				<SideNavigationItem text="Stewardship" icon="group" />
+				<SideNavigationItem text="Activity" icon={activityItemsIcon} />
+				<SideNavigationItem text="Stewardship" icon={groupIcon} />
 			</SideNavigationGroup>
 		</>
 	),

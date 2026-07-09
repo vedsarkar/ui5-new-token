@@ -15,7 +15,11 @@
 import { spawnSync } from "node:child_process";
 import { mkdir, readdir, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
-import { renderSapIconModule } from "./icon-module-codegen.mjs";
+import {
+	renderIconNameReExports,
+	renderModuleHeader,
+	renderSapIconModule,
+} from "./icon-module-codegen.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const UI5_ICONS_DIST = join(ROOT, "node_modules/@ui5/webcomponents-icons/dist");
@@ -43,7 +47,7 @@ async function build() {
 
 	await mkdir(OUT_DIR, { recursive: true });
 	for (const entry of await readdir(OUT_DIR)) {
-		if (entry.endsWith(".tsx")) {
+		if (entry.endsWith(".tsx") || entry === "index.ts") {
 			await rm(join(OUT_DIR, entry), { force: true });
 		}
 	}
@@ -55,6 +59,27 @@ async function build() {
 			"utf8",
 		);
 	}
+
+	// Aggregate barrel (`@reltio/design/icons/sap`): a pure set of icon-name
+	// re-exports (`export { default as accelerated } from "./accelerated"`). No
+	// side-effect imports, so it's fully tree-shakable under `sideEffects: false`.
+	const barrelHeader = renderModuleHeader({
+		generator: "scripts/build-sap-icons.mjs",
+		runScript: "build-sap-icons",
+		source: "@ui5/webcomponents-icons/dist/*.js",
+		extraLines: [
+			"Aggregate entry for every SAP Fiori icon. Each named export is an icon's",
+			'registry name (e.g. `accelerated` -> "accelerated"); consuming one',
+			"registers that icon on demand. Need every name at once? Use a namespace",
+			'import: `import * as sapIcons from "@reltio/design/icons/sap"`. No',
+			"side-effect imports here, so unused icons are tree-shaken away.",
+		],
+	});
+	await writeFile(
+		join(OUT_DIR, "index.ts"),
+		`${barrelHeader}${renderIconNameReExports(files)}\n`,
+		"utf8",
+	);
 
 	// Generated code is committed and linted in CI — apply Biome's formatter and
 	// safe fixes (import order, line wrapping) so the output is conformant

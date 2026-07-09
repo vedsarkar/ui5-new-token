@@ -2,9 +2,9 @@ import { Button } from "@ui5/webcomponents-react/Button";
 import { Menu } from "@ui5/webcomponents-react/Menu";
 import { MenuItem } from "@ui5/webcomponents-react/MenuItem";
 import { useId, useState } from "react";
+import copyIcon from "@/icons/sap/copy";
+import editIcon from "@/icons/sap/edit";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/edit.js";
-import "@ui5/webcomponents-icons/dist/copy.js";
 
 const Trigger = ({
 	label,
@@ -43,8 +43,8 @@ export const Default = meta.story(() => (
 	<Trigger label="Actions">
 		{(openerId, open, close) => (
 			<Menu opener={openerId} open={open} onClose={close}>
-				<MenuItem text="Edit" icon="edit" />
-				<MenuItem text="Duplicate" icon="copy" additionalText="⌘D" />
+				<MenuItem text="Edit" icon={editIcon} />
+				<MenuItem text="Duplicate" icon={copyIcon} additionalText="⌘D" />
 			</Menu>
 		)}
 	</Trigger>

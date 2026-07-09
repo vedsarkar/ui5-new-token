@@ -1,4 +1,23 @@
-import { RELTIO_ICON_COLLECTION } from "@/icons/reltio";
+// Import each Reltio icon referenced by the internal config (plus the generic
+// fallback) by its NAME default. Referencing them in `ICONS` below registers the
+// icons and keeps them from being tree-shaken under `sideEffects: false` — a bare
+// `import "@/icons/reltio/<name>"` would be dropped.
+import dataCloudWarehousePipeline from "@/icons/reltio/data-cloud-warehouse-pipeline";
+import dataLoader from "@/icons/reltio/data-loader";
+import dataModeler from "@/icons/reltio/data-modeler";
+import exportIcon from "@/icons/reltio/export";
+import externalMatch from "@/icons/reltio/external-match";
+import generic from "@/icons/reltio/generic";
+import inbox from "@/icons/reltio/inbox";
+import performance from "@/icons/reltio/performance";
+import securityConfiguration from "@/icons/reltio/security-configuration";
+import shieldEncryption from "@/icons/reltio/shield-encryption";
+import tenantManagement from "@/icons/reltio/tenant-management";
+import uiModeler from "@/icons/reltio/ui-modeler";
+import userManagement from "@/icons/reltio/user-management";
+import workflowModeler from "@/icons/reltio/workflow-modeler";
+// SAP Fiori icon name for the optional "Home" entry (import registers it).
+import homeIcon from "@/icons/sap/home";
 import { SideNavigation } from "../SideNavigation";
 import { SideNavigationGroup } from "../SideNavigationGroup";
 import { SideNavigationItem } from "../SideNavigationItem";
@@ -9,24 +28,24 @@ import type {
 } from "./AppNavigation.types";
 import appIcons from "./appIcons.json";
 
-// SAP Fiori icon for the optional "Home" entry.
-import "@ui5/webcomponents-icons/dist/home.js";
-// Register every Reltio icon referenced by the internal config (plus the
-// generic fallback) as tree-shakable side-effect imports.
-import "@/icons/reltio/data-cloud-warehouse-pipeline";
-import "@/icons/reltio/data-loader";
-import "@/icons/reltio/data-modeler";
-import "@/icons/reltio/export";
-import "@/icons/reltio/external-match";
-import "@/icons/reltio/generic";
-import "@/icons/reltio/inbox";
-import "@/icons/reltio/performance";
-import "@/icons/reltio/security-configuration";
-import "@/icons/reltio/shield-encryption";
-import "@/icons/reltio/tenant-management";
-import "@/icons/reltio/ui-modeler";
-import "@/icons/reltio/user-management";
-import "@/icons/reltio/workflow-modeler";
+/** Registered Reltio icons this component may render, keyed by their config slug.
+ * Values are the fully-qualified registry names returned by each icon module. */
+const ICONS: Record<string, string> = {
+	"data-cloud-warehouse-pipeline": dataCloudWarehousePipeline,
+	"data-loader": dataLoader,
+	"data-modeler": dataModeler,
+	export: exportIcon,
+	"external-match": externalMatch,
+	generic,
+	inbox,
+	performance,
+	"security-configuration": securityConfiguration,
+	"shield-encryption": shieldEncryption,
+	"tenant-management": tenantManagement,
+	"ui-modeler": uiModeler,
+	"user-management": userManagement,
+	"workflow-modeler": workflowModeler,
+};
 
 const ICON_BY_APP_NAME: Record<string, string> = appIcons;
 const FALLBACK_ICON = "generic";
@@ -55,7 +74,7 @@ export const AppNavigation = ({
 				<SideNavigationItem
 					text="Home"
 					tooltip="Home"
-					icon="home"
+					icon={homeIcon}
 					href={resolveUrl(homeUrl, env, tenant)}
 				/>
 			) : null}
@@ -87,8 +106,8 @@ const getRenderableApps = (group: AppNavigationGroupType): AppNavigationApp[] =>
 
 /** Map an app name to its Reltio icon, falling back to a generic glyph. */
 const resolveIcon = (name: string | undefined): string => {
-	const icon = (name && ICON_BY_APP_NAME[name]) || FALLBACK_ICON;
-	return `${RELTIO_ICON_COLLECTION}/${icon}`;
+	const slug = (name && ICON_BY_APP_NAME[name]) || FALLBACK_ICON;
+	return ICONS[slug] ?? ICONS[FALLBACK_ICON];
 };
 
 const resolveUrl = (

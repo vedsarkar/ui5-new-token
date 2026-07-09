@@ -24,13 +24,13 @@ import {
 	useRef,
 	useState,
 } from "react";
+import buildingIcon from "@/icons/sap/building";
+import filterIcon from "@/icons/sap/filter";
+import searchIcon from "@/icons/sap/search";
+import slimArrowDownIcon from "@/icons/sap/slim-arrow-down";
 import { classNames } from "@/utils/classNames";
 import styles from "./TenantSelector.module.css";
 import type { TenantEntry, TenantSelectorProps } from "./TenantSelector.types";
-import "@ui5/webcomponents-icons/dist/building.js";
-import "@ui5/webcomponents-icons/dist/slim-arrow-down.js";
-import "@ui5/webcomponents-icons/dist/search.js";
-import "@ui5/webcomponents-icons/dist/filter.js";
 import "@ui5/webcomponents-fiori/dist/illustrations/NoData.js";
 import "@ui5/webcomponents-fiori/dist/illustrations/NoEntries.js";
 
@@ -161,8 +161,8 @@ export const TenantSelector = ({
 		<Button
 			design="Transparent"
 			className={classNames(styles.trigger)}
-			icon="building"
-			endIcon="slim-arrow-down"
+			icon={buildingIcon}
+			endIcon={slimArrowDownIcon}
 			tooltip={triggerLabel}
 			loading={loading}
 			loadingDelay={0}
@@ -274,7 +274,7 @@ export const TenantSelector = ({
 											value={query}
 											placeholder="Search tenants"
 											showClearIcon
-											icon={<Icon name="search" />}
+											icon={<Icon name={searchIcon} />}
 											onInput={(event) => setQuery(event.target.value)}
 											onBlur={() => {
 												if (!query.trim()) {
@@ -285,7 +285,7 @@ export const TenantSelector = ({
 									) : (
 										<Button
 											design="Transparent"
-											icon="search"
+											icon={searchIcon}
 											accessibleName="Search tenants"
 											onClick={() => setSearchExpanded(true)}
 										/>
@@ -293,7 +293,7 @@ export const TenantSelector = ({
 									<Button
 										id={filterId}
 										design="Transparent"
-										icon="filter"
+										icon={filterIcon}
 										accessibleName={
 											filtersApplied
 												? "Filter tenants (filters applied)"

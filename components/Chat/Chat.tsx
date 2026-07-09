@@ -2,12 +2,12 @@ import { BusyIndicator } from "@ui5/webcomponents-react/BusyIndicator";
 import { Icon } from "@ui5/webcomponents-react/Icon";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Skeleton } from "@/components/Skeleton";
+import navigationDownArrowIcon from "@/icons/sap/navigation-down-arrow";
 import { classNames } from "@/utils/classNames";
 import styles from "./Chat.module.css";
 import type { ChatProps, Message } from "./Chat.types";
 import { AssistantMessage } from "./components/AssistantMessage";
 import { UserMessage } from "./components/UserMessage";
-import "@ui5/webcomponents-icons/dist/navigation-down-arrow.js";
 
 const SCROLL_THRESHOLD = 100;
 
@@ -129,7 +129,7 @@ export const Chat = ({
 					onClick={() => scrollToBottom("smooth")}
 					aria-label="Scroll to bottom"
 				>
-					<Icon name="navigation-down-arrow" />
+					<Icon name={navigationDownArrowIcon} />
 				</button>
 			)}
 		</div>

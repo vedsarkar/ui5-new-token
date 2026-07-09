@@ -12,6 +12,91 @@ export function toPascal(slug) {
 		.join("");
 }
 
+/** `data-quality-1` -> `dataQuality1` (valid camelCase binding identifier). */
+export function toCamel(slug) {
+	const pascal = toPascal(slug);
+	return pascal.charAt(0).toLowerCase() + pascal.slice(1);
+}
+
+/** JS reserved words that can't be used as a bare binding/export identifier. */
+const RESERVED_JS_IDENTIFIERS = new Set([
+	"break",
+	"case",
+	"catch",
+	"class",
+	"const",
+	"continue",
+	"debugger",
+	"default",
+	"delete",
+	"do",
+	"else",
+	"enum",
+	"export",
+	"extends",
+	"false",
+	"finally",
+	"for",
+	"function",
+	"if",
+	"import",
+	"in",
+	"instanceof",
+	"new",
+	"null",
+	"return",
+	"super",
+	"switch",
+	"this",
+	"throw",
+	"true",
+	"try",
+	"typeof",
+	"var",
+	"void",
+	"while",
+	"with",
+	"yield",
+	"await",
+	"let",
+	"static",
+	"implements",
+	"interface",
+	"package",
+	"private",
+	"protected",
+	"public",
+]);
+
+/** camelCase binding for the aggregate name export, guarded against reserved
+ * words and leading digits (`export` -> `exportIcon`). */
+export function iconNameBinding(kebabName) {
+	const camel = toCamel(kebabName);
+	return RESERVED_JS_IDENTIFIERS.has(camel) || /^[0-9]/.test(camel)
+		? `${camel}Icon`
+		: camel;
+}
+
+/** Build the `export { default as <binding> } from "./<name>"` lines for a barrel
+ * of per-icon modules (each default-exports its registry name), throwing on
+ * binding-identifier collisions. Used for both the SAP and Reltio `index.ts`. */
+export function renderIconNameReExports(names) {
+	const seen = new Map();
+	return names
+		.map((name) => {
+			const binding = iconNameBinding(name);
+			const clash = seen.get(binding);
+			if (clash && clash !== name) {
+				throw new Error(
+					`Name-binding collision: "${name}" and "${clash}" both map to "${binding}".`,
+				);
+			}
+			seen.set(binding, name);
+			return `export { default as ${binding} } from "./${name}";`;
+		})
+		.join("\n");
+}
+
 /** PascalCase names that clash with JS globals — suffix `Icon`. */
 const RESERVED_COMPONENT_EXPORTS = new Set(["Error", "Map"]);
 
@@ -59,22 +144,81 @@ export function renderIconComponentBlock(
 	kebabName,
 	iconName,
 	exportName = componentExportName(kebabName),
+	{ declareConst = true } = {},
 ) {
 	const propsName = propsTypeName(kebabName, exportName);
 
-	return `const ICON_NAME = ${JSON.stringify(iconName)};
+	// SAP modules bind `ICON_NAME` from the UI5 icon module's default export
+	// (`export default "busy"`), so they must not redeclare it here. Custom
+	// Reltio modules own the name locally and declare the const.
+	const constDecl = declareConst
+		? `const ICON_NAME = ${JSON.stringify(iconName)};\n\n`
+		: "";
 
-export type ${propsName} = Omit<IconProps, "name">;
+	return `${constDecl}export type ${propsName} = Omit<IconProps, "name">;
 
 /** Renders \`<Icon name="${iconName}" />\` after this module is evaluated. */
 export function ${exportName}(props: ${propsName}) {
 	return <Icon name={ICON_NAME} {...props} />;
 }
+
+/** The icon's registry name (\`${iconName}\`). Consuming this default binding pulls
+ * in — and keeps — the icon-registration side effect above, so it never gets
+ * tree-shaken away when the icon is actually used. */
+export default ICON_NAME;
 `;
 }
 
 /**
- * Custom Reltio icon module: `unsafeRegisterIcon` + PascalCase component.
+ * Shared `registerReltioIcon` helper module (`icons/reltio/registerReltioIcon.ts`).
+ *
+ * The registration call lives INSIDE this function body (not a free-standing
+ * top-level statement) and the function RETURNS the icon's registry name. Every
+ * per-icon module binds its name from this return value, so a bundler must run
+ * the registration to produce the name it consumes — the icon stays registered
+ * even under `sideEffects: false`, where a bare top-level `unsafeRegisterIcon()`
+ * call (return value unused) would be tree-shaken away.
+ */
+export function renderRegisterReltioIconModule({ collection }) {
+	const header = renderModuleHeader({
+		generator: "scripts/build-icons.mjs",
+		runScript: "build-icons",
+		source: "public/icons/*.svg",
+		extraLines: [
+			"Registers a custom Reltio icon and returns its `reltio/<name>` key.",
+		],
+	});
+
+	return `${header}import { unsafeRegisterIcon } from "@ui5/webcomponents-base/dist/asset-registries/Icons.js";
+
+/** UI5 icon-collection prefix for every Reltio icon. */
+export const RELTIO_ICON_COLLECTION = ${JSON.stringify(collection)};
+
+type ReltioIconData = {
+	viewBox: string;
+	customTemplateAsString: string;
+};
+
+/**
+ * Registers one Reltio icon into UI5's global registry and returns its
+ * fully-qualified name (\`reltio/<name>\`). Consuming the returned name keeps the
+ * registration alive under tree-shaking — see this module's header.
+ */
+export function registerReltioIcon(name: string, data: ReltioIconData): string {
+	unsafeRegisterIcon(name, {
+		collection: RELTIO_ICON_COLLECTION,
+		viewBox: data.viewBox,
+		customTemplateAsString: data.customTemplateAsString,
+	});
+	return \`\${RELTIO_ICON_COLLECTION}/\${name}\`;
+}
+`;
+}
+
+/**
+ * Custom Reltio icon module: registers via `registerReltioIcon` (whose return
+ * value — the icon name — is what this module default-exports) plus a PascalCase
+ * component.
  */
 export function renderCustomIconModule({
 	kebabName,
@@ -92,27 +236,27 @@ export function renderCustomIconModule({
 		runScript: "build-icons",
 		source,
 		extraLines: [
-			`Registers the \`${iconName}\` icon. Tree-shakable single import:`,
-			`import "${modulePath}";`,
+			`Registers the \`${iconName}\` icon and default-exports its name.`,
+			`Icon name (default export): import name from "${modulePath}";`,
 			`Optional component: import { ${exportName} } from "${modulePath}";`,
 		],
 	});
 
 	return `${header}import { Icon, type IconProps } from "@reltio/design/components";
-import { unsafeRegisterIcon } from "@ui5/webcomponents-base/dist/asset-registries/Icons.js";
+import { registerReltioIcon } from "../registerReltioIcon";
 
-unsafeRegisterIcon(${JSON.stringify(kebabName)}, {
-	collection: ${JSON.stringify(collection)},
+const ICON_NAME = registerReltioIcon(${JSON.stringify(kebabName)}, {
 	viewBox: ${JSON.stringify(viewBox)},
 	customTemplateAsString: ${JSON.stringify(svg)},
 });
 
-${renderIconComponentBlock(kebabName, iconName, exportName)}
+${renderIconComponentBlock(kebabName, iconName, exportName, { declareConst: false })}
 `;
 }
 
 /**
- * SAP Fiori icon module: `@ui5/webcomponents-icons` side-effect + component.
+ * SAP Fiori icon module: binds the name from the `@ui5/webcomponents-icons`
+ * module's default export (which registers the icon) + PascalCase component.
  */
 export function renderSapIconModule({
 	kebabName,
@@ -124,15 +268,19 @@ export function renderSapIconModule({
 		runScript: "build-sap-icons",
 		source,
 		extraLines: [
-			`Registers the SAP Fiori \`${kebabName}\` icon. Tree-shakable single import:`,
-			`import "@reltio/design/icons/sap/${kebabName}";`,
+			`Registers the SAP Fiori \`${kebabName}\` icon and default-exports its name.`,
+			`Icon name (default export): import name from "@reltio/design/icons/sap/${kebabName}";`,
 			`Optional component: import { ${componentExportName(kebabName)} } from "@reltio/design/icons/sap/${kebabName}";`,
 		],
 	});
 
-	return `${header}import "@ui5/webcomponents-icons/dist/${kebabName}.js";
+	// Bind the icon name from the UI5 module's default export (`export default
+	// "${kebabName}"`) instead of a hardcoded literal + bare side-effect import:
+	// consuming the binding keeps the UI5 registration side effect tied to actual
+	// usage.
+	return `${header}import ICON_NAME from "@ui5/webcomponents-icons/dist/${kebabName}.js";
 import { Icon, type IconProps } from "@reltio/design/components";
 
-${renderIconComponentBlock(kebabName, kebabName)}
+${renderIconComponentBlock(kebabName, kebabName, componentExportName(kebabName), { declareConst: false })}
 `;
 }

@@ -46,7 +46,7 @@ There is no Reltio wrapping around the underlying UI5 component: the props, slot
 
 ### Counters and icons
 
-`additionalText` puts a numeric counter on the tab label — use it for status counts (12 pending, 3 failed) but keep the number short; long counters wrap the tab. `icon` adds a leading SAP Fiori icon — pick the icon set from `@ui5/webcomponents-icons` and load it as a side-effect import in the file that mounts the TabContainer.
+`additionalText` puts a numeric counter on the tab label — use it for status counts (12 pending, 3 failed) but keep the number short; long counters wrap the tab. `icon` adds a leading SAP Fiori icon — import its name from `@reltio/design/icons/sap/<kebab-name>` (which registers it) and pass the binding to the tab's `icon` prop.
 
 ### Accessibility
 

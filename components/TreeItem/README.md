@@ -7,7 +7,7 @@ UI5 ships two node components — `TreeItem` (typed `text` label) and `TreeItemC
 ### Customising a node
 
 - `content` — the row label. A plain string renders as a standard label; any other `ReactNode` (rich layout, controls) renders as custom row content. Nested nodes go in `children`, not here.
-- `icon` — leading SAP icon (load via side-effect import, e.g. `import "@ui5/webcomponents-icons/dist/folder.js"`).
+- `icon` — leading SAP icon. Import its name from `@reltio/design/icons/sap/<kebab-name>` (which registers it) and pass the binding, e.g. `import folderIcon from "@reltio/design/icons/sap/folder"` → `icon={folderIcon}`.
 - `expanded` — whether the node is initially open.
 - `selected` — initial selection state (the parent `Tree` drives the `selectionMode`).
 - `additionalText` / `additionalTextState` — right-aligned metadata with an optional value state. Applies to string `content` (standard nodes); for custom content, compose the metadata inside `content` yourself.

@@ -113,11 +113,11 @@ Endorsed SAP Fiori components are re-exported from `@reltio/design/components` â
 
 ```tsx
 import { Button, Icon } from "@reltio/design/components";
-import "@reltio/design/icons/sap/save";
+import saveIcon from "@reltio/design/icons/sap/save";
 
 function SaveBar() {
   return (
-    <Button design="Emphasized" icon="save">
+    <Button design="Emphasized" icon={saveIcon}>
       Save
     </Button>
   );

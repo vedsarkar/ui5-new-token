@@ -1,10 +1,10 @@
 import { Button } from "@ui5/webcomponents-react/Button";
 import { fn } from "storybook/test";
+import attachmentIcon from "@/icons/sap/attachment";
+import copyIcon from "@/icons/sap/copy";
+import share2Icon from "@/icons/sap/share-2";
 import preview from "../../.storybook/preview";
 import { TextArea } from "./TextArea";
-import "@ui5/webcomponents-icons/dist/attachment.js";
-import "@ui5/webcomponents-icons/dist/copy.js";
-import "@ui5/webcomponents-icons/dist/share-2.js";
 
 const meta = preview.meta({
 	component: TextArea,
@@ -48,9 +48,9 @@ export const WithToolbar = meta.story({
 		label: "Comment",
 		toolbar: (
 			<>
-				<Button icon="attachment">Attach</Button>
-				<Button icon="copy">Copy</Button>
-				<Button icon="share-2">Share</Button>
+				<Button icon={attachmentIcon}>Attach</Button>
+				<Button icon={copyIcon}>Copy</Button>
+				<Button icon={share2Icon}>Share</Button>
 			</>
 		),
 	},

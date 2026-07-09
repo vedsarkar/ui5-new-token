@@ -1,7 +1,7 @@
 import { ToggleButton } from "@ui5/webcomponents-react/ToggleButton";
 import { fn } from "storybook/test";
+import filterIcon from "@/icons/sap/filter";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/filter.js";
 
 const meta = preview.meta({
 	component: ToggleButton,
@@ -34,7 +34,7 @@ export const Emphasized = meta.story({
 
 export const WithIcon = meta.story({
 	args: {
-		icon: "filter",
+		icon: filterIcon,
 		children: "Filters",
 	},
 });
