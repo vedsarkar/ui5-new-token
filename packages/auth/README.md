@@ -251,10 +251,42 @@ app.get("/error", (req, res) => {
 
 The remaining cookie and state helpers (`serializeCookie`, `clearCookie`, `parseCookies`, `validateState`, `ACCESS_TOKEN_COOKIE`, `REFRESH_TOKEN_COOKIE`) are also exported from `@reltio/auth/utils` for adjacent BFF use cases — for example reading and stripping the `access_token` cookie before proxying a request upstream. They are part of the supported public contract; use them instead of carrying the magic-string `"access_token"` around.
 
+## Proxying browser requests to Reltio microservices
+
+`@reltio/auth` ships an opt-in `/proxy` endpoint that browser code calls instead of speaking to Reltio microservices directly. It centralises the BFF proxy pattern that every consuming app used to ship privately — fixing the latent defects (`Set-Cookie` leakage, `Content-Encoding` double-decode, substring-allowlist host spoofing) once.
+
+Add `proxy: { allowedTargets: [...] }` to enable the endpoint:
+
+```ts
+import { createNextAuth } from "@reltio/auth/next";
+
+export const { GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS } = createNextAuth({
+	oauthPath: process.env.OAUTH_PATH!,
+	loginPath: process.env.LOGIN_PATH!,
+	clientId: process.env.CLIENT_ID!,
+	clientSecret: process.env.CLIENT_SECRET!,
+	proxy: { allowedTargets: ["https://**.reltio.com/reltio/"] },
+}).handlers;
+```
+
+Then call the endpoint from the browser with the upstream URL in the `reltio-target-url` header:
+
+```ts
+await fetch("/auth/proxy", {
+	method: "GET",
+	headers: { "reltio-target-url": "https://tst-01.reltio.com/reltio/api/sumit/entities/123" },
+});
+```
+
+Request and response bodies are streamed through with constant memory, so large uploads/downloads and streaming responses (Server-Sent Events, chunked transfer) work with no size cap. On Express, mount `createExpressAuth()` **before** any body-parser middleware — the proxy forwards the raw request stream.
+
+The full contract — allowlist DSL (`*` vs `**`), header rewriting rules, error envelope, streaming passthrough, migration from a custom proxy — is documented in the [Proxy guide](?path=/docs/guides-auth-proxy--docs).
+
 ## Storybook documentation
 
 - [Setup → Express](?path=/docs/guides-auth-setup-express--docs) — full walkthrough including config object, router mount, and error handling.
 - [Setup → Next.js App Router](?path=/docs/guides-auth-setup-next-js-app-router--docs) — full walkthrough for `app/auth/[...auth]/route.ts`.
+- [Proxy](?path=/docs/guides-auth-proxy--docs) — `/proxy` endpoint, `reltio-target-url` header, wildcard DSL, header rewriting rules, error envelope, migration from `http-proxy-middleware`.
 - [Dynamic OAuth Routing](?path=/docs/guides-auth-dynamic-oauth-routing--docs) — how the access token's `aurl` claim + the configured allowlist route `/checkToken` and `/refreshToken` to the right Auth Server cluster, and how to use the adapter's `resolveAuthPath` in apps that bypass the BFF.
 - [Migration → From auth-middleware](?path=/docs/guides-auth-migration-from-auth-middleware--docs) — import-path mapping, before/after code, breaking changes.
 

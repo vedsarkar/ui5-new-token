@@ -67,6 +67,13 @@ export type AuthConfig = AuthEnvironment & {
 	 * origin. Any miss falls back to the primary cluster.
 	 */
 	authEnvironments?: AuthEnvironment[];
+	/**
+	 * Optional BFF proxy. When set, mounts `/proxy` (any HTTP method),
+	 * which forwards to allow-listed upstream URLs with the user's
+	 * `access_token` cookie attached as a Bearer. Omitted ⇒ `/proxy`
+	 * responds `404`.
+	 */
+	proxy?: ProxyConfig;
 };
 
 /**
@@ -98,6 +105,16 @@ export type SsoRedirectContext = {
 	redirectUrl: string;
 	/** The validated `state` value (matches the `state` cookie). */
 	state: string;
+};
+
+/** Configuration for the optional `/proxy` endpoint. */
+export type ProxyConfig = {
+	/**
+	 * URL patterns the proxy will forward to (e.g. `"https://**.reltio.com/"`).
+	 * Validated and compiled once at `createAuth(config)` time — invalid
+	 * patterns throw `TypeError`. Empty array ⇒ every request gets `403`.
+	 */
+	allowedTargets: string[];
 };
 
 /**

@@ -102,13 +102,14 @@ export type CreateTestHandlersOptions = {
 };
 
 /**
- * Builds the `{ GET, POST }` handlers for the Next.js App Router adapter
- * using `DEFAULT_CONFIG` merged with any per-test overrides.
+ * Builds the full `{ GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS }`
+ * handler set using `DEFAULT_CONFIG` merged with any per-test overrides.
+ * The auth-endpoint tests destructure just `GET`/`POST`; the proxy tests
+ * use the wider surface.
  */
-export function createTestHandlers(options: CreateTestHandlersOptions = {}): {
-	GET: (req: Request) => Promise<Response>;
-	POST: (req: Request) => Promise<Response>;
-} {
+export function createTestHandlers(
+	options: CreateTestHandlersOptions = {},
+): ReturnType<typeof createNextAuth>["handlers"] {
 	return createNextAuth({
 		...DEFAULT_CONFIG,
 		...options.config,

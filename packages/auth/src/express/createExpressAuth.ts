@@ -65,6 +65,10 @@ export function createExpressAuth(config: AuthConfig): ExpressAuthRouter {
 	router.post("/refreshToken", handle);
 	router.post("/checkToken", handle);
 
+	if (config.proxy) {
+		router.all("/proxy", handle);
+	}
+
 	router.resolveAuthPath = auth.resolveAuthPath;
 	router.checkToken = auth.checkToken;
 

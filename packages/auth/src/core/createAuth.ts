@@ -14,8 +14,13 @@
  *
  * Routing is path-suffix based so the router is mount-point agnostic
  * (`/auth/login`, `/api/auth/login`, etc. all dispatch to the login handler).
- * All responses get `Cache-Control` and `Pragma` headers applied so
- * intermediate caches never store authentication state.
+ *
+ * Cache-header policy: the five authentication routes and the unmatched-suffix
+ * 404 get `Cache-Control: no-store, ...` + `Pragma: no-cache` so intermediate
+ * caches never store authentication state. The optional `/proxy` route is a
+ * transparent pass-through — it is dispatched unwrapped so the upstream's own
+ * cache directives reach the browser unchanged. See
+ * `openspec/specs/auth/spec.md` § `Cache-control headers`.
  */
 
 import type { AuthConfig, CheckTokenResponse } from "../types";
@@ -26,9 +31,11 @@ import { callbackHandler } from "./handlers/callbackHandler";
 import { checkTokenHandler } from "./handlers/checkTokenHandler";
 import { loginHandler } from "./handlers/loginHandler";
 import { logoutHandler } from "./handlers/logoutHandler";
+import { buildProxyHandler } from "./handlers/proxyHandler";
 import { refreshTokenHandler } from "./handlers/refreshTokenHandler";
 import type { AuthDeps, Handler } from "./handlers/types";
 import { resolveAuthPath } from "./resolveAuthPath";
+import { compileTargetPatterns } from "./targetMatcher";
 
 /** Optional scopes for {@link AuthHandler.checkToken}. */
 export type CheckTokenOptions = {
@@ -51,6 +58,9 @@ const ROUTES: ReadonlyArray<{
 	{ method: "POST", suffix: "refreshToken", handler: refreshTokenHandler },
 	{ method: "POST", suffix: "checkToken", handler: checkTokenHandler },
 ];
+
+/** Path suffix of the optional transparent proxy route. */
+const PROXY_SUFFIX = "proxy";
 
 /**
  * Returned object — the single composition root of the package.
@@ -87,6 +97,10 @@ export type AuthHandler = {
  * origin and precomputed Basic header) is built here from `config` and
  * captured in a single `deps` record shared by the route table and the pure
  * OAuth/routing functions.
+ *
+ * When `config.proxy` is provided, the `/proxy` route's URL-pattern allowlist
+ * is compiled here too — invalid patterns throw `TypeError` synchronously, so
+ * misconfiguration surfaces at boot rather than on the first proxied request.
  */
 export function createAuth(config: AuthConfig): AuthHandler {
 	const deps: AuthDeps = {
@@ -94,10 +108,23 @@ export function createAuth(config: AuthConfig): AuthHandler {
 		allowlist: buildAllowlist(config),
 	};
 
+	const proxyHandler: Handler | null = config.proxy
+		? buildProxyHandler({
+				matcher: compileTargetPatterns(config.proxy.allowedTargets),
+			})
+		: null;
+
 	return {
 		async handle(request) {
 			const url = new URL(request.url);
 			const lastSegment = url.pathname.split("/").filter(Boolean).pop() ?? "";
+
+			// Transparent proxy: any HTTP method, and dispatched unwrapped so the
+			// upstream's own cache directives survive back to the browser.
+			if (proxyHandler && lastSegment === PROXY_SUFFIX) {
+				return proxyHandler({ ...deps, request });
+			}
+
 			const route = ROUTES.find(
 				(r) => r.method === request.method && r.suffix === lastSegment,
 			);
@@ -119,7 +146,8 @@ export function createAuth(config: AuthConfig): AuthHandler {
 
 /**
  * Adds `Cache-Control` and `Pragma` headers to a response. Applied to every
- * response coming out of the router (success or 404).
+ * authentication-route response and the 404, but NOT to `/proxy` (which stays
+ * transparent). Preserves any headers the handler already set.
  */
 function withCacheHeaders(response: Response): Response {
 	if (!response.headers.has("Cache-Control")) {
