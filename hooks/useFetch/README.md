@@ -1,22 +1,24 @@
-Fetches data on mount and returns loading, success, and error states.
+Reads data on mount and returns loading, success, and error states.
 
-An optional first argument is a deduplication `key`: while a request for a given
-key is in flight, additional consumers of the same key reuse that single request
-instead of each firing their own. The key is **opt-in** — pass it only for
-idempotent reads. Omit it for non-idempotent requests (POST/PUT, bulk mutations),
-where every call must run independently.
+This hook is for **reading data only**. It is keyed by `url`, and requests
+sharing the same `url` are deduplicated while in flight (and will be cached in a
+future release). A read may use the POST method if the API requires it, as long
+as its purpose is fetching data.
+
+> **Mutations** (POST/PUT/DELETE that change server state) are triggered by user
+> actions — `onSubmit`, `onClick`, etc. — not on mount, and carry user-supplied
+> data. Use native `fetch` directly for those; do not use this hook.
 
 ## Usage
 
-Url only — a minimal GET request is issued and the JSON body parsed, deduplicated
-by the url:
+Url only — a minimal GET request is issued and the JSON body parsed:
 
 ```tsx
 const { data, error, isLoading } = useFetch<TData, TError>("/api/entities");
 ```
 
-Url with a custom action (still deduplicated by the url). The url is passed to
-the action, so there is no need to repeat it:
+Url with a custom action. The url is passed to the action, so there is no need to
+repeat it:
 
 ```tsx
 const { data, error, isLoading } = useFetch<TData, TError>(
@@ -27,24 +29,24 @@ const { data, error, isLoading } = useFetch<TData, TError>(
         return response.json();
     },
 );
-```
 
-Mutation without a key — each call runs independently:
+if (isLoading) {
+    return <Spinner />;
+}
 
-```tsx
-const { data, error, isLoading } = useFetch<TData, TError>(async () => {
-    const response = await fetch("/api/entities/bulk", { method: "POST" });
+if (error) {
+    return <Error />;
+}
 
-    return response.json();
-});
+return <List items={data} />;
 ```
 
 ## Parameters
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `url` | `string` | Request URL, also used as the deduplication key. When passed without an `action`, a minimal GET request is issued and the JSON body is parsed. |
-| `action` | `(url: string) => Promise<R>` _(optional)_ | Async function called once on mount, receiving `url` when one is provided. Defaults to a GET on `url`. Provide a bare `action` (no url) for non-idempotent requests that must not be deduplicated. |
+| `url` | `string` | Request URL, also used as the deduplication key. |
+| `action` | `(url: string) => Promise<R>` _(optional)_ | Async function called once on mount, receiving `url`. Defaults to a GET on `url` that parses the JSON body. |
 
 ## Return value
 
@@ -56,8 +58,7 @@ const { data, error, isLoading } = useFetch<TData, TError>(async () => {
 
 ## Deduplication
 
-When a `key` is provided, requests are coalesced by that key. While a request is
-in flight, any additional consumers of the same key reuse it. Once it settles the
-entry is released, so a later mount triggers a fresh request — there is no
-response caching yet. Make sure the key uniquely identifies the request, and only
-use it for idempotent reads.
+Requests are keyed by `url`. While a request for a given `url` is in flight, any
+additional consumers of the same `url` reuse it instead of firing their own. Once
+it settles the entry is released, so a later mount triggers a fresh request —
+there is no response caching yet. Make sure `url` uniquely identifies the request.

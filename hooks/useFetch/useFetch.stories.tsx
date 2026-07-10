@@ -7,7 +7,6 @@ import readme from "./README.md?raw";
 const MOCK_URL = "/api/entities";
 const LOADING_URL = "/api/entities/loading";
 const DEDUPE_URL = "/api/entities/dedupe";
-const BULK_URL = "/api/entities/bulk";
 const DEFAULT_URL = "/api/entities/default";
 
 type Entity = { id: string; name: string };
@@ -24,18 +23,6 @@ const DefaultDemo = () => {
 const FetchDemo = ({ url = MOCK_URL }: { url?: string }) => {
 	const result = useFetch<Entity[], Error>(url, (requestUrl) =>
 		fetch(requestUrl).then((r) => {
-			if (!r.ok) throw r.status;
-			return r.json();
-		}),
-	);
-
-	return <pre>{JSON.stringify(result, null, 2)}</pre>;
-};
-
-// Mutation: no key, so every consumer issues its own independent request.
-const MutationDemo = () => {
-	const result = useFetch<Entity[], Error>(() =>
-		fetch(BULK_URL, { method: "POST" }).then((r) => {
 			if (!r.ok) throw r.status;
 			return r.json();
 		}),
@@ -181,43 +168,6 @@ export const Deduplication = meta.story({
 		});
 		// All three consumers share a single in-flight request for the same url.
 		expect(dedupeRequestCount).toBe(1);
-	},
-});
-
-let bulkRequestCount = 0;
-
-export const IndependentRequests = meta.story({
-	beforeEach: () => {
-		bulkRequestCount = 0;
-	},
-	render: () => (
-		<>
-			<MutationDemo />
-			<MutationDemo />
-			<MutationDemo />
-		</>
-	),
-	parameters: {
-		msw: {
-			handlers: [
-				http.post(BULK_URL, () => {
-					bulkRequestCount += 1;
-					return HttpResponse.json([{ id: "1", name: "Entity A" }]);
-				}),
-			],
-		},
-	},
-	play: async ({ canvasElement }) => {
-		await waitFor(() => {
-			const results = canvasElement.querySelectorAll("pre");
-			expect(results).toHaveLength(3);
-			for (const pre of results) {
-				const result = JSON.parse(pre.textContent ?? "{}");
-				expect(result.isLoading).toBe(false);
-			}
-		});
-		// Without a key, each consumer issues its own request — no coalescing.
-		expect(bulkRequestCount).toBe(3);
 	},
 });
 

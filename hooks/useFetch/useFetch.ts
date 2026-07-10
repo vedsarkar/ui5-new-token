@@ -19,31 +19,27 @@ const dedupe = <R>(url: string, action: TUseFetchAction<R>): Promise<R> => {
 	return request;
 };
 
-// Minimal default fetcher: a plain GET that parses the JSON body. Used when a
-// url is provided without an explicit action.
+// Minimal default fetcher: a plain GET that parses the JSON body. Used when no
+// explicit action is provided.
 const defaultFetcher = <R>(url: string): Promise<R> =>
 	fetch(url).then((response) => {
 		if (!response.ok) throw new Error(`HTTP ${response.status}`);
 		return response.json() as Promise<R>;
 	});
 
-export function useFetch<R, E = unknown>(
-	action: TUseFetchAction<R>,
-): TUseFetch<R, E>;
+/**
+ * Reads data once on mount, keyed and deduplicated by `url`: concurrent
+ * consumers of the same url share a single in-flight request.
+ *
+ * This hook is for reading data only. Mutations (POST/PUT that change server
+ * state) are triggered by user actions, not on mount — use native `fetch`
+ * directly for those. A read may still use the POST method, as long as its
+ * purpose is fetching data; deduplication (and future caching) always applies.
+ */
 export function useFetch<R, E = unknown>(
 	url: string,
-	action?: TUseFetchAction<R>,
-): TUseFetch<R, E>;
-export function useFetch<R, E>(
-	urlOrAction: string | TUseFetchAction<R>,
-	maybeAction?: TUseFetchAction<R>,
+	action: TUseFetchAction<R> = defaultFetcher,
 ): TUseFetch<R, E> {
-	const url = typeof urlOrAction === "string" ? urlOrAction : undefined;
-	const action =
-		typeof urlOrAction === "string"
-			? (maybeAction ?? defaultFetcher<R>)
-			: urlOrAction;
-
 	const [data, setData] = useState<R | undefined>(undefined);
 	const [error, setError] = useState<E | undefined>(undefined);
 	const [isLoading, setIsLoading] = useState(false);
@@ -58,15 +54,7 @@ export function useFetch<R, E>(
 		setIsLoading(true);
 		setError(undefined);
 
-		// When a url is present it is passed to the action and used as the
-		// deduplication key, so concurrent callers for the same url share one
-		// request. Without a url the action runs independently (no dedup) —
-		// correct for non-idempotent requests such as POST/PUT or bulk mutations.
-		const request = url
-			? dedupe(url, actionRef.current)
-			: (actionRef.current as () => Promise<R>)();
-
-		request
+		dedupe(url, actionRef.current)
 			.then((res) => {
 				if (active) setData(res as R);
 			})
