@@ -1,5 +1,23 @@
 # @reltio/design
 
+## 1.12.0
+
+### Minor Changes
+
+- fa4c174: Add `useFetch` hook for reading data on mount with loading, success, and error states.
+
+  - Available from `@reltio/design/hooks`
+  - Returns `{ data, error, isLoading }`, generic over the resolved data (`R`) and error (`E`) types
+  - Keyed by `url`: requests sharing the same url are deduplicated while in flight
+  - `useFetch(url)` issues a minimal GET and parses the JSON body; `useFetch(url, action)` runs a custom read action that receives the `url`
+  - Read-only by design — for mutations (POST/PUT triggered by user actions) use native `fetch` directly
+
+### Patch Changes
+
+- 3fde748: Fix the block-layer dimming overlay rendering as fully opaque black.
+
+  - `--sapBlockLayer_Opacity` is now the numeric SAP Horizon default (`0.6`) instead of an invalid color value, so overlays (side navigation drawer, dialogs, busy indicators) dim the content behind them with proper translucency instead of covering it with solid black.
+
 ## 1.11.0
 
 ### Minor Changes

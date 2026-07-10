@@ -1,5 +1,11 @@
 # @reltio/skills
 
+## 1.2.1
+
+### Patch Changes
+
+- 516e617: Refresh the `adopt-reltio-design` skill guidance for the new tree-shakable icon imports (name/component exports instead of bare side-effect imports).
+
 ## 1.2.0
 
 ### Minor Changes
