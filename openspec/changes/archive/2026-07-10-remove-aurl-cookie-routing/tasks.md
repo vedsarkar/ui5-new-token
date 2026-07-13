@@ -69,5 +69,5 @@
 - [x] 10.1 `npx @biomejs/biome check packages/auth` clean.
 - [x] 10.2 `npm run build -w @reltio/auth` clean (ESM + CJS typecheck).
 - [x] 10.3 `npm run test -w @reltio/auth` green.
-- [ ] 10.4 `openspec validate remove-aurl-cookie-routing --strict` passes.
+- [x] 10.4 `openspec validate remove-aurl-cookie-routing --strict` passes.
 - [x] 10.5 Changeset (minor bump) documents the cookie removal, `authEnvironments` for multiauth BFFs, and optional `loginPath`.

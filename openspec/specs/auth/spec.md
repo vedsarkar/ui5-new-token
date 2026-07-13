@@ -55,17 +55,43 @@ The package SHALL ship dual ESM and CJS builds. Every public subpath SHALL resol
 
 ### Requirement: Configuration shape
 
-The auth factory SHALL accept a configuration object with the following keys: `oauthPath` (string, required), `loginPath` (string, required), `clientId` (string, required), `clientSecret` (string, required), `ssoRedirect` (function, optional, signature `(ctx: SsoRedirectContext) => Response | Promise<Response>`), `secure` (boolean, optional, default `true`), `notenant` (boolean, optional, default `false`). The same `AuthConfig` shape is accepted by `createAuth`, `createExpressAuth`, and `createNextAuth` — the `ssoRedirect` signature is uniform across adapters. Required keys are enforced by TypeScript at compile time. The runtime SHALL NOT perform additional null/empty-string validation on the configuration object — consumers are responsible for validating configuration that originates from untyped sources (environment variables, JSON files, etc.) before passing it to the factory.
+The auth factory SHALL accept a configuration object that extends the shared `AuthEnvironment` base type (`{ oauthPath: string; clientId: string; clientSecret: string }` — the primary cluster) with the following additional keys: `loginPath` (string, OPTIONAL), `ssoRedirect` (function, optional, signature `(ctx: SsoRedirectContext) => Response | Promise<Response>`), `secure` (boolean, optional, default `true`), `notenant` (boolean, optional, default `false`), and `authEnvironments` (optional array of `AuthEnvironment` — the multiauth allowlist of additional trusted clusters). The same `AuthConfig` shape is accepted by `createAuth`, `createExpressAuth`, and `createNextAuth`.
 
-#### Scenario: All required keys provided
+`loginPath` is required only for the interactive OAuth flow (`GET /login`, `GET /logout`, `GET /callback`), which build a Reltio Login Page URL from it. It is OPTIONAL so a standalone API service that only introspects tokens (`auth.checkToken`) or resolves the per-session cluster (`auth.resolveAuthPath`) can configure the router without it. When `loginPath` is absent, the three login-flow routes SHALL respond `500`; the introspection/routing surface SHALL be fully functional.
 
-- **WHEN** the factory is called with `{ oauthPath, loginPath, clientId, clientSecret }`
-- **THEN** it returns a working router and uses default values for the optional keys
+The three required keys (`oauthPath`, `clientId`, `clientSecret`) are enforced by TypeScript at compile time. The runtime SHALL NOT perform additional null/empty-string validation of the configuration object — consumers are responsible for validating configuration that originates from untyped sources before passing it to the factory. A malformed `oauthPath` — the primary one or any `authEnvironments[].oauthPath` — SHALL throw at construction time (fail-fast), because the allowlist is built once when the factory is called.
+
+There SHALL be no separate factory or subpath for standalone API-service introspection: the same `createExpressAuth` / `createNextAuth` factories serve BFFs and API services, differing only in whether `loginPath` is configured and whether the router is mounted. `@reltio/auth` SHALL NOT expose a `createTokenChecker` factory, a `TokenCheckerConfig` type, or an `@reltio/auth/api` subpath.
+
+#### Scenario: Required keys provided, loginPath present
+
+- **WHEN** the factory is called with `{ oauthPath, loginPath, clientId, clientSecret }` and no `authEnvironments`
+- **THEN** it returns a working router, uses default values for the optional keys, and routes every upstream `/checkToken` / `/refreshToken` call to `oauthPath`
+
+#### Scenario: Introspection-only config omits loginPath
+
+- **WHEN** the factory is called with `{ oauthPath, clientId, clientSecret }` and no `loginPath`
+- **THEN** it returns a value whose `checkToken` and `resolveAuthPath` are fully functional, and no compile-time or construction-time error occurs
+
+#### Scenario: Login-flow routes respond 500 without loginPath
+
+- **WHEN** `GET /login`, `GET /logout`, or `GET /callback` is dispatched on a router configured without `loginPath`
+- **THEN** each responds `500` and makes no upstream call
 
 #### Scenario: TypeScript rejects missing required keys at compile time
 
-- **WHEN** a TypeScript consumer attempts to call the factory without one or more required keys
+- **WHEN** a TypeScript consumer attempts to call the factory without `oauthPath`, `clientId`, or `clientSecret`
 - **THEN** the TypeScript compiler reports an error before the code can be executed
+
+#### Scenario: Malformed authEnvironments oauthPath throws at construction
+
+- **WHEN** the factory is called with an `authEnvironments` entry whose `oauthPath` cannot be parsed by the WHATWG `URL` parser
+- **THEN** the factory throws at construction time, before any request is handled
+
+#### Scenario: No standalone token-checker factory or subpath exists
+
+- **WHEN** a consumer attempts `import { createTokenChecker } from "@reltio/auth/api"` or `import type { TokenCheckerConfig } from "@reltio/auth/types"`
+- **THEN** module resolution fails (no `./api` subpath) and the type does not exist; API services introspect via `createExpressAuth(config).checkToken` / `createNextAuth(config).checkToken`
 
 ### Requirement: GET /login endpoint
 
@@ -156,303 +182,165 @@ When `secure: true` (the default), the resolved return URL's `protocol` SHALL be
 
 ### Requirement: GET /callback endpoint
 
-The router SHALL expose a `GET /callback` endpoint that exchanges the OAuth authorization code for access and refresh tokens. It SHALL validate the state parameter against the state cookie, validate the `redirectUrl` query parameter against the request origin, exchange the code via `POST ${loginPath}/token` with HTTP Basic authentication, store the resulting tokens in `access_token` and `refresh_token` cookies, mint the per-session routing cookie `reltio_aurl` when the access token carries an `aurl` claim, and finalise the response — either by invoking the optional `config.ssoRedirect` callback with a `SsoRedirectContext` and returning its `Response`, or by performing a default 302 redirect to `redirectUrl`.
+The router SHALL expose a `GET /callback` endpoint that exchanges the OAuth authorization code for access and refresh tokens. It SHALL validate the state parameter against the state cookie, exchange the code via `POST ${loginPath}/token` with HTTP Basic authentication (using the primary cluster's credentials), store the resulting tokens in `access_token` and `refresh_token` cookies, and finalise the response — either by invoking the optional `config.ssoRedirect` callback with a `SsoRedirectContext` and returning its `Response`, or by performing a default 302 redirect to `redirectUrl`.
 
-After a successful authorization-code exchange, the handler SHALL call the internal `decodeAurl(tokens.access_token)` function exactly once. `decodeAurl` returns `string | null`. When the return value is a non-empty string, the handler SHALL compute `cookieValue = await signAurl(aurl, await options.keyPromise)` — using the pure `signAurl(aurl, key)` primitive and the HMAC key derived once in `createAuth` and threaded in via `options.keyPromise` — and append a third `Set-Cookie: reltio_aurl=${cookieValue}` header with the cookie option vector returned by `defaultCookieOptions(secure)` — byte-identical to the `access_token` and `refresh_token` cookies. When `decodeAurl` returns `null` (opaque UUID access token, JWT without `aurl` claim, decompression-bomb guard trip, malformed JWT), the handler SHALL NOT emit any `Set-Cookie: reltio_aurl` header.
-
-All `Set-Cookie` appends (`access_token`, `refresh_token`, and the conditional `reltio_aurl`) SHALL be emitted as a single atomic group: the handler SHALL fully compute the cookie set — including running `decodeAurl` and, if its result is a non-empty string, awaiting `signAurl` — **before** writing any `Set-Cookie` header to the response. If `decodeAurl` returns `null`, the group reduces to `access_token` and `refresh_token` and is emitted immediately. If `signAurl` is called and throws (extreme edge case — Web Crypto runtime failure), the handler SHALL return `502 Bad Gateway` with no `Set-Cookie` headers at all — `access_token` and `refresh_token` MUST NOT be half-written without the corresponding `reltio_aurl`.
-
-The `decodeAurl` call SHALL run exactly once per successful login (the only call site in this handler), and is one of exactly two call sites for `decodeAurl` across the entire router (the other being `POST /refreshToken`).
+The handler SHALL emit exactly two `Set-Cookie` headers on success — `access_token` and `refresh_token`. It SHALL NOT decode the access token, and SHALL NOT emit any routing cookie: per-session routing is derived on demand from the access token's `aurl` claim by later requests, not persisted at callback time.
 
 #### Scenario: Successful callback
 
-- **WHEN** the callback receives matching state cookie and query, a valid same-origin `redirectUrl`, and a `code` that the OAuth server accepts
-- **THEN** the response is 302 with `access_token` and `refresh_token` cookies set with `HttpOnly`, `Secure`, `SameSite=Lax`, `Path=/` and the `Location` header points at `redirectUrl`
+- **WHEN** the callback receives matching state cookie and query, a `redirectUrl`, and a `code` that the OAuth server accepts
+- **THEN** the response is 302 with exactly two `Set-Cookie` headers — `access_token` and `refresh_token` — set with `HttpOnly`, `Secure`, `SameSite=Lax`, `Path=/`, and the `Location` header points at `redirectUrl`
 
-#### Scenario: Successful callback with aurl claim mints reltio_aurl
-
-- **WHEN** the callback succeeds and the returned `access_token` is a Reltio JWT whose decoded payload contains `"aurl": "https://auth-idev-02.reltio.com"`
-- **THEN** the response includes three `Set-Cookie` headers — `access_token`, `refresh_token`, and `reltio_aurl` — and the `reltio_aurl` value verifies back to `"https://auth-idev-02.reltio.com"` when passed to the `resolveAuthPath` of an adapter constructed with the same `clientSecret` (the writer/reader contract — see the dedicated scenario below)
-
-#### Scenario: Successful callback with opaque access token mints no reltio_aurl
-
-- **WHEN** the callback succeeds and the returned `access_token` is an opaque UUID
-- **THEN** the response includes exactly two `Set-Cookie` headers — `access_token` and `refresh_token` — and no `Set-Cookie: reltio_aurl` header
-
-#### Scenario: Successful callback with JWT lacking aurl claim mints no reltio_aurl
-
-- **WHEN** the callback succeeds and the returned `access_token` is a Reltio JWT whose decoded payload does not include an `aurl` claim
-- **THEN** the response includes exactly two `Set-Cookie` headers and no `Set-Cookie: reltio_aurl` header
-
-#### Scenario: Decompression-bomb guard trip mints no reltio_aurl
-
-- **WHEN** the callback succeeds and the returned `access_token` is a Reltio JWT whose payload trips any of the four decompression-bomb guards in `decodeAurl` (encoded-segment cap, declared-size gate, compressed-input cap, or bounded output buffer)
-- **THEN** the response includes exactly two `Set-Cookie` headers (the handler treats the guard trip identically to `decodeAurl` returning `null`)
-
-#### Scenario: signAurl throw produces atomic 502 with no cookies
-
-- **WHEN** the callback succeeds at the token exchange step but `signAurl(aurl, key)` throws an unexpected exception
-- **THEN** the response is `502` with no `Set-Cookie` headers — `access_token` and `refresh_token` are NOT half-written
-
-#### Scenario: State mismatch (unchanged from prior behaviour)
+#### Scenario: State mismatch
 
 - **WHEN** the `state` query parameter differs from the `state` cookie
-- **THEN** the response is 401 and no `Set-Cookie` for `access_token`, `refresh_token`, or `reltio_aurl` is emitted
+- **THEN** the response is 401 and no `Set-Cookie` for `access_token` or `refresh_token` is emitted
 
-#### Scenario: Missing state cookie (unchanged from prior behaviour)
+#### Scenario: Missing state cookie
 
 - **WHEN** the `state` cookie is absent from the request
 - **THEN** the response is 401
 
-#### Scenario: Missing state query parameter (unchanged from prior behaviour)
+#### Scenario: Missing state query parameter
 
 - **WHEN** the `state` query parameter is absent from the request
 - **THEN** the response is 401
 
-#### Scenario: Redirect URL on foreign origin (unchanged from prior behaviour)
-
-- **WHEN** the `redirectUrl` query parameter is provided and its origin (scheme + host + port) does not match the request origin
-- **THEN** the response is 400 and no tokens are exchanged
-
-#### Scenario: Redirect URL on same origin different port (unchanged from prior behaviour)
-
-- **WHEN** the `redirectUrl` is `http://app.example.com:8080` and the request arrived at `http://app.example.com:8080`
-- **THEN** the response is 302 (origins match)
-
-#### Scenario: Redirect URL on same host different scheme (unchanged from prior behaviour)
-
-- **WHEN** the `redirectUrl` is `http://app.example.com` and the request arrived at `https://app.example.com`
-- **THEN** the response is 400 (origins differ)
-
-#### Scenario: ssoRedirect callback receives full context (unchanged from prior behaviour)
+#### Scenario: ssoRedirect callback receives full context
 
 - **WHEN** the configuration provides `ssoRedirect` and the authorization code exchange succeeds
-- **THEN** the callback is invoked exactly once with a `SsoRedirectContext` argument containing `request`, `accessToken`, `refreshToken`, `redirectUrl`, and `state`; its returned `Response` becomes the HTTP response (with `access_token`, `refresh_token`, and conditional `reltio_aurl` `Set-Cookie` headers appended by the router)
+- **THEN** the callback is invoked exactly once with a `SsoRedirectContext` containing `request`, `accessToken`, `refreshToken`, `redirectUrl`, and `state`; its returned `Response` becomes the HTTP response with `access_token` and `refresh_token` `Set-Cookie` headers appended by the router
 
-#### Scenario: ssoRedirect does not mutate request (unchanged from prior behaviour)
-
-- **WHEN** the `ssoRedirect` callback runs
-- **THEN** `context.request` is unchanged after the callback returns
-
-#### Scenario: Default redirect when no ssoRedirect (unchanged from prior behaviour)
+#### Scenario: Default redirect when no ssoRedirect
 
 - **WHEN** the configuration omits `ssoRedirect` and the request omits `redirectUrl`
 - **THEN** the response 302 redirects to `/`
 
 ### Requirement: GET /logout endpoint
 
-The router SHALL expose a `GET /logout` endpoint that clears authentication cookies and redirects to the Reltio Login Page logout URL. Clearing SHALL use the same cookie options used when setting (so browsers identify and remove the cookie reliably). The cookies cleared SHALL be `access_token`, `refresh_token`, `state`, and `reltio_aurl` — four `Set-Cookie` headers, one per cookie.
+The router SHALL expose a `GET /logout` endpoint that clears authentication cookies and redirects to the Reltio Login Page logout URL. Clearing SHALL use the same cookie options used when setting. The cookies cleared SHALL be `access_token`, `refresh_token`, and `state` — three `Set-Cookie` headers, one per cookie. There is no routing cookie to clear.
 
-The handler SHALL NOT call `decodeAurl`, `signAurl`, or `verifyAurl`. Logout is pure cookie cleanup; routing is irrelevant after the user has logged out. The handler SHALL NOT make any upstream call to an Auth Server cluster.
+The handler SHALL NOT make any upstream call to an Auth Server cluster. Logout is pure cookie cleanup; routing is irrelevant after the user has logged out.
 
-The endpoint SHALL resolve the **return URL** and the **tenant** from the same source hierarchy as the `GET /login` endpoint: the request's `?returnTo=` and `?tenant=` query parameters take precedence over the `Referer` header. An empty or whitespace-only `?tenant=` SHALL be treated as absent.
+The endpoint SHALL resolve the **return URL** and the **tenant** from the same source hierarchy as `GET /login`: the request's `?returnTo=` and `?tenant=` query parameters take precedence over the `Referer` header. An empty or whitespace-only `?tenant=` SHALL be treated as absent. The endpoint SHALL respond `400` only when both the request's `?returnTo=` query parameter and the `Referer` header are missing. When both an explicit `?returnTo=` and a `Referer` are present, the endpoint SHALL assert `new URL(returnTo).origin === refererUrl.origin`; a mismatch SHALL produce `400 returnTo origin does not match Referer origin`, no cookies SHALL be cleared, and no redirect SHALL be issued.
 
-The endpoint SHALL respond `400` only when **both** the request's `?returnTo=` query parameter and the `Referer` header are missing. A malformed `Referer` SHALL be treated as absent when `?returnTo=` is supplied.
+#### Scenario: Logout clears the three auth cookies
 
-When **both** an explicit `?returnTo=` and a `Referer` header are present, the endpoint SHALL assert that `new URL(returnTo).origin === refererUrl.origin`. A mismatch SHALL produce `400 returnTo origin does not match Referer origin`, no cookies SHALL be cleared, and no redirect to the Login Page's logout URL SHALL be issued. When `?returnTo=` is supplied alone (no `Referer`), the endpoint SHALL NOT perform a BFF-side same-origin check — the same OAuth-server-allowlist trust model as `GET /login` SHALL apply.
-
-The OAuth `redirect_uri` query parameter sent into the logout chain (Login Page logout URL → BFF callback → final return URL) SHALL be built from a client-supplied origin (`new URL(returnTo).origin` on the explicit path, `refererUrl.origin` on the legacy fallback path) plus the BFF's own pathname (`new URL(request.url).pathname.replace(/logout$/, "callback")`). The endpoint SHALL NOT use `new URL(request.url).origin` for the OAuth callback URL.
-
-#### Scenario: Logout clears all four auth cookies
-
-- **WHEN** a browser issues `GET /logout` with a same-origin `Referer` header and carrying `access_token`, `refresh_token`, `state`, and `reltio_aurl` cookies
-- **THEN** the response contains four `Set-Cookie` headers that clear each cookie (`Max-Age=0`, empty value) with `HttpOnly`, `Secure` (when `secure: true`), `SameSite=Lax`, and `Path=/` matching the original set
-
-#### Scenario: Logout clears reltio_aurl even when the cookie is absent on the request
-
-- **WHEN** a browser issues `GET /logout` carrying only `access_token` and `refresh_token` cookies (no `reltio_aurl` cookie was ever minted because the access token was opaque)
-- **THEN** the response still contains a `Set-Cookie: reltio_aurl=; Max-Age=0` header — the clear is unconditional (browsers ignore clears for cookies they do not have)
+- **WHEN** a browser issues `GET /logout` with a same-origin `Referer` header and carrying `access_token`, `refresh_token`, and `state` cookies
+- **THEN** the response contains `Set-Cookie` headers that clear `access_token`, `refresh_token`, and `state` (`Max-Age=0`, empty value) with `HttpOnly`, `Secure` (when `secure: true`), `SameSite=Lax`, and `Path=/` matching the original set, and no `reltio_aurl` cookie is referenced
 
 #### Scenario: Logout makes no upstream call
 
 - **WHEN** the logout handler runs
-- **THEN** no `fetch` call is made to any Auth Server cluster URL (verified via `vi.spyOn(globalThis, "fetch")`)
+- **THEN** no `fetch` call is made to any Auth Server cluster URL
 
-#### Scenario: Logout redirects via login page logout URL (unchanged from prior behaviour)
+#### Scenario: Logout redirects via login page logout URL
 
 - **WHEN** logout is invoked with a same-origin `Referer` header
 - **THEN** the response is 302 to `${loginPath}/logout?redirectUrl=...`
 
-#### Scenario: New state cookie issued for subsequent login (unchanged from prior behaviour)
+#### Scenario: New state cookie issued for subsequent login
 
 - **WHEN** logout is invoked with a same-origin `Referer` header
 - **THEN** the response sets a fresh `state` cookie so the user can immediately re-authenticate
 
-#### Scenario: Logout with explicit returnTo query parameter (unchanged from prior behaviour)
+#### Scenario: Logout responds 400 when neither query nor Referer supplies returnTo
 
-- **WHEN** the request URL is `GET /logout?tenant=acme&returnTo=https://app.example.com/hub/acme` and the `Referer` header is absent
-- **THEN** the response is 302, the redirect chain ultimately returns to `https://app.example.com/hub/acme`, and the Login Page's `tenant` parameter equals `acme`
-
-#### Scenario: Explicit returnTo overrides referer href (unchanged from prior behaviour)
-
-- **WHEN** the request URL is `GET /logout?returnTo=https://app.example.com/hub/acme` and the `Referer` is `https://app.example.com/dashboard?tenant=other`
-- **THEN** the resolved return URL is `https://app.example.com/hub/acme` (explicit `?returnTo=` wins); the tenant falls back to the referer query (`other`) because no `?tenant=` was supplied on the request
-
-#### Scenario: Logout responds 400 when neither query nor Referer supplies returnTo (unchanged from prior behaviour)
-
-- **WHEN** the request URL is `GET /logout` (no `?returnTo=` query parameter) and no `Referer` header is supplied
-- **THEN** the response is `400` with the body `Missing returnTo query parameter or Referer header`, no cookies are cleared, and no redirect to the Login Page's logout URL is issued
-
-#### Scenario: Logout responds 400 when explicit returnTo origin differs from Referer origin (unchanged from prior behaviour)
-
-- **WHEN** the request URL is `GET /logout?returnTo=https://evil.example.com/` and the `Referer` header is `https://app.example.com/dashboard`
-- **THEN** the response is `400` with the body `returnTo origin does not match Referer origin`, no cookies are cleared (none of the four), and no redirect to the Login Page's logout URL is issued
-
-#### Scenario: Logout forwards single-source returnTo without same-origin check (unchanged from prior behaviour)
-
-- **WHEN** the request URL is `GET /logout?returnTo=https://app.example.com/hub/acme` and no `Referer` header is supplied
-- **THEN** the response is 302 into the logout chain with the OAuth `redirect_uri` carrying origin `https://app.example.com`; no BFF-side same-origin check is performed
+- **WHEN** the request URL is `GET /logout` (no `?returnTo=`) and no `Referer` header is supplied
+- **THEN** the response is `400`, no cookies are cleared, and no redirect is issued
 
 ### Requirement: POST /refreshToken endpoint
 
-The router SHALL expose a `POST /refreshToken` endpoint that exchanges the refresh token cookie for a fresh access token by calling `POST ${upstreamRoot}/token` with `grant_type=refresh_token` and HTTP Basic authentication, where `${upstreamRoot}` is resolved per-request from the `reltio_aurl` cookie (when present and HMAC-verified) or falls back to `AuthConfig.oauthPath`. On success, the endpoint SHALL update both the `access_token` and `refresh_token` cookies, re-derive the `reltio_aurl` cookie from the new access token's `aurl` claim (minting a fresh signed cookie when present, clearing the cookie when absent), and respond 201 with an empty body. On absence of a refresh token cookie or upstream rejection, the endpoint SHALL respond 401.
+The router SHALL expose a `POST /refreshToken` endpoint that exchanges the refresh token cookie for a fresh access token by calling `POST ${upstreamRoot}/token` with `grant_type=refresh_token` and HTTP Basic authentication, where `${upstreamRoot}` and the Basic credential are resolved per-request from the access token's `aurl` claim matched against the allowlist (falling back to the primary cluster when the token is absent, undecodable, or its `aurl` is not in the allowlist). On success, the endpoint SHALL update both the `access_token` and `refresh_token` cookies and respond 201 with an empty body. On absence of a refresh token cookie or upstream rejection, the endpoint SHALL respond 401.
 
-The handler SHALL apply the routing rule from the `Dynamic OAuth cluster routing` requirement: forward `refreshAccessToken({ ...options, refreshToken })`, which calls `resolveAuthPath(options)` to read the `reltio_aurl` cookie, run HMAC verification, and return the per-request upstream root (or `config.oauthPath` on miss/verify-failure). The handler SHALL NOT import or call `verifyAurl` directly.
+The handler SHALL resolve the cluster via `selectAuthServiceForRequest(allowlist, request)` — reading the access token from the request, decoding its `aurl`, and selecting the matching allowlist entry (or the primary). It SHALL NOT read or emit any routing cookie, and SHALL NOT re-mint or clear one after a successful refresh — the refreshed token is routed on its next request the same way, by decoding its own `aurl`.
 
-After a successful upstream refresh, the handler SHALL call `decodeAurl(tokens.access_token)` on the **new** access token exactly once. The handler SHALL NOT call `decodeAurl` on the old access token; the routing for the refresh call is sourced exclusively from the signed `reltio_aurl` cookie (via `resolveAuthPath`), not from the JWT payload of the request.
+The refreshed `access_token` and `refresh_token` cookies SHALL be emitted with identical cookie options (co-terminal lifetime); the `access_token` cookie SHALL NOT be capped with a `Max-Age` derived from the upstream `expires_in`. Because the refresh token is opaque and carries no `aurl`, the access token cookie is the sole routing hint for the next `POST /refreshToken`; capping it shorter than the refresh cookie would strand a secondary-cluster session on the primary once the access cookie lapsed. The access token's own `exp` still governs when the client triggers a refresh.
 
-When `decodeAurl` on the new access token returns a non-empty string `newAurl`, the handler SHALL append `Set-Cookie: reltio_aurl=${await signAurl(newAurl, await options.keyPromise)}` — using the pure `signAurl(aurl, key)` primitive with the key from `options.keyPromise` — with the same option vector as the other refreshed cookies. The handler SHALL re-mint even when `newAurl` equals the value already in the request cookie (the handler does not optimise for the no-change case — re-minting is cheap and keeps the logic uniform).
+#### Scenario: Successful refresh routes to the cluster named by the token aurl
 
-When `decodeAurl` on the new access token returns `null` (the new token is opaque UUID, JWT without `aurl`, or trips a decompression-bomb guard), the handler SHALL append `Set-Cookie: reltio_aurl=` with `Max-Age=0` and the standard option vector — clearing the cookie so the session does not retain a stale routing cookie pointing at a cluster the new token wasn't issued by.
+- **WHEN** the request carries a valid `refresh_token` cookie and an `access_token` cookie whose `aurl` claim equals an allowlisted additional cluster's origin
+- **THEN** the upstream `fetch` call targets that cluster's `/oauth/token`, authenticated with that cluster's Basic credential, not the primary `oauthPath`
 
-All `Set-Cookie` appends (`access_token`, `refresh_token`, and the conditional re-mint or clear of `reltio_aurl`) SHALL be emitted as a single atomic group: the handler SHALL fully compute the cookie set — including running `decodeAurl` on the new access token and, if its result is a non-empty string, awaiting `signAurl` — **before** writing any `Set-Cookie` header to the response. When `decodeAurl` returns `null`, the `reltio_aurl` slot in the group is a `Max-Age=0` clear rather than a fresh mint, and no `signAurl` call is made. If `signAurl` is called and throws, the handler SHALL return `502 Bad Gateway` with no `Set-Cookie` headers — `access_token` and `refresh_token` MUST NOT be half-written without the corresponding `reltio_aurl` re-mint.
+#### Scenario: Successful refresh falls back to the primary when the token has no allowlisted aurl
 
-#### Scenario: Successful refresh routes via verified cookie
+- **WHEN** the request carries a valid `refresh_token` cookie and an access token whose `aurl` is absent or not in the allowlist
+- **THEN** the upstream `fetch` call targets `${config.oauthPath}/token` with the primary Basic credential
 
-- **WHEN** the request carries a valid `refresh_token` cookie and a valid `reltio_aurl` cookie set to `"https://auth-idev-02.reltio.com"`, and `config.oauthPath` ends in `/oauth`
-- **THEN** the upstream `fetch` call targets `https://auth-idev-02.reltio.com/oauth/token`, not `${config.oauthPath}/token`
-
-#### Scenario: Successful refresh routes to oauthPath when cookie is absent
-
-- **WHEN** the request carries a valid `refresh_token` cookie and no `reltio_aurl` cookie
-- **THEN** the upstream `fetch` call targets `${config.oauthPath}/token`
-
-#### Scenario: Successful refresh routes to oauthPath when cookie is tampered
-
-- **WHEN** the request carries a valid `refresh_token` cookie and a `reltio_aurl` cookie whose MAC segment has been altered by one bit
-- **THEN** the upstream `fetch` call targets `${config.oauthPath}/token`
-
-#### Scenario: Successful refresh with new aurl re-mints the cookie
-
-- **WHEN** the upstream refresh returns a new access token whose payload contains `"aurl": "https://auth-test.reltio.com"` and the existing `reltio_aurl` cookie pointed at `"https://auth-idev-02.reltio.com"`
-- **THEN** the response includes a fresh `Set-Cookie: reltio_aurl=<...>` whose value verifies to `"https://auth-test.reltio.com"`
-
-#### Scenario: Successful refresh with same aurl still re-mints
-
-- **WHEN** the upstream refresh returns a new access token whose `aurl` claim equals the value in the existing `reltio_aurl` cookie
-- **THEN** the response still includes a fresh `Set-Cookie: reltio_aurl=<...>` (no optimisation for the no-change case)
-
-#### Scenario: Successful refresh with opaque new token clears the cookie
-
-- **WHEN** the upstream refresh returns a new access token that is an opaque UUID (no `aurl` claim available)
-- **THEN** the response includes `Set-Cookie: reltio_aurl=` with `Max-Age=0` and the same `HttpOnly`, `Secure`, `SameSite=Lax`, `Path=/` option vector as the original cookie
-
-#### Scenario: Successful refresh updates access and refresh cookies (unchanged from prior behaviour)
+#### Scenario: Successful refresh updates access and refresh cookies
 
 - **WHEN** the request carries a `refresh_token` cookie that the OAuth server accepts
-- **THEN** the response is 201, both `access_token` and `refresh_token` cookies are replaced, and the new `access_token` cookie carries `Max-Age` equal to the OAuth server's `expires_in` value (in seconds)
+- **THEN** the response is 201, both `access_token` and `refresh_token` cookies are replaced with identical (co-terminal) cookie options, neither cookie carries a `Max-Age` derived from the upstream `expires_in`, and no routing cookie is emitted
 
-#### Scenario: No refresh token cookie (unchanged from prior behaviour)
+#### Scenario: No refresh token cookie
 
 - **WHEN** the request has no `refresh_token` cookie
 - **THEN** the response is 401 and no upstream call is made
 
-#### Scenario: Upstream rejects refresh token (unchanged from prior behaviour)
+#### Scenario: Upstream rejects refresh token
 
 - **WHEN** the OAuth server returns 4xx for the refresh request
-- **THEN** the response is 401 and no `Set-Cookie` for `access_token`, `refresh_token`, or `reltio_aurl` is emitted
-
-#### Scenario: signAurl throw on re-mint produces atomic 502
-
-- **WHEN** the upstream refresh succeeds but the post-refresh `signAurl(newAurl, key)` call throws an unexpected exception
-- **THEN** the response is `502` with no `Set-Cookie` headers — `access_token` and `refresh_token` are NOT half-written
+- **THEN** the response is 401 and no `Set-Cookie` for `access_token` or `refresh_token` is emitted
 
 ### Requirement: POST /checkToken endpoint
 
-The router SHALL expose a `POST /checkToken` endpoint that validates the access token and returns user and permission data. It SHALL read the access token from the `Authorization: Bearer` header if present, otherwise from the `access_token` cookie. It SHALL call `POST ${upstreamRoot}/checkToken` with optional `serviceId` and `tenantId` query parameters propagated from the request, where `${upstreamRoot}` is resolved per-request from the `reltio_aurl` cookie (when present and HMAC-verified) or falls back to `AuthConfig.oauthPath`. It SHALL return the upstream JSON response with HTTP 200. On absence of an access token it SHALL respond 401.
+The router SHALL expose a `POST /checkToken` endpoint that validates the access token and returns user and permission data. It SHALL read the access token from the `Authorization: Bearer` header if present, otherwise from the `access_token` cookie. It SHALL call `POST ${upstreamRoot}/checkToken` with optional `serviceId` and `tenantId` query parameters propagated from the request, where `${upstreamRoot}` and the Basic credential are resolved per-request from the access token's `aurl` claim matched against the allowlist (falling back to the primary cluster on any miss). It SHALL return the upstream JSON response with HTTP 200. On absence of an access token it SHALL respond 401.
 
-The handler SHALL apply the routing rule from the `Dynamic OAuth cluster routing` requirement and SHALL NOT call `decodeAurl` on the incoming access token. Routing is sourced exclusively from the signed `reltio_aurl` cookie. This boundary is what closes the forged-JWT routing vector: a browser-side attacker who tampers with the `access_token` cookie payload to inject `"aurl": "https://attacker.example.com"` does NOT influence routing, because the handler never reads `aurl` from the request access token.
+Routing is derived from the same access token the endpoint introspects: the handler decodes the token's `aurl` claim and selects the matching allowlist entry. Because `aurl` can only ever select a pre-configured cluster, a forged `aurl` cannot steer the upstream call to an arbitrary origin — the worst case is selecting an already-trusted cluster or falling back to the primary.
 
-#### Scenario: Token validation routes via verified cookie
+#### Scenario: Token validation routes to the cluster named by the token aurl
 
-- **WHEN** the request carries a valid `access_token` cookie and a valid `reltio_aurl` cookie set to `"https://auth-idev-02.reltio.com"`, and `config.oauthPath` ends in `/oauth`
-- **THEN** the upstream `fetch` call targets `https://auth-idev-02.reltio.com/oauth/checkToken`
+- **WHEN** the request carries an `access_token` whose `aurl` claim equals an allowlisted additional cluster's origin
+- **THEN** the upstream `fetch` call targets that cluster's `/oauth/checkToken` with that cluster's Basic credential
 
-#### Scenario: Token validation routes to oauthPath when cookie is absent
+#### Scenario: Token validation falls back to the primary when the aurl is not allowlisted
 
-- **WHEN** the request carries a valid `access_token` cookie and no `reltio_aurl` cookie
-- **THEN** the upstream `fetch` call targets `${config.oauthPath}/checkToken`
+- **WHEN** the request carries an `access_token` whose `aurl` claim is absent or not present in the allowlist
+- **THEN** the upstream `fetch` call targets `${config.oauthPath}/checkToken` with the primary Basic credential
 
-#### Scenario: Token validation routes to oauthPath when cookie is tampered
+#### Scenario: Forged aurl can only select an allowlisted cluster
 
-- **WHEN** the request carries a valid `access_token` cookie and a `reltio_aurl` cookie whose MAC segment has been altered by one bit
-- **THEN** the upstream `fetch` call targets `${config.oauthPath}/checkToken`
+- **WHEN** the request carries an `access_token` whose payload has been tampered to claim `"aurl": "https://attacker.example.com"`, which is not in the allowlist
+- **THEN** the upstream `fetch` call targets `${config.oauthPath}/checkToken`, never `https://attacker.example.com`
 
-#### Scenario: decodeAurl is never invoked on /checkToken
+#### Scenario: Token validation succeeds
 
-- **WHEN** any number of `POST /checkToken` requests are dispatched with any combination of `access_token` payloads (opaque UUIDs, JWTs with `aurl`, JWTs without `aurl`, malformed JWTs)
-- **THEN** `decodeAurl` is invoked zero times across all of these requests (verified via `vi.spyOn` on the `decodeAurl` module export)
-
-#### Scenario: Forged aurl in access_token is ignored for routing
-
-- **WHEN** the request carries an `access_token` cookie whose payload has been tampered to claim `"aurl": "https://attacker.example.com"`, and a valid `reltio_aurl` cookie set to `"https://auth-idev-02.reltio.com"`, and `config.oauthPath` ends in `/oauth`
-- **THEN** the upstream `fetch` call targets `https://auth-idev-02.reltio.com/oauth/checkToken`, not `https://attacker.example.com/checkToken` or any URL derived from the forged `aurl` claim
-
-#### Scenario: Forged aurl in access_token without reltio_aurl cookie falls back to oauthPath
-
-- **WHEN** the request carries an `access_token` cookie whose payload has been tampered to claim `"aurl": "https://attacker.example.com"`, and no `reltio_aurl` cookie
-- **THEN** the upstream `fetch` call targets `${config.oauthPath}/checkToken`, not `https://attacker.example.com/checkToken`
-
-#### Scenario: Token validation succeeds (unchanged from prior behaviour)
-
-- **WHEN** the request carries a valid `access_token` cookie and the OAuth server returns 200 with a JSON body
+- **WHEN** the request carries a valid `access_token` and the OAuth server returns 200 with a JSON body
 - **THEN** the response is 200 with the same JSON body
 
-#### Scenario: Bearer header takes precedence over cookie (unchanged from prior behaviour)
+#### Scenario: Bearer header takes precedence over cookie
 
 - **WHEN** the request carries both an `Authorization: Bearer X` header and an `access_token` cookie with a different value
 - **THEN** the upstream call uses the header token
 
-#### Scenario: Bearer header is case-insensitive (unchanged from prior behaviour)
-
-- **WHEN** the request carries `authorization: bearer X`, `Authorization: Bearer X`, or `Authorization: BEARER X`
-- **THEN** the token is extracted correctly in every case
-
-#### Scenario: serviceId and tenantId forwarded (unchanged from prior behaviour)
+#### Scenario: serviceId and tenantId forwarded
 
 - **WHEN** the request carries query parameters `serviceId=svc&tenantId=t1`
 - **THEN** the upstream call is made with the same query parameters appended to the resolved upstream URL
 
-#### Scenario: No access token (unchanged from prior behaviour)
+#### Scenario: No access token
 
 - **WHEN** the request has neither `Authorization` header nor `access_token` cookie
 - **THEN** the response is 401 and no upstream call is made
 
 ### Requirement: Cookie attributes
 
-All cookies set by the router SHALL be `HttpOnly`. The `access_token`, `refresh_token`, and `reltio_aurl` cookies SHALL additionally be `SameSite=Lax` and `Path=/`. The `state` cookie SHALL be `SameSite=Lax`, `Path=/`. When the configuration sets `secure: true`, all four cookies SHALL also carry the `Secure` flag. Cookies SHALL be cleared with the identical option vector used at set time.
-
-The `reltio_aurl` cookie SHALL use the same option vector as `access_token` and `refresh_token` — set via `defaultCookieOptions(secure)` from `src/utils/cookies.ts` so any future change to the default vector applies uniformly to all three.
+All cookies set by the router SHALL be `HttpOnly`. The `access_token` and `refresh_token` cookies SHALL additionally be `SameSite=Lax` and `Path=/`. The `state` cookie SHALL be `SameSite=Lax`, `Path=/`. When the configuration sets `secure: true`, all three cookies SHALL also carry the `Secure` flag. Cookies SHALL be cleared with the identical option vector used at set time. The router SHALL set no routing cookie.
 
 #### Scenario: Secure mode default
 
 - **WHEN** the configuration omits `secure`
-- **THEN** all four cookies (`access_token`, `refresh_token`, `state`, `reltio_aurl`) are set with the `Secure` flag (default is `true`)
+- **THEN** all three cookies (`access_token`, `refresh_token`, `state`) are set with the `Secure` flag (default is `true`)
 
 #### Scenario: Insecure mode
 
 - **WHEN** the configuration sets `secure: false`
-- **THEN** all four cookies are set without the `Secure` flag
+- **THEN** all three cookies are set without the `Secure` flag
 
 #### Scenario: Clear cookie matches set cookie
 
-- **WHEN** the router clears any cookie it previously set (including `reltio_aurl` at logout)
+- **WHEN** the router clears any cookie it previously set
 - **THEN** the `Set-Cookie` header used for clearing carries the same `HttpOnly`, `Secure`, `SameSite`, and `Path` as the original set
-
-#### Scenario: reltio_aurl option vector identical to access_token
-
-- **WHEN** `GET /callback` mints `access_token`, `refresh_token`, and `reltio_aurl` in a single response
-- **THEN** the three `Set-Cookie` headers carry byte-identical `HttpOnly`, `Secure`, `SameSite`, and `Path` attributes
 
 ### Requirement: Cache-control headers
 
@@ -527,39 +415,39 @@ The `@reltio/auth/utils` entry SHALL export three functions:
 - `getRefreshToken(request)` — reads the refresh token from the `refresh_token` cookie. Returns the token string or `null`.
 - `getBasicToken(clientId, clientSecret)` — returns the base64-encoded `clientId:clientSecret` string suitable for HTTP Basic authentication.
 
-The per-session routing resolver is NOT exported from `@reltio/auth/utils`; it is exposed as `resolveAuthPath` on the value returned by `createExpressAuth(config)` / `createNextAuth(config)` (see the `resolveAuthPath resolver` requirement), so it shares the router's once-derived HMAC key.
+The per-session routing resolver is NOT exported from `@reltio/auth/utils`; it is exposed as `resolveAuthPath` on the value returned by `createExpressAuth(config)` / `createNextAuth(config)` (see the `resolveAuthPath resolver` requirement), so it shares the router's once-built allowlist.
 
 Both request-accepting helpers (`getAccessToken`, `getRefreshToken`) — and the adapter-exposed `resolveAuthPath` — SHALL accept Express `Request`, Next.js `NextRequest`, and Web `Request` uniformly through runtime detection of the request shape (the `AnyRequest` internal type). Helpers SHALL NOT mutate the request argument.
 
-#### Scenario: getAccessToken with Express request and Bearer header (unchanged from prior behaviour)
+#### Scenario: getAccessToken with Express request and Bearer header
 
 - **WHEN** called with an Express request whose `headers.authorization` is `Bearer abc`
 - **THEN** returns `"abc"`
 
-#### Scenario: getAccessToken with Web Request and cookie (unchanged from prior behaviour)
+#### Scenario: getAccessToken with Web Request and cookie
 
 - **WHEN** called with a Web `Request` whose `Cookie` header includes `access_token=xyz`
 - **THEN** returns `"xyz"`
 
-#### Scenario: getAccessToken returns null when no token (unchanged from prior behaviour)
+#### Scenario: getAccessToken returns null when no token
 
 - **WHEN** called with a request that has neither a Bearer header nor an `access_token` cookie
 - **THEN** returns `null`
 
-#### Scenario: getBasicToken encoding (unchanged from prior behaviour)
+#### Scenario: getBasicToken encoding
 
 - **WHEN** called with `clientId="test"` and `clientSecret="secret"`
 - **THEN** returns `"dGVzdDpzZWNyZXQ="`
 
-#### Scenario: Helpers do not mutate the request (unchanged from prior behaviour)
+#### Scenario: Helpers do not mutate the request
 
 - **WHEN** any helper is called with a request argument
 - **THEN** the request's `headers`, `cookies`, and own properties are unchanged after the call returns
 
 #### Scenario: adapter-exposed resolveAuthPath returns a working per-request resolver
 
-- **WHEN** `const auth = createExpressAuth(config); await auth.resolveAuthPath(request)` is called with a request containing a valid `reltio_aurl` cookie
-- **THEN** the verified `aurl` string is returned (see the `resolveAuthPath resolver` requirement for the full scenario set)
+- **WHEN** `const auth = createExpressAuth(config); await auth.resolveAuthPath(request)` is called with a request whose access token carries an allowlisted `aurl`
+- **THEN** the matched cluster URL is returned (see the `resolveAuthPath resolver` requirement for the full scenario set)
 
 ### Requirement: No public OAuth client surface in v1 (BREAKING)
 
@@ -642,194 +530,81 @@ Stories SHALL use `/auth/` as the canonical mount path in examples and explicitl
 - **WHEN** an AI agent queries the Migration story through the Reltio Design MCP
 - **THEN** the response contains the mapping `auth-middleware → @reltio/auth/express`, `auth-middleware/src/utils/getAccessToken → @reltio/auth/utils`, `auth-middleware/src/utils/getBasicToken → @reltio/auth/utils`, `auth-middleware/utils/getAccessToken → @reltio/auth/utils`, and the explicit removal note for `auth-middleware/signingHandler` with the replacement pattern using `getAccessToken` and manual header assignment on the outgoing request
 
-### Requirement: reltio_aurl cookie
-
-The router SHALL mint, verify, and clear a cookie named `reltio_aurl` that carries the HMAC-signed URL of the Auth Server cluster that issued the user's current access token. The cookie SHALL be the single source of truth for per-session routing of `POST /checkToken` and `POST /refreshToken` upstream calls.
-
-The cookie value SHALL be the ASCII string `base64url(aurl) + "." + base64url(mac)`, where:
-
-- `aurl` is the verbatim string of the `aurl` claim extracted from the access token's JWT payload (a full URL — scheme + host + optional port, no path, no query, no fragment).
-- `mac` is the full 32-byte HMAC-SHA-256 of the UTF-8-encoded `aurl` string, computed with the HMAC key derived per the `HMAC key derivation` requirement.
-- `base64url` is the URL-safe, padding-free Base64 alphabet (RFC 4648 §5).
-- The `.` separator is a literal U+002E period; it SHALL never appear inside either base64url segment.
-
-The cookie SHALL be set with the option vector `HttpOnly`, `SameSite=Lax`, `Path=/`, plus `Secure` when `AuthConfig.secure` is `true` (the default). The option vector SHALL be byte-identical to the `access_token` and `refresh_token` cookies set by `GET /callback`. Cookie clearing SHALL use the same option vector with `Max-Age=0` and an empty value, exactly as the other cookies set by the router.
-
-The cookie SHALL be minted only by `GET /callback` (on initial login or silent SSO) and `POST /refreshToken` (after a successful token refresh whose new access token contains an `aurl` claim). The cookie SHALL be cleared by `GET /logout` and by `POST /refreshToken` (when the new access token after a successful refresh does NOT contain an `aurl` claim). No other handler SHALL emit a `Set-Cookie: reltio_aurl` header.
-
-The cookie name SHALL be exported from the package's internal cookies module as `AUTH_URL_COOKIE` for use by handlers. The constant SHALL NOT be re-exported from any public subpath — consumers do not interact with the cookie directly; they go through the `resolveAuthPath` member exposed on the value returned by `createExpressAuth(config)` / `createNextAuth(config)`.
-
-#### Scenario: Cookie value round-trips through sign and verify
-
-- **WHEN** an arbitrary `aurl` string (e.g. `"https://auth-idev-02.reltio.com"`) is passed to the internal `signAurl(aurl, key)` function and the resulting cookie value is passed to `verifyAurl(value, key)` with the same key
-- **THEN** `verifyAurl` returns the original `aurl` string byte-for-byte
-
-#### Scenario: Cookie carries the same option vector as access_token
-
-- **WHEN** `GET /callback` mints `reltio_aurl` alongside `access_token` and `refresh_token`
-- **THEN** the three `Set-Cookie` headers carry identical `HttpOnly`, `Secure`, `SameSite`, and `Path` attributes; the only attribute that differs is the cookie name and value
-
-#### Scenario: Cookie absent when access token has no aurl claim
-
-- **WHEN** `GET /callback` exchanges a code for tokens and the resulting access token is an opaque UUID, OR is a JWT whose payload contains no `aurl` claim, OR is a JWT whose `aurl` claim is the empty string
-- **THEN** no `Set-Cookie: reltio_aurl` header is emitted in the response
-
-#### Scenario: Cookie not exported as a public constant
-
-- **WHEN** a consumer attempts `import { AUTH_URL_COOKIE } from "@reltio/auth/utils"` or from any other subpath
-- **THEN** TypeScript reports an error and the runtime import resolves to `undefined`
-
-### Requirement: HMAC key derivation
-
-The router SHALL derive a 32-byte HMAC-SHA-256 key from `AuthConfig.clientSecret` **exactly once** per `createAuth(config)` invocation. `createAuth` (the single factory) calls `deriveHmacKey(config.clientSecret)` once and stores the resulting `Promise<CryptoKey>` in the `AuthDeps` record (field `keyPromise`) it threads into every handler and OAuth/routing function via the flat `options` object. Both the mint side (`signAurl(aurl, await options.keyPromise)`) and the verify side (`resolveAuthPath`, which reads `options.keyPromise`) consume that one key — there is no second derivation. The raw `CryptoKey` is reached only via `await options.keyPromise` inside the functions that sign or verify; it is never placed on a public surface. The derivation SHALL use the formula:
-
-```
-key_material = SHA-256(UTF-8("reltio-auth-routing-v1:" + clientSecret))
-key          = crypto.subtle.importKey("raw", key_material,
-                 { name: "HMAC", hash: "SHA-256" },
-                 extractable=false,
-                 usages=["sign", "verify"])
-```
-
-The label string `"reltio-auth-routing-v1:"` SHALL be a fixed, version-tagged domain-separation prefix that prevents the derived key from colliding with any other key derived from `clientSecret` for a different purpose (HTTP Basic credential, future signing keys, etc.). The version suffix (`v1`) is the rotation handle for backward-compatible future migrations.
-
-All cryptographic operations (SHA-256 digest, HMAC sign, HMAC verify, key import) SHALL use `globalThis.crypto.subtle` (Web Crypto API). The router SHALL NOT import `node:crypto`, `node-forge`, `jose`, or any other Node-only or non-Web-Crypto cryptographic library.
-
-The derived key SHALL be marked `extractable: false` and SHALL carry exactly the two usages `"sign"` and `"verify"` — no `"encrypt"`, `"decrypt"`, `"wrapKey"`, `"unwrapKey"`, `"deriveKey"`, or `"deriveBits"`.
-
-`createAuth` SHALL reference `config.clientSecret` only at construction time (once for the HTTP Basic credential, once for `deriveHmacKey`) and never on a per-request code path. The functions that sign or verify SHALL `await options.keyPromise` on first use and reuse the resolved `CryptoKey` thereafter. `createAuth` SHALL NOT mutate the `config` argument and SHALL NOT memoise across calls (each invocation produces an independent `AuthDeps` record and key).
-
-The `deriveHmacKey` function SHALL be defined exactly once in the package, at `src/core/signAurl.ts` (private — `core/` has no public subpath), and SHALL be called from exactly one site: `createAuth`. Because the BFF's mint side, the BFF's verify side, and the resolver exposed on the adapter return all read the same `keyPromise` from the same `AuthDeps` record, the writer and reader cannot drift onto different keys. A contract test (see the `resolveAuthPath resolver` requirement, "Writer/reader contract" scenario) SHALL drive `GET /callback` end-to-end, capture the minted `reltio_aurl` cookie, and assert that a separately-constructed adapter's `resolveAuthPath` (same `clientSecret`, different fallback `oauthPath`) returns the original `aurl` — so any regression in the cookie envelope, cookie name, `signAurl` / `verifyAurl` shape, base64url encoding, or cookie attributes is caught before release.
-
-#### Scenario: Key derivation is deterministic
-
-- **WHEN** `deriveHmacKey(clientSecret)` is called twice with the same string
-- **THEN** signing the same message with each resulting key produces the same MAC byte-for-byte
-
-#### Scenario: Different clientSecret produces unrelated keys
-
-- **WHEN** two distinct `clientSecret` strings are passed to `deriveHmacKey`, and the same `aurl` is signed under each resulting key
-- **THEN** the resulting MACs differ, and verifying a cookie minted under key A using key B returns `null`
-
-#### Scenario: Domain-separation label is mandatory
-
-- **WHEN** the package source files are scanned for the string `"reltio-auth-routing-v1:"`
-- **THEN** the label appears exactly once in the source (in `signAurl.ts` or its equivalent), and the derivation is the only consumer of it; raw `clientSecret` is never passed directly to `importKey` for HMAC use
-
-#### Scenario: Key is derived at factory time, not per request
-
-- **WHEN** `createAuth(config)` is invoked once and then 1000 requests are handled
-- **THEN** `crypto.subtle.importKey` is invoked exactly **once** for the duration of the test — inside `createAuth`, via the single `deriveHmacKey(config.clientSecret)` call — and never per request (verified via a `vi.spyOn` on `crypto.subtle.importKey`)
-
-#### Scenario: No Node-only crypto imports
-
-- **WHEN** the package source files are scanned
-- **THEN** none of them imports `node:crypto`, `crypto` (the Node built-in), `node-forge`, `jose`, `tweetnacl`, or any other Node-only or non-Web-Crypto cryptographic library
-
 ### Requirement: Dynamic OAuth cluster routing
 
-The router SHALL route `POST /checkToken` and `POST /refreshToken` upstream calls per-request to the Auth Server cluster identified by the verified `reltio_aurl` cookie, falling back fail-closed to `AuthConfig.oauthPath` whenever the cookie is absent, malformed, signed with a different key, or fails HMAC verification for any reason.
+The router SHALL route `POST /checkToken` and `POST /refreshToken` upstream calls per-request to the Auth Server cluster identified by the access token's `aurl` claim, matched against the operator-configured allowlist, falling back to `AuthConfig.oauthPath` (the primary cluster) whenever the token is absent, undecodable, carries no `aurl` claim, or carries an `aurl` that is not in the allowlist.
 
-Routing is owned by a single pure function — `resolveAuthPath(options)` where `options` is `AuthDeps & { request: AnyRequest }` — defined in `src/core/resolveAuthPath.ts`. `createAuth` builds the `AuthDeps` record once and both the OAuth functions (`checkAccessToken` / `refreshAccessToken`, which forward their `options` to `resolveAuthPath`) and the adapter-exposed resolver read from it. The BFF and any external direct-call site therefore share **one** implementation of the routing read path.
+The allowlist SHALL be built once at `createAuth(config)` time by `buildAllowlist(config)` into a `ResolvedAuthService[]` — the primary cluster (the top-level `oauthPath` + primary credentials) at index 0, followed by each `authEnvironments` entry (its `oauthPath` origin + its own precomputed Basic credential). Origin matching SHALL be trailing-slash insensitive and compared by WHATWG-`URL` origin. When an additional environment duplicates the primary origin, the primary (earlier) entry's credentials SHALL win.
 
-The function SHALL:
+Routing SHALL be owned by shared core functions: `selectAuthService(allowlist, accessToken)` selects the entry for a decoded token, and `selectAuthServiceForRequest(allowlist, request)` reads the access token from the request (via `getAccessToken`) and delegates to `selectAuthService`, returning the primary when no token is present. Both the BFF handlers and the adapter-exposed `resolveAuthPath` read from this one implementation. The `aurl` claim SHALL NEVER be used to construct an outbound origin that is not present in the allowlist.
 
-1. Read the request's `Cookie` header via the internal `readHeader(request, "cookie")` adapter.
-2. Parse it via `parseCookies` and read the `reltio_aurl` cookie value.
-3. Await `options.keyPromise` and pass the cookie value plus the resolved key to the internal `verifyAurl(value, key)` function. `verifyAurl` returns `string | null` — `null` when the cookie is absent, malformed, or fails HMAC verification.
-4. Select the base URL: the verified `aurl` string when `verifyAurl` returned a non-null value, otherwise `config.oauthPath`. Reduce it to its origin (`new URL(base).origin`) and append the fixed `/oauth` base path, returning `${origin}/oauth`.
+Because the routing source (the access token's `aurl`) is the very token being introspected or refreshed, and because `aurl` can only select a pre-configured cluster, there is no separate trusted routing input to keep in sync and no SSRF surface: a forged `aurl` resolves to either an already-trusted cluster or the primary fallback.
 
-The `/oauth` base path is a fixed Reltio Auth Service contract, hardcoded as `OAUTH_BASE_PATH = "/oauth"` in `resolveAuthPath.ts` — NOT derived from `config.oauthPath`. The `aurl` claim is always a path-less cluster origin, and `config.oauthPath` may or may not carry the `/oauth` segment; both are normalized to their origin and given the contract path so callers can append endpoint paths uniformly — `${resolved}/checkToken` is well-formed on both the verified and the fallback branch.
+#### Scenario: Routing uses the token aurl when it matches an allowlist entry
 
-For every dispatched `POST /checkToken` and `POST /refreshToken` request, the handler SHALL forward its flat `options` (plus the request-specific params) to `checkAccessToken({ ...options, accessToken, ... })` / `refreshAccessToken({ ...options, refreshToken })`. That function SHALL call `resolveAuthPath(options)` once to obtain the upstream root and then dispatch the upstream `fetch` against `${root}/checkToken` or `${root}/token` with the same body, headers, and method semantics it would have used pre-DESIGN-75.
+- **WHEN** `POST /checkToken` is dispatched with an access token whose `aurl` equals an allowlisted additional cluster's origin
+- **THEN** the upstream `fetch` targets that cluster's `/oauth/checkToken` with that cluster's Basic credential
 
-The handlers SHALL NOT import `decodeAurl`, `verifyAurl`, `signAurl`, `parseCookies`, or `AUTH_URL_COOKIE` for the purpose of routing — every routing concern is encapsulated in `resolveAuthPath`. The handler for `POST /checkToken` SHALL NOT import `decodeAurl` at all (the mint side never runs there). Routing SHALL be sourced exclusively from the signed `reltio_aurl` cookie — this closes the forged-JWT routing vector that would otherwise let a browser-side attacker (who can write but not read `HttpOnly` cookies via DevTools) redirect upstream traffic by tampering with the `access_token` cookie payload.
+#### Scenario: Routing falls back to the primary when the token has no aurl
 
-The handler for `POST /refreshToken` SHALL apply the routing rule above for the upstream `/token` call. After a successful refresh, the handler SHALL re-derive routing by calling `decodeAurl` on the **new** access token and either minting a fresh `Set-Cookie: reltio_aurl` (when the new token has an `aurl` claim) or clearing the cookie via `Max-Age=0` (when the new token does not). See the modified `POST /refreshToken endpoint` requirement for the full re-minting rule.
+- **WHEN** `POST /checkToken` is dispatched with an access token that carries no `aurl` claim
+- **THEN** the upstream `fetch` targets `${config.oauthPath}/checkToken` with the primary credential
 
-Verification failures, parse failures, missing cookies, and tampered cookies SHALL all produce identical observable behaviour: the routing decision falls back silently to `AuthConfig.oauthPath`. The router SHALL NOT log, throw, or emit any error response to the client based on a routing fallback — the fallback path is the existing static-routing behaviour and SHALL be byte-for-byte indistinguishable from a pre-DESIGN-75 deployment.
+#### Scenario: Routing falls back to the primary for an undecodable token
 
-#### Scenario: Routing uses verified aurl when cookie is valid
+- **WHEN** `POST /checkToken` is dispatched with an opaque or malformed access token that cannot be decoded
+- **THEN** the upstream `fetch` targets `${config.oauthPath}/checkToken`, and the handler does not throw on the decode failure
 
-- **WHEN** `POST /checkToken` is dispatched with a `reltio_aurl` cookie whose value was just minted by `signAurl(aurl, key)` for `"https://auth-idev-02.reltio.com"`, alongside a valid `access_token` cookie, and `config.oauthPath` ends in `/oauth`
-- **THEN** the upstream `fetch` call targets `https://auth-idev-02.reltio.com/oauth/checkToken`, not `${config.oauthPath}/checkToken`
+#### Scenario: A non-allowlisted aurl is never contacted
 
-#### Scenario: Routing falls back when cookie is absent
-
-- **WHEN** `POST /checkToken` is dispatched with no `reltio_aurl` cookie in the request
-- **THEN** the upstream `fetch` call targets `${config.oauthPath}/checkToken`
-
-#### Scenario: Routing falls back when cookie is tampered
-
-- **WHEN** `POST /checkToken` is dispatched with a `reltio_aurl` cookie whose MAC segment has been altered by one bit
-- **THEN** the upstream `fetch` call targets `${config.oauthPath}/checkToken` and no error is logged or returned to the client
-
-#### Scenario: Routing falls back when cookie was signed by a different clientSecret
-
-- **WHEN** `POST /checkToken` is dispatched with a `reltio_aurl` cookie minted under one `clientSecret` while the BFF is now configured with a different `clientSecret`
-- **THEN** the upstream `fetch` call targets `${config.oauthPath}/checkToken`
+- **WHEN** `POST /checkToken` is dispatched with an access token whose `aurl` is `https://attacker.example.com`, not present in the allowlist
+- **THEN** no request is ever made to `https://attacker.example.com`; the call targets `${config.oauthPath}/checkToken`
 
 #### Scenario: Routing applies identically to POST /refreshToken
 
-- **WHEN** `POST /refreshToken` is dispatched with a valid `reltio_aurl` cookie set to `"https://auth-idev-02.reltio.com"` and `config.oauthPath` ends in `/oauth`
-- **THEN** the upstream `fetch` call targets `https://auth-idev-02.reltio.com/oauth/token`, not `${config.oauthPath}/token`
-
-#### Scenario: decodeAurl is not invoked on /checkToken
-
-- **WHEN** the package source files are scanned and `POST /checkToken` is dispatched 1000 times in a test harness
-- **THEN** `checkTokenHandler.ts` does not import `decodeAurl` and no execution of the handler invokes `decodeAurl` (verified via `vi.spyOn` on the `decodeAurl` module export)
+- **WHEN** `POST /refreshToken` is dispatched with an access token whose `aurl` matches an allowlisted additional cluster
+- **THEN** the upstream `/token` call targets that cluster's `/oauth/token` with that cluster's Basic credential
 
 ### Requirement: resolveAuthPath resolver
 
-The value returned by `createExpressAuth(config)` and `createNextAuth(config)` SHALL expose `resolveAuthPath: (request: AnyRequest) => Promise<string>` as the sole public API for resolving the per-session Auth Server cluster URL. This is the recommended (and only) way for applications to learn the cluster URL the BFF would route to for the same session, so apps that call Auth Server APIs directly (bypassing the BFF) route to the same cluster. The Express adapter SHALL attach it to the returned `Router` (`Router & { resolveAuthPath }`); the Next.js adapter SHALL return it as a field alongside `handlers`.
+The value returned by `createExpressAuth(config)` and `createNextAuth(config)` SHALL expose `resolveAuthPath: (request: AnyRequest) => Promise<string>` as the sole public API for resolving the per-session Auth Server cluster URL. This is the recommended (and only) way for applications to learn the cluster URL the BFF would route to for the same session, so apps that call Auth Server APIs directly (bypassing the BFF) route to the same cluster. The Express adapter SHALL attach it to the returned `Router`; the Next.js adapter SHALL return it as a field alongside `handlers`.
 
-`resolveAuthPath` SHALL be the **same** resolver the router uses internally — it reads the `keyPromise` and parsed-`oauthPath` segments from the `AuthDeps` record `createAuth` built once. It is therefore exposed on the adapter return (rather than as a standalone factory in `@reltio/auth/utils`) so that: (1) a single factory (`createAuth`) owns all once-derived state and the HMAC key is derived exactly once; (2) the read path provably shares the router's key and cannot drift onto a mismatched `clientSecret` or re-derive the key; and (3) the resolver requires no extra setup, key derivation, or "build deps once" contract from the consumer — it is a member of a value they already hold to mount the router.
-
-The internal implementation SHALL be a pure function `resolveAuthPath(options: AuthDeps & { request: AnyRequest }): Promise<string>` in `src/core/resolveAuthPath.ts`; the adapter member is a thin closure `(request) => resolveAuthPath({ ...deps, request })`.
+`resolveAuthPath` SHALL be the **same** resolution the router uses internally: it reads the allowlist built once in `createAuth`. The internal implementation SHALL be a pure function `resolveAuthPath(options: AuthDeps & { request: AnyRequest }): Promise<string>` in `src/core/resolveAuthPath.ts`; the adapter member is a thin closure `(request) => resolveAuthPath({ ...deps, request })`.
 
 `resolveAuthPath` SHALL:
 
-1. Await `options.keyPromise` (the key derived once in `createAuth`).
-2. Read the `Cookie` header via the internal `readHeader(request, "cookie")` helper (which abstracts over Express `Request`, Next.js `NextRequest`, and Web `Request`), parse it via `parseCookies`, and read the `reltio_aurl` value.
-3. Call `await verifyAurl(value, key)` (a missing cookie yields `verifyAurl(undefined, key) === null`).
-4. Select the base URL — the verified `aurl` on success, else `config.oauthPath` — reduce it to its origin via `new URL(base).origin`, and return `${origin}/oauth`.
+1. Call `selectAuthServiceForRequest(allowlist, request)` — read the access token from the request, decode its `aurl`, and select the matching allowlist entry (or the primary on any miss).
+2. Return `${service.origin}${OAUTH_BASE_PATH}` where `OAUTH_BASE_PATH` is the fixed `"/oauth"` Reltio Auth Service contract path — NOT derived from `config.oauthPath`. The selected entry's origin plus the contract path means `${resolved}/checkToken` is well-formed on both the matched and fallback branches.
 
-The `/oauth` base path is hardcoded as `OAUTH_BASE_PATH = "/oauth"` — a fixed Reltio Auth Service contract, NOT derived from `config.oauthPath`. The verified `aurl` claim is always a path-less origin, and `config.oauthPath` may or may not carry the `/oauth` segment; reducing both to their origin and appending the contract path means `${resolved}/checkToken` is well-formed on both branches regardless of whether `config.oauthPath` was configured with or without a trailing path. An invalid `config.oauthPath` (one that fails `new URL(...)`) SHALL surface a `TypeError` when `resolveAuthPath` falls back to it.
-
-`config.clientSecret` SHALL NOT be in scope on the per-request path — only the derived `keyPromise` is. `createAuth` SHALL NOT memoise across calls; each invocation produces an independent `AuthDeps` record and key. Callers SHOULD build the auth value once at server boot (as they already do to mount the router) and reuse `resolveAuthPath`.
+`config.clientSecret` SHALL NOT be re-read on the per-request path — the allowlist already carries every precomputed Basic credential. `createAuth` SHALL NOT memoise across calls; each invocation produces an independent `AuthDeps` record. Callers SHOULD build the auth value once at server boot and reuse `resolveAuthPath`.
 
 #### Scenario: resolveAuthPath is exposed on the adapter return
 
 - **WHEN** `const auth = createExpressAuth(config)` (or `createNextAuth(config)`) is called
 - **THEN** `auth.resolveAuthPath` is a function with signature `(request: AnyRequest) => Promise<string>`
 
-#### Scenario: resolver returns verified aurl origin plus the fixed /oauth base path when cookie is present and valid
+#### Scenario: resolver returns the allowlisted cluster origin plus the fixed /oauth base path
 
-- **WHEN** an adapter constructed with `oauthPath = "https://fallback.example.com/oauth"` exposes `resolveAuthPath`, called with a request whose `reltio_aurl` cookie was minted by `signAurl("https://auth-idev-02.reltio.com", key)` with a key derived from the same `clientSecret`
-- **THEN** the resolver returns `"https://auth-idev-02.reltio.com/oauth"` (verified `aurl` origin + the fixed `/oauth` base path); when the adapter was instead constructed with `oauthPath = "https://fallback.example.com"` (no path segment), the resolver returns the same `"https://auth-idev-02.reltio.com/oauth"` — the `/oauth` base path is hardcoded, not taken from `config.oauthPath`
+- **WHEN** the resolver is called with a request whose access token's `aurl` matches an allowlisted cluster `https://auth-idev-02.reltio.com`
+- **THEN** the resolver returns `"https://auth-idev-02.reltio.com/oauth"` — the matched origin plus the hardcoded `/oauth` base path
 
-#### Scenario: resolver falls back to oauthPath origin on absent or tampered cookie
+#### Scenario: resolver falls back to the primary oauthPath origin on any routing miss
 
-- **WHEN** the resolver is called with a request lacking a `reltio_aurl` cookie, OR with a tampered `reltio_aurl` cookie, OR with a `reltio_aurl` cookie signed by a different `clientSecret`
-- **THEN** in each case the resolver returns `${new URL(config.oauthPath).origin}/oauth` and does not throw (for the canonical `oauthPath` ending in `/oauth`, this equals `config.oauthPath`)
+- **WHEN** the resolver is called with a request that has no access token, or whose token has no `aurl`, is undecodable, or carries an `aurl` not in the allowlist
+- **THEN** in each case the resolver returns `${new URL(config.oauthPath).origin}/oauth` and does not throw
 
-#### Scenario: HMAC key derived once across the router and the resolver
+#### Scenario: resolver reads the token from a Bearer header or the access_token cookie
 
-- **WHEN** `createAuth(config)` is invoked once and the returned `resolveAuthPath` is invoked 100 times alongside any number of routed requests
-- **THEN** `crypto.subtle.importKey` is invoked exactly once (during `createAuth`), proving the resolver shares the router's once-derived key (verified via `vi.spyOn` on `crypto.subtle.importKey`)
+- **WHEN** the resolver is called with the token supplied via `Authorization: Bearer` in one call and via the `access_token` cookie in another, both carrying the same allowlisted `aurl`
+- **THEN** both calls resolve to the same allowlisted cluster URL
 
 #### Scenario: resolver is not exported from @reltio/auth/utils
 
-- **WHEN** a consumer attempts `import { createOauthPathResolver, resolveAuthPath } from "@reltio/auth/utils"`
-- **THEN** module resolution does not provide either name (the resolver is reached only through the adapter return value)
+- **WHEN** a consumer attempts `import { resolveAuthPath } from "@reltio/auth/utils"`
+- **THEN** module resolution does not provide the name (the resolver is reached only through the adapter return value)
 
-#### Scenario: Internal HMAC primitives are not exported
+#### Scenario: Internal routing helpers are not exported
 
-- **WHEN** a consumer attempts `import { signAurl, verifyAurl, decodeAurl, deriveHmacKey } from "@reltio/auth/utils"` or from any other subpath
-- **THEN** TypeScript reports an error and the runtime imports resolve to `undefined`. External consumers mint nothing — they only verify via the adapter-exposed `resolveAuthPath`.
-
-#### Scenario: Writer/reader contract — cookie minted by callbackHandler verifies through resolveAuthPath
-
-- **WHEN** `GET /callback` mints a `reltio_aurl` cookie for an access token containing `"aurl": "https://auth-idev-02.reltio.com"` using the test `clientSecret`, and the cookie is then handed (via a request fixture) to the `resolveAuthPath` of a separately-constructed `createExpressAuth({ ...DEFAULT_CONFIG, oauthPath: "https://fallback.example.com" })` (the fallback origin differs from the verified `aurl`, so a fallback would be observable)
-- **THEN** the resolver returns `"https://auth-idev-02.reltio.com/oauth"` — the verified `aurl` origin plus the hardcoded `/oauth` base path, NOT a URL derived from the fallback `oauthPath` origin. The test lives at `packages/auth/tests/express/callback.test.ts` (single `it(...)` block, kept next to the writer it exercises rather than in a standalone `tests/integration/` directory) and asserts that the cookie the BFF writes (envelope + name + encoding + attributes + MAC) is exactly what the resolver reads — any one-sided change to the writer (`callbackHandler` → `signAurl`) or the reader (`resolveAuthPath` → `verifyAurl`) breaks CI. The Next.js adapter is intentionally NOT mirrored — the contract is between adapter-agnostic internal modules (both `AnyRequest`-typed and exercised by their own unit tests across runtimes), so a single-adapter integration test is sufficient. Key-derivation drift is structurally impossible (the key is derived once in `createAuth` and the same `keyPromise` feeds writer and reader).
+- **WHEN** a consumer attempts `import { selectAuthService, buildAllowlist, checkAccessToken } from "@reltio/auth/utils"` or from any other public subpath
+- **THEN** TypeScript reports an error and the runtime imports resolve to `undefined`
 

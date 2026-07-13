@@ -32,6 +32,7 @@
 		"coverage": "vitest run --coverage",
 		"dev": "storybook dev -p 6006",
 		"predev": "npm run build-icons && npm run build-sap-icons && npm run build-component-docs",
+		"app-template": "npm --prefix app-template install && npm --prefix app-template run dev",
 		"build-storybook": "storybook build",
 		"prebuild-storybook": "npm run build-icons && npm run build-sap-icons && npm run build-component-docs",
 		"build-css": "node scripts/build-css.mjs",

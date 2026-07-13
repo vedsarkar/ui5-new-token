@@ -1,7 +1,7 @@
 {
-	"name": "@reltio/skills",
-	"version": "1.2.1",
-	"description": "Reltio agent skills — installable AI-agent skills (Cursor, Claude, Codex) for adopting the Reltio Design Platform.",
+	"name": "@reltio/app",
+	"version": "0.0.0",
+	"description": "Reltio application CLI — scaffold and maintain a Next.js App Router app wired to @reltio/design and @reltio/auth.",
 	"license": "Apache-2.0",
 	"homepage": "https://reltio.design",
 	"bugs": {
@@ -10,8 +10,17 @@
 	"repository": {
 		"type": "git",
 		"url": "git+ssh://git@bitbucket.org/reltio-ondemand/reltio-design.git",
-		"directory": "packages/skills"
+		"directory": "packages/app"
 	},
+	"keywords": [
+		"reltio",
+		"cli",
+		"create",
+		"scaffold",
+		"nextjs",
+		"template",
+		"starter"
+	],
 	"publishConfig": {
 		"access": "public"
 	},
@@ -20,7 +29,7 @@
 		"node": ">=20"
 	},
 	"bin": {
-		"skills": "./bin/cli.mjs"
+		"app": "./bin/cli.mjs"
 	},
 	"files": [
 		"dist",
