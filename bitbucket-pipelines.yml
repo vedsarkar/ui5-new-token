@@ -72,6 +72,7 @@ definitions:
           - npm run build --workspace=@reltio/design
           - npm run build --workspace=@reltio/auth
           - npm run build --workspace=@reltio/skills
+          - npm run build --workspace=@reltio/app
     - step: &chromatic
         name: Deploy to Chromatic
         caches:
@@ -135,6 +136,7 @@ definitions:
           - npm run build --workspace=@reltio/design
           - npm run build --workspace=@reltio/auth
           - npm run build --workspace=@reltio/skills
+          - npm run build --workspace=@reltio/app
           - npm run release
     - step: &snapshot-packages
         name: Publish snapshot for current branch
@@ -154,6 +156,7 @@ definitions:
           - npm run build --workspace=@reltio/design
           - npm run build --workspace=@reltio/auth
           - npm run build --workspace=@reltio/skills
+          - npm run build --workspace=@reltio/app
           - npm run release:snapshot -- --tag "$SNAPSHOT_TAG"
 
 pipelines:

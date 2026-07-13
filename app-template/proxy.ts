@@ -1,39 +1,25 @@
-import { ACCESS_TOKEN_COOKIE } from "@reltio/auth/utils";
-import { type NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { handlers } from "@/lib/auth";
 
-// Paths that must stay reachable without a session: the auth endpoints
-// (login / logout / callback / refreshToken / checkToken).
-const PUBLIC_PREFIXES = ["/auth"];
+// The Reltio auth endpoints (login / logout / callback / refreshToken /
+// checkToken) all live under `/auth/`. `nextUrl.pathname` is already stripped
+// of the base path, so the check is base-path agnostic.
+const AUTH_PREFIX = "/auth/";
 
 /**
- * Cheap gate (Next.js Proxy, formerly Middleware): if there is no access-token
- * cookie, bounce unauthenticated visitors to the Reltio login flow with a
- * `returnTo` back to the requested page. Full token validation happens
- * server-side in `requireUser()`.
+ * Next.js Proxy (middleware). Serves the Reltio auth endpoints straight from
+ * here — in middleware `request.url` still includes the base path (route
+ * handlers get it stripped), so @reltio/auth derives the OAuth callback
+ * (`redirect_uri`) under the sub-path on its own, with no rewriting.
+ *
+ * Everything else falls through; protected pages guard themselves and pass an
+ * explicit `returnTo` from the client (see app/SignInRedirect.tsx).
  */
 export function proxy(request: NextRequest) {
-	const { pathname, origin } = request.nextUrl;
+	const { pathname } = request.nextUrl;
 
-	const isPublic = PUBLIC_PREFIXES.some(
-		(prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
-	);
-	if (isPublic) {
-		return NextResponse.next();
+	if (pathname.startsWith(AUTH_PREFIX)) {
+		const handler = handlers[request.method as keyof typeof handlers];
+		return handler ? handler(request) : new Response(null, { status: 405 });
 	}
-
-	const hasToken = Boolean(request.cookies.get(ACCESS_TOKEN_COOKIE)?.value);
-	if (hasToken) {
-		return NextResponse.next();
-	}
-
-	const loginUrl = request.nextUrl.clone();
-	loginUrl.pathname = "/auth/login";
-	loginUrl.search = "";
-	loginUrl.searchParams.set("returnTo", `${origin}${pathname}`);
-	return NextResponse.redirect(loginUrl);
 }
-
-export const config = {
-	// Run on everything except Next internals and static assets.
-	matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
-};

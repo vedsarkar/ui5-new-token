@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { getUser } from "@/lib/session";
 import { AppShell } from "./AppShell";
 import "./globals.css";
 
@@ -9,17 +8,10 @@ export const metadata = {
 		"A Reltio application starter built with @reltio/design and @reltio/auth",
 };
 
-export default async function RootLayout({
-	children,
-}: {
-	children: ReactNode;
-}) {
-	// Every rendered page is behind auth (see proxy.ts), so the shell wraps the
-	// whole app here — pages just render their content. When there is no valid
-	// session the page's own `requireUser()` redirects to the login flow, so we
-	// render children bare in that edge case.
-	const session = await getUser();
-
+export default function RootLayout({ children }: { children: ReactNode }) {
+	// Client-first: no server-side auth or data. `AppShell` fetches the session
+	// in the browser (showing a preloader) and only renders the chrome and the
+	// page once there is a valid session.
 	return (
 		<html lang="en" data-theme="sap-reltio-light">
 			<head>
@@ -29,18 +21,7 @@ export default async function RootLayout({
 				<link rel="stylesheet" href="https://reltio.design/fonts.css" />
 			</head>
 			<body>
-				{session ? (
-					<AppShell
-						user={{
-							username: session.user.username,
-							email: session.user.email,
-						}}
-					>
-						{children}
-					</AppShell>
-				) : (
-					children
-				)}
+				<AppShell>{children}</AppShell>
 			</body>
 		</html>
 	);

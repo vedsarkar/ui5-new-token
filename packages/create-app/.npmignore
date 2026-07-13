@@ -1,7 +1,0 @@
-# Defensive: the bundled app-template/ is staged fresh by prepack (which skips
-# these), but never ship dev-time artifacts if any are present.
-app-template/node_modules
-app-template/.next
-app-template/.env.local
-app-template/next-env.d.ts
-app-template/*.tsbuildinfo

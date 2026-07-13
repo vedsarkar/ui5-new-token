@@ -3,7 +3,7 @@
 A Reltio application starter built with
 [`@reltio/design`](https://www.npmjs.com/package/@reltio/design) and
 [`@reltio/auth`](https://www.npmjs.com/package/@reltio/auth), scaffolded with
-`npm create @reltio/app`.
+`npx @reltio/app create`.
 
 ## Getting started
 
@@ -19,8 +19,10 @@ A Reltio application starter built with
    cp .env.local.example .env.local
    ```
 
-   Fill in `OAUTH_PATH`, `LOGIN_PATH`, `CLIENT_ID`, `CLIENT_SECRET`. Keep
-   `SECURE=false` for local http development.
+   Fill in `OAUTH_PATH`, `LOGIN_PATH`, `CLIENT_ID`, `CLIENT_SECRET`, and
+   `BASE_PATH` (the sub-path this app is served under, e.g. `/my-app`). Keep
+   `SECURE=false` for local http development. The app will not start until every
+   required variable is set.
 
 3. Run the dev server:
 
@@ -29,8 +31,17 @@ A Reltio application starter built with
    ```
 
    Open [http://localhost:3000](http://localhost:3000). You'll be redirected to
-   the Reltio Login Page; after signing in you land on a protected page showing
-   your user and tenants.
+   your `BASE_PATH` and then to the Reltio Login Page; after signing in you land
+   on a protected page showing your user and tenants.
+
+## Base path
+
+The app is served under `BASE_PATH` (Next.js [`basePath`](https://nextjs.org/docs/app/api-reference/config/next-config-js/basePath)),
+so it can be mounted behind a platform's path rewrite. Next prefixes routing,
+`<Link>`, navigation, and static assets automatically; `proxy.ts` and the auth
+route keep the login round-trip inside the sub-path. Visiting the origin root
+(`/`) redirects to `BASE_PATH`. It is validated at startup — an invalid or
+missing value stops the server with a clear message.
 
 ## What's inside
 

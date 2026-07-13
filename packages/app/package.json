@@ -1,7 +1,7 @@
 {
-	"name": "@reltio/create-app",
-	"version": "0.1.0",
-	"description": "Scaffold a Reltio application starter (Next.js App Router) wired to @reltio/design and @reltio/auth.",
+	"name": "@reltio/app",
+	"version": "0.0.0",
+	"description": "Reltio application CLI — scaffold and maintain a Next.js App Router app wired to @reltio/design and @reltio/auth.",
 	"license": "Apache-2.0",
 	"homepage": "https://reltio.design",
 	"bugs": {
@@ -10,10 +10,11 @@
 	"repository": {
 		"type": "git",
 		"url": "git+ssh://git@bitbucket.org/reltio-ondemand/reltio-design.git",
-		"directory": "packages/create-app"
+		"directory": "packages/app"
 	},
 	"keywords": [
 		"reltio",
+		"cli",
 		"create",
 		"scaffold",
 		"nextjs",
@@ -28,17 +29,16 @@
 		"node": ">=20"
 	},
 	"bin": {
-		"create-app": "./index.mjs"
+		"app": "./bin/cli.mjs"
 	},
 	"files": [
-		"index.mjs",
-		"scaffold.mjs",
-		"app-template",
+		"dist",
 		"README.md",
 		"LICENSE",
 		"NOTICE"
 	],
 	"scripts": {
-		"prepack": "node prepack.mjs"
+		"build": "node scripts/build.mjs",
+		"postbuild": "cp README.md dist/ && cp ../../LICENSE dist/ && cp ../../NOTICE dist/"
 	}
 }

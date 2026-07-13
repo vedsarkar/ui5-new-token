@@ -21,9 +21,5 @@
 		}
 	},
 	"include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
-	"exclude": [
-		"node_modules",
-		"app-template",
-		"packages/create-app/app-template"
-	]
+	"exclude": ["node_modules", "app-template", "packages/app/dist"]
 }

@@ -13,7 +13,7 @@
 			"!.claude",
 			"!public/fonts.css",
 			"!app-template",
-			"!packages/create-app/app-template"
+			"!packages/app/dist"
 		]
 	},
 	"formatter": {
