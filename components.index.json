@@ -2,7 +2,7 @@
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "ReltioDesignComponentIndex",
 	"generatedBy": "scripts/build-component-index.mjs",
-	"count": 152,
+	"count": 153,
 	"components": [
 		{
 			"name": "ActionSheet",
@@ -896,6 +896,12 @@
 			"name": "UserMenu",
 			"import": "@reltio/design/components",
 			"description": "UserMenu is the Reltio header user menu.",
+			"hasSchema": true
+		},
+		{
+			"name": "UserMenuItem",
+			"import": "@reltio/design/components",
+			"description": "UserMenuItem is a menu entry inside a UserMenu popover.",
 			"hasSchema": true
 		},
 		{

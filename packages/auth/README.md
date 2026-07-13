@@ -76,10 +76,10 @@ See the [Setup → Express](?path=/docs/guides-auth-setup-express--docs) or [Set
 
 | Subpath | What's in it |
 |---|---|
-| `@reltio/auth/types` | TypeScript type declarations: `AuthConfig`, `SsoRedirect`, `SsoRedirectContext`, `TokenResponse`, `CheckTokenResponse`. Use these to type your callback and config objects. No runtime code. |
+| `@reltio/auth/types` | TypeScript type declarations: `AuthConfig`, `AuthEnvironment`, `SsoRedirect`, `SsoRedirectContext`, `TokenResponse`, `CheckTokenResponse`. Use these to type your callback and config objects. No runtime code. |
 | `@reltio/auth/express` | `createExpressAuth(config)` — Express `Router` factory. |
 | `@reltio/auth/next` | `createNextAuth(config)` — returns `{ handlers: { GET, POST } }` for Next.js App Router. |
-| `@reltio/auth/utils` | The full set of framework-agnostic helpers the router itself uses. Token readers (`getAccessToken`, `getRefreshToken`, `getBasicToken`), cookie plumbing (`parseCookies`, `serializeCookie`, `clearCookie`, `defaultCookieOptions`, the `CookieOptions` type, and the `ACCESS_TOKEN_COOKIE` / `REFRESH_TOKEN_COOKIE` / `STATE_COOKIE` / `AUTH_URL_COOKIE` name constants), CSRF-state primitives (`generateState`, `validateState`), the request-shape adapter (`readHeader`, `AnyRequest`), and the redirect-param resolver (`resolveRedirectParams`, `upgradeToHttps`, `RedirectParams`). All accept Express `Request`, Next.js `NextRequest`, or Web `Request` uniformly where applicable. The dynamic Auth-server routing resolver is **not** here — it lives on the adapter return value as `createExpressAuth(config).resolveAuthPath` / `createNextAuth(config).resolveAuthPath` so it shares the router's once-derived HMAC key. |
+| `@reltio/auth/utils` | The full set of framework-agnostic helpers the router itself uses. Token readers (`getAccessToken`, `getRefreshToken`, `getBasicToken`), cookie plumbing (`parseCookies`, `serializeCookie`, `clearCookie`, `defaultCookieOptions`, the `CookieOptions` type, and the `ACCESS_TOKEN_COOKIE` / `REFRESH_TOKEN_COOKIE` / `STATE_COOKIE` name constants), CSRF-state primitives (`generateState`, `validateState`), the request-shape adapter (`readHeader`, `AnyRequest`), and the redirect-param resolver (`resolveRedirectParams`, `upgradeToHttps`, `RedirectParams`). All accept Express `Request`, Next.js `NextRequest`, or Web `Request` uniformly where applicable. The dynamic Auth-server routing resolver is **not** here — it lives on the adapter return value as `createExpressAuth(config).resolveAuthPath` / `createNextAuth(config).resolveAuthPath` so it shares the router's allowlist, resolving the request's cluster from the access token's `aurl` claim. |
 
 > **Always use a subpath.** `import x from "@reltio/auth"` (no subpath) deliberately fails — there is no `main`/`exports` target for the bare package name.
 
@@ -105,25 +105,44 @@ The same signature works in both Express and Next.js — no framework-specific a
 ## Configuration
 
 ```ts
-type AuthConfig = {
+/** A Reltio Auth Server environment: the OAuth URL plus the credentials registered with it. */
+type AuthEnvironment = {
 	/** URL of the Reltio OAuth server, e.g. `https://auth-stg.reltio.com/oauth`. */
 	oauthPath: string;
-	/** URL of the Reltio Login Page, e.g. `https://login-stg.reltio.com`. */
-	loginPath: string;
-	/** OAuth client id registered with the Reltio OAuth server. */
+	/** OAuth client id registered with this environment's OAuth server. */
 	clientId: string;
-	/** OAuth client secret registered with the Reltio OAuth server. */
+	/** OAuth client secret registered with this environment's OAuth server. */
 	clientSecret: string;
+};
+
+// AuthConfig extends AuthEnvironment: the top-level fields describe the primary
+// cluster; authEnvironments lists any additional trusted clusters.
+type AuthConfig = AuthEnvironment & {
+	/**
+	 * URL of the Reltio Login Page, e.g. `https://login-stg.reltio.com`.
+	 * Required for the interactive OAuth flow (`/login`, `/logout`, `/callback`);
+	 * optional for introspection-only API services (see below).
+	 */
+	loginPath?: string;
 	/** Post-callback hook returning a Web `Response`. */
 	ssoRedirect?: SsoRedirect;
 	/** Set cookies with the `Secure` flag and force `https` in redirect URLs. Default `true`. */
 	secure?: boolean;
 	/** Append `notenant=true` to the Login Page URL. Default `false`. */
 	notenant?: boolean;
+	/**
+	 * Allowlist of additional trusted auth environments for multiauth routing.
+	 * `/checkToken` and `/refreshToken` route to the environment named by the
+	 * access token's `aurl` claim; an `aurl` that is absent, undecodable, or
+	 * not in this allowlist falls back to the primary cluster (`oauthPath`).
+	 */
+	authEnvironments?: AuthEnvironment[];
 };
 ```
 
-All four required keys (`oauthPath`, `loginPath`, `clientId`, `clientSecret`) are enforced at compile time by TypeScript. Consumers reading config from environment variables, JSON files, or other untyped sources are responsible for their own validation at the boundary.
+The three required keys (`oauthPath`, `clientId`, `clientSecret`) are enforced at compile time by TypeScript. `loginPath` is required for the interactive OAuth flow (`/login`, `/logout`, `/callback`) — those routes respond `500` without it — but may be omitted by introspection-only API services (see below). Consumers reading config from environment variables, JSON files, or other untyped sources are responsible for their own validation at the boundary.
+
+`authEnvironments` is optional: omit it for a single-cluster deployment. When present, every entry's `oauthPath` origin is matched against the access token's `aurl` claim so per-request calls route to the issuing cluster with that cluster's own credentials.
 
 ## Reading the access token in your own routes
 
@@ -146,6 +165,58 @@ app.get("/api/profile", async (req, res, next) => {
 ```
 
 `getAccessToken` accepts Express `Request`, Next.js `NextRequest`, or Web `Request` uniformly, reads from `Authorization: Bearer` first then the `access_token` cookie, and **never mutates** the request argument.
+
+## Validating tokens in a standalone API service (`auth.checkToken`)
+
+A **standalone API service** (e.g. `config-service`) has no login flow — it receives an access token directly and must introspect it against the cluster that **issued** it. In a multiauth deployment there are several auth clusters, and the issuing cluster is named by the token's `aurl` claim.
+
+Use the same factory the BFF uses. `auth.checkToken(request)` is the guard helper you call from your own protected endpoints; it reads the token, routes to the issuing cluster from the token's `aurl` claim (matched against the allowlist), and returns the parsed `CheckTokenResponse`. An API service that only introspects can **omit `loginPath`** — the login/logout/callback routes it never mounts are the only thing that needs it:
+
+```ts
+import { createExpressAuth } from "@reltio/auth/express";
+import { isRequestError } from "@reltio/auth/utils";
+
+// No loginPath — this service never runs the interactive OAuth flow.
+const auth = createExpressAuth({
+	oauthPath: process.env.OAUTH_PATH!,
+	clientId: process.env.CLIENT_ID!,
+	clientSecret: process.env.CLIENT_SECRET!,
+	authEnvironments: [
+		{
+			oauthPath: "https://auth-stg.cloud.reltio.com",
+			clientId: process.env.ADDITIONAL_0_CLIENT_ID!,
+			clientSecret: process.env.ADDITIONAL_0_CLIENT_SECRET!,
+		},
+	],
+});
+
+app.use(async (req, res, next) => {
+	try {
+		res.locals.auth = await auth.checkToken(req);
+		next();
+	} catch (error) {
+		if (isRequestError(error)) {
+			// 401 = token missing/rejected; 502 = auth server unreachable —
+			// keep them distinct so an outage is never reported as "unauthorized".
+			res.sendStatus(error.statusCode >= 500 ? 502 : 401);
+			return;
+		}
+		next(error);
+	}
+});
+```
+
+You don't have to mount the router (`app.use("/auth", auth)`) to use `checkToken` — call it directly. `createNextAuth(config).checkToken` behaves identically for Next.js services.
+
+How the issuing cluster is chosen:
+
+- The token's `aurl` claim is **decoded** (no signature verification in this version) and matched — by normalized origin, trailing-slash insensitive — against the allowlist (the primary `oauthPath` plus every `authEnvironments[].oauthPath`).
+- On a match, the token is introspected against **that cluster's** auth server (its `/checkToken` endpoint), authenticated with **that cluster's** `clientId` / `clientSecret`.
+- An `aurl` that is absent, undecodable, or **not in the allowlist** falls back to the primary cluster. An attacker-controlled `aurl` can therefore only ever select a pre-configured cluster — never an arbitrary URL.
+
+`checkToken` resolves the parsed `CheckTokenResponse` on success and signals failure by **throwing `RequestError`**: a missing request token → `statusCode` 401, an upstream 4xx → the upstream status, an upstream 5xx / network failure → 502. Branch on `isRequestError(error)` + `error.statusCode` so an auth-server outage (502) is never collapsed into an authentication failure (401).
+
+> **Scope.** This version trusts `aurl` purely through allowlist membership; it does **not** verify the token signature locally. Local signature verification (to remove the per-service allowlist) is a possible future addition.
 
 ## Seeding the CSRF state cookie from a custom pre-login handler
 
@@ -180,11 +251,43 @@ app.get("/error", (req, res) => {
 
 The remaining cookie and state helpers (`serializeCookie`, `clearCookie`, `parseCookies`, `validateState`, `ACCESS_TOKEN_COOKIE`, `REFRESH_TOKEN_COOKIE`) are also exported from `@reltio/auth/utils` for adjacent BFF use cases — for example reading and stripping the `access_token` cookie before proxying a request upstream. They are part of the supported public contract; use them instead of carrying the magic-string `"access_token"` around.
 
+## Proxying browser requests to Reltio microservices
+
+`@reltio/auth` ships an opt-in `/proxy` endpoint that browser code calls instead of speaking to Reltio microservices directly. It centralises the BFF proxy pattern that every consuming app used to ship privately — fixing the latent defects (`Set-Cookie` leakage, `Content-Encoding` double-decode, substring-allowlist host spoofing) once.
+
+Add `proxy: { allowedTargets: [...] }` to enable the endpoint:
+
+```ts
+import { createNextAuth } from "@reltio/auth/next";
+
+export const { GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS } = createNextAuth({
+	oauthPath: process.env.OAUTH_PATH!,
+	loginPath: process.env.LOGIN_PATH!,
+	clientId: process.env.CLIENT_ID!,
+	clientSecret: process.env.CLIENT_SECRET!,
+	proxy: { allowedTargets: ["https://**.reltio.com/reltio/"] },
+}).handlers;
+```
+
+Then call the endpoint from the browser with the upstream URL in the `reltio-target-url` header:
+
+```ts
+await fetch("/auth/proxy", {
+	method: "GET",
+	headers: { "reltio-target-url": "https://tst-01.reltio.com/reltio/api/sumit/entities/123" },
+});
+```
+
+Request and response bodies are streamed through with constant memory, so large uploads/downloads and streaming responses (Server-Sent Events, chunked transfer) work with no size cap. On Express, mount `createExpressAuth()` **before** any body-parser middleware — the proxy forwards the raw request stream.
+
+The full contract — allowlist DSL (`*` vs `**`), header rewriting rules, error envelope, streaming passthrough, migration from a custom proxy — is documented in the [Proxy guide](?path=/docs/guides-auth-proxy--docs).
+
 ## Storybook documentation
 
 - [Setup → Express](?path=/docs/guides-auth-setup-express--docs) — full walkthrough including config object, router mount, and error handling.
 - [Setup → Next.js App Router](?path=/docs/guides-auth-setup-next-js-app-router--docs) — full walkthrough for `app/auth/[...auth]/route.ts`.
-- [Dynamic OAuth Routing](?path=/docs/guides-auth-dynamic-oauth-routing--docs) — how the per-session `reltio_aurl` cookie routes `/checkToken` and `/refreshToken` to the right Auth Server cluster, and how to use the adapter's `resolveAuthPath` in apps that bypass the BFF.
+- [Proxy](?path=/docs/guides-auth-proxy--docs) — `/proxy` endpoint, `reltio-target-url` header, wildcard DSL, header rewriting rules, error envelope, migration from `http-proxy-middleware`.
+- [Dynamic OAuth Routing](?path=/docs/guides-auth-dynamic-oauth-routing--docs) — how the access token's `aurl` claim + the configured allowlist route `/checkToken` and `/refreshToken` to the right Auth Server cluster, and how to use the adapter's `resolveAuthPath` in apps that bypass the BFF.
 - [Migration → From auth-middleware](?path=/docs/guides-auth-migration-from-auth-middleware--docs) — import-path mapping, before/after code, breaking changes.
 
 ## License

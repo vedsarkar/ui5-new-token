@@ -1,10 +1,10 @@
 import { Tab } from "@ui5/webcomponents-react/Tab";
 import { TabContainer } from "@ui5/webcomponents-react/TabContainer";
 import { fn } from "storybook/test";
+import acceptIcon from "@/icons/sap/accept";
+import errorIcon from "@/icons/sap/error";
+import pendingIcon from "@/icons/sap/pending";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/accept.js";
-import "@ui5/webcomponents-icons/dist/error.js";
-import "@ui5/webcomponents-icons/dist/pending.js";
 
 const meta = preview.meta({
 	component: TabContainer,
@@ -36,13 +36,13 @@ export const Default = meta.story({
 export const WithIcons = meta.story({
 	render: (args) => (
 		<TabContainer {...args}>
-			<Tab text="Pending" icon="pending" selected>
+			<Tab text="Pending" icon={pendingIcon} selected>
 				<div style={{ padding: 16 }}>Pending</div>
 			</Tab>
-			<Tab text="Failed" icon="error">
+			<Tab text="Failed" icon={errorIcon}>
 				<div style={{ padding: 16 }}>Failed</div>
 			</Tab>
-			<Tab text="Completed" icon="accept">
+			<Tab text="Completed" icon={acceptIcon}>
 				<div style={{ padding: 16 }}>Completed</div>
 			</Tab>
 		</TabContainer>

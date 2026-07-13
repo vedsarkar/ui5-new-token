@@ -20,12 +20,14 @@ export type ExchangeCodeOptions = AuthDeps & {
 export async function exchangeCode(
 	options: ExchangeCodeOptions,
 ): Promise<TokenResponse> {
-	const { config, authHeader, code } = options;
+	const { config, allowlist, code } = options;
 	const response = await safeFetch({
 		url: `${config.loginPath}/token`,
 		method: "POST",
 		headers: {
-			Authorization: authHeader,
+			// The code was minted by the primary Login Page, so the code grant
+			// uses the primary cluster's Basic credentials (allowlist index 0).
+			Authorization: allowlist[0].authHeader,
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({ grant_type: "authorization_code", code }),

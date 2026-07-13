@@ -8,7 +8,7 @@ The `apps` prop accepts the raw Config Service shape: an array of `{ name, items
 
 ### Icons are resolved internally
 
-The icon for each app is **not** taken from the API. Instead it is resolved from an internal configuration (`appIcons.json`) that maps each known app name to a curated [Reltio icon](/?path=/story/icons--docs) (`reltio/*`). Apps with no mapping fall back to the generic `reltio/generic` glyph. This keeps the navigation visually consistent with the rest of the platform regardless of which icon URL the backend happens to return. To support a new app, add a `"App Name": "icon-name"` entry to `appIcons.json` and register the icon's side-effect import in `AppNavigation.tsx`.
+The icon for each app is **not** taken from the API. Instead it is resolved from an internal configuration (`appIcons.json`) that maps each known app name to a curated [Reltio icon](/?path=/story/icons--docs) (`reltio/*`). Apps with no mapping fall back to the generic `reltio/generic` glyph. This keeps the navigation visually consistent with the rest of the platform regardless of which icon URL the backend happens to return. To support a new app, add a `"App Name": "icon-name"` entry to `appIcons.json` and import that icon's name into the `ICONS` map in `AppNavigation.tsx` (`import iconName from "@/icons/reltio/<icon-name>"`), which registers it.
 
 ### Home entry
 

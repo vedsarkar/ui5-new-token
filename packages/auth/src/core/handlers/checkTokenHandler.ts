@@ -11,22 +11,16 @@
  */
 
 import { isRequestError } from "../../utils/errors";
-import { getAccessToken } from "../../utils/getAccessToken";
 import { checkAccessToken } from "../checkAccessToken";
 import type { Handler } from "./types";
 
 export const checkTokenHandler: Handler = async (options) => {
-	const { request } = options;
-	const accessToken = getAccessToken(request);
-	if (!accessToken) {
-		return new Response(null, { status: 401 });
-	}
-
+	const { allowlist, request } = options;
 	const url = new URL(request.url);
 	try {
 		const data = await checkAccessToken({
-			...options,
-			accessToken,
+			allowlist,
+			request,
 			serviceId: url.searchParams.get("serviceId") ?? undefined,
 			tenantId: url.searchParams.get("tenantId") ?? undefined,
 		});
@@ -36,9 +30,8 @@ export const checkTokenHandler: Handler = async (options) => {
 		});
 	} catch (error) {
 		if (isRequestError(error)) {
-			// Per spec "Upstream error propagation": 5xx and network failures
-			// surface as 502; any 4xx from the introspection endpoint means
-			// the access token was rejected → 401.
+			// A missing request token and any upstream 4xx both mean the token
+			// was rejected → 401; upstream 5xx / network failures → 502.
 			const status = error.statusCode >= 500 ? 502 : 401;
 			return new Response(null, { status });
 		}

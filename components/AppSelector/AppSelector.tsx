@@ -4,14 +4,14 @@ import { Popover } from "@ui5/webcomponents-react/Popover";
 import { ProductSwitch } from "@ui5/webcomponents-react/ProductSwitch";
 import { ProductSwitchItem } from "@ui5/webcomponents-react/ProductSwitchItem";
 import { useId, useState } from "react";
+import gridIcon from "@/icons/sap/grid";
+import internetBrowserIcon from "@/icons/sap/internet-browser";
 import { classNames } from "@/utils/classNames";
 import styles from "./AppSelector.module.css";
 import type { AppEntry, AppSelectorProps } from "./AppSelector.types";
-import "@ui5/webcomponents-icons/dist/grid.js";
-import "@ui5/webcomponents-icons/dist/internet-browser.js";
 
 const DEFAULT_CATEGORY = "Applications";
-const FALLBACK_ICON = "internet-browser";
+const FALLBACK_ICON = internetBrowserIcon;
 
 type Placement = "Top" | "Bottom" | "Start" | "End";
 
@@ -42,7 +42,7 @@ export const AppSelector = ({
 			<Button
 				id={triggerId}
 				design="Transparent"
-				icon="grid"
+				icon={gridIcon}
 				accessibleName={accessibleName}
 				onClick={() => setOpen((value) => !value)}
 			>

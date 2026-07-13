@@ -2,10 +2,10 @@ import { Option } from "@ui5/webcomponents-react/Option";
 import { OptionCustom } from "@ui5/webcomponents-react/OptionCustom";
 import { Select } from "@ui5/webcomponents-react/Select";
 import { fn } from "storybook/test";
+import customerIcon from "@/icons/sap/customer";
+import databaseIcon from "@/icons/sap/database";
+import employeeIcon from "@/icons/sap/employee";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/database.js";
-import "@ui5/webcomponents-icons/dist/customer.js";
-import "@ui5/webcomponents-icons/dist/employee.js";
 
 const meta = preview.meta({
 	component: Select,
@@ -52,9 +52,9 @@ export const Preselected = meta.story({
 export const WithIcons = meta.story({
 	render: (args) => (
 		<Select {...args}>
-			<Option icon="database">Organization</Option>
-			<Option icon="employee">Individual</Option>
-			<Option icon="customer">Customer</Option>
+			<Option icon={databaseIcon}>Organization</Option>
+			<Option icon={employeeIcon}>Individual</Option>
+			<Option icon={customerIcon}>Customer</Option>
 		</Select>
 	),
 });

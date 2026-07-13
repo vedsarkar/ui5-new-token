@@ -1,0 +1,224 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/Auth/Proxy" />
+
+# Proxy — the `/proxy` endpoint
+
+`@reltio/auth` ships a single, centrally-maintained reverse proxy at `<mount>/proxy`. Browser code calls it instead of talking to Reltio services directly: the proxy reads the upstream URL from the `reltio-target-url` header, attaches the user's bearer token from the `access_token` cookie server-side, and streams the request through transparently.
+
+> **🎯 Key principle:** the browser never sees the token, and the request/response are forwarded byte-for-byte — including streaming responses and large uploads.
+
+The endpoint is **opt-in**: add `proxy: { allowedTargets: [...] }` to `AuthConfig` to register it. Omit `proxy` and every request to `<mount>/proxy` gets a plain `404`.
+
+## Enabling it
+
+### Next.js App Router
+
+```ts
+// app/auth/[...auth]/route.ts
+import { createNextAuth } from "@reltio/auth/next";
+
+export const { GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS } = createNextAuth({
+	oauthPath: process.env.OAUTH_PATH!,
+	loginPath: process.env.LOGIN_PATH!,
+	clientId: process.env.CLIENT_ID!,
+	clientSecret: process.env.CLIENT_SECRET!,
+	proxy: { allowedTargets: ["https://**.reltio.com/reltio/"] },
+}).handlers;
+```
+
+Export **all seven** methods. The proxy accepts every HTTP verb; omit `PUT`/`DELETE`/etc. and Next.js returns `405` before the package is reached.
+
+### Express
+
+```ts
+// server/app.ts
+import express from "express";
+import { createExpressAuth } from "@reltio/auth/express";
+
+app.use(
+	"/auth",
+	createExpressAuth({
+		oauthPath: process.env.OAUTH_PATH!,
+		loginPath: process.env.LOGIN_PATH!,
+		clientId: process.env.CLIENT_ID!,
+		clientSecret: process.env.CLIENT_SECRET!,
+		proxy: { allowedTargets: ["https://**.reltio.com/reltio/"] },
+	}),
+);
+```
+
+The router auto-mounts `/proxy` for every method when `proxy` is set.
+
+> **⚠️ Mount before any body parser.** The proxy streams the raw request body, so `createExpressAuth()` must run **before** `express.json()` / `express.urlencoded()` / `express.raw()`. A parser that has already consumed the stream leaves nothing to forward.
+
+Patterns in `allowedTargets` are compiled once at startup — an invalid pattern throws `TypeError` immediately, so the app fails to boot rather than failing on the first request.
+
+The BFF must be mounted on the **same origin** as the page. The proxy emits no `Access-Control-*` headers, which closes a CSRF vector: a cross-origin request carrying the custom `reltio-target-url` header is blocked by the browser's CORS preflight before it reaches the BFF.
+
+## Calling it from the browser
+
+Put the upstream URL in the `reltio-target-url` header. The `access_token` cookie is sent automatically on same-origin requests; the proxy turns it into `Authorization: Bearer …` server-side.
+
+```ts
+// GET an entity through the proxy
+const res = await fetch("/auth/proxy", {
+	method: "GET",
+	headers: {
+		"reltio-target-url":
+			"https://tst-01.reltio.com/reltio/api/tenant/entities/0Q8dP8e",
+	},
+});
+const entity = await res.json();
+```
+
+```ts
+// POST a JSON body through the proxy
+await fetch("/auth/proxy", {
+	method: "POST",
+	headers: {
+		"reltio-target-url": "https://tst-01.reltio.com/reltio/api/tenant/entities",
+		"Content-Type": "application/json",
+	},
+	body: JSON.stringify([{ type: "configuration/entityTypes/HCP" }]),
+});
+```
+
+The inbound `Authorization` header is **ignored** — the bearer always comes from the cookie. This forecloses a token-confusion attack where a script calls the proxy with a bearer other than the authenticated user's.
+
+## Streaming and large files
+
+Request and response bodies are **streamed** through with constant memory — there is no size cap. This means:
+
+- **Large uploads/downloads** (file transfers, entity batches, config exports) stream without buffering the whole payload.
+- **Streaming responses** — Server-Sent Events (`text/event-stream`), NDJSON, and chunked transfers reach the browser incrementally as the upstream produces them.
+- **Cancellation** — aborting the browser request propagates to the upstream connection.
+
+## Allowlist (`allowedTargets`)
+
+Each entry is a `https://` URL pattern with a **host** clause and a **path** clause. A URL matches only if both halves match; multiple entries are OR-combined.
+
+### Host clause
+
+<table>
+	<thead>
+		<tr><th>Pattern</th><th>Matches</th><th>Does NOT match</th></tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>rdm.reltio.com</code> (literal)</td>
+			<td><code>rdm.reltio.com</code> (case-insensitive)</td>
+			<td><code>foo.rdm.reltio.com</code>, any other host</td>
+		</tr>
+		<tr>
+			<td><code>{`*.reltio.com`}</code> (one label)</td>
+			<td><code>tst-01.reltio.com</code></td>
+			<td><code>a.b.reltio.com</code>, <code>reltio.com</code></td>
+		</tr>
+		<tr>
+			<td><code>{`**.reltio.com`}</code> (one or more labels)</td>
+			<td><code>tst-01.reltio.com</code>, <code>a.b.c.reltio.com</code></td>
+			<td><code>reltio.com</code> (apex)</td>
+		</tr>
+	</tbody>
+</table>
+
+Wildcards are only valid as the **leading** label. Mid-host wildcards, hosts without a dot (`localhost`), and ports throw at construction time.
+
+### Path clause
+
+The pattern path is matched with `startsWith` against the **normalised** `URL.pathname` (so `/reltio/../admin` resolves to `/admin` and will not match `/reltio/`).
+
+<table>
+	<thead>
+		<tr><th>Pattern path</th><th>Matches</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>/reltio/</code></td><td>anything under <code>/reltio/</code></td></tr>
+		<tr><td><code>{`/reltio/*`}</code></td><td>identical to <code>/reltio/</code> (trailing <code>*</code> is sugar)</td></tr>
+		<tr><td><code>/</code> or no path</td><td>every path on the matching host</td></tr>
+	</tbody>
+</table>
+
+A trailing `*` is the only glob allowed in the path; any other glob character throws at construction. This keeps every entry a literal prefix — trivially auditable.
+
+```ts
+// Reltio API across every cluster — the common shape
+proxy: { allowedTargets: ["https://**.reltio.com/reltio/"] }
+
+// Tightest possible scope — one host, one path prefix
+proxy: { allowedTargets: ["https://rdm.reltio.com/rdm/api/"] }
+```
+
+An empty array (`allowedTargets: []`) registers the endpoint but rejects every request with `403 target_not_allowed`.
+
+## Header handling
+
+The proxy is deliberately narrow about what crosses the trust boundary.
+
+**Request (browser → upstream):**
+
+- `Authorization` — stripped, replaced with the cookie-derived `Bearer …`.
+- `Cookie`, `reltio-target-url`, `Host`, `Content-Length` — stripped.
+- `Accept-Encoding` — forced to `identity` (see below).
+- Hop-by-hop headers (RFC 7230 §6.1) — stripped.
+- Everything else (`Content-Type`, custom headers, …) — forwarded verbatim.
+
+**Response (upstream → browser):**
+
+- `Set-Cookie` — stripped. Upstream cannot plant cookies on your origin.
+- `Content-Encoding`, `Content-Length` — stripped. `fetch` (undici) auto-decodes the upstream body, so the streamed bytes are always identity-encoded; forcing `identity` upstream and stripping these keeps the response self-consistent.
+- Hop-by-hop headers — stripped.
+- Everything else (`Content-Type`, `Cache-Control`, `ETag`, `Location`, …) — forwarded verbatim.
+
+Upstream **status codes are forwarded byte-for-byte** (`200`, `201`, `204`, `4xx`, `5xx`, …). `3xx` reaches the caller as a redirect (`redirect: "manual"`) rather than being followed. The proxy injects no `Cache-Control` of its own — the upstream's caching directives pass through unchanged.
+
+## Error responses
+
+When the proxy rejects a request **before** reaching upstream, it returns a JSON envelope with `Content-Type: application/json`:
+
+```json
+{ "error": "<code>", "message": "<human-readable detail>" }
+```
+
+Key on `error` — it is the stable contract. `message` is dev-facing.
+
+<table>
+	<thead>
+		<tr><th>Status</th><th><code>error</code></th><th>Trigger</th></tr>
+	</thead>
+	<tbody>
+		<tr><td><code>400</code></td><td><code>missing_target_url</code></td><td><code>reltio-target-url</code> is absent or blank.</td></tr>
+		<tr><td><code>400</code></td><td><code>invalid_target_url</code></td><td>Value fails URL parsing or embeds credentials (<code>{`user:pass@host`}</code>).</td></tr>
+		<tr><td><code>400</code></td><td><code>unsupported_scheme</code></td><td>Scheme is not <code>https:</code>.</td></tr>
+		<tr><td><code>401</code></td><td><code>missing_access_token</code></td><td>No <code>access_token</code> cookie (inbound <code>Authorization</code> is not a fallback).</td></tr>
+		<tr><td><code>403</code></td><td><code>target_not_allowed</code></td><td>URL matches no <code>allowedTargets</code> entry.</td></tr>
+		<tr><td><code>404</code></td><td>(plain 404)</td><td><code>proxy</code> is not configured — the route is unmounted.</td></tr>
+		<tr><td><code>502</code></td><td><code>upstream_error</code></td><td>The upstream <code>fetch</code> failed (DNS, connection refused, TLS). Internal details are never echoed back.</td></tr>
+	</tbody>
+</table>
+
+Upstream `4xx`/`5xx` responses are **not** rewritten — they reach the browser verbatim with the upstream body and status. The envelope above covers only the proxy's own reject paths.
+
+## Migrating from a custom proxy
+
+Delete your hand-rolled BFF proxy route and enable `proxy` on `createExpressAuth` / `createNextAuth`. Update the frontend in lockstep:
+
+<table>
+	<thead>
+		<tr><th>Frontend</th><th>Legacy</th><th>New</th></tr>
+	</thead>
+	<tbody>
+		<tr><td>Proxy path</td><td><code>/api/proxy</code></td><td><code>/auth/proxy</code> (wherever you mounted the router)</td></tr>
+		<tr><td>Header name</td><td><code>reltio-api-url</code></td><td><code>reltio-target-url</code></td></tr>
+		<tr><td>Token</td><td>Attached by custom middleware</td><td>Server reads the <code>access_token</code> cookie automatically</td></tr>
+	</tbody>
+</table>
+
+The centralised endpoint also fixes defects common to hand-rolled proxies: substring host allowlists that admit spoofed hosts (`evil.com.reltio.com…`), missing `return` after a rejected request, leaked `Set-Cookie`, and `Content-Encoding` mismatches. See [Migration → From auth-middleware](?path=/docs/guides-auth-migration-from-auth-middleware--docs) for the full walkthrough.
+
+## Sources and references
+
+- [RFC 7230 §6.1 — Connection / hop-by-hop headers](https://www.rfc-editor.org/rfc/rfc7230#section-6.1) — which headers a proxy must not forward
+- [OWASP SSRF Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html) — the allowlist threat model
+- [MDN — Server-Sent Events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) — the streaming response format the proxy passes through

@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { UserMenuItem } from "@ui5/webcomponents-react/UserMenuItem";
 import { fn } from "storybook/test";
 import preview from "@/.storybook/preview";
 import { UserMenu } from "./UserMenu";
@@ -36,4 +37,20 @@ export const WithAvatarImage = meta.story({
 			avatarUrl: faker.image.avatar(),
 		},
 	},
+});
+
+export const WithCustomMenuItems = meta.story({
+	args: {
+		onItemClick: fn(),
+	},
+	render: (args) => (
+		<UserMenu {...args}>
+			<UserMenuItem
+				text="Settings"
+				icon="action-settings"
+				data-href="/settings"
+			/>
+			<UserMenuItem text="Help" icon="sys-help" data-href="/help" />
+		</UserMenu>
+	),
 });

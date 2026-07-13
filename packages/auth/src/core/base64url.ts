@@ -1,10 +1,9 @@
 /**
- * Base64url codec (RFC 4648 §5).
+ * Base64url decoder (RFC 4648 §5).
  *
- * Internal helper used by `decodeAccessToken` (JWT envelope) and the
- * `aurlCookie` HMAC module so the package has a single base64url
- * implementation.
- * Private to `src/core/` — unreachable by consumers (no public subpath).
+ * Internal helper used by `decodeAccessToken` to decode the Reltio JWT
+ * envelope. Private to `src/core/` — unreachable by consumers (no public
+ * subpath).
  *
  * base64url differs from standard base64 in three ways:
  *   - `+` is replaced with `-`
@@ -15,21 +14,8 @@
  * characters outside the base64url alphabet (`A-Z`, `a-z`, `0-9`, `-`,
  * `_`). Standard base64 inputs (with `+`, `/`, or `=`) return `null`
  * rather than being silently coerced — this protects callers that
- * branch on the cookie/JWT format from accepting forged variants.
+ * branch on the JWT format from accepting forged variants.
  */
-
-/**
- * Encodes a byte sequence as a base64url string (no padding).
- *
- * Callers that hold a Web Crypto `ArrayBuffer` wrap it in a `Uint8Array`
- * view at the call site (`new Uint8Array(buffer)`) before passing it in.
- */
-export function base64urlEncode(bytes: Uint8Array): string {
-	return btoa(String.fromCharCode(...bytes))
-		.replace(/\+/g, "-")
-		.replace(/\//g, "_")
-		.replace(/=+$/, "");
-}
 
 /**
  * Decodes a base64url string to bytes, or returns `null` when the input

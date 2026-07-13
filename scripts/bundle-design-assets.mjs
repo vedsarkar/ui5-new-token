@@ -57,7 +57,19 @@ const main = () => {
 	if (fs.existsSync(binSrc))
 		fs.cpSync(binSrc, path.join(DIST, "bin"), { recursive: true });
 
-	console.log(`✓ bundled dist assets: index + ${schemaCount} schema(s) + bin`);
+	// `tsc` infers `rootDir` as the common ancestor of every compiled file.
+	// Because the build spans both the repo-root code folders (`components/`,
+	// `charts/`, …) and the workspace entry files (`packages/design/*.ts`), that
+	// ancestor is the repo root, so the entry files land in `dist/packages/design/`.
+	// Those emitted barrels only re-export `../../components` (i.e. `dist/components`),
+	// which is what `@reltio/design/components` already resolves to — nothing
+	// references `dist/packages`, so drop it from the published artifact.
+	const strayEntryDir = path.join(DIST, "packages");
+	fs.rmSync(strayEntryDir, { recursive: true, force: true });
+
+	console.log(
+		`✓ bundled dist assets: index + ${schemaCount} schema(s) + bin (pruned dist/packages)`,
+	);
 };
 
 main();

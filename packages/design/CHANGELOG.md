@@ -1,5 +1,76 @@
 # @reltio/design
 
+## 1.12.0
+
+### Minor Changes
+
+- fa4c174: Add `useFetch` hook for reading data on mount with loading, success, and error states.
+
+  - Available from `@reltio/design/hooks`
+  - Returns `{ data, error, isLoading }`, generic over the resolved data (`R`) and error (`E`) types
+  - Keyed by `url`: requests sharing the same url are deduplicated while in flight
+  - `useFetch(url)` issues a minimal GET and parses the JSON body; `useFetch(url, action)` runs a custom read action that receives the `url`
+  - Read-only by design — for mutations (POST/PUT triggered by user actions) use native `fetch` directly
+
+### Patch Changes
+
+- 3fde748: Fix the block-layer dimming overlay rendering as fully opaque black.
+
+  - `--sapBlockLayer_Opacity` is now the numeric SAP Horizon default (`0.6`) instead of an invalid color value, so overlays (side navigation drawer, dialogs, busy indicators) dim the content behind them with proper translucency instead of covering it with solid black.
+
+## 1.11.0
+
+### Minor Changes
+
+- da2c4eb: Make the package fully tree-shakable (`sideEffects: false`) and expose each icon's name as a tree-shakable export.
+
+  **Tree-shaking**
+
+  - Declared `sideEffects: false`, so consumer bundlers drop everything you don't import: pulling a few components from `@reltio/design/components` no longer bundles the whole catalog (`Chat`, `Details`, `Table`, `Calendar`, `Tree`, ...), and unused icons are dropped too.
+  - CSS Modules keep working — they're consumed through their default export (the hashed class map), so a bundler keeps each one exactly when its component is kept.
+
+  **Icons — registration through consumed exports**
+
+  - Every per-icon module now default-exports its registry name: `import name from "@reltio/design/icons/sap/save"` (and `.../icons/reltio/<name>`) returns the name string for `<Icon name={name} />`. SAP modules bind it from the UI5 icon module's own default export; Reltio modules bind it from `registerReltioIcon(...)`, whose return value is the name — so registration is tied to using the name and survives tree-shaking. The PascalCase component export (`Save`, `ReltioDataQuality`, ...) also still registers on use.
+  - `@reltio/design/icons/reltio` and `@reltio/design/icons/sap` are now pure barrels of icon-name exports (`export { default as aco } from "./aco"`, `aco === "reltio/aco"`; `accelerated === "accelerated"`). Grab every name at once with a namespace import: `import * as reltioIcons from "@reltio/design/icons/reltio"` / `import * as sapIcons from "@reltio/design/icons/sap"` (iterating registers the whole set).
+
+  **Notes for early adopters of the icon modules** (shipped in 1.10.0)
+
+  - Register an icon by importing its name (default) or component — not a bare `import "@reltio/design/icons/sap/save"`, which `sideEffects: false` may drop. Register-all changes from `import "@reltio/design/icons/reltio"` to `import * as reltioIcons from "@reltio/design/icons/reltio"` (used/iterated).
+  - The `@reltio/design/icons/reltio` barrel no longer exports the `reltioIcons` metadata array, the `ReltioIcon` type, or `RELTIO_ICON_COLLECTION` — use the per-icon name exports (or the namespace import); names already carry the `reltio/` prefix.
+
+- f139bdb: Add custom menu items and `onItemClick` to `UserMenu`, and endorse `UserMenuItem`.
+
+  - New optional `children` prop on `UserMenu` (`ReactNode`); document passing one or more `UserMenuItem` elements after About, before Sign Out
+  - New optional `onItemClick` prop forwards UI5 `item-click` for custom items; identify the item via `event.detail.item` (e.g. `data-href`)
+  - New `UserMenuItem` 1:1 re-export from `@reltio/design/components`
+  - About modal opens only when the built-in About item is clicked; consumer `onItemClick` is not called for About
+
+## 1.10.0
+
+### Minor Changes
+
+- 00b27e6: Re-export SAP Fiori icons from `@reltio/design/icons/sap/<kebab-name>` so consumer apps never import `@ui5/webcomponents-icons` directly. Reltio custom icons publish under `@reltio/design/icons/reltio/<kebab-name>` so both families can share kebab names without module collisions.
+
+  Every per-icon module shares the same contract: tree-shakable side-effect registration plus an optional PascalCase React component from the same path (`import { Decline } from "@reltio/design/icons/sap/decline"`, `import { ReltioDataQuality } from "@reltio/design/icons/reltio/data-quality"`). Render SAP icons by bare registry name (`<Icon name="save" />`); Reltio icons by `reltio/<name>`.
+
+  SAP modules compile into `dist/icons/sap/`; Reltio modules compile into `dist/icons/reltio/`. Reltio aggregate: `import "@reltio/design/icons/reltio"` only.
+
+### Patch Changes
+
+- acdb0c7: Drop the stray `dist/packages` directory from the published package.
+
+  `tsc` infers `rootDir` as the common ancestor of every compiled file, which spans both the repo-root code folders (`components/`, `charts/`, …) and the workspace entry files (`packages/design/*.ts`) — so the entry files were emitted into `dist/packages/design/`. Those files only re-export `../../components` (i.e. `dist/components`, which is what `@reltio/design/components` already resolves to) and nothing references them, so they are now pruned during `postbuild`. No public API or import-path change.
+
+## 1.9.1
+
+### Patch Changes
+
+- 7d3ba73: Fix the dark theme rendering incompletely when nested under a light theme.
+
+  - `variables.css` now emits every token that differs from UI5's stock light theme for **both** themes, so a `data-theme="sap-reltio-dark"` subtree no longer inherits light values (e.g. background, text, surface colors) from a light ancestor. This affects nested/sibling theming such as light and dark panels shown side by side.
+  - `ShellBar` now swaps to its light logo correctly under the `sap-reltio-dark` theme.
+
 ## 1.9.0
 
 ### Minor Changes

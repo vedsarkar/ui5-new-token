@@ -15,6 +15,7 @@ For setup of a fresh application, see [Setup → Express](?path=/docs/guides-aut
 3. Rewrite the `ssoRedirect` callback to the new Web-API signature (see [Breaking change 1](#breaking-change-1-ssoredirect-signature)).
 4. Remove any use of `signingHandler` — replace with explicit `getAccessToken` + outgoing-header set (see [Breaking change 2](#breaking-change-2-removed-signinghandler)).
 5. Apps that imported `node-oauth-provider` directly: no migration target in v1, rework through the BFF router (see [Breaking change 3](#breaking-change-3-direct-node-oauth-provider-consumers)).
+6. **Optional but recommended.** Replace your custom `/api/proxy` route built on `http-proxy-middleware` with `@reltio/auth`'s `/auth/proxy` endpoint (see [Bonus](#bonus-replace-your-custom-apiproxy-route)).
 
 Cookie names, URL paths, config keys, and runtime behaviour are preserved — your existing fixtures, end-to-end tests, and registered OAuth callback URLs continue to work unchanged.
 
@@ -262,6 +263,150 @@ This is **non-breaking** for all existing consumers. Apps that do not supply `?t
 
 So your existing end-to-end fixtures that mock `/api/auth/checkToken` at the HTTP layer continue to work without modification. Likewise, the OAuth callback URL registered with the Reltio OAuth server does not need re-registration.
 
+## Bonus — replace your custom `/api/proxy` route
+
+Most applications that ship `auth-middleware` also ship a private BFF proxy route on top of [`http-proxy-middleware`](https://www.npmjs.com/package/http-proxy-middleware) — admin-tools' `api/proxy/proxy.ts` is the canonical example. `@reltio/auth` now bundles a centrally-maintained equivalent behind `createExpressAuth({ proxy: { allowedTargets } })` (and `createNextAuth(...)`) at `<mount>/proxy`. Migrating is small, non-breaking, and fixes three latent defects without any change to the frontend's request shape (other than the path and the header name).
+
+### What's wrong with the custom proxy today
+
+The admin-tools proxy code reveals three classes of defect that every privately-maintained variant carries to varying degrees:
+
+```ts
+// admin-tools/api/proxy/proxy.ts — BEFORE (excerpt)
+router.use(
+	(req, res, next) => {
+		const targetUrl = req.headers[proxyHeaderName] as string;
+		try {
+			const apiUrl = new URL(targetUrl);
+			if (!apiUrl.origin.endsWith(".reltio.com")) {
+				throw new Error();
+			}
+		} catch (e) {
+			res.status(400).send({ error: "..." });
+			// ⚠ DEFECT 1: no `return` — the next middleware still runs
+		}
+		const token = getRequestToken(req);
+		if (!token) {
+			res.status(401).send({ error: "access token is required" });
+			return;
+		}
+		// ⚠ DEFECT 2: mutates the inbound request
+		req.headers.authorization = `Bearer ${token}`;
+		next();
+	},
+	createProxyMiddleware({
+		changeOrigin: true,
+		router: (req) => req.headers[proxyHeaderName] as string,
+		pathRewrite: (path) => path.replace(proxyPathPrefix, ""),
+		onProxyReq: fixRequestBody,
+	}),
+);
+```
+
+<table>
+	<thead>
+		<tr>
+			<th>Defect</th>
+			<th>What it allows</th>
+			<th>How <code>@reltio/auth</code> fixes it</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><strong>Missing <code>return</code></strong> after the 400 response</td>
+			<td>An invalid <code>reltio-api-url</code> still reaches <code>createProxyMiddleware</code> on the same request; the user sees double-written responses or proxied data depending on Express's response-state checks.</td>
+			<td>Pure validation chain in <code>validateProxyRequest</code> — every reject path returns a <code>Response</code> immediately. No middleware composition, no second-handler fall-through.</td>
+		</tr>
+		<tr>
+			<td><strong>Substring allowlist</strong> <code>origin.endsWith('.reltio.com')</code></td>
+			<td>Admits attacker-controlled hosts like <code>https://evil.com.reltio.com.attacker.com</code> (substring match passes; the actual host is the attacker's).</td>
+			<td>Wildcard DSL compiled to anchored regex (<code>{`/^[^.]+\\.reltio\\.com$/i`}</code> for <code>{`*.reltio.com`}</code>). Construction-time validation rejects mid-host wildcards, missing scheme, glob in path. See the <a href="?path=/docs/guides-auth-proxy--docs#allowlist-allowedtargets">Allowlist</a> section.</td>
+		</tr>
+		<tr>
+			<td><strong>Mutates the inbound <code>req.headers.authorization</code></strong></td>
+			<td>Side-effect anti-pattern that breaks any downstream middleware reading the original <code>Authorization</code>. Also lets a malicious client send a different bearer than the user's session (the mutation overwrites, but only after running other middleware).</td>
+			<td>Outgoing <code>Authorization</code> is built per-request from the <code>access_token</code> cookie inside <code>buildOutgoingHeaders</code>; the inbound <code>Request</code> object is never mutated. Inbound <code>Authorization</code> is stripped before forwarding (token-confusion defence).</td>
+		</tr>
+		<tr>
+			<td>No <code>Set-Cookie</code> / <code>Content-Encoding</code> / hop-by-hop stripping (<code>http-proxy-middleware</code> defaults)</td>
+			<td>Upstream services can plant cookies on the application's origin; <code>Content-Encoding</code> forwarding causes <code>ERR_CONTENT_DECODING_FAILED</code> in browsers when <code>undici</code> has already decompressed the body.</td>
+			<td>Both header sets stripped on the response side by default. See the <a href="?path=/docs/guides-auth-proxy--docs#header-handling">Header handling</a> section.</td>
+		</tr>
+		<tr>
+			<td>Buffers the whole request/response body</td>
+			<td>A large upload or download buffered by the BFF spikes memory and can take the process out.</td>
+			<td>Both directions are streamed with constant memory — large uploads/downloads and streaming responses (SSE, chunked) pass through without buffering.</td>
+		</tr>
+	</tbody>
+</table>
+
+### The migration
+
+The custom proxy router and its constants module become a single config key:
+
+```ts
+// admin-tools/server/app.ts — BEFORE
+import authMiddleware from "auth-middleware";
+import proxyRouter from "./api/proxy"; // the custom router shown above
+
+app.use("/api/auth", authMiddleware({ /* ... */ }));
+app.use("/api/proxy", proxyRouter);
+```
+
+```ts
+// admin-tools/server/app.ts — AFTER
+//
+// Note: admin-tools wraps createExpressAuth() with its own error-handler
+// middleware in api/auth.ts (kept verbatim — the wrapper is unaffected by
+// this change; only the proxy: { allowedTargets } key is added).
+//
+// Scope: only the bearer-token route api/proxy/proxy.ts is replaced.
+// The basic-token route at /api/state_token/proxy stays as-is.
+
+import { createExpressAuth } from "@reltio/auth/express";
+
+app.use(
+	"/api/auth",
+	createExpressAuth({
+		oauthPath: config.get("paths.oauth"),
+		loginPath: config.get("paths.login"),
+		clientId: config.get("secrets.clientId"),
+		clientSecret: config.get("secrets.clientSecret"),
+		secure: process.env.NODE_ENV === "production",
+		proxy: { allowedTargets: ["https://**.reltio.com/reltio/"] },
+	}),
+);
+// delete apps/admin-tools/api/proxy/proxy.ts and its constants module
+```
+
+Two frontend-side renames complete the cutover:
+
+<table>
+	<thead>
+		<tr>
+			<th>Frontend call</th>
+			<th>Legacy</th>
+			<th>New</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Endpoint path</td>
+			<td><code>POST /api/proxy</code></td>
+			<td><code>POST /api/auth/proxy</code> (or wherever you mounted <code>createExpressAuth</code>)</td>
+		</tr>
+		<tr>
+			<td>Upstream header name</td>
+			<td><code>reltio-api-url</code></td>
+			<td><code>reltio-target-url</code></td>
+		</tr>
+	</tbody>
+</table>
+
+Everything else on the frontend stays the same — the browser sends the `access_token` cookie by default on same-origin requests (no `credentials: "include"` needed), JSON or form bodies are forwarded byte-for-byte, upstream status and body are relayed verbatim.
+
+For the full reference (wildcard DSL semantics, complete header rewriting table, every error envelope, streaming passthrough), see the [Proxy guide](?path=/docs/guides-auth-proxy--docs).
+
 ## What's better than before
 
 The new package fixes ten latent issues in the legacy library without changing any contract:
@@ -290,6 +435,7 @@ After the migration is complete, verify the cutover with these checks:
 - [ ] `/api/auth/checkToken` returns user/permission data as before.
 - [ ] Logout clears cookies and redirects through the Login Page.
 - [ ] End-to-end tests pass without fixture changes.
+- [ ] (If applicable) custom `/api/proxy` route deleted; frontend updated to call `<mount>/proxy` with the `reltio-target-url` header.
 
 ## Need help?
 

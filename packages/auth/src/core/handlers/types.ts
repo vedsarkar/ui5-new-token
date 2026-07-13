@@ -14,7 +14,7 @@
  */
 
 import type { AuthConfig } from "../../types";
-import type { deriveHmacKey } from "../aurlCookie";
+import type { ResolvedAuthService } from "../allowlist";
 
 /**
  * Runtime dependencies derived once in `createAuth`. Spread into the flat
@@ -23,14 +23,14 @@ import type { deriveHmacKey } from "../aurlCookie";
 export type AuthDeps = {
 	/** Static auth configuration provided by the consumer. */
 	config: AuthConfig;
-	/** `Basic <base64(clientId:clientSecret)>`, precomputed once. */
-	authHeader: string;
 	/**
-	 * HMAC-SHA-256 key for the `reltio_aurl` routing cookie, derived once
-	 * from `clientSecret`. A promise because Web Crypto's `importKey` is
-	 * async; callers `await` an already-resolved value after startup.
+	 * Multiauth allowlist built once from `config` (primary cluster at index 0,
+	 * then `authEnvironments`). Each entry carries its cluster origin and the
+	 * precomputed `Authorization` Basic header. The primary cluster's header is
+	 * used for the authorization-code exchange; `/checkToken` and
+	 * `/refreshToken` select the entry named by the token's `aurl` claim.
 	 */
-	keyPromise: ReturnType<typeof deriveHmacKey>;
+	allowlist: ResolvedAuthService[];
 };
 
 /** Flat options every core handler receives: the shared deps plus the request. */

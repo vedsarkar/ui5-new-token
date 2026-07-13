@@ -12,9 +12,9 @@
 
 import { createNextAuth } from "@reltio/auth/next";
 import type { AuthConfig, SsoRedirect } from "@reltio/auth/types";
-import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll } from "vitest";
+import { TOKEN_WITH_AURL_ORIGIN } from "../fixtures/aurlTokens";
 
 /**
  * Reltio OAuth and Login Page URLs used by every test. Stable, fake hosts
@@ -45,6 +45,23 @@ export const DEFAULT_CONFIG: AuthConfig = {
 	clientId: "test_client_id",
 	clientSecret: "test_client_secret",
 	secure: true,
+};
+
+/**
+ * `AuthConfig` with a multiauth allowlist entry whose origin matches the
+ * `aurl` claim in {@link TOKEN_WITH_AURL}. Tests that exercise per-request
+ * cluster routing use this so a request carrying `TOKEN_WITH_AURL` routes to
+ * the additional cluster instead of the primary `oauthPath`.
+ */
+export const MULTIAUTH_CONFIG: AuthConfig = {
+	...DEFAULT_CONFIG,
+	authEnvironments: [
+		{
+			oauthPath: TOKEN_WITH_AURL_ORIGIN,
+			clientId: "additional_client_id",
+			clientSecret: "additional_client_secret",
+		},
+	],
 };
 
 /** Shared MSW server. */
@@ -85,13 +102,14 @@ export type CreateTestHandlersOptions = {
 };
 
 /**
- * Builds the `{ GET, POST }` handlers for the Next.js App Router adapter
- * using `DEFAULT_CONFIG` merged with any per-test overrides.
+ * Builds the full `{ GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS }`
+ * handler set using `DEFAULT_CONFIG` merged with any per-test overrides.
+ * The auth-endpoint tests destructure just `GET`/`POST`; the proxy tests
+ * use the wider surface.
  */
-export function createTestHandlers(options: CreateTestHandlersOptions = {}): {
-	GET: (req: Request) => Promise<Response>;
-	POST: (req: Request) => Promise<Response>;
-} {
+export function createTestHandlers(
+	options: CreateTestHandlersOptions = {},
+): ReturnType<typeof createNextAuth>["handlers"] {
 	return createNextAuth({
 		...DEFAULT_CONFIG,
 		...options.config,
@@ -154,44 +172,6 @@ export function parseSetCookies(
 		out[name] = { value, attributes: attrs };
 	}
 	return out;
-}
-
-/**
- * Mints a signed `reltio_aurl` routing cookie the only way a consumer can:
- * by driving a real `GET /auth/callback` exchange whose access token carries
- * the given `aurl` claim. The HMAC signing key never leaves the router, so
- * this public round-trip is how tests obtain a valid routing cookie without
- * reaching into the private `core/` signer. Registers its own one-off MSW
- * handler for the Login Page `/token` endpoint; callers register their own
- * handlers (for `/checkToken` etc.) independently.
- */
-export async function mintAurlCookie(
-	handlers: { GET: (req: Request) => Promise<Response> },
-	accessToken: string,
-): Promise<string> {
-	const state = "mint-state";
-	mswServer.use(
-		http.post(`${TEST_LOGIN_HOST}/token`, () =>
-			HttpResponse.json({
-				access_token: accessToken,
-				refresh_token: "mint_refresh",
-			}),
-		),
-	);
-	const res = await handlers.GET(
-		buildRequest({
-			path: "/auth/callback",
-			query: { code: "mint-code", state },
-			cookies: { state },
-		}),
-	);
-	const cookie = parseSetCookies(res).reltio_aurl?.value;
-	if (!cookie) {
-		throw new Error(
-			"test helper: GET /auth/callback did not mint a reltio_aurl cookie",
-		);
-	}
-	return cookie;
 }
 
 /** Extracts the `state` cookie value from a response's `Set-Cookie` headers. */

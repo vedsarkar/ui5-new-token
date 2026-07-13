@@ -22,10 +22,13 @@ of truth, so it always matches the exact version that app uses.
   exact API from `@reltio/design` itself — do not guess prop names or rely on a
   hand-maintained mapping table.
 - **Everything comes from `@reltio/design`.** Import components, charts, hooks,
-  and utils only from `@reltio/design/*` (`/components`, `/charts`, `/hooks`,
-  `/utils`) — never directly from `@ui5/*` or `@sap/*`. Always use the subpath;
-  the bare `@reltio/design` specifier does not resolve. (The one exception is the
-  side-effect icon-registration import — see the playbook.)
+  utils, and icons only from `@reltio/design/*` (`/components`, `/charts`,
+  `/hooks`, `/utils`, `/icons/sap`, `/icons/reltio`) — never directly from
+  `@ui5/*` or `@sap/*`. Always use the subpath; the bare `@reltio/design`
+  specifier does not resolve. Icons are imported **by name** and passed to the
+  `icon` prop (`import saveIcon from "@reltio/design/icons/sap/save"` →
+  `<Button icon={saveIcon} />`) — there is no `@ui5/*` icon exception. See the
+  playbook for details.
 - **Semantic matching.** Classify each primitive by its UI intent ("this is a
   button"), then find the standardized component with that intent.
 - **No fabrication.** If there is no clear standardized equivalent, mark it for

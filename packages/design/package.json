@@ -1,8 +1,9 @@
 {
 	"name": "@reltio/design",
-	"version": "1.9.0",
+	"version": "1.12.0",
 	"description": "Reltio Design Platform",
 	"license": "Apache-2.0",
+	"sideEffects": false,
 	"homepage": "https://reltio.design",
 	"bugs": {
 		"url": "https://bitbucket.org/reltio-ondemand/reltio-design/issues"

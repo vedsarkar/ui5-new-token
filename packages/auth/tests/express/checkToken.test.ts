@@ -8,15 +8,16 @@
 
 import { createExpressAuth } from "@reltio/auth/express";
 import { HttpResponse, http } from "msw";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
 	TOKEN_WITH_AURL,
 	TOKEN_WITH_AURL_ORIGIN,
+	TOKEN_WITHOUT_AURL,
 } from "../fixtures/aurlTokens";
 import {
 	createTestApp,
 	DEFAULT_CONFIG,
-	mintAurlCookie,
+	MULTIAUTH_CONFIG,
 	mswServer,
 	TEST_HOST,
 	TEST_OAUTH_HOST,
@@ -267,7 +268,7 @@ describe("Express adapter — POST /checkToken", () => {
 		expect(res.statusCode).toBe(500);
 	});
 
-	it("routes the upstream call to the verified reltio_aurl cluster URL", async () => {
+	it("routes the upstream call to the cluster named by the access token's aurl", async () => {
 		let clusterCalled = false;
 		let staticCalled = false;
 		mswServer.use(
@@ -280,19 +281,20 @@ describe("Express adapter — POST /checkToken", () => {
 				return HttpResponse.json({});
 			}),
 		);
-		const app = createTestApp();
-		const reltioAurl = await mintAurlCookie(app, TOKEN_WITH_AURL);
+		const app = createTestApp({
+			config: { authEnvironments: MULTIAUTH_CONFIG.authEnvironments },
+		});
 
 		await app
 			.post("/api/auth/checkToken")
 			.set("Host", TEST_HOST)
-			.set("Cookie", [`access_token=token; reltio_aurl=${reltioAurl}`]);
+			.set("Cookie", [`access_token=${TOKEN_WITH_AURL}`]);
 
 		expect(clusterCalled).toBe(true);
 		expect(staticCalled).toBe(false);
 	});
 
-	it("falls back to the static oauthPath when reltio_aurl is tampered (fail-closed)", async () => {
+	it("falls back to the primary oauthPath when the token's aurl is not in the allowlist", async () => {
 		let clusterCalled = false;
 		let staticCalled = false;
 		mswServer.use(
@@ -305,12 +307,13 @@ describe("Express adapter — POST /checkToken", () => {
 				return HttpResponse.json({});
 			}),
 		);
+		// DEFAULT_CONFIG has no authEnvironments: the token's aurl is untrusted.
 		const app = createTestApp();
 
 		await app
 			.post("/api/auth/checkToken")
 			.set("Host", TEST_HOST)
-			.set("Cookie", ["access_token=token; reltio_aurl=tampered-garbage"]);
+			.set("Cookie", [`access_token=${TOKEN_WITH_AURL}`]);
 
 		expect(staticCalled).toBe(true);
 		expect(clusterCalled).toBe(false);
@@ -458,7 +461,7 @@ describe("Express adapter — checkToken (programmatic introspection)", () => {
 		expect(error.statusCode).toBe(502);
 	});
 
-	it("routes via the verified reltio_aurl cookie", async () => {
+	it("routes to the cluster named by the access token's aurl", async () => {
 		let clusterCalled = false;
 		let staticCalled = false;
 		mswServer.use(
@@ -471,21 +474,17 @@ describe("Express adapter — checkToken (programmatic introspection)", () => {
 				return HttpResponse.json({});
 			}),
 		);
-		const app = createTestApp();
-		const reltioAurl = await mintAurlCookie(app, TOKEN_WITH_AURL);
-		const { checkToken } = createExpressAuth(DEFAULT_CONFIG);
+		const { checkToken } = createExpressAuth(MULTIAUTH_CONFIG);
 
 		await checkToken(
-			introspectionRequest({
-				cookie: `access_token=token; reltio_aurl=${reltioAurl}`,
-			}),
+			introspectionRequest({ cookie: `access_token=${TOKEN_WITH_AURL}` }),
 		);
 
 		expect(clusterCalled).toBe(true);
 		expect(staticCalled).toBe(false);
 	});
 
-	it("falls back to the static oauthPath when no reltio_aurl cookie is present", async () => {
+	it("falls back to the primary oauthPath when the token has no aurl claim", async () => {
 		let capturedUrl: URL | undefined;
 		mswServer.use(
 			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, ({ request }) => {
@@ -493,9 +492,11 @@ describe("Express adapter — checkToken (programmatic introspection)", () => {
 				return HttpResponse.json({});
 			}),
 		);
-		const { checkToken } = createExpressAuth(DEFAULT_CONFIG);
+		const { checkToken } = createExpressAuth(MULTIAUTH_CONFIG);
 
-		await checkToken(introspectionRequest({ cookie: "access_token=token" }));
+		await checkToken(
+			introspectionRequest({ cookie: `access_token=${TOKEN_WITHOUT_AURL}` }),
+		);
 
 		expect(capturedUrl?.origin).toBe(new URL(DEFAULT_CONFIG.oauthPath).origin);
 	});
@@ -519,24 +520,6 @@ describe("Express adapter — checkToken (programmatic introspection)", () => {
 		expect(capturedUrl?.searchParams.get("tenantId")).toBe("acme-prod");
 	});
 
-	it("derives the HMAC key once and reuses it across many checkToken calls", async () => {
-		const importKeySpy = vi.spyOn(crypto.subtle, "importKey");
-		try {
-			mockOAuthCheckToken({});
-			const { checkToken } = createExpressAuth(DEFAULT_CONFIG);
-
-			for (let i = 0; i < 5; i++) {
-				await checkToken(
-					introspectionRequest({ cookie: "access_token=token" }),
-				);
-			}
-
-			expect(importKeySpy).toHaveBeenCalledTimes(1);
-		} finally {
-			importKeySpy.mockRestore();
-		}
-	});
-
 	it("does not mutate the request", async () => {
 		mockOAuthCheckToken({});
 		const { checkToken } = createExpressAuth(DEFAULT_CONFIG);
@@ -547,4 +530,36 @@ describe("Express adapter — checkToken (programmatic introspection)", () => {
 
 		expect(request.headers.get("Cookie")).toBe(cookieBefore);
 	});
+});
+
+describe("Express adapter — introspection-only config (no loginPath)", () => {
+	useMswServer();
+
+	it("checkToken introspects with a config that omits loginPath", async () => {
+		mockOAuthCheckToken({ body: { clientId: "config-service" } });
+		// A standalone API service never runs the interactive OAuth flow, so it
+		// configures without loginPath and only calls checkToken.
+		const { checkToken } = createExpressAuth({
+			oauthPath: TEST_OAUTH_HOST,
+			clientId: "svc_client_id",
+			clientSecret: "svc_client_secret",
+		});
+
+		const result = await checkToken(
+			introspectionRequest({ cookie: "access_token=token" }),
+		);
+
+		expect(result.clientId).toBe("config-service");
+	});
+
+	it.each(["login", "logout", "callback"])(
+		"responds 500 on GET /%s when loginPath is not configured",
+		async (route) => {
+			const app = createTestApp({ config: { loginPath: undefined } });
+
+			const res = await app.get(`/api/auth/${route}`).set("Host", TEST_HOST);
+
+			expect(res.statusCode).toBe(500);
+		},
+	);
 });

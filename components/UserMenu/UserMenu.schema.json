@@ -32,6 +32,10 @@
 			"description": "Defines the optional badge that will be used for visual affordance.\n\n**Recommendation:** While badges are supported on all avatars, it is recommended\nto use them with interactive avatars (via `mode=\"Interactive\"` or `interactive` attribute)\nto provide better user experience and accessibility.\n\n**Note:** While the slot allows for custom badges, to achieve\nthe Fiori design, use the `AvatarBadge` component.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"badge\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v1.7.0](https://github.com/UI5/webcomponents/releases/tag/v1.7.0) of **@ui5/webcomponents**.\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
 			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
 		},
+		"children": {
+			"description": "Additional popover menu items. Pass one or more `UserMenuItem` elements\n(after About, before Sign Out). Not validated at runtime — supported contract\nis flat `UserMenuItem`s only; `UserMenuItemGroup` and nested sub-menus are out of scope.",
+			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal"
+		},
 		"className": {
 			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
 			"x-typescriptType": "string",
@@ -66,6 +70,11 @@
 			"description": "Defines the mode of the component.\n\n**Note:**\n- `Image` (default) - renders with role=\"img\"\n- `Decorative` - renders with role=\"presentation\" and aria-hidden=\"true\", making it purely decorative\n- `Interactive` - renders with role=\"button\", focusable (tabindex=\"0\"), and supports keyboard interaction\n\n**Note:** This property is ignored when the `interactive` property is set to `true`.\nIn that case, the avatar will always be rendered as interactive.\n\n**Note:** Available since [v2.20](https://github.com/UI5/webcomponents/releases/tag/v2.20) of **@ui5/webcomponents**.",
 			"default": "Image",
 			"x-typescriptType": "AvatarMode | 'Image' | 'Decorative' | 'Interactive'"
+		},
+		"onItemClick": {
+			"description": "Fired when a custom (non-About) menu item is selected. Use `event.detail.item`\nto identify the item — for example read a `data-href` attribute. Not called for\nthe built-in About item.",
+			"x-typescriptType": "(event: Ui5CustomEvent<UserMenuDomRef, UserMenuItemClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<UserMenuDomRef, UserMenuItemClickEventDetail>) => void"
 		},
 		"shape": {
 			"description": "Defines the shape of the component.",

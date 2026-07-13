@@ -12,20 +12,36 @@
  */
 
 /**
- * Configuration for the BFF auth router.
- *
- * Used by both `createExpressAuth` and `createNextAuth`. Adapters do not
- * extend this type — the shape is unified across runtimes.
+ * A single Reltio Auth Server environment (cluster): the OAuth server URL plus
+ * the client credentials registered with it. Shared shape of the primary
+ * cluster (the top-level {@link AuthConfig} fields) and every
+ * {@link AuthConfig.authEnvironments} entry.
  */
-export type AuthConfig = {
+export type AuthEnvironment = {
 	/** URL of the Reltio OAuth server, e.g. `https://auth-stg.reltio.com/oauth`. */
 	oauthPath: string;
-	/** URL of the Reltio Login Page, e.g. `https://login-stg.reltio.com`. */
-	loginPath: string;
-	/** OAuth client id registered with the Reltio OAuth server. */
+	/** OAuth client id registered with this environment's OAuth server. */
 	clientId: string;
-	/** OAuth client secret registered with the Reltio OAuth server. */
+	/** OAuth client secret registered with this environment's OAuth server. */
 	clientSecret: string;
+};
+
+/**
+ * Configuration for the BFF auth router. Extends {@link AuthEnvironment} (the
+ * primary cluster) with the login-flow options and the `authEnvironments`
+ * allowlist. Used by both `createExpressAuth` and `createNextAuth`.
+ */
+export type AuthConfig = AuthEnvironment & {
+	/**
+	 * URL of the Reltio Login Page, e.g. `https://login-stg.reltio.com`.
+	 *
+	 * Required for the interactive OAuth flow (`GET /login`, `GET /logout`,
+	 * `GET /callback`). Standalone API services that only introspect tokens
+	 * (`auth.checkToken`) or resolve the per-session cluster
+	 * (`auth.resolveAuthPath`) may omit it; the login/logout/callback routes
+	 * then respond `500` because they cannot build a Login Page URL.
+	 */
+	loginPath?: string;
 	/**
 	 * Optional callback invoked at the end of a successful authorization-code
 	 * exchange in `GET /callback`. Receives a context object with the tokens
@@ -43,6 +59,21 @@ export type AuthConfig = {
 	secure?: boolean;
 	/** When `true`, the `notenant=true` query parameter is appended to the Login Page URL. */
 	notenant?: boolean;
+	/**
+	 * Allowlist of additional trusted auth environments for multiauth routing.
+	 * `POST /checkToken` and `POST /refreshToken` route to the environment whose
+	 * `oauthPath` origin matches the access token's `aurl` claim; `aurl` can only
+	 * ever SELECT a pre-configured environment, never introduce an arbitrary
+	 * origin. Any miss falls back to the primary cluster.
+	 */
+	authEnvironments?: AuthEnvironment[];
+	/**
+	 * Optional BFF proxy. When set, mounts `/proxy` (any HTTP method),
+	 * which forwards to allow-listed upstream URLs with the user's
+	 * `access_token` cookie attached as a Bearer. Omitted ⇒ `/proxy`
+	 * responds `404`.
+	 */
+	proxy?: ProxyConfig;
 };
 
 /**
@@ -74,6 +105,16 @@ export type SsoRedirectContext = {
 	redirectUrl: string;
 	/** The validated `state` value (matches the `state` cookie). */
 	state: string;
+};
+
+/** Configuration for the optional `/proxy` endpoint. */
+export type ProxyConfig = {
+	/**
+	 * URL patterns the proxy will forward to (e.g. `"https://**.reltio.com/"`).
+	 * Validated and compiled once at `createAuth(config)` time — invalid
+	 * patterns throw `TypeError`. Empty array ⇒ every request gets `403`.
+	 */
+	allowedTargets: string[];
 };
 
 /**

@@ -596,7 +596,7 @@
 	--sapObjectHeader_BorderColor: #dedee6;
 	--sapObjectHeader_Title_TextColor: #111727;
 	--sapObjectHeader_Subtitle_TextColor: #646e97;
-	--sapBlockLayer_Opacity: rgba(0,0,0,0.2);
+	--sapBlockLayer_Opacity: 0.6;
 	--sapTab_TextColor: #111727;
 	--sapTab_ForegroundColor: #4563ed;
 	--sapTab_IconColor: #4563ed;
@@ -1788,7 +1788,7 @@
 	--sapObjectHeader_BorderColor: #2e3742;
 	--sapObjectHeader_Title_TextColor: #f5f6f7;
 	--sapObjectHeader_Subtitle_TextColor: #8396a8;
-	--sapBlockLayer_Opacity: rgba(0,0,0,0.2);
+	--sapBlockLayer_Opacity: 0.6;
 	--sapTab_TextColor: #f5f6f7;
 	--sapTab_ForegroundColor: #4db1ff;
 	--sapTab_IconColor: #4db1ff;

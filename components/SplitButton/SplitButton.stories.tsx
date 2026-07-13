@@ -3,9 +3,9 @@ import { MenuItem } from "@ui5/webcomponents-react/MenuItem";
 import { SplitButton } from "@ui5/webcomponents-react/SplitButton";
 import { useRef, useState } from "react";
 import { fn } from "storybook/test";
+import declineIcon from "@/icons/sap/decline";
+import saveIcon from "@/icons/sap/save";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/save.js";
-import "@ui5/webcomponents-icons/dist/decline.js";
 
 const meta = preview.meta({
 	component: SplitButton,
@@ -15,7 +15,7 @@ const meta = preview.meta({
 	},
 	args: {
 		children: "Save",
-		icon: "save",
+		icon: saveIcon,
 		onClick: fn(),
 		onArrowClick: fn(),
 	},
@@ -43,7 +43,7 @@ export const Negative = meta.story({
 	args: {
 		design: "Negative",
 		children: "Delete",
-		icon: "decline",
+		icon: declineIcon,
 	},
 });
 
@@ -57,7 +57,7 @@ export const WithDropdownMenu = meta.story({
 	args: {
 		design: "Emphasized",
 		children: "Save",
-		icon: "save",
+		icon: saveIcon,
 	},
 	render: (args) => {
 		const SplitButtonWithMenu = () => {

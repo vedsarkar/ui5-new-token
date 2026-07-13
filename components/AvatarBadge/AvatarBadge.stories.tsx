@@ -1,7 +1,7 @@
 import { Avatar } from "@ui5/webcomponents-react/Avatar";
 import { AvatarBadge } from "@ui5/webcomponents-react/AvatarBadge";
+import acceptIcon from "@/icons/sap/accept";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/accept.js";
 
 const meta = preview.meta({
 	component: AvatarBadge,
@@ -15,6 +15,6 @@ export default meta;
 
 export const Default = meta.story(() => (
 	<Avatar initials="JD" accessibleName="Jane Doe">
-		<AvatarBadge slot="badge" icon="accept" />
+		<AvatarBadge slot="badge" icon={acceptIcon} />
 	</Avatar>
 ));

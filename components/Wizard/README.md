@@ -42,10 +42,12 @@ Set `branching={true}` on a step when the next step depends on user input from t
 
 ### Step icons
 
-`WizardStep` accepts a UI5 icon name via the `icon` prop. Load the icon as a side-effect import in the file that mounts the Wizard:
+`WizardStep` accepts an icon name via the `icon` prop. Import the icon's name from `@reltio/design/icons/sap/<kebab-name>` (the import registers it) and pass the binding:
 
 ```tsx
-import "@ui5/webcomponents-icons/dist/product.js";
+import productIcon from "@reltio/design/icons/sap/product";
+
+<WizardStep titleText="Source" icon={productIcon} />;
 ```
 
 ### Reltio Stepper note

@@ -3,14 +3,22 @@ import { ReltioIconGallery } from "./ReltioIconGallery";
 
 <Meta title="Icons" />
 
-# Reltio Icons
+# Icons
 
-Reltio Icons are a custom, Reltio-branded icon set (application icons, entity-type icons, and product glyphs) that complements the standard SAP Fiori icons. They are authored as SVGs, vendored in the platform, and registered into UI5's global icon registry under the `reltio/*` namespace so they behave exactly like built-in SAP icons.
+The Reltio Design Platform ships two icon families — SAP Fiori icons and Reltio icons.
 
-> **🎯 Key Principle:** Import the icons you use (per icon for tree-shaking, or the whole set for convenience), then render any of them by name with `<Icon name="reltio/<name>" />` — or pass that same name to any UI5 `icon` prop.
+> **🎯 Key Principle:** Import each icon you use — its <code>default</code> export (the registry name) or its React component — which registers it (the package is <code>sideEffects: false</code>, so only imported icons ship). Then render the component, or pass the imported name to the <code>&lt;Icon&gt;</code> component's <code>name</code> prop or any Reltio Design Platform component's <code>icon</code> prop.
+
+## SAP Fiori icons
+
+The standard SAP icon set, browse the full set in the [SAP Fiori Icons explorer](https://ui5.github.io/webcomponents/icons/).
+
+## Reltio icons
+
+Custom, Reltio-branded icon set (application icons, entity-type icons, and product glyphs) that complement SAP Fiori icons.  They are authored as SVGs, vendored in the platform, and registered into global icon registry under the `reltio/*` namespace so they behave exactly like built-in SAP icons.
 
 <ReltioIconGallery />
-<br />
+
 ## Two ways to consume
 
 <table>
@@ -22,69 +30,85 @@ Reltio Icons are a custom, Reltio-branded icon set (application icons, entity-ty
 	</thead>
 	<tbody>
 		<tr>
-			<td><strong>Inside a Reltio app (recommended)</strong> — buttons, navigation, lists, anywhere a UI5 component takes an icon</td>
-			<td>Register the set via a side-effect import, then reference icons by <code>reltio/&lt;name&gt;</code></td>
+			<td><strong>Inside a Reltio app (recommended)</strong> — buttons, navigation, lists, anywhere a Reltio Design Platform component takes an icon</td>
+			<td>Import each icon (its <code>default</code> name export or its React component — either registers it), then render the component or pass the name to an <code>icon</code> prop</td>
 		</tr>
 		<tr>
-			<td><strong>Outside UI5</strong> — emails, external sites, <code>&lt;img&gt;</code>/CSS, non-React surfaces</td>
-			<td>Load the raw SVG by its public URL: <code>https://reltio.design/icons/&lt;name&gt;.svg</code></td>
+			<td><strong>Outside the app</strong> — emails, external sites, <code>&lt;img&gt;</code>/CSS, non-React surfaces</td>
+			<td>Load the raw SVG by its public URL: <code>https://reltio.design/icons/&lt;kebab-name&gt;.svg</code> (<strong>Reltio icons only</strong>; registry name is <code>reltio/&lt;kebab-name&gt;</code> — omit <code>reltio/</code> in the URL)</td>
 		</tr>
 	</tbody>
 </table>
-<br />
-## 1. As UI5 icons (recommended)
 
-### Step 1 — register the icons you use
+## 1. In your app (recommended)
 
-Registering an icon is a side-effect import. There are two options — pick based on how much you care about bundle size.
+### Step 1 — import the icons you use
 
-**Per icon (recommended) — tree-shakable.** Import only the icons you actually use; your bundle includes only those SVGs. This mirrors SAP Fiori icons (`@ui5/webcomponents-icons/dist/save.js`):
+Each per-icon module registers its icon **when you consume one of its exports** — its name (the `default` export) or its React component. There are no bare side-effect imports: the package is `sideEffects: false`, so importing only what you use is what keeps the icon registered *and* lets the bundler drop every icon you don't.
 
-```tsx
-import "@reltio/design/icons/data-quality";
-import "@reltio/design/icons/compare";
-```
-
-**The whole set — convenience.** A single import registers all `reltio/*` icons. Simplest to wire up, but pulls every icon into your bundle (use only when you genuinely need most of them, or in tooling/prototypes):
+**Default export — the icon name (recommended for `icon` props).** The default export is the registry name string (`"save"`, `"reltio/data-quality"`), and importing it registers the icon:
 
 ```tsx
-import "@reltio/design/icons";
+import saveIcon from "@reltio/design/icons/sap/save";
+import dataQualityIcon from "@reltio/design/icons/reltio/data-quality";
 ```
 
-Either form is a one-time side effect — do it once, as early as possible (e.g. your root entry or layout). The icon stays registered globally for the rest of the app.
-
-**✅ Do:** import per icon in app code
+**Component export — for standalone icons.** Every module also exports a PascalCase React component from the same path (importing it registers the icon too):
 
 ```tsx
-import "@reltio/design/icons/contact";
+import { Save } from "@reltio/design/icons/sap/save";
+import { ReltioDataQuality } from "@reltio/design/icons/reltio/data-quality";
 ```
 
-**❌ Don't:** import the whole set in a size-sensitive app just to use a few icons
+**The whole Reltio set — namespace import.** When you need every Reltio icon by name (e.g. a data-driven picker where the names aren't known at build time), import the barrel as a namespace and read the names off it; iterating it registers the whole set (and pulls every icon into your bundle — use only when you truly need them all):
 
 ```tsx
-import "@reltio/design/icons"; // bundles all 100+ icons
+import * as reltioIcons from "@reltio/design/icons/reltio";
+
+// e.g. reltioIcons.dataQuality === "reltio/data-quality"
+const allReltioNames = Object.values(reltioIcons);
 ```
 
-### Step 2 — render by name
+**✅ Do:** import just the icons you use
 
-Use the icon name `reltio/<name>` with the `Icon` component, or pass it to any UI5 component that accepts an `icon` prop:
+```tsx
+import contactIcon from "@reltio/design/icons/reltio/contact";
+```
+
+**❌ Don't:** namespace-import the whole set in a size-sensitive app just to use a few icons
+
+```tsx
+import * as reltioIcons from "@reltio/design/icons/reltio"; // can bundle all 100+ icons
+```
+
+### Step 2 — render
+
+Render the component directly, or pass the imported name to `<Icon>` / any Reltio Design Platform component that accepts an `icon` prop:
 
 ```tsx
 import { Icon, Button, SideNavigationItem } from "@reltio/design/components";
+import saveIcon from "@reltio/design/icons/sap/save";
+import { ReltioDataQuality } from "@reltio/design/icons/reltio/data-quality";
+import compareIcon from "@reltio/design/icons/reltio/compare";
+import homepageIcon from "@reltio/design/icons/reltio/homepage";
 
-<Icon name="reltio/data-quality" />
-<Button icon="reltio/compare">Compare</Button>
-<SideNavigationItem icon="reltio/homepage" text="Home" />
+// Component export — standalone icon
+<ReltioDataQuality accessibleName="Data quality" />
+
+// Name export — for the `icon` prop or <Icon name>
+<Icon name={saveIcon} />
+<Button icon={compareIcon}>Compare</Button>
+<SideNavigationItem icon={homepageIcon} text="Home" />
 ```
 
-The `<name>` is always the lowercase, kebab-case file name (see the [gallery](/?path=/story/icons-reltio-icons--gallery) for the full list).
+The underlying name is always the lowercase, kebab-case file name (`save`, `reltio/data-quality`) — see the [catalog](/?path=/docs/icons-reltio-icons-catalog--docs) for the full list of Reltio icons or the [SAP Fiori Icons explorer](https://ui5.github.io/webcomponents/icons/) for SAP Fiori icons.
 
 ### Sizing
 
-Reltio icons render as inline SVGs that follow the surrounding `font-size`, or an explicit `width`/`height`:
+Icons render as inline SVGs that follow the surrounding `font-size`, or an explicit `width`/`height`:
 
 ```tsx
-<Icon name="reltio/chart" style={{ fontSize: "1rem" }} />        {/* 16px */}
+<Icon name="save" style={{ fontSize: "1rem" }} />                 {/* 16px */}
 <Icon name="reltio/chart" style={{ width: "32px", height: "32px" }} />
 ```
 
@@ -93,7 +117,7 @@ Reltio icons render as inline SVGs that follow the surrounding `font-size`, or a
 The icons are monochrome and paint with `currentColor`, so they inherit the surrounding text color and re-theme automatically between light and dark. Recolor via a SAP Horizon `--sap*` token or the semantic `design` prop:
 
 ```tsx
-<Icon name="reltio/health-status" style={{ color: "var(--sapBrandColor)" }} />
+<Icon name="save" style={{ color: "var(--sapBrandColor)" }} />
 <Icon name="reltio/health-status" design="Positive" mode="Image" accessibleName="Healthy" />
 ```
 
@@ -111,16 +135,37 @@ The icons are monochrome and paint with `currentColor`, so they inherit the surr
 
 ### Accessibility
 
-Same rules as the SAP `Icon`: decorative by default (hidden from assistive tech). When an icon carries meaning on its own, set `mode="Image"` and an `accessibleName`. For an icon-only action, prefer a `Button` with `icon` + `accessibleName`.
+Decorative by default (hidden from assistive tech). When an icon carries meaning on its own, set `mode="Image"` and an `accessibleName`. For an icon-only action, prefer a `Button` with `icon` + `accessibleName`.
 
 ```tsx
 <Icon name="reltio/shield-encryption" mode="Image" accessibleName="Encrypted" />
-<Button icon="reltio/export-data" accessibleName="Export data" />
+<Button icon="save" accessibleName="Save" />
 ```
 
 ## 2. As static SVG assets (by URL)
 
-The SVGs are published verbatim under the platform's public origin, so any non-UI5 surface can use them directly. The file name is the icon name plus `.svg`:
+**Reltio icons only** — SAP Fiori icons are not published as standalone `.svg` files on `reltio.design`. Reltio glyphs are served verbatim from `public/icons/`.
+
+The URL stem is the kebab-case file name (same segment as `@reltio/design/icons/reltio/<kebab-name>` and the part after `reltio/` in `<Icon name="reltio/<kebab-name>" />`) — **not** the full registry name:
+
+<table>
+	<thead>
+		<tr>
+			<th>Registry / render name</th>
+			<th>Static URL</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>reltio/data-quality</code></td>
+			<td><code>https://reltio.design/icons/data-quality.svg</code></td>
+		</tr>
+		<tr>
+			<td><code>reltio/health-status</code></td>
+			<td><code>https://reltio.design/icons/health-status.svg</code></td>
+		</tr>
+	</tbody>
+</table>
 
 ```html
 <img src="https://reltio.design/icons/data-quality.svg" alt="Data quality" width="20" height="20" />
@@ -132,7 +177,7 @@ The SVGs are published verbatim under the platform's public origin, so any non-U
 }
 ```
 
-> **⚠️ Note:** A plain `<img>` renders the icon at its baked-in ink color and does **not** inherit `currentColor` or re-theme. Use the UI5 `Icon` path (option 1) whenever you need theming, semantic color, or icon-prop integration.
+> **⚠️ Note:** A plain `<img>` renders the icon at its baked-in ink color and does **not** inherit `currentColor` or re-theme. Use `<Icon>` from Reltio Design Platform (option 1) whenever you need theming, semantic color, or  icon-prop integration.
 
 ## Naming convention
 
@@ -142,27 +187,35 @@ Icon names are part of the public API and follow URL-safe rules:
 	<thead>
 		<tr>
 			<th>Rule</th>
-			<th>Example</th>
+			<th>SAP Fiori icons</th>
+			<th>Reltio icons</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
 			<td>Lowercase, kebab-case</td>
+			<td><code>save</code>, <code>navigation-down-arrow</code></td>
 			<td><code>reltio/data-quality</code>, <code>reltio/entity-type</code></td>
 		</tr>
 		<tr>
-			<td>Name == public file name</td>
-			<td><code>reltio/contact</code> ⇄ <code>/icons/contact.svg</code></td>
+			<td>Import path</td>
+			<td><code>@reltio/design/icons/sap/&lt;kebab-name&gt;</code></td>
+			<td><code>@reltio/design/icons/reltio/&lt;kebab-name&gt;</code></td>
 		</tr>
 		<tr>
-			<td>Single flat namespace</td>
-			<td>all icons live under <code>reltio/</code> (no sub-folders)</td>
+			<td>Name == public file name</td>
+			<td>—</td>
+			<td><code>reltio/contact</code> ⇄ <code>https://reltio.design/icons/contact.svg</code></td>
 		</tr>
 	</tbody>
 </table>
 
+## Notes
+
+> **Do not import `@ui5/webcomponents-icons` in application code.** The package arrives transitively via `@reltio/design`; register standard SAP icons through `@reltio/design/icons/sap/<kebab-name>`.
+
 ## See also
 
-- **Icons/Catalog** — per-icon pages showing each icon at different sizes and semantic colors
-- [Icon Library guide](/?path=/docs/guides-icon-library--docs) — the standard SAP Fiori icon set and the shared `Icon` component
-- [Icon component](/?path=/docs/components-icon--docs) — full `Icon` API (`mode`, `design`, `accessibleName`)
+- **Reltio Icons Catalog** — Reltio per-icon pages showing each icon at different sizes and semantic colors
+- [Icon Library guide](/docs/guides-icon-library--docs) — SAP Fiori and Reltio icon families, registration, sizing, theming, and `Icon` usage
+- [Icon component](/docs/components-icon--docs) — full `Icon` API (`mode`, `design`, `accessibleName`)

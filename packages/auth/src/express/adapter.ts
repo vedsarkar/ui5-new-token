@@ -1,25 +1,25 @@
-/**
- * Conversion helpers between Express `req`/`res` and the Web Fetch API
- * `Request`/`Response` types.
- *
- * The Express adapter converts every incoming Express request to a Web
- * `Request`, runs the core router, and writes the resulting Web `Response`
- * back to the Express `res`.
- */
+/** Conversion helpers between Express `req`/`res` and Web `Request`/`Response`. */
 
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
+import type { ReadableStream as NodeReadableStream } from "node:stream/web";
 import type {
 	Request as ExpressRequest,
 	Response as ExpressResponse,
 	NextFunction,
 } from "express";
 
+/** `RequestInit` plus the `duplex` field undici requires to stream a request body. */
+type StreamingRequestInit = RequestInit & { duplex?: "half" };
+
 /**
- * Builds a Web `Request` from an Express `Request`.
+ * Builds a Web `Request` from an Express `Request`, streaming the raw request
+ * body through without buffering. The URL origin is a fixed placeholder
+ * (`http://internal.invalid`) — handlers read only `.pathname`/`.searchParams`.
  *
- * URL is assembled with the IANA-reserved placeholder origin (`http://internal.invalid`)
- * so that `new URL(request.url)` always succeeds. Handlers must only read `.pathname`
- * and `.searchParams` from `request.url` — the origin is not meaningful.
- * Body is not forwarded — none of the five auth endpoints reads a request body.
+ * The body is taken straight from the raw Node stream, so `createExpressAuth`
+ * MUST be mounted BEFORE any body-parser middleware (`express.json()`, …): a
+ * parser that has already consumed the stream leaves nothing to forward.
  */
 export function expressToWebRequest(req: ExpressRequest): Request {
 	const url = `http://internal.invalid${req.originalUrl}`;
@@ -28,29 +28,25 @@ export function expressToWebRequest(req: ExpressRequest): Request {
 	for (const [key, value] of Object.entries(req.headers)) {
 		if (Array.isArray(value)) {
 			for (const v of value) {
-				if (typeof v === "string") {
-					headers.append(key, v);
-				}
+				if (typeof v === "string") headers.append(key, v);
 			}
 		} else if (typeof value === "string") {
 			headers.set(key, value);
 		}
 	}
 
-	return new Request(url, {
-		method: req.method,
-		headers,
-	});
+	const init: StreamingRequestInit = { method: req.method, headers };
+	if (req.method !== "GET" && req.method !== "HEAD") {
+		init.body = Readable.toWeb(req) as unknown as ReadableStream<Uint8Array>;
+		init.duplex = "half";
+	}
+	return new Request(url, init);
 }
 
 /**
- * Writes a Web `Response` back to an Express `Response`.
- *
- * `Set-Cookie` headers are written individually so multiple cookies are
- * preserved (Headers.set overwrites; Headers.append + getSetCookie reads
- * back the full list).
- *
- * The body is read as text (we don't have streaming auth endpoints).
+ * Writes a Web `Response` back to an Express `Response`, streaming the body
+ * through so large downloads and Server-Sent Events reach the client with
+ * constant memory. Multiple `Set-Cookie` headers are preserved via `append`.
  */
 export async function applyWebResponseToExpressRes(
 	webResponse: Response,
@@ -61,17 +57,17 @@ export async function applyWebResponseToExpressRes(
 		res.status(webResponse.status);
 		const setCookies = webResponse.headers.getSetCookie?.() ?? [];
 		for (const [key, value] of webResponse.headers.entries()) {
-			if (key.toLowerCase() === "set-cookie") {
-				continue;
-			}
+			if (key.toLowerCase() === "set-cookie") continue;
 			res.setHeader(key, value);
 		}
 		for (const cookieHeader of setCookies) {
 			res.append("Set-Cookie", cookieHeader);
 		}
 		if (webResponse.body) {
-			const text = await webResponse.text();
-			res.send(text);
+			await pipeline(
+				Readable.fromWeb(webResponse.body as unknown as NodeReadableStream),
+				res,
+			);
 		} else {
 			res.end();
 		}

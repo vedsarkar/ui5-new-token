@@ -7,10 +7,10 @@ import { UserMenuAccount } from "@ui5/webcomponents-react/UserMenuAccount";
 import { UserMenuItem } from "@ui5/webcomponents-react/UserMenuItem";
 import { type ComponentRef, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import hintIcon from "@/icons/sap/hint";
 import { classNames } from "@/utils/classNames";
 import styles from "./UserMenu.module.css";
 import type { UserMenuProps } from "./UserMenu.types";
-import "@ui5/webcomponents-icons/dist/hint.js";
 
 const deriveInitials = (name: string): string =>
 	name
@@ -21,6 +21,9 @@ const deriveInitials = (name: string): string =>
 		.join("");
 
 const ABOUT_TITLE = "About";
+/** Reserved on the built-in About item — consumers must not reuse this attribute. */
+const ABOUT_ITEM_ATTR = "data-reltio-user-menu";
+const ABOUT_ITEM_VALUE = "about";
 const ABOUT_COPYRIGHT = `© ${new Date().getFullYear()} Reltio Inc. All rights reserved.`;
 const LEGAL_LINKS = [
 	{ label: "Privacy Policy", href: "https://www.reltio.com/privacy-policy/" },
@@ -35,6 +38,8 @@ export const UserMenu = ({
 	user,
 	appVersion,
 	onSignOut,
+	children,
+	onItemClick,
 	className,
 	colorScheme = "Accent4",
 	...rest
@@ -62,16 +67,27 @@ export const UserMenu = ({
 					/>
 				}
 				onClose={() => setOpen(false)}
-				onItemClick={() => {
+				onItemClick={(event) => {
 					setOpen(false);
-					setAboutOpen(true);
+					if (
+						event.detail.item.getAttribute(ABOUT_ITEM_ATTR) === ABOUT_ITEM_VALUE
+					) {
+						setAboutOpen(true);
+						return;
+					}
+					onItemClick?.(event);
 				}}
 				onSignOutClick={() => {
 					setOpen(false);
 					onSignOut();
 				}}
 			>
-				<UserMenuItem text={ABOUT_TITLE} icon="hint" />
+				<UserMenuItem
+					text={ABOUT_TITLE}
+					icon={hintIcon}
+					data-reltio-user-menu={ABOUT_ITEM_VALUE}
+				/>
+				{children}
 			</Ui5UserMenu>
 			<Dialog
 				open={aboutOpen}

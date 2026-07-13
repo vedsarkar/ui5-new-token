@@ -1,11 +1,11 @@
 import { faker } from "@faker-js/faker";
 import { fn } from "storybook/test";
 import { List, ListItem, ListItemGroup } from "@/components";
+import accountIcon from "@/icons/sap/account";
+import calendarIcon from "@/icons/sap/calendar";
+import emailReadIcon from "@/icons/sap/email-read";
+import taskIcon from "@/icons/sap/task";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/account.js";
-import "@ui5/webcomponents-icons/dist/calendar.js";
-import "@ui5/webcomponents-icons/dist/email-read.js";
-import "@ui5/webcomponents-icons/dist/task.js";
 
 faker.seed(42);
 
@@ -66,12 +66,12 @@ export const Grouped = meta.story({
 	render: (args) => (
 		<List {...args}>
 			<ListItemGroup headerText="Productivity">
-				<ListItem icon="task">{faker.hacker.verb()} tasks</ListItem>
-				<ListItem icon="calendar">{faker.hacker.verb()} events</ListItem>
+				<ListItem icon={taskIcon}>{faker.hacker.verb()} tasks</ListItem>
+				<ListItem icon={calendarIcon}>{faker.hacker.verb()} events</ListItem>
 			</ListItemGroup>
 			<ListItemGroup headerText="Communication">
-				<ListItem icon="email-read">{faker.hacker.verb()} messages</ListItem>
-				<ListItem icon="account">{faker.hacker.verb()} contacts</ListItem>
+				<ListItem icon={emailReadIcon}>{faker.hacker.verb()} messages</ListItem>
+				<ListItem icon={accountIcon}>{faker.hacker.verb()} contacts</ListItem>
 			</ListItemGroup>
 		</List>
 	),

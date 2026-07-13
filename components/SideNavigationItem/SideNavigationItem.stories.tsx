@@ -1,12 +1,12 @@
+import addIcon from "@/icons/sap/add";
+import businessObjectsExperienceIcon from "@/icons/sap/business-objects-experience";
+import homeIcon from "@/icons/sap/home";
+import logIcon from "@/icons/sap/log";
+import orgChartIcon from "@/icons/sap/org-chart";
 import preview from "../../.storybook/preview";
 import { SideNavigation } from "../SideNavigation";
 import { SideNavigationSubItem } from "../SideNavigationSubItem";
 import { SideNavigationItem } from "./SideNavigationItem";
-import "@ui5/webcomponents-icons/dist/home.js";
-import "@ui5/webcomponents-icons/dist/org-chart.js";
-import "@ui5/webcomponents-icons/dist/business-objects-experience.js";
-import "@ui5/webcomponents-icons/dist/add.js";
-import "@ui5/webcomponents-icons/dist/log.js";
 
 const meta = preview.meta({
 	component: SideNavigationItem,
@@ -15,7 +15,7 @@ const meta = preview.meta({
 	},
 	args: {
 		text: "Entities",
-		icon: "business-objects-experience",
+		icon: businessObjectsExperienceIcon,
 	},
 	decorators: [
 		(Story) => (
@@ -35,7 +35,7 @@ export const Default = meta.story({});
 export const Selected = meta.story({
 	args: {
 		text: "Home",
-		icon: "home",
+		icon: homeIcon,
 		selected: true,
 	},
 });
@@ -43,7 +43,7 @@ export const Selected = meta.story({
 export const Disabled = meta.story({
 	args: {
 		text: "Relationships",
-		icon: "org-chart",
+		icon: orgChartIcon,
 		disabled: true,
 	},
 });
@@ -51,7 +51,7 @@ export const Disabled = meta.story({
 export const ExternalLink = meta.story({
 	args: {
 		text: "External link",
-		icon: "log",
+		icon: logIcon,
 		href: "https://www.reltio.com",
 		target: "_blank",
 		unselectable: true,
@@ -61,7 +61,7 @@ export const ExternalLink = meta.story({
 export const Action = meta.story({
 	args: {
 		text: "Add app",
-		icon: "add",
+		icon: addIcon,
 		design: "Action",
 		unselectable: true,
 	},
@@ -78,7 +78,7 @@ export const WithoutIcon = meta.story({
 export const WithSubItems = meta.story({
 	args: {
 		text: "Data Model",
-		icon: "business-objects-experience",
+		icon: businessObjectsExperienceIcon,
 		expanded: true,
 	},
 	render: (args) => (

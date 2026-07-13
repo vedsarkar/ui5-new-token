@@ -64,7 +64,9 @@ describe("Next.js adapter — POST /auth/refreshToken", () => {
 		expect(cookies.refresh_token.value).toBe("refreshed_refresh_888");
 	});
 
-	it("sets Max-Age on the access_token cookie from the upstream expires_in", async () => {
+	it("keeps the access_token cookie co-terminal with refresh_token (no Max-Age) so its aurl survives to the next refresh", async () => {
+		// The next /refreshToken routes by the access token's aurl (the refresh
+		// token is opaque), so both cookies share one session lifetime.
 		mockOAuthTokenRefresh({
 			access_token: "a",
 			refresh_token: "r",
@@ -81,7 +83,10 @@ describe("Next.js adapter — POST /auth/refreshToken", () => {
 		);
 
 		const cookies = parseSetCookies(res);
-		expect(cookies.access_token.attributes.join("; ")).toContain("Max-Age=600");
+		expect(cookies.access_token.attributes.join("; ")).not.toContain("Max-Age");
+		expect(cookies.refresh_token.attributes.join("; ")).not.toContain(
+			"Max-Age",
+		);
 	});
 
 	it("sends grant_type=refresh_token and Basic auth in the upstream call", async () => {

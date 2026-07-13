@@ -1,9 +1,8 @@
 import { Avatar } from "@ui5/webcomponents-react/Avatar";
 import { fn } from "storybook/test";
+import employeeIcon from "@/icons/sap/employee";
+import productIcon from "@/icons/sap/product";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/employee.js";
-import "@ui5/webcomponents-icons/dist/org-chart.js";
-import "@ui5/webcomponents-icons/dist/product.js";
 
 const meta = preview.meta({
 	component: Avatar,
@@ -25,7 +24,7 @@ export const Default = meta.story({});
 export const WithIcon = meta.story({
 	args: {
 		initials: undefined,
-		icon: "employee",
+		icon: employeeIcon,
 		accessibleName: "User",
 	},
 });
@@ -46,7 +45,7 @@ export const ShapeSquare = meta.story({
 	args: {
 		shape: "Square",
 		initials: undefined,
-		icon: "product",
+		icon: productIcon,
 		accessibleName: "Product entity",
 	},
 });

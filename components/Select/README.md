@@ -24,7 +24,7 @@ Select is the default for "long list, single pick, no typing" — most attribute
 ```
 
 Mark the currently selected option with `selected`. `Option` supports:
-- `icon` — leading icon (load via side-effect import like every UI5 icon).
+- `icon` — leading icon. Import its name from `@reltio/design/icons/sap/<kebab-name>` (which registers it) and pass the binding.
 - `additionalText` — secondary label aligned to the right (category, code, ID).
 
 For richer cell layouts (multi-line option with description), use `OptionCustom` and place arbitrary children. The custom option still owns selection — just style the inner content.

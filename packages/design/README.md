@@ -36,7 +36,7 @@ function App() {
 export default App;
 ```
 
-> **Always use a subpath.** This package exposes only `/components`, `/charts`, `/hooks`, and `/utils` entries — there is no `main`/`exports` target for the bare package name. A `import { X } from "@reltio/design"` resolves to nothing and breaks at install time.
+> **Always use a subpath.** The bare package name has no root entry (no `main`), so `import { X } from "@reltio/design"` does not resolve — always import through a subpath (`/components`, `/charts`, `/hooks`, `/utils`, `/icons`). The package intentionally ships **without an `exports` lock**, so the whole file tree stays importable: you can deep-import a nested file (e.g. `@reltio/design/components/SideNavigation`) when you need to, though the curated subpath barrels above are the recommended entry. Consume through a bundler (Next/Vite/webpack); if an SSR or tooling path throws a module-resolution error, transpile the package (e.g. Next `transpilePackages: ["@reltio/design"]`).
 
 | Subpath | What's in it |
 |---|---|
@@ -119,14 +119,22 @@ See the [UI Architecture](https://reltio.design/?path=/docs/guides-ui-architectu
 
 ### Icons
 
-Icons are loaded as side-effect imports — the SAP icon set ships through `@ui5/webcomponents-icons` (a transitive dependency of `@reltio/design`):
+The package is `sideEffects: false`, so import each icon's **name** (the `default` export) — the import registers the icon and returns its registry-name string. Bare side-effect imports (`import "@reltio/design/icons/sap/save"`) are dropped by the bundler.
+
+SAP Fiori icons: `import saveIcon from "@reltio/design/icons/sap/<kebab-name>"` (`saveIcon === "<kebab-name>"`).
+
+Reltio custom icons: `import dataQualityIcon from "@reltio/design/icons/reltio/<kebab-name>"` (`=== "reltio/<kebab-name>"`).
 
 ```tsx
 import { Button } from "@reltio/design/components";
-import "@ui5/webcomponents-icons/dist/save.js";
+import saveIcon from "@reltio/design/icons/sap/save";
+import dataQualityIcon from "@reltio/design/icons/reltio/data-quality";
 
-<Button icon="save">Save</Button>;
+<Button icon={saveIcon}>Save</Button>;
+<Button icon={dataQualityIcon}>Quality</Button>;
 ```
+
+SAP icons resolve to `save`; Reltio icons to `reltio/data-quality`. See the [Icons](https://reltio.design/?path=/docs/icons--docs) docs page.
 
 ## CLI — component discovery
 

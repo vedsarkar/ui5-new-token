@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { fn } from "storybook/test";
 import { Tree, TreeItem } from "@/components";
+import documentIcon from "@/icons/sap/document";
+import folderIcon from "@/icons/sap/folder";
 import preview from "../../.storybook/preview";
 import type { TreeProps } from "./Tree.types";
-import "@ui5/webcomponents-icons/dist/folder.js";
-import "@ui5/webcomponents-icons/dist/document.js";
 
 const meta = preview.meta({
 	component: Tree,
@@ -31,13 +31,13 @@ export default meta;
 export const Default = meta.story({
 	render: (args) => (
 		<Tree {...args}>
-			<TreeItem content="Organizations" icon="folder" expanded>
-				<TreeItem content="Acme Corp" icon="document" />
-				<TreeItem content="Globex" icon="document" />
+			<TreeItem content="Organizations" icon={folderIcon} expanded>
+				<TreeItem content="Acme Corp" icon={documentIcon} />
+				<TreeItem content="Globex" icon={documentIcon} />
 			</TreeItem>
-			<TreeItem content="Individuals" icon="folder">
-				<TreeItem content="Ada Lovelace" icon="document" />
-				<TreeItem content="Alan Turing" icon="document" />
+			<TreeItem content="Individuals" icon={folderIcon}>
+				<TreeItem content="Ada Lovelace" icon={documentIcon} />
+				<TreeItem content="Alan Turing" icon={documentIcon} />
 			</TreeItem>
 		</Tree>
 	),
@@ -49,11 +49,11 @@ export const SingleSelect = meta.story({
 	},
 	render: (args) => (
 		<Tree {...args}>
-			<TreeItem content="Organizations" icon="folder" expanded>
-				<TreeItem content="Acme Corp" icon="document" selected />
-				<TreeItem content="Globex" icon="document" />
+			<TreeItem content="Organizations" icon={folderIcon} expanded>
+				<TreeItem content="Acme Corp" icon={documentIcon} selected />
+				<TreeItem content="Globex" icon={documentIcon} />
 			</TreeItem>
-			<TreeItem content="Individuals" icon="folder" />
+			<TreeItem content="Individuals" icon={folderIcon} />
 		</Tree>
 	),
 });
@@ -64,11 +64,16 @@ export const MultiSelect = meta.story({
 	},
 	render: (args) => (
 		<Tree {...args}>
-			<TreeItem content="Organizations" icon="folder" expanded indeterminate>
-				<TreeItem content="Acme Corp" icon="document" selected />
-				<TreeItem content="Globex" icon="document" />
+			<TreeItem
+				content="Organizations"
+				icon={folderIcon}
+				expanded
+				indeterminate
+			>
+				<TreeItem content="Acme Corp" icon={documentIcon} selected />
+				<TreeItem content="Globex" icon={documentIcon} />
 			</TreeItem>
-			<TreeItem content="Individuals" icon="folder" selected />
+			<TreeItem content="Individuals" icon={folderIcon} selected />
 		</Tree>
 	),
 });
@@ -80,12 +85,12 @@ export const WithHeaderAndFooter = meta.story({
 	},
 	render: (args) => (
 		<Tree {...args}>
-			<TreeItem content="Organizations" icon="folder" expanded>
-				<TreeItem content="Acme Corp" icon="document" />
-				<TreeItem content="Globex" icon="document" />
+			<TreeItem content="Organizations" icon={folderIcon} expanded>
+				<TreeItem content="Acme Corp" icon={documentIcon} />
+				<TreeItem content="Globex" icon={documentIcon} />
 			</TreeItem>
-			<TreeItem content="Individuals" icon="folder">
-				<TreeItem content="Ada Lovelace" icon="document" />
+			<TreeItem content="Individuals" icon={folderIcon}>
+				<TreeItem content="Ada Lovelace" icon={documentIcon} />
 			</TreeItem>
 		</Tree>
 	),
@@ -152,14 +157,14 @@ export const LazyLoading = meta.story({
 					<TreeItem
 						key={node.text}
 						content={node.text}
-						icon="folder"
+						icon={folderIcon}
 						hasChildren
 						expanded={expanded.includes(node.text)}
 						loading={loading === node.text}
 					>
 						{loaded.includes(node.text)
 							? node.children.map((child) => (
-									<TreeItem key={child} content={child} icon="document" />
+									<TreeItem key={child} content={child} icon={documentIcon} />
 								))
 							: null}
 					</TreeItem>

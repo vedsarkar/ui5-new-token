@@ -1,9 +1,9 @@
 import { faker } from "@faker-js/faker";
 import { fn } from "storybook/test";
 import { List, ListItem } from "@/components";
+import accountIcon from "@/icons/sap/account";
+import inboxIcon from "@/icons/sap/inbox";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/account.js";
-import "@ui5/webcomponents-icons/dist/inbox.js";
 
 faker.seed(42);
 
@@ -35,14 +35,14 @@ export const Default = meta.story({
 
 export const WithIcon = meta.story({
 	args: {
-		icon: "inbox",
+		icon: inboxIcon,
 		children: faker.commerce.department(),
 	},
 });
 
 export const WithDescription = meta.story({
 	args: {
-		icon: "account",
+		icon: accountIcon,
 		children: faker.person.fullName(),
 		description: faker.internet.email(),
 	},

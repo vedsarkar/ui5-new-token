@@ -8,6 +8,8 @@
  *
  *   public/icons/data-quality.svg -> <Icon name="reltio/data-quality" />
  *
+ * Per-icon modules publish at `@reltio/design/icons/reltio/<kebab-name>`.
+ *
  * The same name works in any UI5 `icon` prop (Button, SideNavigationItem, …).
  *
  * `public/icons/` is a public URL surface: the files are served verbatim (e.g.
@@ -47,20 +49,28 @@ import {
 	writeFile,
 } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import {
+	reltioComponentExportName,
+	renderCustomIconModule,
+	renderIconNameReExports,
+	renderRegisterReltioIconModule,
+} from "./icon-module-codegen.mjs";
 
 // ── Paths ────────────────────────────────────────────────────────────────
 
 const ROOT = resolve(import.meta.dirname, "..");
 const ICONS_DIR = join(ROOT, "public/icons");
 const ICONS_REL = "public/icons";
-const OUT_DIR = join(ROOT, "icons");
-const OUT_REL = "icons";
+const OUT_DIR = join(ROOT, "icons/reltio");
+const OUT_REL = "icons/reltio";
+/** Parent folder for gallery + catalog stories (hand-written `icons.story.mdx` lives here too). */
+const PARENT_DIR = join(ROOT, "icons");
 /** Import specifier for `.storybook/preview` from a story inside OUT_DIR. */
 const PREVIEW_IMPORT = "../.storybook/preview";
 /** UI5 icon-collection prefix for every Reltio icon. */
 const COLLECTION = "reltio";
 /** Storybook title prefix for the per-icon showcase stories. */
-const CATALOG_PREFIX = "Icons/Catalog";
+const CATALOG_PREFIX = "Icons/Reltio Icons Catalog";
 
 /** Fill/stroke values that represent the monochrome "ink" of an icon. Mapped to
  * `currentColor` so the icon is theme-aware. */
@@ -76,15 +86,6 @@ function toSlug(value) {
 		.toLowerCase()
 		.replace(/[^a-z0-9]+/g, "-")
 		.replace(/^-+|-+$/g, "");
-}
-
-/** `data-quality-1` -> `DataQuality1` (valid CSF export identifier). */
-function toPascal(slug) {
-	return slug
-		.split(/[^a-z0-9]+/i)
-		.filter(Boolean)
-		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-		.join("");
 }
 
 function extractViewBox(svg) {
@@ -207,69 +208,44 @@ function header(extraLines = []) {
 	].join("\n");
 }
 
-/** Per-icon module: a side-effect import that registers exactly one icon.
- * This is what makes single-icon imports (`@reltio/design/icons/<name>`)
- * tree-shakable — a consumer bundles only the icons they import. */
+/** Per-icon module: registration + PascalCase component export. */
 function renderIconModule(icon) {
-	return `${header([
-		`Registers the \`${COLLECTION}/${icon.name}\` icon. Tree-shakable single import:`,
-		`import "@reltio/design/icons/${icon.name}";`,
-	])}import { unsafeRegisterIcon } from "@ui5/webcomponents-base/dist/asset-registries/Icons.js";
-
-unsafeRegisterIcon(${JSON.stringify(icon.name)}, {
-	collection: ${JSON.stringify(COLLECTION)},
-	viewBox: ${JSON.stringify(icon.viewBox)},
-	customTemplateAsString: ${JSON.stringify(icon.svg)},
-});
-`;
+	return renderCustomIconModule({
+		kebabName: icon.name,
+		collection: COLLECTION,
+		viewBox: icon.viewBox,
+		svg: icon.svg,
+	});
 }
 
-/** Aggregate entry (`@reltio/design/icons`): side-effect-imports every per-icon
- * module (registers the whole set) and re-exports lightweight metadata. */
+/** Aggregate entry (`@reltio/design/icons/reltio`): NOTHING but plain default
+ * re-exports of each icon's registry name (`export { default as aco } from
+ * "./aco"`). No side-effect imports, no metadata, no helper re-exports — so the
+ * barrel is fully tree-shakable under `sideEffects: false`. Consuming a single
+ * name (`aco`) registers just that icon; a namespace import
+ * (`import * as reltioIcons from "@reltio/design/icons/reltio"`) that is iterated
+ * registers the whole set. */
 function renderIndexModule(icons) {
-	const sideEffectImports = icons
-		.map((icon) => `import "./${icon.name}";`)
-		.join("\n");
-
-	const metaLiteral = icons
-		.map(
-			(icon) =>
-				`\t{ name: ${JSON.stringify(icon.name)}, viewBox: ${JSON.stringify(icon.viewBox)} },`,
-		)
-		.join("\n");
+	const reExports = renderIconNameReExports(icons.map((icon) => icon.name));
 
 	return `${header([
-		"Importing this module registers EVERY Reltio icon into UI5's global icon",
-		'registry, e.g. <Icon name="reltio/data-quality" />. To register only one',
-		'icon (tree-shakable), import "@reltio/design/icons/<name>" instead.',
-	])}${sideEffectImports}
-
-/** UI5 icon-collection prefix for every Reltio icon. */
-export const RELTIO_ICON_COLLECTION = ${JSON.stringify(COLLECTION)};
-
-export type ReltioIcon = {
-	/** Icon name. Render as <Icon name={\`reltio/\${name}\`} />. */
-	name: string;
-	/** The icon's SVG viewBox. */
-	viewBox: string;
-};
-
-/** Metadata for every Reltio icon, sorted by name (no SVG payload). Useful for
- * building pickers; does not by itself pull icon SVGs into your bundle. */
-export const reltioIcons: ReltioIcon[] = [
-${metaLiteral}
-];
+		"Aggregate entry for every Reltio icon. Each named export is an icon's",
+		'fully-qualified registry name (e.g. `aco` -> "reltio/aco"); consuming one',
+		"registers that icon on demand. Need every name at once? Use a namespace",
+		'import: `import * as reltioIcons from "@reltio/design/icons/reltio"`. This',
+		"module has NO side-effect imports, so unused icons are tree-shaken away.",
+	])}${reExports}
 `;
 }
 
-/** Gallery component (for the `icons.story.mdx` docs page), not a story. Imports
- * the aggregate entry so every icon is registered when the gallery renders. */
+/** Gallery component (for the `icons.story.mdx` docs page), not a story. Uses a
+ * namespace import of the barrel so every icon is registered when it renders. */
 function renderGalleryModule() {
 	return `${header([
 		"Gallery of every Reltio icon — rendered in icons.story.mdx (the Overview",
-		"docs page). Imports ./index so the whole set is registered when shown.",
+		"docs page). A namespace import of the barrel registers the whole set.",
 	])}import { Icon } from "@ui5/webcomponents-react/Icon";
-import { RELTIO_ICON_COLLECTION, reltioIcons } from "./index";
+import * as reltioIcons from "./reltio";
 
 /** Grid of every Reltio icon rendered through the UI5 Icon component. */
 export function ReltioIconGallery() {
@@ -282,38 +258,35 @@ export function ReltioIconGallery() {
 				fontFamily: "var(--sapFontFamily)",
 			}}
 		>
-			{reltioIcons.map((icon) => {
-				const fullName = \`\${RELTIO_ICON_COLLECTION}/\${icon.name}\`;
-				return (
-					<div
-						key={icon.name}
+			{Object.values(reltioIcons).map((fullName) => (
+				<div
+					key={fullName}
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						gap: "10px",
+						padding: "16px 8px",
+						border:
+							"1px solid var(--sapTile_BorderColor, var(--sapList_BorderColor))",
+						borderRadius: "8px",
+						background: "var(--sapTile_Background)",
+						color: "var(--sapTextColor)",
+						textAlign: "center",
+					}}
+				>
+					<Icon name={fullName} style={{ width: "28px", height: "28px" }} />
+					<code
 						style={{
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							gap: "10px",
-							padding: "16px 8px",
-							border:
-								"1px solid var(--sapTile_BorderColor, var(--sapList_BorderColor))",
-							borderRadius: "8px",
-							background: "var(--sapTile_Background)",
-							color: "var(--sapTextColor)",
-							textAlign: "center",
+							fontSize: "11px",
+							color: "var(--sapContent_LabelColor)",
+							wordBreak: "break-word",
 						}}
 					>
-						<Icon name={fullName} style={{ width: "28px", height: "28px" }} />
-						<code
-							style={{
-								fontSize: "11px",
-								color: "var(--sapContent_LabelColor)",
-								wordBreak: "break-word",
-							}}
-						>
-							{fullName}
-						</code>
-					</div>
-				);
-			})}
+						{fullName}
+					</code>
+				</div>
+			))}
 		</div>
 	);
 }
@@ -325,21 +298,38 @@ export function ReltioIconGallery() {
  * included in the interaction/a11y/visual test run. */
 function renderCatalogStoryModule(icons) {
 	const exportsSeen = new Map();
-	const stories = icons
-		.map((icon) => {
-			const exportName = toPascal(icon.name);
-			const clash = exportsSeen.get(exportName);
-			if (clash && clash !== icon.name) {
-				throw new Error(
-					`Export-name collision: "${icon.name}" and "${clash}" both map to "${exportName}".`,
-				);
-			}
-			exportsSeen.set(exportName, icon.name);
-			return `export const ${exportName} = meta.story({
-	name: ${JSON.stringify(icon.name)},
-	render: showcase(${JSON.stringify(`${COLLECTION}/${icon.name}`)}),
-});`;
-		})
+	const entries = icons.map((icon) => {
+		const exportName = reltioComponentExportName(icon.name);
+		const clash = exportsSeen.get(exportName);
+		if (clash && clash !== icon.name) {
+			throw new Error(
+				`Export-name collision: "${icon.name}" and "${clash}" both map to "${exportName}".`,
+			);
+		}
+		exportsSeen.set(exportName, icon.name);
+		// Import the icon's name from its own module so rendering the story
+		// registers it — no bare side-effect import needed.
+		return { exportName, nameBinding: `${exportName}Name`, name: icon.name };
+	});
+
+	const nameImports = entries
+		.map(
+			({ nameBinding, name }) =>
+				`import ${nameBinding} from "./reltio/${name}";`,
+		)
+		.join("\n");
+
+	const stories = entries
+		.map(
+			({
+				exportName,
+				nameBinding,
+				name,
+			}) => `export const ${exportName} = meta.story({
+	name: ${JSON.stringify(name)},
+	render: showcase(${nameBinding}),
+});`,
+		)
 		.join("\n\n");
 
 	return `${header([
@@ -348,8 +338,7 @@ function renderCatalogStoryModule(icons) {
 	])}import { Stories, Title } from "@storybook/addon-docs/blocks";
 import { Icon } from "@ui5/webcomponents-react/Icon";
 import preview from "${PREVIEW_IMPORT}";
-// Side-effect import: registers every reltio/* icon into UI5's registry.
-import "./index";
+${nameImports}
 
 const meta = preview.meta({
 	title: ${JSON.stringify(CATALOG_PREFIX)},
@@ -463,9 +452,7 @@ async function build() {
 		});
 	}
 
-	// Clear previously generated TS/TSX (per-icon modules, index, story) so
-	// removed icons disappear, while preserving hand-written companions like
-	// `icons.story.mdx`.
+	// Clear previously generated modules under icons/reltio/ (per-icon + index).
 	await mkdir(OUT_DIR, { recursive: true });
 	for (const entry of await readdir(OUT_DIR)) {
 		if (entry.endsWith(".ts") || entry.endsWith(".tsx")) {
@@ -473,25 +460,53 @@ async function build() {
 		}
 	}
 
-	// One tree-shakable registration module per icon: `@reltio/design/icons/<name>`.
+	// Drop legacy flat modules from icons/ (pre–icons/reltio/ layout), but keep
+	// the hand-written docs, the sub-collections, and the generated helper.
+	const PRESERVED_IN_PARENT = new Set([
+		"icons.stories.tsx",
+		"ReltioIconGallery.tsx",
+		"registerReltioIcon.ts",
+		"icons.story.mdx",
+		"reltio",
+		"sap",
+	]);
+	for (const entry of await readdir(PARENT_DIR)) {
+		if (PRESERVED_IN_PARENT.has(entry)) {
+			continue;
+		}
+		if (entry.endsWith(".ts") || entry.endsWith(".tsx")) {
+			await rm(join(PARENT_DIR, entry), { force: true });
+		}
+	}
+
+	// Shared registration helper (`@reltio/design/icons/registerReltioIcon`) —
+	// registers an icon and returns its name so the side effect survives
+	// tree-shaking. Lives OUTSIDE the `reltio/` barrel so the aggregate stays a
+	// pure set of icon-name exports.
+	await writeFile(
+		join(PARENT_DIR, "registerReltioIcon.ts"),
+		renderRegisterReltioIconModule({ collection: COLLECTION }),
+		"utf8",
+	);
+	// One tree-shakable registration module per icon: `@reltio/design/icons/reltio/<name>`.
 	for (const icon of icons) {
 		await writeFile(
-			join(OUT_DIR, `${icon.name}.ts`),
+			join(OUT_DIR, `${icon.name}.tsx`),
 			renderIconModule(icon),
 			"utf8",
 		);
 	}
-	// Aggregate entry (register all) + metadata: `@reltio/design/icons`.
+	// Aggregate entry: `@reltio/design/icons/reltio` — only icon-name exports.
 	await writeFile(join(OUT_DIR, "index.ts"), renderIndexModule(icons), "utf8");
 	// Gallery component consumed by icons.story.mdx (the Overview docs page).
 	await writeFile(
-		join(OUT_DIR, "ReltioIconGallery.tsx"),
+		join(PARENT_DIR, "ReltioIconGallery.tsx"),
 		renderGalleryModule(),
 		"utf8",
 	);
 	// Single catalog of per-icon showcase stories.
 	await writeFile(
-		join(OUT_DIR, "icons.stories.tsx"),
+		join(PARENT_DIR, "icons.stories.tsx"),
 		renderCatalogStoryModule(icons),
 		"utf8",
 	);
@@ -499,14 +514,14 @@ async function build() {
 	// Generated code is committed and linted in CI — apply Biome's formatter and
 	// safe fixes (import order, line wrapping) so the output is conformant
 	// regardless of the icon data.
-	const biomeBin = join(
-		ROOT,
-		"node_modules/.bin",
-		process.platform === "win32" ? "biome.cmd" : "biome",
+	const biomeEntry = join(ROOT, "node_modules/@biomejs/biome/bin/biome");
+	const biome = spawnSync(
+		process.execPath,
+		[biomeEntry, "check", "--write", OUT_DIR, PARENT_DIR],
+		{
+			stdio: "inherit",
+		},
 	);
-	const biome = spawnSync(biomeBin, ["check", "--write", OUT_DIR], {
-		stdio: "inherit",
-	});
 	if (biome.status !== 0) {
 		throw new Error("Biome could not format the generated icon files.");
 	}

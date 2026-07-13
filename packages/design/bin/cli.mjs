@@ -108,7 +108,7 @@ const printComponent = (name) => {
 		}
 	}
 	console.log(
-		'\nTypes shown are the resolved TypeScript signatures. For the full shape of named types (enums, `*AccessibilityAttributes`, event payloads), read the bundled declarations in node_modules/@reltio/design or use the Reltio Design MCP.',
+		"\nTypes shown are the resolved TypeScript signatures. For the full shape of named types (enums, `*AccessibilityAttributes`, event payloads), read the bundled declarations in node_modules/@reltio/design or use the Reltio Design MCP.",
 	);
 };
 

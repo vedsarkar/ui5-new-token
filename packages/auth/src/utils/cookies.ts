@@ -16,8 +16,6 @@ export const ACCESS_TOKEN_COOKIE = "access_token";
 export const REFRESH_TOKEN_COOKIE = "refresh_token";
 /** Name of the cookie that carries the CSRF state for an in-flight login. */
 export const STATE_COOKIE = "state";
-/** Name of the cookie that carries the HMAC-signed Auth Server cluster URL for per-session `/checkToken` and `/refreshToken` routing. */
-export const AUTH_URL_COOKIE = "reltio_aurl";
 
 /** Options applied to every cookie set or cleared by the router. */
 export type CookieOptions = {

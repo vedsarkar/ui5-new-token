@@ -1,10 +1,11 @@
 /**
  * Public-surface guards for the `checkToken` introspection feature.
  *
- * The introspection wire function `checkAccessToken` is private (`core/`) and
- * MUST stay unreachable from every public subpath — consumers reach
- * introspection only through the adapter-exposed `checkToken` member. The
- * public `CheckTokenResponse` type MUST resolve from `@reltio/auth/types`.
+ * The introspection wire functions (`checkAccessToken`,
+ * `introspectToken`) are private (`core/`) and MUST stay unreachable from
+ * every public subpath — consumers reach introspection only through the
+ * adapter-exposed `checkToken` member. The public `CheckTokenResponse` type
+ * MUST resolve from `@reltio/auth/types`.
  */
 
 import { createExpressAuth } from "@reltio/auth/express";
@@ -17,11 +18,13 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 import { DEFAULT_CONFIG } from "../express/testApp";
 
 describe("checkToken public surface", () => {
-	it("does not export checkAccessToken from any public subpath", () => {
-		expect("checkAccessToken" in authUtils).toBe(false);
-		expect("checkAccessToken" in authTypes).toBe(false);
-		expect("checkAccessToken" in createExpressAuth(DEFAULT_CONFIG)).toBe(false);
-		expect("checkAccessToken" in createNextAuth(DEFAULT_CONFIG)).toBe(false);
+	it("does not export the private introspectors from any public subpath", () => {
+		for (const name of ["checkAccessToken", "introspectToken"]) {
+			expect(name in authUtils).toBe(false);
+			expect(name in authTypes).toBe(false);
+			expect(name in createExpressAuth(DEFAULT_CONFIG)).toBe(false);
+			expect(name in createNextAuth(DEFAULT_CONFIG)).toBe(false);
+		}
 	});
 
 	it("exposes checkToken on both adapter return values", () => {

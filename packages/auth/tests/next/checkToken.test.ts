@@ -5,16 +5,17 @@
 
 import { createNextAuth } from "@reltio/auth/next";
 import { HttpResponse, http } from "msw";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
 	TOKEN_WITH_AURL,
 	TOKEN_WITH_AURL_ORIGIN,
+	TOKEN_WITHOUT_AURL,
 } from "../fixtures/aurlTokens";
 import {
 	buildRequest,
 	createTestHandlers,
 	DEFAULT_CONFIG,
-	mintAurlCookie,
+	MULTIAUTH_CONFIG,
 	mswServer,
 	TEST_OAUTH_HOST,
 	useMswServer,
@@ -248,7 +249,7 @@ describe("Next.js adapter — POST /auth/checkToken", () => {
 		expect(res.status).toBe(502);
 	});
 
-	it("routes the upstream call to the verified reltio_aurl cluster URL", async () => {
+	it("routes the upstream call to the cluster named by the access token's aurl", async () => {
 		let clusterCalled = false;
 		let staticCalled = false;
 		mswServer.use(
@@ -261,15 +262,15 @@ describe("Next.js adapter — POST /auth/checkToken", () => {
 				return HttpResponse.json({});
 			}),
 		);
-		const handlers = createTestHandlers();
-		const reltioAurl = await mintAurlCookie(handlers, TOKEN_WITH_AURL);
-		const { POST } = handlers;
+		const { POST } = createTestHandlers({
+			config: { authEnvironments: MULTIAUTH_CONFIG.authEnvironments },
+		});
 
 		await POST(
 			buildRequest({
 				method: "POST",
 				path: "/auth/checkToken",
-				cookies: { access_token: "token", reltio_aurl: reltioAurl },
+				cookies: { access_token: TOKEN_WITH_AURL },
 			}),
 		);
 
@@ -277,7 +278,7 @@ describe("Next.js adapter — POST /auth/checkToken", () => {
 		expect(staticCalled).toBe(false);
 	});
 
-	it("falls back to the static oauthPath when reltio_aurl is tampered (fail-closed)", async () => {
+	it("falls back to the primary oauthPath when the token's aurl is not in the allowlist", async () => {
 		let clusterCalled = false;
 		let staticCalled = false;
 		mswServer.use(
@@ -290,13 +291,14 @@ describe("Next.js adapter — POST /auth/checkToken", () => {
 				return HttpResponse.json({});
 			}),
 		);
+		// DEFAULT_CONFIG has no authEnvironments: the token's aurl is untrusted.
 		const { POST } = createTestHandlers();
 
 		await POST(
 			buildRequest({
 				method: "POST",
 				path: "/auth/checkToken",
-				cookies: { access_token: "token", reltio_aurl: "tampered-garbage" },
+				cookies: { access_token: TOKEN_WITH_AURL },
 			}),
 		);
 
@@ -440,7 +442,7 @@ describe("Next.js adapter — checkToken (programmatic introspection)", () => {
 		expect(error.statusCode).toBe(502);
 	});
 
-	it("routes via the verified reltio_aurl cookie", async () => {
+	it("routes to the cluster named by the access token's aurl", async () => {
 		let clusterCalled = false;
 		let staticCalled = false;
 		mswServer.use(
@@ -453,20 +455,39 @@ describe("Next.js adapter — checkToken (programmatic introspection)", () => {
 				return HttpResponse.json({});
 			}),
 		);
-		const handlers = createTestHandlers();
-		const reltioAurl = await mintAurlCookie(handlers, TOKEN_WITH_AURL);
-		const { checkToken } = createNextAuth(DEFAULT_CONFIG);
+		const { checkToken } = createNextAuth(MULTIAUTH_CONFIG);
 
 		await checkToken(
 			buildRequest({
 				method: "POST",
 				path: "/auth/checkToken",
-				cookies: { access_token: "token", reltio_aurl: reltioAurl },
+				cookies: { access_token: TOKEN_WITH_AURL },
 			}),
 		);
 
 		expect(clusterCalled).toBe(true);
 		expect(staticCalled).toBe(false);
+	});
+
+	it("falls back to the primary oauthPath when the token has no aurl claim", async () => {
+		let capturedUrl: URL | undefined;
+		mswServer.use(
+			http.post(`${TEST_OAUTH_HOST}/oauth/checkToken`, ({ request }) => {
+				capturedUrl = new URL(request.url);
+				return HttpResponse.json({});
+			}),
+		);
+		const { checkToken } = createNextAuth(MULTIAUTH_CONFIG);
+
+		await checkToken(
+			buildRequest({
+				method: "POST",
+				path: "/auth/checkToken",
+				cookies: { access_token: TOKEN_WITHOUT_AURL },
+			}),
+		);
+
+		expect(capturedUrl?.origin).toBe(new URL(DEFAULT_CONFIG.oauthPath).origin);
 	});
 
 	it("forwards serviceId and tenantId from opts as query parameters", async () => {
@@ -490,27 +511,5 @@ describe("Next.js adapter — checkToken (programmatic introspection)", () => {
 
 		expect(capturedUrl?.searchParams.get("serviceId")).toBe("MDM");
 		expect(capturedUrl?.searchParams.get("tenantId")).toBe("acme-prod");
-	});
-
-	it("derives the HMAC key once and reuses it across many checkToken calls", async () => {
-		const importKeySpy = vi.spyOn(crypto.subtle, "importKey");
-		try {
-			mockOAuthCheckToken({});
-			const { checkToken } = createNextAuth(DEFAULT_CONFIG);
-
-			for (let i = 0; i < 5; i++) {
-				await checkToken(
-					buildRequest({
-						method: "POST",
-						path: "/auth/checkToken",
-						cookies: { access_token: "token" },
-					}),
-				);
-			}
-
-			expect(importKeySpy).toHaveBeenCalledTimes(1);
-		} finally {
-			importKeySpy.mockRestore();
-		}
 	});
 });

@@ -5,10 +5,10 @@ import { MenuItemGroup } from "@ui5/webcomponents-react/MenuItemGroup";
 import { MenuSeparator } from "@ui5/webcomponents-react/MenuSeparator";
 import { useId, useState } from "react";
 import { fn } from "storybook/test";
+import copyIcon from "@/icons/sap/copy";
+import deleteIcon from "@/icons/sap/delete";
+import editIcon from "@/icons/sap/edit";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/edit.js";
-import "@ui5/webcomponents-icons/dist/copy.js";
-import "@ui5/webcomponents-icons/dist/delete.js";
 
 const meta = preview.meta({
 	component: Menu,
@@ -49,9 +49,9 @@ export const Default = meta.story({
 		<MenuTrigger>
 			{(openerId, open, close) => (
 				<Menu {...args} opener={openerId} open={open} onClose={close}>
-					<MenuItem text="Edit" icon="edit" />
-					<MenuItem text="Duplicate" icon="copy" />
-					<MenuItem text="Delete" icon="delete" />
+					<MenuItem text="Edit" icon={editIcon} />
+					<MenuItem text="Duplicate" icon={copyIcon} />
+					<MenuItem text="Delete" icon={deleteIcon} />
 				</Menu>
 			)}
 		</MenuTrigger>

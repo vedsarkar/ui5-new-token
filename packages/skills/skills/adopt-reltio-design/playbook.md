@@ -62,29 +62,42 @@ Do **not** port `sx`, `styled`, `makeStyles`, or theme objects verbatim.
 ## 4. Theming
 
 - Replace MUI `ThemeProvider` / `createTheme` palette switching with the
-  `data-theme` attribute: `data-theme="horizon-light"` or `"horizon-dark"` on an
-  ancestor element. UI5 components and token-based CSS re-theme together.
+  `data-theme` attribute: `data-theme="sap-reltio-light"` or `"sap-reltio-dark"`
+  on an ancestor element (the legacy `horizon-light` / `horizon-dark` values still
+  resolve to the same tokens but are deprecated — prefer the `sap-reltio-*` names).
+  UI5 components and token-based CSS re-theme together.
 - The consumer must load `variables.css` + `fonts.css` from `reltio.design`
   (or self-host). If theming looks broken after migration, verify these are loaded.
 
 ## 5. Icons
 
 - Replace MUI icon components with SAP Fiori icons referenced **by name** on the
-  component (e.g. `<Button icon="save" />`). The icon set ships transitively via
-  `@reltio/design` — do **not** add `@ui5/*` to the app's dependencies.
-- Each named icon must be **registered once** via a side-effect import so the web
-  component can resolve it: `import "@ui5/webcomponents-icons/dist/save.js";`.
-  This registration import is the **only** thing ever imported directly from an
-  `@ui5/*` package, and only because there is no `@reltio/design` re-export for
-  icon registration. Prefer the consumer app's existing icon-loading convention
-  if it already has one; never reach into `@ui5/*` for components, hooks, or utils.
+  component. The icon set ships transitively via `@reltio/design` — do **not** add
+  `@ui5/*` to the app's dependencies.
+- Register each icon by importing its **name** from
+  `@reltio/design/icons/sap/<kebab-name>` and passing the binding to the `icon`
+  prop: `import saveIcon from "@reltio/design/icons/sap/save";` →
+  `<Button icon={saveIcon} />`. The import both registers the icon and returns its
+  name string. Because `@reltio/design` is `sideEffects: false`, a bare
+  `import "@reltio/design/icons/sap/save"` is dropped by the bundler — always
+  import the name (or the PascalCase component) and use it. Reltio custom glyphs
+  come from `@reltio/design/icons/reltio/<kebab-name>`. Never reach into `@ui5/*`
+  for icons, components, hooks, or utils.
+- **Discover which icon names exist** (offline, version-matched to the installed
+  package) by listing the icon modules:
+  `ls node_modules/@reltio/design/icons/sap` and
+  `ls node_modules/@reltio/design/icons/reltio` — each file is one icon; its
+  base name (minus `.js`) is the kebab-name to import. For a visual browser, use
+  the Icon Gallery on `https://reltio.design` (Storybook → Icons) or the Reltio
+  Design MCP. Do not guess names from memory — confirm the module exists before
+  importing it.
 
 ## 6. Imports — everything from `@reltio/design`
 
 - **All components, charts, hooks, and utils come from `@reltio/design/*`** —
   `@reltio/design/components`, `/charts`, `/hooks`, `/utils`. Never import a
-  component, hook, or util directly from `@ui5/*` or `@sap/*`. The single icon
-  registration side-effect import (section 5) is the sole exception.
+  component, hook, util, or icon directly from `@ui5/*` or `@sap/*` — icons are
+  registered through `@reltio/design/icons/sap/*` too (see section 5).
 - All adopted components import from `@reltio/design/components` (charts from
   `@reltio/design/charts`). Never the bare `@reltio/design`.
 - Remove the now-unused `@mui/*` (or other) imports as you go, but only for the

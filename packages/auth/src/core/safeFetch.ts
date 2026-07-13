@@ -10,7 +10,7 @@
  * Takes a single flat `options` object (`url` plus the standard
  * `RequestInit` fields) to match the package's options-object convention.
  * Internal to `core/` — used by `exchangeCode`, `refreshAccessToken`, and
- * `checkAccessToken`. Never returns a non-ok response.
+ * `introspectToken`. Never returns a non-ok response.
  */
 
 import { RequestError } from "../utils/errors";

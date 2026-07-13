@@ -1,5 +1,35 @@
 # @reltio/auth
 
+## 1.6.0
+
+### Minor Changes
+
+- b9f198a: Add a transparent, streaming `/proxy` endpoint that forwards browser requests to allow-listed Reltio services with the session's access token attached server-side as `Authorization: Bearer …` — the browser never sees the token.
+
+  - Mounted alongside the existing endpoints; accepts every HTTP method and forwards to the URL in the `reltio-target-url` request header.
+  - Request and response bodies are streamed through with constant memory — large uploads/downloads, chunked transfers, and Server-Sent Events pass through without buffering or a size cap.
+  - Enabled via the optional `proxy.allowedTargets` key on `AuthConfig`. Patterns use a wildcard DSL (`*` = one host label, `**` = any number of labels, trailing `/*` = any path under the prefix) and are validated at `createAuth()` construction time — malformed entries throw immediately. Omitting `proxy` leaves `/proxy` unmounted (a normal 404).
+  - The Next.js App Router adapter now exports `PUT`, `PATCH`, `DELETE`, `HEAD`, and `OPTIONS` alongside `GET`/`POST`, so a single `app/api/auth/[...auth]/route.ts` can re-export them all.
+
+  Note for Express: mount `createExpressAuth()` **before** any body-parser middleware (`express.json()`, …). The proxy streams the raw request body, so a parser that has already consumed the stream leaves nothing to forward.
+
+## 1.5.0
+
+### Minor Changes
+
+- 5cfec10: Route per-session cluster from the access token's `aurl` claim (matched against an allowlist) and drop the internal `reltio_aurl` routing cookie.
+
+  The BFF router previously derived per-session cluster routing from a dedicated HMAC-signed `reltio_aurl` cookie minted at `GET /callback`. That cookie and its entire HMAC subsystem (`signAurl` / `verifyAurl` / `deriveHmacKey`, the `AUTH_URL_COOKIE` constant, and the `base64urlEncode` primitive) are gone. `POST /checkToken`, `POST /refreshToken`, and the adapter-exposed `resolveAuthPath` now resolve the upstream cluster by decoding the access token's `aurl` claim and matching it against the operator-configured allowlist (the primary `oauthPath` plus the new `AuthConfig.authEnvironments`), falling back to the primary cluster for an absent/undecodable/non-allowlisted `aurl`. A forged `aurl` can still only ever _select_ a pre-configured cluster, so the model is SSRF-safe without signing.
+
+  This also unifies token introspection on the same mechanism: standalone API services introspect via `createExpressAuth(config).checkToken` / `createNextAuth(config).checkToken`, and `AuthConfig.loginPath` becomes optional so one factory serves both BFFs and introspection-only API services (`/login`, `/logout`, `/callback` respond `500` when it is absent).
+
+  For published consumers this is net-additive — existing single-cluster deployments keep working with no config change (every request resolves to `oauthPath`):
+
+  - `AuthConfig` now extends the shared `AuthEnvironment` type (`{ oauthPath, clientId, clientSecret }`) and gains an optional `authEnvironments: AuthEnvironment[]` allowlist. Configure it to route to non-primary clusters; omit it and every request resolves to `oauthPath`.
+  - `AuthConfig.loginPath` is now optional (required only for the interactive `/login`, `/logout`, `/callback` flow).
+  - The public adapter surface (`createExpressAuth` / `createNextAuth` return shape, `resolveAuthPath`, `checkToken`) is unchanged in signature; only the routing mechanism behind it changed.
+  - The `reltio_aurl` cookie was `HttpOnly` and never public API; the BFF now sets exactly two auth cookies (`access_token`, `refresh_token`) plus the CSRF `state` cookie.
+
 ## 1.4.1
 
 ### Patch Changes

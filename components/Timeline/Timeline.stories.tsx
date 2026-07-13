@@ -1,9 +1,9 @@
 import { Timeline } from "@ui5/webcomponents-react/Timeline";
 import { TimelineGroupItem } from "@ui5/webcomponents-react/TimelineGroupItem";
 import { TimelineItem } from "@ui5/webcomponents-react/TimelineItem";
+import activityItemsIcon from "@/icons/sap/activity-items";
+import employeeIcon from "@/icons/sap/employee";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/employee.js";
-import "@ui5/webcomponents-icons/dist/activity-items.js";
 
 const meta = preview.meta({
 	component: Timeline,
@@ -25,7 +25,7 @@ export const Default = meta.story({
 			<TimelineItem
 				titleText="Record created"
 				subtitleText="2024-01-12"
-				icon="employee"
+				icon={employeeIcon}
 				name="Jane Doe"
 			>
 				Initial profile ingested from CRM.
@@ -33,7 +33,7 @@ export const Default = meta.story({
 			<TimelineItem
 				titleText="Source merged"
 				subtitleText="2024-02-03"
-				icon="activity-items"
+				icon={activityItemsIcon}
 				name="System"
 			>
 				ERP source matched and merged.

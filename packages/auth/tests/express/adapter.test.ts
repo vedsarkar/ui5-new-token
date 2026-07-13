@@ -6,8 +6,8 @@
  *   - `expressToWebRequest` forwarding a multi-valued (Node-arrayed) request
  *     header (`Set-Cookie` is the one header Node always represents as an
  *     array) into the Web `Request`.
- *   - `applyWebResponseToExpressRes` forwarding a response-write failure to
- *     Express's error handler via `next(error)` instead of crashing.
+ *   - `applyWebResponseToExpressRes` surfacing a response-body-stream failure
+ *     to the client (aborted connection) instead of hanging or crashing.
  */
 
 import type { SsoRedirect } from "@reltio/auth/types";
@@ -53,11 +53,12 @@ describe("Express adapter — request/response conversion", () => {
 		expect(forwarded).toEqual(["a=1", "b=2"]);
 	});
 
-	it("forwards a response-write failure to Express's error handler", async () => {
+	it("surfaces a response-body-stream failure to the client instead of hanging", async () => {
 		mockTokenExchange();
-		// A consumer ssoRedirect returning a Response whose body stream errors
-		// makes `webResponse.text()` reject inside the adapter; the catch must
-		// route it to `next(error)` (→ 500) rather than leave it unhandled.
+		// A consumer ssoRedirect returning a Response whose body stream errors.
+		// The adapter streams the body through `pipeline`, so a body failure
+		// aborts the client connection (surfaced as a socket error) rather
+		// than hanging forever or crashing the process.
 		const ssoRedirect: SsoRedirect = () =>
 			new Response(
 				new ReadableStream({
@@ -69,12 +70,12 @@ describe("Express adapter — request/response conversion", () => {
 			);
 		const app = createTestApp({ ssoRedirect });
 
-		const res = await app
-			.get("/api/auth/callback")
-			.set("Host", TEST_HOST)
-			.set("Cookie", [`state=${STATE}`])
-			.query({ code: "x", state: STATE });
-
-		expect(res.statusCode).toBe(500);
+		await expect(
+			app
+				.get("/api/auth/callback")
+				.set("Host", TEST_HOST)
+				.set("Cookie", [`state=${STATE}`])
+				.query({ code: "x", state: STATE }),
+		).rejects.toThrow();
 	});
 });

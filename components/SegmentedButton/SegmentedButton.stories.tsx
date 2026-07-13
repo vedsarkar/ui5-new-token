@@ -1,10 +1,10 @@
 import { SegmentedButton } from "@ui5/webcomponents-react/SegmentedButton";
 import { SegmentedButtonItem } from "@ui5/webcomponents-react/SegmentedButtonItem";
 import { fn } from "storybook/test";
+import listIcon from "@/icons/sap/list";
+import menu2Icon from "@/icons/sap/menu2";
+import tableViewIcon from "@/icons/sap/table-view";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/list.js";
-import "@ui5/webcomponents-icons/dist/menu2.js";
-import "@ui5/webcomponents-icons/dist/table-view.js";
 
 const meta = preview.meta({
 	component: SegmentedButton,
@@ -49,18 +49,18 @@ export const IconOnly = meta.story({
 	render: (args) => (
 		<SegmentedButton {...args}>
 			<SegmentedButtonItem
-				icon="list"
+				icon={listIcon}
 				accessibleName="List view"
 				tooltip="List view"
 				selected
 			/>
 			<SegmentedButtonItem
-				icon="table-view"
+				icon={tableViewIcon}
 				accessibleName="Table view"
 				tooltip="Table view"
 			/>
 			<SegmentedButtonItem
-				icon="menu2"
+				icon={menu2Icon}
 				accessibleName="Compact view"
 				tooltip="Compact view"
 			/>
@@ -71,11 +71,11 @@ export const IconOnly = meta.story({
 export const IconWithText = meta.story({
 	render: (args) => (
 		<SegmentedButton {...args}>
-			<SegmentedButtonItem icon="list" selected>
+			<SegmentedButtonItem icon={listIcon} selected>
 				List
 			</SegmentedButtonItem>
-			<SegmentedButtonItem icon="table-view">Table</SegmentedButtonItem>
-			<SegmentedButtonItem icon="menu2">Compact</SegmentedButtonItem>
+			<SegmentedButtonItem icon={tableViewIcon}>Table</SegmentedButtonItem>
+			<SegmentedButtonItem icon={menu2Icon}>Compact</SegmentedButtonItem>
 		</SegmentedButton>
 	),
 });

@@ -1,8 +1,8 @@
 import { Icon } from "@ui5/webcomponents-react/Icon";
 import { MessageStrip } from "@ui5/webcomponents-react/MessageStrip";
 import { fn } from "storybook/test";
+import sysHelp2Icon from "@/icons/sap/sys-help-2";
 import preview from "../../.storybook/preview";
-import "@ui5/webcomponents-icons/dist/sys-help-2.js";
 
 const meta = preview.meta({
 	component: MessageStrip,
@@ -74,7 +74,7 @@ export const TextOnly = meta.story({
 export const CustomIcon = meta.story({
 	args: {
 		design: "Information",
-		icon: <Icon name="sys-help-2" />,
+		icon: <Icon name={sysHelp2Icon} />,
 		children: "Need help? Check the matching rules documentation.",
 	},
 });

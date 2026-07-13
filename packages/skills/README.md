@@ -54,3 +54,15 @@ ergonomics, `--sap*` token theming, and small, reviewable pull requests.
 It pairs with `@reltio/design`'s self-describing discovery CLI
 (`npx @reltio/design components`) so the agent always reads the exact component
 inventory and props of the version your app uses.
+
+### `container-vuln-check`
+
+Guides an agent from a container/app name through finding the freshest scanned
+image, listing its open vulnerabilities, classifying them (app Node.js deps vs
+base-image npm vs OS packages), verifying the Node.js findings against the
+repository, and remediating (dependency bumps, parent-subtree refresh, override
+cleanup).
+
+The security scanner is a pluggable "source adapter" — everything after fetching
+(classify → verify → remediate → report) is tool-independent. The **Wiz**
+adapter (via the `user-wiz` MCP) is the one implemented today.

@@ -66,7 +66,7 @@ import {
 
 Apps install one package, follow one import convention, and always run on the UI5 version that the UI Center of Excellence (CoE) has signed off.
 
-> **Always include the `/components` subpath.** The package exposes only subpath entries — `@reltio/design/components`, `@reltio/design/charts`, `@reltio/design/hooks`, `@reltio/design/utils`. A bare `import { X } from "@reltio/design"` has no `main`/`exports` target and will fail at install time. AI agents reading from the Reltio Design MCP receive the correct subpath in every snippet — match it.
+> **Always include the `/components` subpath.** The bare package name has no root entry (no `main`), so `import { X } from "@reltio/design"` will fail — import through a subpath (`/components`, `/charts`, `/hooks`, `/utils`, `/icons`). The package intentionally ships **without an `exports` lock**, so the full file tree stays importable (deep imports like `@reltio/design/components/SideNavigation` work) — the subpath barrels are simply the recommended, curated entry. AI agents reading from the Reltio Design MCP receive the correct subpath in every snippet — match it.
 
 ## Why a single entry point
 
@@ -242,9 +242,9 @@ A plain emphasized save button. Import it from `@reltio/design/components`:
 
 ```tsx
 import { Button } from "@reltio/design/components";
-import "@ui5/webcomponents-icons/dist/save.js";
+import saveIcon from "@reltio/design/icons/sap/save";
 
-<Button design="Emphasized" icon="save">Save</Button>;
+<Button design="Emphasized" icon={saveIcon}>Save</Button>;
 ```
 
 No spec, no wrapper, no CSS module. Anything beyond this is over-engineering.
@@ -292,7 +292,7 @@ UI5 has no chat scrollback / message rendering control, so [`Chat`](/?path=/docs
 - [Component Customization](?path=/docs/guides-component-customization--docs) — restyling UI5 vs. Reltio components
 - [Design Tokens](?path=/docs/design-tokens--docs) — the full SAP Horizon `--sap*` token surface and how UI5 consumes it
 - [Typography](?path=/docs/guides-typography--docs) — SAP 72 fonts loaded once, used everywhere
-- [Icons (UI5)](?path=/docs/guides-icon-library--docs) — how to render and theme icons via `@ui5/webcomponents-icons`
+- [Icon Library](/?path=/docs/guides-icon-library--docs) — `@reltio/design/icons/sap/<kebab-name>` and `@reltio/design/icons/reltio/<kebab-name>` imports, sizing, theming (SAP Fiori + Reltio icons)
 - [Spec-Driven Development](?path=/docs/guides-spec-driven-development--docs) — the OpenSpec workflow used to plan Reltio components
 
 ## Sources and References

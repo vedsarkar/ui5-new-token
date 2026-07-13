@@ -719,7 +719,7 @@
 		"sapObjectHeader_Title_FontFamily": "\"72Black\", \"72Blackfull\",\"72\", \"72full\", Arial, Helvetica, sans-serif",
 		"sapObjectHeader_Subtitle_TextColor": "#646e97",
 		"sapBlockLayer_Background": "#000",
-		"sapBlockLayer_Opacity": "rgba(0,0,0,0.2)",
+		"sapBlockLayer_Opacity": "0.6",
 		"sapTab_TextColor": "#111727",
 		"sapTab_ForegroundColor": "#4563ed",
 		"sapTab_IconColor": "#4563ed",
