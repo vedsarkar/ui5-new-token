@@ -8,8 +8,8 @@ import { classNames } from "@/utils/classNames";
 import styles from "./ShellBar.module.css";
 import type { ShellBarProps } from "./ShellBar.types";
 
-const lightLogoUrl = "https://reltio.design/logo/sap-reltio-light.svg";
-const darkLogoUrl = "https://reltio.design/logo/sap-reltio-dark.svg";
+const lightLogoUrl = "https://reltio.design/logo/reltio-light.svg";
+const darkLogoUrl = "https://reltio.design/logo/reltio-dark.svg";
 
 const defaultReltioLogo = (
 	<picture className={styles.logo}>
