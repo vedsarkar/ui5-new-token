@@ -9,7 +9,7 @@ export default create({
 	base: "light",
 	brandTitle: "Reltio Design Platform",
 	brandUrl: "https://reltio.design",
-	brandImage: "/logo.png",
+	brandImage: "/logo/reltio-design-portal.png",
 	brandTarget: "_self",
 	fontBase,
 	fontCode,

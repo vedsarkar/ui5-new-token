@@ -64,6 +64,15 @@
 	margin-right: 12px;
 }
 
+/* The brand SVGs ship with a viewBox but no intrinsic width/height, so the
+ * <img> has no natural size inside the ShellBar logo slot. Pin the height and
+ * let the width scale from the aspect ratio so the mark stays visible. */
+.lightLogo,
+.darkLogo {
+	height: 1rem;
+	width: auto;
+}
+
 .lightLogo {
 	display: none;
 }
