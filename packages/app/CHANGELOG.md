@@ -1,5 +1,17 @@
 # @reltio/app
 
+## 0.2.0
+
+### Minor Changes
+
+- Update the scaffolded template with an environment-aware configuration system.
+
+  - Add `config/*.json` (`default`, `dev`, `prod`) resolved at startup by `APP_ENV`, deep-merged over the defaults (`config/deepMerge.ts`, `config/index.ts`) and consumed server-side via `import config from "@/config"`.
+  - Add a `GET /api/config` route that exposes a curated public config subset, consumed on the client through the new `useConfig()` hook.
+  - Add `Tenants`, `Config`, and `Environments` pages, plus an `authFetch` helper and a `useTenants` hook.
+  - Wire `lib/auth.ts` to read `oauthPath` / `loginPath` from `@/config`; the environment now holds only secrets (`CLIENT_ID`, `CLIENT_SECRET`) and the build-time `BASE_PATH`. `OAUTH_PATH` / `LOGIN_PATH` env vars are removed in favor of `config/*.json`.
+  - Bump the template's bundled `@reltio/auth` dependency to `^1.6.0`.
+
 ## 0.1.0
 
 ### Minor Changes

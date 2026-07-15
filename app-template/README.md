@@ -19,10 +19,14 @@ A Reltio application starter built with
    cp .env.local.example .env.local
    ```
 
-   Fill in `OAUTH_PATH`, `LOGIN_PATH`, `CLIENT_ID`, `CLIENT_SECRET`, and
-   `BASE_PATH` (the sub-path this app is served under, e.g. `/my-app`). Keep
-   `SECURE=false` for local http development. The app will not start until every
-   required variable is set.
+   Fill in the secrets `CLIENT_ID` and `CLIENT_SECRET`, set `BASE_PATH` (the
+   sub-path this app is served under, e.g. `/my-app`), and pick `APP_ENV`
+   (`dev` or `prod`). Keep `SECURE=false` for local http development. The app
+   will not start until the required variables are set.
+
+   Runtime, non-secret settings (`oauthPath`, `loginPath`, ...) live in
+   `config/*.json`, not in `.env`. `config/<APP_ENV>.json` is deep-merged over
+   `config/default.json` at startup — see [Configuration](#configuration).
 
 3. Run the dev server:
 
@@ -34,19 +38,45 @@ A Reltio application starter built with
    your `BASE_PATH` and then to the Reltio Login Page; after signing in you land
    on a protected page showing your user and tenants.
 
+## Configuration
+
+Runtime, non-secret settings live in `config/*.json`, resolved at startup:
+
+- `config/default.json` — settings shared by every environment.
+- `config/<APP_ENV>.json` (`dev.json` / `prod.json`) — per-environment
+  overrides, **deep-merged** over the defaults (objects extend, arrays and
+  primitives replace).
+- `config/index.ts` — reads `APP_ENV`, performs the merge, and exports the
+  resolved config as `import config from "@/config"`.
+
+`APP_ENV` is a **start-time** variable: build artifacts are identical across
+environments and carry no `APP_ENV`; the value is injected when the artifact
+boots, so one build can be deployed to any environment.
+
+Only settings the browser needs are exposed — the `GET /api/config` route
+returns a curated public subset (see `app/api/config/route.ts`), consumed on the
+client via `useConfig()` (`lib/useConfig.ts`).
+
+Note the split: **secrets and the build-time `BASE_PATH` stay in the
+environment**, while `config/*.json` is for runtime, non-secret settings only.
+
 ## Base path
 
 The app is served under `BASE_PATH` (Next.js [`basePath`](https://nextjs.org/docs/app/api-reference/config/next-config-js/basePath)),
 so it can be mounted behind a platform's path rewrite. Next prefixes routing,
 `<Link>`, navigation, and static assets automatically; `proxy.ts` and the auth
 route keep the login round-trip inside the sub-path. Visiting the origin root
-(`/`) redirects to `BASE_PATH`. It is validated at startup — an invalid or
-missing value stops the server with a clear message.
+(`/`) redirects to `BASE_PATH`.
+
+Because Next bakes `basePath` into the build (it cannot change at runtime), it
+is an **environment variable**, not part of the runtime-resolved `@/config`.
+`next.config.mjs` reads and validates it, so an invalid or missing value stops
+the server with a clear message.
 
 ## What's inside
 
-- `lib/auth.ts` — the `@reltio/auth` router, configured from environment
-  variables.
+- `lib/auth.ts` — the `@reltio/auth` router; `oauthPath` / `loginPath` from
+  `@/config`, secrets from the environment.
 - `app/auth/[...auth]/route.ts` — mounts `/auth/login`, `/auth/logout`,
   `/auth/callback`, `/auth/refreshToken`, `/auth/checkToken`.
 - `lib/session.ts` — server helpers `getUser()` / `requireUser()` that

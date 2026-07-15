@@ -5,9 +5,10 @@ import { fileURLToPath } from "node:url";
 // `process.env` before evaluating this file, so an incomplete config stops
 // `next dev` / `next build` / `next start` from starting at all — with one clear
 // message — instead of surfacing a cryptic runtime crash on the first request.
+//
+// The environment holds the secrets AND the build-time `BASE_PATH`. Runtime,
+// non-secret settings live in config/*.json (resolved at startup by APP_ENV).
 const REQUIRED_ENV = [
-	"OAUTH_PATH",
-	"LOGIN_PATH",
 	"CLIENT_ID",
 	"CLIENT_SECRET",
 	// The sub-path this app is served under (e.g. /my-app). Everything —
@@ -24,13 +25,16 @@ if (missingEnv.length > 0) {
 			"",
 			`  Missing environment variable(s): ${missingEnv.join(", ")}`,
 			"",
-			"  Copy .env.local.example to .env.local and fill it in (Reltio OAuth",
-			"  client + BASE_PATH), then restart.",
+			"  Copy .env.local.example to .env.local and fill in the Reltio OAuth",
+			"  client secrets + BASE_PATH, then restart.",
 			"",
 		].join("\n"),
 	);
 }
 
+// basePath is a BUILD-TIME setting in Next — it is baked into the artifact
+// (routing, <Link>, assets) and cannot change at runtime. So it cannot come
+// from the runtime-resolved `@/config`; it stays an environment variable.
 const basePath = process.env.BASE_PATH;
 if (!basePath.startsWith("/") || basePath.endsWith("/")) {
 	throw new Error(

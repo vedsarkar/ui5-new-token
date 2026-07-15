@@ -1,0 +1,4 @@
+{
+  "oauthPath": "https://auth.reltio.com/oauth",
+  "loginPath": "https://login.reltio.com"
+}

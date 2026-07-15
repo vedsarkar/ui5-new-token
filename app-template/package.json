@@ -8,7 +8,7 @@
 		"start": "next start"
 	},
 	"dependencies": {
-		"@reltio/auth": "^1.4.1",
+		"@reltio/auth": "^1.6.0",
 		"@reltio/design": "^1.12.0",
 		"next": "^16.2.0",
 		"react": "^18.3.1",
