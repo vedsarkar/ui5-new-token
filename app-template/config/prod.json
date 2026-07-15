@@ -1,4 +1,5 @@
 {
   "oauthPath": "https://auth.reltio.com/oauth",
-  "loginPath": "https://login.reltio.com"
+  "loginPath": "https://login.reltio.com",
+  "configServicePath": "https://config-service.reltio.com/service"
 }

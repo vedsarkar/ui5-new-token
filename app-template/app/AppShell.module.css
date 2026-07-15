@@ -1,0 +1,26 @@
+.root {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	grid-template-rows: auto 1fr;
+	grid-template-areas:
+		"header header"
+		"sidebar content";
+	height: 100vh;
+	overflow: hidden;
+}
+
+.header {
+	grid-area: header;
+}
+
+.leftSide {
+	grid-area: sidebar;
+	border-inline-end: 1px solid var(--sapList_BorderColor);
+}
+
+.content {
+	grid-area: content;
+	overflow: auto;
+	min-width: 0;
+	padding: 24px;
+}

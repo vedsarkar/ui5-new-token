@@ -7,10 +7,14 @@ import { fileURLToPath } from "node:url";
 // message — instead of surfacing a cryptic runtime crash on the first request.
 //
 // The environment holds the secrets AND the build-time `BASE_PATH`. Runtime,
-// non-secret settings live in config/*.json (resolved at startup by APP_ENV).
+// non-secret settings live in config/*.json (resolved at startup by APP_CONFIG).
 const REQUIRED_ENV = [
-	"CLIENT_ID",
-	"CLIENT_SECRET",
+	// OAuth client for the Reltio auth service.
+	"AUTH_CLIENT_ID",
+	"AUTH_CLIENT_SECRET",
+	// Separate OAuth client for the Reltio API services.
+	"API_CLIENT_ID",
+	"API_CLIENT_SECRET",
 	// The sub-path this app is served under (e.g. /my-app). Everything —
 	// routing, links, assets, the auth flow — is prefixed with it, so the app can
 	// be mounted behind a platform's path rewrite. Required: no sensible default.

@@ -1,12 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type { PublicConfig } from "@/app/api/config/route";
+import type { TenantEntry } from "@reltio/design/components";
+import { useEffect, useMemo, useState } from "react";
 import { authFetch } from "@/lib/authFetch";
 import { useConfig } from "@/lib/useConfig";
 
-// A configured Reltio environment, as delivered to the browser by `/api/config`.
-type Environment = PublicConfig["environments"][number];
+// Config-service namespace holding the shared Console/admin configuration —
+// the source of the environment list (see `adminToolsConfig`).
+const CONFIG_NAMESPACE = "adminToolsConfig";
+
+// A configured Reltio environment, as stored in `adminToolsConfig.environments`.
+// Only the fields this hook and its consumers use are typed; the payload carries
+// many more optional per-environment fields (rdmPath, mlApi, …) we don't need.
+export type Environment = {
+	label: string;
+	name: string;
+	apiPath: string;
+};
+
+// The slice of `adminToolsConfig` we read. We project only `environments` from
+// the (large) config so the rest of the document is never fetched.
+type AdminToolsConfig = {
+	environments: Environment[];
+};
 
 // One tenant as returned by `{apiPath}/enhancedTenants`. The endpoint responds
 // with an array of these; it carries no environment field — the environment is
@@ -17,10 +33,11 @@ export type EnhancedTenant = {
 	customerName: string;
 };
 
-// Per-environment slice of the result. Each starts as `isLoading` and settles
-// independently into either `tenants` (the `enhancedTenants` payload) or an
-// `error` message.
-export type TenantsResult = {
+// Per-environment slice of the in-flight fetch. Each starts as `isLoading` and
+// settles independently into either `tenants` (the `enhancedTenants` payload) or
+// an `error` message. Internal to this hook — consumers get the aggregated
+// `data` list, not these per-environment slices.
+type TenantsResult = {
 	environment: Environment;
 	isLoading: boolean;
 	tenants?: EnhancedTenant[];
@@ -30,25 +47,44 @@ export type TenantsResult = {
 const toMessage = (error: unknown): string =>
 	error instanceof Error ? error.message : String(error);
 
+// A `TenantEntry` (what `TenantSelector` renders) enriched with the environment's
+// machine `name`. The selector shows `environment` (the human `label`), while
+// callers that build URLs or query params need the `name` — e.g. the console
+// deep-links and the `env` query param expect the identifier, not the label.
+export type TenantOption = TenantEntry & {
+	/** Machine identifier of the environment (e.g. `"EUS102-DEVELOP"`). */
+	environmentName: string;
+};
+
 /**
  * Fetches the tenants available to the signed-in user across **every**
- * configured environment via `{apiPath}/enhancedTenants`.
+ * configured environment via `{apiPath}/enhancedTenants` and returns them as a
+ * single flat `TenantOption[]` ready to feed straight into `TenantSelector`.
  *
  * All environments are queried **in parallel** (one BFF proxy call each), and
  * results stream in **as each response arrives** — a slow environment never
- * blocks a fast one. Each entry in `results` flips from `isLoading` to either
- * `tenants` or `error` on its own; `isLoading` (top level) stays `true` until
- * every environment has settled.
+ * blocks a fast one. As each response settles it is folded into the aggregated
+ * `data` list; `isLoading` stays `true` until every environment has settled.
  *
- * The environment list itself comes from `useConfig()`, so the requests only
- * start once the public config has loaded.
+ * The `enhancedTenants` payload has no environment field, so each tenant is
+ * stamped with its source environment's `label` (the picker's "Environment"
+ * column) and its machine `name` (`environmentName`, for URLs/query params).
+ * Tenant ids are globally unique in Reltio, but we still de-dupe defensively so
+ * the selector never sees a duplicate row key.
+ *
+ * The environment list itself comes from the shared `adminToolsConfig` in the
+ * config service (only its `environments` field is projected), so the requests
+ * only start once that config has loaded.
  */
 export function useTenants(): {
-	results: TenantsResult[];
+	data: TenantOption[];
 	isLoading: boolean;
 } {
-	const { data: config } = useConfig();
-	const environments = config?.environments;
+	const { data: config } = useConfig<AdminToolsConfig>({
+		namespace: CONFIG_NAMESPACE,
+		projection: { environments: 1 },
+	});
+	const environments = config?.data.environments;
 	const [results, setResults] = useState<TenantsResult[]>([]);
 
 	useEffect(() => {
@@ -100,5 +136,23 @@ export function useTenants(): {
 		((environments?.length ?? 0) > 0 && results.length === 0) ||
 		results.some((result) => result.isLoading);
 
-	return { results, isLoading };
+	const data = useMemo<TenantOption[]>(() => {
+		const byId = new Map<string, TenantOption>();
+		for (const result of results) {
+			for (const tenant of result.tenants ?? []) {
+				if (!byId.has(tenant.tenantId)) {
+					byId.set(tenant.tenantId, {
+						customerName: tenant.customerName,
+						tenantName: tenant.tenantName,
+						tenantId: tenant.tenantId,
+						environment: result.environment.label,
+						environmentName: result.environment.name,
+					});
+				}
+			}
+		}
+		return [...byId.values()];
+	}, [results]);
+
+	return { data, isLoading };
 }

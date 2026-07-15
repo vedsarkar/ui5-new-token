@@ -1,5 +1,20 @@
 # @reltio/app
 
+## 0.3.0
+
+### Minor Changes
+
+- Add a config-service proxy and split auth/API credentials in the scaffolded template.
+
+  - Add `GET /api/config/service/<path>` — a same-origin, read-only BFF proxy to the Reltio configuration service. It authenticates as the app's **API client** (`client_credentials` service token) rather than the signed-in user's token, is gated behind a valid session, and streams the upstream response without buffering.
+  - Add `getServiceToken()` to `lib/auth`, which mints an API-client access token via the OAuth `client_credentials` grant.
+  - Split the OAuth secrets into two clients: `AUTH_CLIENT_ID` / `AUTH_CLIENT_SECRET` (interactive login) and `API_CLIENT_ID` / `API_CLIENT_SECRET` (service-to-service calls). Renames the previous `CLIENT_ID` / `CLIENT_SECRET`.
+  - Rename the start-time config selector `APP_ENV` to `APP_CONFIG` (env var and `config/index.ts`).
+  - Rework `AppShell` around a CSS Grid layout (`AppShell.module.css`) with `TenantSelector` and `AppNavigation`, and reshape the `useConfig` / `useTenants` hooks accordingly.
+  - Remove the standalone `Tenants`, `Config`, and `Environments` pages in favor of the tenant/app navigation in `AppShell`.
+
+  **Note:** existing scaffolds must rename `APP_ENV` → `APP_CONFIG` and `CLIENT_ID` / `CLIENT_SECRET` → `AUTH_CLIENT_ID` / `AUTH_CLIENT_SECRET`, and add `API_CLIENT_ID` / `API_CLIENT_SECRET` to use the config-service proxy. Freshly created apps (`npx @reltio/app create`) need no changes.
+
 ## 0.2.0
 
 ### Minor Changes

@@ -19,13 +19,17 @@ A Reltio application starter built with
    cp .env.local.example .env.local
    ```
 
-   Fill in the secrets `CLIENT_ID` and `CLIENT_SECRET`, set `BASE_PATH` (the
-   sub-path this app is served under, e.g. `/my-app`), and pick `APP_ENV`
+   Fill in the auth-service secrets `AUTH_CLIENT_ID` and `AUTH_CLIENT_SECRET`
+   (the OAuth client for the interactive login flow) and the API-service
+   secrets `API_CLIENT_ID` and `API_CLIENT_SECRET` (a separate `client_credentials`
+   client the app uses to call internal Reltio services on its own behalf — see
+   [Config-service proxy](#config-service-proxy)). Set `BASE_PATH` (the
+   sub-path this app is served under, e.g. `/my-app`), and pick `APP_CONFIG`
    (`dev` or `prod`). Keep `SECURE=false` for local http development. The app
    will not start until the required variables are set.
 
    Runtime, non-secret settings (`oauthPath`, `loginPath`, ...) live in
-   `config/*.json`, not in `.env`. `config/<APP_ENV>.json` is deep-merged over
+   `config/*.json`, not in `.env`. `config/<APP_CONFIG>.json` is deep-merged over
    `config/default.json` at startup — see [Configuration](#configuration).
 
 3. Run the dev server:
@@ -43,14 +47,14 @@ A Reltio application starter built with
 Runtime, non-secret settings live in `config/*.json`, resolved at startup:
 
 - `config/default.json` — settings shared by every environment.
-- `config/<APP_ENV>.json` (`dev.json` / `prod.json`) — per-environment
+- `config/<APP_CONFIG>.json` (`dev.json` / `prod.json`) — per-environment
   overrides, **deep-merged** over the defaults (objects extend, arrays and
   primitives replace).
-- `config/index.ts` — reads `APP_ENV`, performs the merge, and exports the
+- `config/index.ts` — reads `APP_CONFIG`, performs the merge, and exports the
   resolved config as `import config from "@/config"`.
 
-`APP_ENV` is a **start-time** variable: build artifacts are identical across
-environments and carry no `APP_ENV`; the value is injected when the artifact
+`APP_CONFIG` is a **start-time** variable: build artifacts are identical across
+environments and carry no `APP_CONFIG`; the value is injected when the artifact
 boots, so one build can be deployed to any environment.
 
 Only settings the browser needs are exposed — the `GET /api/config` route
@@ -88,6 +92,30 @@ the server with a clear message.
 - `app/AppShell.tsx` — the `@reltio/design` `ShellBar` + `UserMenu` chrome
   mounted by the layout; the user menu's Sign Out delegates to `/auth/logout`.
 - `app/page.tsx` — protected page showing the signed-in user and tenants.
+- `lib/auth.ts` — also exports `getServiceToken()`, which mints an API-client
+  access token via the OAuth `client_credentials` grant (defaults to
+  `config.oauthPath` + `API_CLIENT_ID`/`API_CLIENT_SECRET`).
+- `app/api/config/service/[...path]/route.ts` — the config-service proxy (below).
+
+## Config-service proxy
+
+`GET /api/config/service/<path>` is a same-origin BFF proxy to the internal
+Reltio **configuration service**, where shared configurations live. It forwards
+to `${configServicePath}/<path>` (configured per environment in `config/*.json`),
+so `/api/config/service/adminToolsConfig?tenant=default&environment=default`
+reaches the config service's `/service/adminToolsConfig?...`.
+
+Unlike `/auth/proxy` — which forwards the **user's** session token to allow-listed
+Reltio APIs — this route authenticates as the app's **API client**: it attaches a
+`client_credentials` service token minted from `API_CLIENT_ID` /
+`API_CLIENT_SECRET` (`getServiceToken` in `lib/auth`), never the signed-in user's token. The
+route is gated behind a valid Reltio session, so only authenticated app users can
+reach it; a valid session is enough (no specific role). Tighten `checkToken`
+options if you need to gate further.
+
+It is **read-only** and **memory-safe**: the upstream response is streamed
+straight back (never buffered) and `cache: "no-store"` keeps Next from buffering
+it into the Data Cache, so a very large configuration does not blow up memory.
 
 ## Next steps
 

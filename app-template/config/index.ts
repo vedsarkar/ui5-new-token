@@ -5,7 +5,7 @@ import { deepMerge } from "./deepMerge";
 
 // One config file per deployment environment. Both files are statically
 // imported so the bundler includes them; the active one is chosen at runtime by
-// APP_ENV. This keeps "build once, deploy anywhere" — the same artifact can run
+// APP_CONFIG. This keeps "build once, deploy anywhere" — the same artifact can run
 // on dev or prod, the environment is decided by an env var at boot, not at
 // build time. Add another environment by dropping a file here and registering
 // it in this map.
@@ -23,24 +23,24 @@ export type AppEnv = keyof typeof configsByEnv;
 export type AppConfig = typeof defaultConfig & typeof devConfig;
 
 function resolveAppEnv(): AppEnv {
-	const value = process.env.APP_ENV ?? "dev";
+	const value = process.env.APP_CONFIG ?? "dev";
 	if (!(value in configsByEnv)) {
 		throw new Error(
-			`✗ APP_ENV must be one of: ${Object.keys(configsByEnv).join(", ")}. Got: "${value}".`,
+			`✗ APP_CONFIG must be one of: ${Object.keys(configsByEnv).join(", ")}. Got: "${value}".`,
 		);
 	}
 	return value as AppEnv;
 }
 
 // Fully-resolved config for this deployment. Server-side only — reading
-// APP_ENV happens here, so import this module from server code (route
+// APP_CONFIG happens here, so import this module from server code (route
 // handlers, server components), never straight into a client bundle.
 //
-// APP_ENV is a START-TIME variable: build artifacts are identical across
-// environments and carry no APP_ENV; the value is injected when the artifact
+// APP_CONFIG is a START-TIME variable: build artifacts are identical across
+// environments and carry no APP_CONFIG; the value is injected when the artifact
 // boots. So this selection must run at runtime, never at build. Consume it from
 // a dynamic server context (the config route below is `force-dynamic`) so Next
-// never evaluates it during build/prerender, where APP_ENV would be absent.
+// never evaluates it during build/prerender, where APP_CONFIG would be absent.
 //
 // `default.json` holds settings common to every environment; the active env
 // file is deep-merged on top of it (objects extend, arrays/primitives replace).

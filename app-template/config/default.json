@@ -1,1 +1,3 @@
-{}
+{
+  "allowedProxyTargets": ["https://**.reltio.com/reltio/"]
+}
