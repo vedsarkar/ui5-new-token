@@ -56,12 +56,12 @@ api/*/*.story.mdx
 apps/*/src/
 
 # app-template — local-run lockfile (its own .gitignore covers the rest)
-app-template/package-lock.json
+packages/app/app-template/package-lock.json
 
 # ...but the example env file is a real template artifact and must be tracked
 # (the broad `.env*` rule above would otherwise ignore it). `@reltio/app create`
 # copies it into generated apps; the build renames it to `_env.local.example`.
-!app-template/.env.local.example
+!packages/app/app-template/.env.local.example
 
 # @reltio/app — the CLI's dist/ (built by scripts/build.mjs, published from
 # dist/) is already covered by the global `dist/` rule above, along with the

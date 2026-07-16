@@ -5,12 +5,18 @@ import {
 	AppNavigation,
 	AppSelector,
 	BusyIndicator,
+	Button,
+	IllustratedMessage,
 	ShellBar,
 	SideNavigation,
 	SideNavigationItem,
 	TenantSelector,
 	UserMenu,
 } from "@reltio/design/components";
+// Fiori ships every illustration as a separate lazy module — the `name` prop
+// alone is not enough, so the referenced illustration must be side-effect
+// imported in the file that mounts the IllustratedMessage.
+import "@ui5/webcomponents-fiori/dist/illustrations/NoData.js";
 import type {
 	AppEntry,
 	AppNavigationGroup,
@@ -21,23 +27,25 @@ import homeIcon from "@reltio/design/icons/sap/home";
 import orgChartIcon from "@reltio/design/icons/sap/org-chart";
 import settingsIcon from "@reltio/design/icons/sap/settings";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { type CSSProperties, type ReactNode, useMemo } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { useConfig } from "@/lib/useConfig";
 import { useFetch } from "@/lib/useFetch";
+import { useHref } from "@/lib/useHref";
+import { useLinks } from "@/lib/useLinks";
 import { useTenants } from "@/lib/useTenants";
 import styles from "./AppShell.module.css";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
-// Placeholder in-app navigation. These routes don't exist yet, so the links
-// resolve to the app's 404 page — they're here purely to demonstrate the
-// persistent `SideNavigation`. `path` is compared against the (base-path-less)
-// pathname to drive the selected state; `href` carries the base path.
+// In-app navigation. Each route renders a placeholder page (see
+// `app/entities` and `app/relationships`) so the persistent `SideNavigation`
+// can demonstrate client-side page transitions. `path` is compared against the
+// (base-path-less) pathname to drive the selected state; `href` carries the
+// base path.
 const NAV_ITEMS: { text: string; icon: string; path: string }[] = [
-	{ text: "Overview", icon: homeIcon, path: "/overview" },
+	{ text: "Welcome", icon: homeIcon, path: "/" },
 	{ text: "Entities", icon: businessObjectsExperienceIcon, path: "/entities" },
 	{ text: "Relationships", icon: orgChartIcon, path: "/relationships" },
-	{ text: "Settings", icon: settingsIcon, path: "/settings" },
 ];
 
 const fullScreen: CSSProperties = {
@@ -65,6 +73,16 @@ const signOut = (): void => {
  * with a preloader; a `401` is handled inside `useFetch` (refresh, then login).
  */
 export function AppShell({ children }: { children: ReactNode }) {
+	// Turn every in-app `<a href>` (including the ones UI5 renders in Shadow DOM,
+	// e.g. `SideNavigation`) into a client-side Next navigation instead of a
+	// full-page reload. See `lib/useLinks`.
+	useLinks();
+
+	// Builds hrefs carrying the current `env`/`tenant`/`customer` context, so the
+	// links stay correct even when opened in a new tab (which bypasses the click
+	// interceptor above). See `lib/useHref`.
+	const href = useHref();
+
 	const { data: session, error } = useFetch<CheckTokenResponse>(
 		"/auth/checkToken",
 		{ method: "POST" },
@@ -106,36 +124,14 @@ export function AppShell({ children }: { children: ReactNode }) {
 	// service return that tenant's catalog (with `default=true` falling back to
 	// the shared config), so the menu composition follows the active tenant.
 	//
-	// The returned URLs still carry `${environment}`/`${tenant}` placeholders, so
-	// rather than let `AppNavigation` interpolate them, we force the current
-	// selection onto every app link's query string (`env`, `tenant`, `customer`)
-	// up front — so each link opens the app on the selected tenant.
+	// The returned URLs carry `${environment}`/`${tenant}` placeholders; we hand
+	// the catalog straight to `AppNavigation` and let it interpolate them from
+	// the `env`/`tenant` props below.
 	const { data: appsConfig } = useConfig<AppNavigationGroup[]>({
 		namespace: "consoleApps",
 		tenant: selectedTenantId,
 		environment: selectedEnv,
 	});
-	const apps = useMemo<AppNavigationGroup[]>(() => {
-		const withSelection = (url?: string): string | undefined => {
-			if (!url) return url;
-			try {
-				const parsed = new URL(url);
-				parsed.searchParams.set("env", selectedEnv ?? "");
-				parsed.searchParams.set("tenant", selectedTenantId ?? "");
-				parsed.searchParams.set("customer", selectedCustomer ?? "");
-				return parsed.toString();
-			} catch {
-				return url;
-			}
-		};
-		return (appsConfig?.data ?? []).map((group) => ({
-			...group,
-			items: group.items?.map((app) => ({
-				...app,
-				url: withSelection(app.url),
-			})),
-		}));
-	}, [appsConfig, selectedEnv, selectedTenantId, selectedCustomer]);
 
 	// Cross-product switcher (Hub, Console, RDM, Inbox, …) lives in the shared
 	// `common` configuration. Its `uri`s embed `${environment}`/`${tenant}` in the
@@ -173,8 +169,10 @@ export function AppShell({ children }: { children: ReactNode }) {
 					primaryTitle="App Template"
 					sideNavigation={
 						<AppNavigation
-							homeUrl={`/?tenant=${selectedTenantId ?? ""}&env=${selectedEnv ?? ""}`}
-							apps={apps}
+							homeUrl={href("/")}
+							apps={appsConfig?.data ?? []}
+							tenant={selectedTenantId ?? ""}
+							env={selectedEnv ?? ""}
 						/>
 					}
 					tenantSelector={
@@ -208,13 +206,31 @@ export function AppShell({ children }: { children: ReactNode }) {
 							key={item.path}
 							text={item.text}
 							icon={item.icon}
-							href={`${BASE_PATH}${item.path}`}
+							href={href(item.path)}
 							selected={pathname === item.path}
 						/>
 					))}
 				</SideNavigation>
 			</div>
-			<main className={styles.content}>{children}</main>
+			<main className={styles.content}>
+				{selectedTenantId ? (
+					children
+				) : (
+					<IllustratedMessage
+						name="NoData"
+						titleText="Select a tenant"
+						subtitleText="Choose a tenant from the selector above to start working."
+					>
+						<TenantSelector
+							tenants={tenants}
+							selectedTenantId={selectedTenantId}
+							onSelect={handleSelectTenant}
+							loading={tenantsLoading}
+							trigger={<Button design="Emphasized">Select tenant</Button>}
+						/>
+					</IllustratedMessage>
+				)}
+			</main>
 		</div>
 	);
 }

@@ -9,10 +9,10 @@
  *   update          Update the platform-managed files of an existing app in
  *                   place (planned — see bin/update.mjs).
  *
- * The template it scaffolds from (`app-template/`) is bundled next to this file
- * in the published package, so `create` is offline and self-contained; in the
- * source monorepo the CLI falls back to the runnable `app-template/` at the
- * repo root (the same one `npm run app-template` serves).
+ * The template it scaffolds from (`app-template/`) sits next to this file in
+ * both layouts — `packages/app/app-template` in the source monorepo (the one
+ * `npm run app-template` serves) and `dist/app-template` in the published
+ * package — so `create` is offline and self-contained.
  */
 
 const HELP = `@reltio/app CLI

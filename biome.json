@@ -12,7 +12,7 @@
 			"!public/mockServiceWorker.js",
 			"!.claude",
 			"!public/fonts.css",
-			"!app-template",
+			"!packages/app/app-template",
 			"!packages/app/dist"
 		]
 	},

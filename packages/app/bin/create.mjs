@@ -18,15 +18,12 @@ import readline from "node:readline";
 import { fileURLToPath } from "node:url";
 
 const BIN_DIR = path.dirname(fileURLToPath(import.meta.url));
-// Published packages carry a bundled `app-template/` next to the CLI (staged at
-// build into `dist/app-template`). In the source monorepo that folder does not
-// exist beside the CLI, so fall back to the runnable `app-template/` at the
-// repo root — the same one `npm run app-template` serves.
-const BUNDLED_TEMPLATE = path.resolve(BIN_DIR, "..", "app-template");
-const SOURCE_TEMPLATE = path.resolve(BIN_DIR, "..", "..", "..", "app-template");
-const TEMPLATE_DIR = fs.existsSync(BUNDLED_TEMPLATE)
-	? BUNDLED_TEMPLATE
-	: SOURCE_TEMPLATE;
+// The template sits next to the CLI in both layouts — `packages/app/app-template`
+// in the source monorepo (the one `npm run app-template` serves) and
+// `dist/app-template` in the published package (staged there by scripts/build.mjs).
+// So a single relative resolution works everywhere; `create` is offline and
+// self-contained.
+const TEMPLATE_DIR = path.resolve(BIN_DIR, "..", "app-template");
 
 /** npm package-name grammar (scoped or unscoped). */
 const NAME_RE = /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/;

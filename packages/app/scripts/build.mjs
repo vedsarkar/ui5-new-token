@@ -12,9 +12,9 @@
  *                           publish-safe placeholders (restored by `create`)
  *   dist/package.json       staged manifest (dev-only fields stripped)
  *
- * The CLI resolves `app-template/` relative to its own location, so the same
- * code path works in-repo (falling back to the repo-root `app-template/`) and
- * from the published package (`dist/app-template`).
+ * Source and published layouts mirror each other: the template is a sibling of
+ * the CLI's `bin/` in both (`packages/app/app-template` in-repo, staged to
+ * `dist/app-template` on build), so the CLI resolves it the same way in each.
  */
 import {
 	cpSync,
@@ -28,9 +28,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const pkgDir = join(dirname(fileURLToPath(import.meta.url)), "..");
-const repoRoot = join(pkgDir, "..", "..");
 const distDir = join(pkgDir, "dist");
-const templateSrc = join(repoRoot, "app-template");
+const templateSrc = join(pkgDir, "app-template");
 
 /** Dev/run artifacts and secrets that must never enter the published template. */
 const SKIP = new Set([

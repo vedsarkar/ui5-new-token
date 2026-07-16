@@ -115,9 +115,21 @@ export function useTenants(): {
 			authFetch(`${environment.apiPath}/enhancedTenants`)
 				.then((response) => {
 					if (!response.ok) throw new Error(`HTTP ${response.status}`);
-					return response.json() as Promise<EnhancedTenant[]>;
+					return response.json() as Promise<unknown>;
 				})
-				.then((tenants) => settle(environment.name, { isLoading: false, tenants }))
+				.then((tenants) => {
+					// Some environments can answer `200` with a non-array payload (e.g.
+					// an error/permission object). Fold that into this environment's
+					// error slice instead of letting a non-iterable value crash the
+					// aggregation for every environment.
+					if (!Array.isArray(tenants)) {
+						throw new Error("Unexpected enhancedTenants response");
+					}
+					settle(environment.name, {
+						isLoading: false,
+						tenants: tenants as EnhancedTenant[],
+					});
+				})
 				.catch((error) =>
 					settle(environment.name, {
 						isLoading: false,

@@ -1,5 +1,22 @@
 # @reltio/app
 
+## 0.4.0
+
+### Minor Changes
+
+- Show the selected tenant's business configuration on the scaffolded Entities and Relationships pages, with in-memory caching for configuration reads.
+
+  - New `useTenantConfiguration` hook fetches the selected tenant's data-model configuration (`GET {apiPath}/api/{tenantId}/configuration`) and returns the full payload; pages pick the slice they render.
+  - The `Entities` and `Relationships` pages now render the tenant's `entityTypes` / `relationTypes` as a pretty-printed JSON block (via a shared `ConfigurationJson` view) instead of placeholders.
+  - `useConfig` and `useTenantConfiguration` memoize results per URL in a browser in-memory cache, so navigating between pages reuses the loaded configuration instead of refetching it. `useFetch` accepts `url = null` to skip a request entirely (used for cache hits and while a dependency isn't ready).
+  - `useTenants` now tolerates a non-array `enhancedTenants` response for a single environment (folding it into that environment's error slice) instead of crashing the whole tenant list.
+
+- Add client-side navigation and context-preserving links to the scaffolded app template.
+
+  - In-app links — including the ones UI5 renders in its Shadow DOM (`SideNavigation`, `ShellBar`, …) — now route through the Next.js router instead of triggering a full-page reload, via a single `useLinks` interceptor mounted in `AppShell`.
+  - The working context (`env`/`tenant`/`customer`) is carried across navigation automatically; a new `useHref` helper also bakes it into hrefs so it survives cases that bypass the interceptor (open in new tab, copy link). Opt out per link with `data-no-context`, or skip client-side routing entirely with `data-native-link`.
+  - Add example `Entities` and `Relationships` pages wired into the side navigation to demonstrate page transitions.
+
 ## 0.3.0
 
 ### Minor Changes

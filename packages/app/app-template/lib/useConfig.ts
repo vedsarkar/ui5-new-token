@@ -29,6 +29,11 @@ export type UseConfigOptions = {
 	projection?: Record<string, unknown>;
 };
 
+// In-memory cache of configuration reads, keyed by request URL. Configuration
+// changes very rarely, so once loaded a config is reused for the lifetime of the
+// tab — across pages and remounts — and only a full page reload refetches.
+const cache = new Map<string, unknown>();
+
 function buildServiceConfigUrl({
 	namespace,
 	tenant = "default",
@@ -46,9 +51,12 @@ function buildServiceConfigUrl({
 }
 
 /**
- * Client hook for configuration. Thin wrapper over `lib/useFetch`, so it
- * inherits base-path prefixing and the Reltio session lifecycle
- * (401 → refresh → retry → login).
+ * Client hook for configuration, backed by an in-memory cache.
+ *
+ * Reads go through `lib/useFetch` (de-duplication + the Reltio session
+ * lifecycle, `401 → refresh → retry → login`). Because configuration changes
+ * very rarely, the result is memoized per URL: a cache hit passes `null` to
+ * `useFetch` so no request is made, and the cached value is returned directly.
  *
  * - `useConfig()` — the app's own public config (`/api/config`). The server
  *   route decides which parts of the config are public; the browser only ever
@@ -68,5 +76,13 @@ export function useConfig<T = unknown>(
 	const url = options?.namespace
 		? buildServiceConfigUrl(options as UseConfigOptions & { namespace: string })
 		: "/api/config";
-	return useFetch<PublicConfig | RemoteConfig<T>>(url);
+
+	type Data = PublicConfig | RemoteConfig<T>;
+	const isCached = cache.has(url);
+	const result = useFetch<Data>(isCached ? null : url);
+	if (!isCached && result.data !== undefined) cache.set(url, result.data);
+
+	return isCached
+		? { data: cache.get(url) as Data, error: undefined, isLoading: false }
+		: result;
 }
