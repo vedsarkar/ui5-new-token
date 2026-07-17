@@ -1,0 +1,204 @@
+import { Meta, Canvas } from "@storybook/addon-docs/blocks";
+import * as WelcomeStories from "./page.stories";
+
+<Meta of={WelcomeStories} />
+
+# Welcome Page
+
+The Welcome page is the default landing page shown after sign-in. It is rendered
+inside the `AppShell` chrome — the persistent header with `ShellBar`,
+`TenantSelector`, and `UserMenu`, plus the `SideNavigation` sidebar.
+
+The page itself (`app/page.tsx`) is a simple React component with no data
+dependencies. All the complexity — session validation, tenant discovery,
+navigation — lives in `AppShell`, which gates the page behind a valid session
+and a selected tenant.
+
+## States
+
+The page has two primary states, driven by whether the user has selected a
+tenant in the URL (`?tenant=...&env=...`).
+
+### Tenant selected
+
+When a tenant is active, `AppShell` renders the page content inside its
+`{`<code>children</code>`}` slot. The sidebar highlights the current route, the header shows
+the selected tenant and the signed-in user.
+
+<Canvas of={WelcomeStories.Default} />
+
+### No tenant selected
+
+When no tenant is in the URL, `AppShell` replaces the page content with an
+`IllustratedMessage` prompting the user to pick a tenant. The `TenantSelector`
+button opens the tenant picker dialog.
+
+<Canvas of={WelcomeStories.NoTenantSelected} />
+
+## How it works
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>File</th>
+      <th>Responsibility</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Page component</td>
+      <td><code>app/page.tsx</code></td>
+      <td>Static welcome content — no data fetching, no auth</td>
+    </tr>
+    <tr>
+      <td>App shell</td>
+      <td><code>app/AppShell.tsx</code></td>
+      <td>Session gate, header, sidebar, tenant context</td>
+    </tr>
+    <tr>
+      <td>Session</td>
+      <td><code>lib/authFetch.ts</code></td>
+      <td>401 → refresh → retry → login redirect</td>
+    </tr>
+    <tr>
+      <td>Tenants</td>
+      <td><code>lib/useTenants.ts</code></td>
+      <td>Parallel discovery across all environments</td>
+    </tr>
+    <tr>
+      <td>Config</td>
+      <td><code>lib/useConfig.ts</code></td>
+      <td>Config service reads with in-memory cache</td>
+    </tr>
+  </tbody>
+</table>
+
+## Writing page stories
+
+Every story in this Storybook is automatically wrapped in `AppShell` with
+mocked API responses (auth session, tenant list, config service). The defaults
+are set globally in `.storybook/preview.tsx`.
+
+A minimal page story is just the component and a title:
+
+```tsx
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import MyPage from "./page";
+
+const meta = {
+  title: "Pages/MyPage",
+  component: MyPage,
+} satisfies Meta<typeof MyPage>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
+```
+
+### Overriding API mocks
+
+Import specific mock variants and pass them to `handlers()`:
+
+```tsx
+import { handlers, checkTokenUnauthorized, tenantsEmpty } from "../.storybook/mocks";
+
+export const Unauthorized: Story = {
+  parameters: {
+    msw: { handlers: handlers({ checkToken: checkTokenUnauthorized }) },
+  },
+};
+
+export const NoTenants: Story = {
+  parameters: {
+    msw: { handlers: handlers({ tenants: tenantsEmpty }) },
+  },
+};
+```
+
+### Overriding navigation context
+
+Control which route and tenant the AppShell displays:
+
+```tsx
+export const EntitiesPage: Story = {
+  parameters: {
+    appShell: { pathname: "/entities", tenant: "abc123", env: "dev" },
+  },
+};
+
+export const NoTenantSelected: Story = {
+  parameters: {
+    appShell: { tenant: "", env: "", customer: "" },
+  },
+};
+```
+
+### Adding page-specific API mocks
+
+Use the second argument of `handlers()` to add extra handlers alongside the
+defaults:
+
+```tsx
+import { HttpResponse, http } from "msw";
+import { handlers } from "../.storybook/mocks";
+
+export const WithData: Story = {
+  parameters: {
+    msw: {
+      handlers: handlers({}, [
+        http.get("*/api/my-data", () =>
+          HttpResponse.json({ items: [...] }),
+        ),
+      ]),
+    },
+  },
+};
+```
+
+### Rendering without AppShell
+
+For isolated component testing, override the global decorator:
+
+```tsx
+export const Isolated: Story = {
+  decorators: [],
+  parameters: { layout: "padded" },
+};
+```
+
+## Mock structure
+
+All API mocks live in `.storybook/mocks/`, grouped by service:
+
+<table>
+  <thead>
+    <tr>
+      <th>File</th>
+      <th>Endpoint</th>
+      <th>Variants</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>auth.ts</code></td>
+      <td><code>POST /auth/checkToken</code></td>
+      <td><code>checkTokenSuccess</code>, <code>checkTokenUnauthorized</code>, <code>checkTokenNetworkError</code></td>
+    </tr>
+    <tr>
+      <td><code>config.ts</code></td>
+      <td><code>GET /api/config/service/*</code></td>
+      <td><code>adminToolsConfigSuccess</code> / <code>Empty</code> / <code>Error</code>, <code>consoleAppsSuccess</code> / <code>Error</code>, <code>commonSuccess</code> / <code>Error</code></td>
+    </tr>
+    <tr>
+      <td><code>tenants.ts</code></td>
+      <td><code>GET /proxy?reltio-target-url=*/enhancedTenants</code></td>
+      <td><code>tenantsSuccess</code>, <code>tenantsEmpty</code>, <code>tenantsError</code></td>
+    </tr>
+  </tbody>
+</table>
+
+Each mock file uses `@faker-js/faker` with a fixed seed for deterministic
+Chromatic snapshots. Mock data (e.g. `mockUser`, `mockTenants`,
+`mockEnvironments`) is exported alongside the handlers for use in assertions.

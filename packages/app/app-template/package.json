@@ -5,7 +5,12 @@
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
-		"start": "next start"
+		"start": "next start",
+		"storybook": "storybook dev -p 6007",
+		"build-storybook": "storybook build",
+		"test": "vitest run",
+		"coverage": "vitest run --coverage",
+		"chromatic": "chromatic --exit-zero-on-changes --exit-once-uploaded"
 	},
 	"dependencies": {
 		"@reltio/auth": "^1.6.0",
@@ -15,9 +20,28 @@
 		"react-dom": "^18.3.1"
 	},
 	"devDependencies": {
+		"@faker-js/faker": "^10.3.0",
+		"@chromatic-com/storybook": "^5.2.1",
+		"@storybook/addon-a11y": "^10.4.6",
+		"@storybook/addon-docs": "^10.4.6",
+		"@storybook/addon-vitest": "^10.4.6",
+		"@storybook/react-vite": "^10.4.6",
 		"@types/node": "^22.0.0",
 		"@types/react": "^18.3.1",
 		"@types/react-dom": "^18.3.1",
-		"typescript": "^5.7.2"
+		"@vitest/browser-playwright": "^4.0.14",
+		"@vitest/coverage-v8": "^4.0.14",
+		"chromatic": "^13.3.4",
+		"msw": "^2.12.14",
+		"msw-storybook-addon": "^2.0.6",
+		"playwright": "^1.57.0",
+		"storybook": "^10.4.6",
+		"typescript": "^5.7.2",
+		"vitest": "^4.0.14"
+	},
+	"msw": {
+		"workerDirectory": [
+			"public"
+		]
 	}
 }

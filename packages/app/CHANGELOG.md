@@ -1,5 +1,36 @@
 # @reltio/app
 
+## 0.5.0
+
+### Minor Changes
+
+- Add Storybook to app-template for local development, testing, and documentation.
+
+  **Storybook setup** (`@storybook/react-vite` + Vite):
+
+  - Visual testing via Chromatic (private)
+  - Accessibility testing via `@storybook/addon-a11y` (todo mode)
+  - Interaction testing via `@storybook/addon-vitest` + Playwright (headless Chromium)
+  - Code coverage via `@vitest/coverage-v8`
+  - API mocking via MSW + `msw-storybook-addon`
+  - Next.js module mocks (`next/navigation`, `next/link`, `next/image`, `next/headers`)
+
+  **AppShell decorator**: every story is wrapped in the full app chrome (header, sidebar, navigation) by default. Configurable per-story via `parameters.appShell` (pathname, tenant, env). Uses React Context for isolated navigation state — multiple stories on the Docs page render correctly.
+
+  **Structured API mocks** (`.storybook/mocks/`):
+
+  - `auth.ts` — `checkTokenSuccess`, `checkTokenUnauthorized`, `checkTokenNetworkError`
+  - `config.ts` — `adminToolsConfigSuccess`/`Empty`/`Error`, `consoleAppsSuccess`/`Error`, `commonSuccess`/`Error`
+  - `tenants.ts` — `tenantsSuccess`, `tenantsEmpty`, `tenantsError`
+  - `index.ts` — `handlers()` composer with per-endpoint overrides
+  - All mock data generated with `@faker-js/faker` (seeded for deterministic snapshots)
+
+  **MDX documentation** (`page.story.mdx`): example docs page with embedded Canvas blocks showing different page states, and a guide for writing page stories.
+
+  **authFetch**: target URL added as a query parameter on proxy requests (`/proxy?reltio-target-url=...`) alongside the header — visible in DevTools and matchable by MSW without header inspection.
+
+  **Scripts**: `storybook`, `build-storybook`, `test`, `coverage`, `chromatic`.
+
 ## 0.4.0
 
 ### Minor Changes

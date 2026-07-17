@@ -1,0 +1,21 @@
+<!--
+  App Storybook preview head.
+
+  SAP Reltio design tokens and fonts are loaded from the reltio.design CDN,
+  same as the app's root layout. data-theme is required for the Reltio token
+  overrides to take effect.
+-->
+<link rel="stylesheet" href="https://reltio.design/variables.css" />
+<link rel="stylesheet" href="https://reltio.design/fonts.css" />
+<script>
+  document.documentElement.setAttribute("data-theme", "sap-reltio-light");
+</script>
+
+<style>
+  body {
+    font-family: "72", "72full", -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--sapTextColor);
+    background: var(--sapBackgroundColor);
+  }
+</style>

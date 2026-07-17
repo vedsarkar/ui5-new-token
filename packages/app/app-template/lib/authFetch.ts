@@ -70,7 +70,13 @@ export async function authFetch(
 	init?: RequestInit,
 ): Promise<Response> {
 	const absolute = isAbsoluteUrl(url);
-	const input = withBasePath(absolute ? PROXY_PATH : url);
+	// Absolute URLs go through the BFF proxy. The target is sent in the
+	// `reltio-target-url` header (the proxy reads it from there) AND as a
+	// query parameter (ignored by the proxy, but visible in DevTools and
+	// matchable by MSW mocks without header inspection).
+	const input = absolute
+		? withBasePath(`${PROXY_PATH}?reltio-target-url=${url}`)
+		: withBasePath(url);
 	const requestInit = absolute
 		? {
 				...init,
