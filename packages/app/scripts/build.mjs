@@ -43,6 +43,15 @@ const SKIP = new Set([
 	".git",
 ]);
 
+/** Generated (git-ignored) artifacts identified by suffix. Vite/Storybook emit
+ * `*.module.css.ts` / `*.module.css.json` next to CSS Modules when the template
+ * is run locally; they must never ship, or they collide with the real
+ * `*.module.css` in the scaffolded app and break its build. */
+const SKIP_SUFFIX = [".module.css.ts", ".module.css.json"];
+
+const shouldSkip = (name) =>
+	SKIP.has(name) || SKIP_SUFFIX.some((suffix) => name.endsWith(suffix));
+
 /** Real dotfile → publish-safe placeholder. npm strips a real `.gitignore` from
  * a tarball and treats `.env.local.example` specially, so we stage them
  * underscore-prefixed; the CLI's `scaffold()` renames them back. */
@@ -54,7 +63,7 @@ const RENAME = {
 const copyTemplate = (src, dest) => {
 	mkdirSync(dest, { recursive: true });
 	for (const entry of readdirSync(src, { withFileTypes: true })) {
-		if (SKIP.has(entry.name)) continue;
+		if (shouldSkip(entry.name)) continue;
 		const from = join(src, entry.name);
 		const to = join(dest, RENAME[entry.name] ?? entry.name);
 		if (entry.isDirectory()) copyTemplate(from, to);

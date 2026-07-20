@@ -1,5 +1,13 @@
 # @reltio/app
 
+## 0.5.1
+
+### Patch Changes
+
+- Exclude generated CSS Module artifacts (`*.module.css.ts`, `*.module.css.json`) from the scaffolded app template.
+
+  These Vite/Storybook-generated files could leak into the published package and collide with the real `*.module.css` files in a newly created app, breaking its build. The CLI build now skips them when staging the template.
+
 ## 0.5.0
 
 ### Minor Changes
