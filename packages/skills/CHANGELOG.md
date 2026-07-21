@@ -1,5 +1,11 @@
 # @reltio/skills
 
+## 1.2.2
+
+### Patch Changes
+
+- d2b0bca: Update the `adopt-reltio-design` skill to prefer the PascalCase icon component (`<Save />`) for standalone icons, while keeping name imports for a component's `icon` prop (`<Button icon={saveIcon} />`).
+
 ## 1.2.1
 
 ### Patch Changes

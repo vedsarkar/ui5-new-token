@@ -1,6 +1,6 @@
 {
 	"name": "@reltio/skills",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"description": "Reltio agent skills — installable AI-agent skills (Cursor, Claude, Codex) for adopting the Reltio Design Platform.",
 	"license": "Apache-2.0",
 	"homepage": "https://reltio.design",
