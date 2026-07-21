@@ -6,8 +6,10 @@
 
 .trigger {
 	max-width: 320px;
-	--sapButton_Lite_TextColor: var(--sapShell_TextColor);
+	--sapButton_Lite_TextColor: var(--sapShell_InteractiveTextColor);
 	--sapButton_Lite_Hover_Background: var(--sapShell_Hover_Background);
+	--sapButton_Lite_Hover_TextColor: var(--sapShell_TextColor);
+	--sapButton_Active_TextColor: var(--sapShell_Active_TextColor);
 }
 
 .dialog {

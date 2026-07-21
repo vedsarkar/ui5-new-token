@@ -1,6 +1,6 @@
 # ShellBar
 
-`ShellBar` is the Reltio top navigation chrome, built on top of `@ui5/webcomponents-react/ShellBar`. Every Reltio application mounts a `ShellBar` at the top of its layout — it carries the Reltio brand mark, the app title, search, user profile, and any sub-app-specific actions. Every UI5 ShellBar prop passes through unchanged.
+`ShellBar` is the Reltio top navigation chrome, built on top of `@ui5/webcomponents-react/ShellBar`. Every Reltio application mounts a `ShellBar` at the top of its layout — it carries the Reltio brand mark, the app title, tenant and application selectors, notifications, the user menu, and any application-specific actions. The wrapper exposes a curated subset of UI5 ShellBar props together with Reltio-specific composition props.
 
 ### Branding
 
@@ -10,11 +10,14 @@ When `logo` is omitted, the wrapper renders the default Reltio mark, which adapt
 
 ### Reltio slots
 
-Beyond the UI5 pass-through props, the wrapper adds three convenience slots:
+Beyond the curated UI5 pass-through props, the wrapper adds four convenience composition props:
 
 - `sideNavigation` — hosts a UI5 `<SideNavigation>` (see "Side navigation slot" below).
 - `tenantSelector` — hosts a `<TenantSelector>` in the left content area, composed with (not replacing) any `content` prop.
-- `userMenu` — hosts a `<UserMenu>` whose avatar is routed into the user (`profile`) area. This is the only way to populate the user area; the UI5 `profile` and `onProfileClick` props are intentionally not exposed.
+- `userMenu` — hosts a `<UserMenu>` in the ShellBar's right actions sequence.
+- `appSelector` — hosts an `<AppSelector>` after `userMenu` in the right actions sequence.
+
+`children`, the notifications button, `userMenu`, and `appSelector` are rendered as direct ShellBar children in that order. UI5 assigns each direct child an individual default slot (`default-1`, `default-2`, and so on), preserving the sequence without requiring consumers to set slot names manually.
 
 ### Title and subtitle
 
@@ -44,8 +47,8 @@ Beyond the UI5 pass-through props, the wrapper adds three convenience slots:
 `tenantSelector` accepts a `<TenantSelector>` element and renders it into the UI5
 ShellBar `content` slot, so the picker sits in the content area just after the
 branding/title (left cluster), not in the right actions cluster. It takes
-precedence over a directly-supplied `content` prop. Omit it to render nothing
-extra.
+the first position when a directly supplied `content` prop is also present.
+Omit it to render only `content`.
 
 ```tsx
 <ShellBar
@@ -62,7 +65,7 @@ extra.
 
 ### User menu slot
 
-`userMenu` accepts a [`UserMenu`](/?path=/docs/components-usermenu--docs) element. Its inner avatar carries `slot="profile"`, so UI5 mounts the avatar in the canonical user position while the menu popover and About modal render as overlays. This is the only way to populate the user area — the UI5 `profile` and `onProfileClick` props are intentionally not exposed.
+`userMenu` accepts a [`UserMenu`](/?path=/docs/components-usermenu--docs) element. Its avatar remains a direct ShellBar child and is assigned an individual default slot by UI5. The menu popover and About modal are portaled to `document.body`, so they do not consume additional ShellBar layout slots. The wrapper intentionally does not expose the UI5 `profile` or `onProfileClick` props.
 
 ```tsx
 <ShellBar
@@ -74,6 +77,17 @@ extra.
       onSignOut={handleSignOut}
     />
   }
+/>
+```
+
+### Application selector
+
+`appSelector` accepts an [`AppSelector`](/?path=/docs/components-appselector--docs) element and renders its trigger after `userMenu` in the ShellBar's right actions sequence. The popover is portaled to `document.body`, leaving only the trigger button as a direct ShellBar child.
+
+```tsx
+<ShellBar
+  primaryTitle="Console"
+  appSelector={<AppSelector apps={apps} positionArea="bottom" />}
 />
 ```
 

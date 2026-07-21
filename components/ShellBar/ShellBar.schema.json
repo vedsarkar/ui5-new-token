@@ -4,6 +4,10 @@
 	"x-component": "ShellBar",
 	"type": "object",
 	"properties": {
+		"appSelector": {
+			"description": "Application selector rendered in the UI5 ShellBar's right actions cluster.\nIntended to host an `<AppSelector>` element whose trigger button remains\ninline while its popover is portaled outside the ShellBar, preventing an\nextra layout slot. The element is appended after explicit `children`,\nnotifications, and `userMenu` in the ShellBar's light DOM. UI5 assigns the\ntrigger an individual default slot automatically.\n\nThe type is the generic `ReactElement`; the wrapper does not enforce the\nruntime element type.",
+			"x-typescriptType": "ReactElement<any, string | JSXElementConstructor<any>>"
+		},
 		"children": {
 			"description": "Defines the `ShellBar` additional items.\n\n**Note:**\nYou can use the `<ShellBarItem></ShellBarItem>`.\n\n__Supported Node Type/s:__ `Array<ShellBarItem>`",
 			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
@@ -54,7 +58,7 @@
 			"x-typescriptType": "ReactElement<any, string | JSXElementConstructor<any>>"
 		},
 		"userMenu": {
-			"description": "User menu rendered into the UI5 ShellBar `profile` slot. Intended to host a\n`<UserMenu>` element whose inner avatar carries `slot=\"profile\"`, so UI5's\nslot routing mounts the avatar in the canonical profile position while the\npopover and About modal render as overlays. The type is the generic\n`ReactElement` and the wrapper does not enforce the runtime element type.\n\nThis is the only way to populate the user area — the UI5 `profile` prop is\nintentionally not exposed.",
+			"description": "User menu rendered in the UI5 ShellBar's right actions sequence. Intended\nto host a `<UserMenu>` element whose avatar remains a direct ShellBar child\nwhile its popover and About modal are portaled to `document.body`. UI5\nassigns the avatar an individual default slot automatically. The element is\nappended after explicit `children` and notifications, and before\n`appSelector`.\n\nThe type is the generic `ReactElement`; the wrapper does not enforce the\nruntime element type. The UI5 `profile` prop is intentionally not exposed.",
 			"x-typescriptType": "ReactElement<any, string | JSXElementConstructor<any>>"
 		}
 	}

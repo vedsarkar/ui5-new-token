@@ -4,10 +4,9 @@ import { Popover } from "@ui5/webcomponents-react/Popover";
 import { ProductSwitch } from "@ui5/webcomponents-react/ProductSwitch";
 import { ProductSwitchItem } from "@ui5/webcomponents-react/ProductSwitchItem";
 import { useId, useState } from "react";
+import { createPortal } from "react-dom";
 import gridIcon from "@/icons/sap/grid";
 import internetBrowserIcon from "@/icons/sap/internet-browser";
-import { classNames } from "@/utils/classNames";
-import styles from "./AppSelector.module.css";
 import type { AppEntry, AppSelectorProps } from "./AppSelector.types";
 
 const DEFAULT_CATEGORY = "Applications";
@@ -33,14 +32,45 @@ export const AppSelector = ({
 	const placement = mapPositionAreaToPlacement(positionArea);
 	const accessibleName = label || "Applications";
 
-	return (
-		<nav
-			className={classNames(styles.root, className)}
-			aria-label="Applications"
-			{...rest}
+	// The popover is rendered through a portal so it never becomes a slotted
+	// light-DOM child of a host like ShellBar — only the trigger button stays
+	// inline. Otherwise the host would reserve a layout slot for the closed
+	// overlay, producing phantom gaps.
+	const popover = (
+		<Popover
+			opener={triggerId}
+			open={open}
+			placement={placement}
+			onClose={() => setOpen(false)}
 		>
+			<ProductSwitch>
+				{orderedApps.map((app) => (
+					<ProductSwitchItem
+						key={app.name}
+						titleText={app.name}
+						subtitleText={app.category || DEFAULT_CATEGORY}
+						targetSrc={resolveUri(app.uri, env, tenant)}
+						target="_blank"
+						icon={app.icon ? undefined : FALLBACK_ICON}
+						image={
+							app.icon ? (
+								<Avatar size="S" shape="Square" colorScheme="Transparent">
+									<img src={app.icon} alt="" />
+								</Avatar>
+							) : undefined
+						}
+					/>
+				))}
+			</ProductSwitch>
+		</Popover>
+	);
+
+	return (
+		<>
 			<Button
+				{...rest}
 				id={triggerId}
+				className={className}
 				design="Transparent"
 				icon={gridIcon}
 				accessibleName={accessibleName}
@@ -48,33 +78,10 @@ export const AppSelector = ({
 			>
 				{label}
 			</Button>
-			<Popover
-				opener={triggerId}
-				open={open}
-				placement={placement}
-				onClose={() => setOpen(false)}
-			>
-				<ProductSwitch>
-					{orderedApps.map((app) => (
-						<ProductSwitchItem
-							key={app.name}
-							titleText={app.name}
-							subtitleText={app.category || DEFAULT_CATEGORY}
-							targetSrc={resolveUri(app.uri, env, tenant)}
-							target="_blank"
-							icon={app.icon ? undefined : FALLBACK_ICON}
-							image={
-								app.icon ? (
-									<Avatar size="S" shape="Square" colorScheme="Transparent">
-										<img src={app.icon} alt="" />
-									</Avatar>
-								) : undefined
-							}
-						/>
-					))}
-				</ProductSwitch>
-			</Popover>
-		</nav>
+			{typeof document === "undefined"
+				? popover
+				: createPortal(popover, document.body)}
+		</>
 	);
 };
 

@@ -33,12 +33,14 @@ column sorting, and the close-on-select behavior.
 
 ### Controlled selection
 
-The component is fully controlled. The consumer owns `selectedTenantId` and reacts
-to `onSelect`. There is no shadow selection state inside the component: the trigger
-label and the highlighted row are both derived from matching `selectedTenantId`
-against the `tenants` array. After the user picks a row, `onSelect(tenant)` fires
-and the dialog closes — the consumer is responsible for updating `selectedTenantId`
-(from its URL, store, etc.) on the next render.
+The component is fully controlled. The consumer owns `selectedTenantId` (and
+preferably `selectedEnvironment`) and reacts to `onSelect`. There is no shadow
+selection state inside the component: the trigger label and the highlighted row
+are derived from matching those props against the `tenants` array. The same
+`tenantId` can appear in more than one environment — pass `selectedEnvironment`
+so only the matching row is highlighted. After the user picks a row,
+`onSelect(tenant)` fires and the dialog closes — the consumer is responsible for
+updating both selection props (from its URL, store, etc.) on the next render.
 
 ### Trigger label format
 

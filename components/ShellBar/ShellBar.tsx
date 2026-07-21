@@ -1,6 +1,5 @@
 import { Button } from "@ui5/webcomponents-react/Button";
 import { ShellBar as Ui5ShellBar } from "@ui5/webcomponents-react/ShellBar";
-import { ShellBarItem } from "@ui5/webcomponents-react/ShellBarItem";
 import { isValidElement, useEffect, useState } from "react";
 import bellIcon from "@/icons/sap/bell";
 import menu2Icon from "@/icons/sap/menu2";
@@ -33,6 +32,7 @@ export const ShellBar = ({
 	children,
 	userMenu,
 	notificationsUrl,
+	appSelector,
 	...rest
 }: ShellBarProps) => {
 	const hasSideNavigation = isValidElement(sideNavigation);
@@ -80,15 +80,17 @@ export const ShellBar = ({
 			>
 				{children}
 				{notificationsUrl && (
-					<ShellBarItem
+					<Button
 						icon={bellIcon}
-						text="Notifications"
+						tooltip="Notifications"
+						accessibleName="Notifications"
 						onClick={() =>
 							window.open(notificationsUrl, "_blank", "noopener,noreferrer")
 						}
 					/>
 				)}
 				{userMenu}
+				{appSelector}
 			</Ui5ShellBar>
 			{hasSideNavigation && (
 				<div

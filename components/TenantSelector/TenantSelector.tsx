@@ -47,10 +47,19 @@ const COLUMNS: { key: ColumnKey; label: string }[] = [
 const ALL_CUSTOMERS = "All customers";
 const ALL_ENVIRONMENTS = "All environments";
 
+/** Collision-safe row id — plain concatenation of tenantId+environment can collide
+ * (e.g. "ab"+"cdef" vs "abc"+"def"). */
+const tenantRowKey = ({
+	tenantId,
+	environment,
+}: Pick<TenantEntry, "tenantId" | "environment">) =>
+	JSON.stringify([tenantId, environment]);
+
 /** Tenant picker for the Reltio header — a trigger label that opens a searchable, filterable, sortable dialog of available tenants. */
 export const TenantSelector = ({
 	tenants,
 	selectedTenantId,
+	selectedEnvironment,
 	onSelect,
 	trigger,
 	loading,
@@ -76,7 +85,10 @@ export const TenantSelector = ({
 	}, [searchExpanded]);
 
 	const selectedTenant = tenants.find(
-		(tenant) => tenant.tenantId === selectedTenantId,
+		(tenant) =>
+			tenant.tenantId === selectedTenantId &&
+			(selectedEnvironment == null ||
+				tenant.environment === selectedEnvironment),
 	);
 	const triggerLabel = selectedTenant
 		? `${selectedTenant.customerName} - ${selectedTenant.tenantName} - ${selectedTenant.environment}`
@@ -211,7 +223,7 @@ export const TenantSelector = ({
 				className={classNames(styles.table)}
 				onRowClick={(event) => {
 					const tenant = visibleTenants.find(
-						(entry) => entry.tenantId === event.detail.row.rowKey,
+						(entry) => tenantRowKey(entry) === event.detail.row.rowKey,
 					);
 					if (tenant) {
 						onSelect(tenant);
@@ -232,11 +244,14 @@ export const TenantSelector = ({
 				</TableHeaderRow>
 				{visibleTenants.map((tenant) => (
 					<TableRow
-						key={tenant.tenantId}
-						rowKey={tenant.tenantId}
+						key={tenantRowKey(tenant)}
+						rowKey={tenantRowKey(tenant)}
 						interactive
 						className={classNames(
-							tenant.tenantId === selectedTenantId && styles.selectedRow,
+							selectedTenant != null &&
+								tenant.tenantId === selectedTenant.tenantId &&
+								tenant.environment === selectedTenant.environment &&
+								styles.selectedRow,
 						)}
 					>
 						<TableCell>{tenant.customerName}</TableCell>

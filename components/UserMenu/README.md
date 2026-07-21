@@ -5,10 +5,11 @@ Reltio application composes by hand today — the trigger avatar, the UI5 user-m
 popover, and the About modal — into a single endorsed component so popover
 placement, avatar rhythm, and About-modal content stay consistent across products.
 
-It composes UI5 `Avatar`, `UserMenu`, and `Dialog`. The avatar carries
-`slot="profile"` so that, when passed to `ShellBar`'s `userMenu` slot, UI5's slot
-routing mounts it in the canonical profile position; the popover and About modal
-render as overlays anchored to the avatar and the document body respectively.
+It composes UI5 `Avatar`, `UserMenu`, and `Dialog`. The avatar is the component's
+only inline element. When `UserMenu` is passed through `ShellBar`'s `userMenu`
+prop, UI5 assigns that direct child an individual default slot in the right
+actions sequence. The popover and About modal are portaled to `document.body`,
+so closed overlays do not reserve ShellBar layout slots.
 
 ### Required props
 
@@ -25,6 +26,11 @@ initials derived from `user.username`
 (the first letter of each space-separated word, up to two characters). The trigger
 avatar uses `colorScheme="Accent4"` by default to match the canonical Console
 look; pass `colorScheme` to override.
+
+The optional `slot` prop is forwarded to the avatar. Leave it unset when using
+`ShellBar`: UI5 assigns the appropriate individual default slot automatically.
+Use an explicit slot only when embedding `UserMenu` in another slotted host that
+requires one.
 
 ### Internal popover and modal state
 

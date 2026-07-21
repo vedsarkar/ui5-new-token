@@ -52,8 +52,8 @@ export const UserMenu = ({
 
 	// The popover and About modal are rendered through a portal so they never
 	// become slotted light-DOM children of a host like ShellBar — only the
-	// avatar (slot="profile") stays inline. Otherwise the host would reserve a
-	// layout slot for each closed overlay, producing phantom gaps.
+	// avatar stays inline. Otherwise the host would reserve a layout slot for
+	// each closed overlay, producing phantom gaps.
 	const overlays = (
 		<>
 			<Ui5UserMenu
@@ -128,7 +128,6 @@ export const UserMenu = ({
 		<>
 			<Avatar
 				ref={avatarRef}
-				slot="profile"
 				mode="Interactive"
 				accessibleName={user.username}
 				accessibilityAttributes={{ hasPopup: "menu" }}

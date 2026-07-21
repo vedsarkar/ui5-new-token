@@ -13,7 +13,8 @@ type Ui5ShellBarProps = ComponentPropsWithoutRef<typeof Ui5ShellBar>;
  *   `[data-theme]` ancestor
  * - `logo` override prop (the recommended customization path) for sub-apps
  *   that want their own mark
- * - `tenantSelector` / `userMenu` Reltio slot props (see below)
+ * - `tenantSelector`, `userMenu`, and `appSelector` Reltio composition props
+ *   (see below)
  * - `notificationsUrl` prop that renders a bell icon linking to a
  *   notifications page (see below)
  * - `data-test-id` forwarding to the rendered light-DOM host
@@ -78,14 +79,15 @@ export type ShellBarProps = Omit<
 	 */
 	tenantSelector?: ReactElement;
 	/**
-	 * User menu rendered into the UI5 ShellBar `profile` slot. Intended to host a
-	 * `<UserMenu>` element whose inner avatar carries `slot="profile"`, so UI5's
-	 * slot routing mounts the avatar in the canonical profile position while the
-	 * popover and About modal render as overlays. The type is the generic
-	 * `ReactElement` and the wrapper does not enforce the runtime element type.
+	 * User menu rendered in the UI5 ShellBar's right actions sequence. Intended
+	 * to host a `<UserMenu>` element whose avatar remains a direct ShellBar child
+	 * while its popover and About modal are portaled to `document.body`. UI5
+	 * assigns the avatar an individual default slot automatically. The element is
+	 * appended after explicit `children` and notifications, and before
+	 * `appSelector`.
 	 *
-	 * This is the only way to populate the user area — the UI5 `profile` prop is
-	 * intentionally not exposed.
+	 * The type is the generic `ReactElement`; the wrapper does not enforce the
+	 * runtime element type. The UI5 `profile` prop is intentionally not exposed.
 	 */
 	userMenu?: ReactElement;
 	/**
@@ -94,4 +96,16 @@ export type ShellBarProps = Omit<
 	 * new browser tab. When omitted, no bell icon is shown.
 	 */
 	notificationsUrl?: string;
+	/**
+	 * Application selector rendered in the UI5 ShellBar's right actions cluster.
+	 * Intended to host an `<AppSelector>` element whose trigger button remains
+	 * inline while its popover is portaled outside the ShellBar, preventing an
+	 * extra layout slot. The element is appended after explicit `children`,
+	 * notifications, and `userMenu` in the ShellBar's light DOM. UI5 assigns the
+	 * trigger an individual default slot automatically.
+	 *
+	 * The type is the generic `ReactElement`; the wrapper does not enforce the
+	 * runtime element type.
+	 */
+	appSelector?: ReactElement;
 };

@@ -173,7 +173,7 @@ export const WithAppNavigation = meta.story({
 		userMenu: (
 			<UserMenu onSignOut={fn()} user={shellBarUser} appVersion="2.21.3" />
 		),
-		children: <AppSelector apps={appSelectorApps} positionArea="bottom" />,
+		appSelector: <AppSelector apps={appSelectorApps} positionArea="bottom" />,
 		sideNavigation: (
 			<AppNavigation
 				apps={appCatalog}
@@ -189,9 +189,10 @@ export const WithAppNavigation = meta.story({
 				<p>
 					Two views of the same app catalog: the left drawer (open it from the
 					top-left hamburger) is built by <code>AppNavigation</code> as a
-					persistent grouped menu, while the grid button in the header opens the{" "}
-					<code>AppSelector</code> popup for quick switching. Both are fed by
-					the same Config Service data.
+					persistent grouped menu, while the{" "}
+					<code>appSelector</code> prop renders <code>AppSelector</code> in the
+					right actions sequence after <code>userMenu</code> for quick
+					switching. Both are fed by the same Config Service data.
 				</p>
 			</div>
 		</>

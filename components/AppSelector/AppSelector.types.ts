@@ -1,4 +1,7 @@
-import type { HtmlProps } from "@/utils/types";
+import type { Button } from "@ui5/webcomponents-react/Button";
+import type { ComponentPropsWithoutRef } from "react";
+
+type Ui5ButtonProps = ComponentPropsWithoutRef<typeof Button>;
 
 export type AppEntry = {
 	/** Application display name. Apps without a name are ignored. */
@@ -13,28 +16,28 @@ export type AppEntry = {
 	category?: string;
 };
 
-export type AppSelectorProps = HtmlProps<
-	"div",
-	{
-		/** List of apps to display, grouped by category.
-		 * Apps missing `name` or `uri` are silently ignored.
-		 * The list of available apps for a given tenant
-		 * can be retrieved from Reltio Config Service.
-		 */
-		apps: AppEntry[];
-		/** Environment identifier substituted into URI templates (`${environment}`). */
-		env?: string;
-		/** Tenant identifier substituted into URI templates (`${tenant}`). */
-		tenant?: string;
-		/** Text label displayed next to the trigger icon.
-		 * When omitted, the trigger renders as an icon-only button.
-		 */
-		label?: string;
-		/** CSS `position-area`-style value controlling popover placement relative to the trigger.
-		 * Mapped internally to the underlying UI5 `Popover` placement
-		 * (`top` → `Top`, `bottom` → `Bottom`, `left` → `Start`, `right` → `End`).
-		 * @default "right span-top"
-		 */
-		positionArea?: string;
-	}
->;
+export type AppSelectorProps = Omit<
+	Ui5ButtonProps,
+	"design" | "icon" | "children" | "onClick" | "id" | "accessibleName"
+> & {
+	/** List of apps to display, grouped by category.
+	 * Apps missing `name` or `uri` are silently ignored.
+	 * The list of available apps for a given tenant
+	 * can be retrieved from Reltio Config Service.
+	 */
+	apps: AppEntry[];
+	/** Environment identifier substituted into URI templates (`${environment}`). */
+	env?: string;
+	/** Tenant identifier substituted into URI templates (`${tenant}`). */
+	tenant?: string;
+	/** Text label displayed next to the trigger icon.
+	 * When omitted, the trigger renders as an icon-only button.
+	 */
+	label?: string;
+	/** CSS `position-area`-style value controlling popover placement relative to the trigger.
+	 * Mapped internally to the underlying UI5 `Popover` placement
+	 * (`top` → `Top`, `bottom` → `Bottom`, `left` → `Start`, `right` → `End`).
+	 * @default "right span-top"
+	 */
+	positionArea?: string;
+};

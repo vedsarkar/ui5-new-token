@@ -10,6 +10,20 @@ Each `app.uri` may contain `${environment}` and `${tenant}` placeholders. The co
 
 `ProductSwitch` is intentionally a flat grid — SAP does not support category headers inside it. `AppSelector` encodes each app's `category` in the item's `subtitleText` and reorders apps so that entries sharing the same category stay adjacent. Categories appear in the order they first occur in the input array; apps without a `category` fall back to `"Applications"`.
 
+### Trigger and ShellBar placement
+
+The inline element is a transparent UI5 `Button`; the popover is portaled to
+`document.body`. This keeps the trigger as the only direct child when
+`AppSelector` is passed through `ShellBar`'s `appSelector` prop, allowing UI5 to
+assign it an individual default slot automatically. Button props such as
+`className`, `style`, `slot`, `tooltip`, and `data-*` attributes are forwarded
+to the trigger. The component owns its `id`, icon, design, accessible name, and
+click handler.
+
+When `label` is omitted, the trigger is icon-only and uses `"Applications"` as
+its accessible name. When provided, `label` is both the visible text and the
+accessible name.
+
 ### Optional fields
 
 Apps without `name` or `uri` are silently filtered out — your tenant config may include incomplete entries during rollout, and you should not have to pre-filter the list. `icon` is also optional; when omitted, the item shows UI5's `internet-browser` fallback so the grid stays uniform.

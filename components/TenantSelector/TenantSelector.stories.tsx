@@ -115,3 +115,56 @@ export const NoTenants = meta.story({
 		});
 	},
 });
+
+export const DuplicateTenantAcrossEnvironments = meta.story({
+	args: {
+		tenants: [
+			{
+				customerName: "Acme Corp",
+				tenantName: "acme-prod",
+				tenantId: "tenant-acme-01",
+				environment: "EUS105-PRODUCTION",
+			},
+			{
+				customerName: "Acme Corp",
+				tenantName: "acme-prod",
+				tenantId: "tenant-acme-01",
+				environment: "EUS102-DEVELOP",
+			},
+			{
+				customerName: "Acme Corp",
+				tenantName: "acme-prod",
+				tenantId: "tenant-acme-01",
+				environment: "WUS201-STAGING",
+			},
+			...tenants.slice(0, 3),
+		],
+		selectedTenantId: "tenant-acme-01",
+		selectedEnvironment: "EUS105-PRODUCTION",
+	},
+	play: async ({ canvasElement }) => {
+		const dialog = await openFirstDialog(canvasElement);
+		await waitFor(() => {
+			const idCells = [...dialog.querySelectorAll("ui5-table-cell")].filter(
+				(cell) => cell.textContent === "tenant-acme-01",
+			);
+			if (idCells.length !== 3) {
+				throw new Error(
+					`expected 3 rows with tenant-acme-01, got ${idCells.length}`,
+				);
+			}
+			const selectedRows = [
+				...dialog.querySelectorAll("ui5-table-row"),
+			].filter((row) =>
+				[...row.classList].some((className) =>
+					className.includes("selectedRow"),
+				),
+			);
+			if (selectedRows.length !== 1) {
+				throw new Error(
+					`expected exactly 1 selected row, got ${selectedRows.length}`,
+				);
+			}
+		});
+	},
+});
