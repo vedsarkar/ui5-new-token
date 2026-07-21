@@ -25,9 +25,11 @@ of truth, so it always matches the exact version that app uses.
   utils, and icons only from `@reltio/design/*` (`/components`, `/charts`,
   `/hooks`, `/utils`, `/icons/sap`, `/icons/reltio`) — never directly from
   `@ui5/*` or `@sap/*`. Always use the subpath; the bare `@reltio/design`
-  specifier does not resolve. Icons are imported **by name** and passed to the
-  `icon` prop (`import saveIcon from "@reltio/design/icons/sap/save"` →
-  `<Button icon={saveIcon} />`) — there is no `@ui5/*` icon exception. See the
+  specifier does not resolve. For a standalone icon, **prefer the PascalCase
+  component** export (`import { Save } from "@reltio/design/icons/sap/save"` →
+  `<Save />`); for a component's `icon` prop, import the icon **by name** and
+  pass it (`import saveIcon from "@reltio/design/icons/sap/save"` →
+  `<Button icon={saveIcon} />`). There is no `@ui5/*` icon exception. See the
   playbook for details.
 - **Semantic matching.** Classify each primitive by its UI intent ("this is a
   button"), then find the standardized component with that intent.

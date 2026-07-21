@@ -71,18 +71,26 @@ Do **not** port `sx`, `styled`, `makeStyles`, or theme objects verbatim.
 
 ## 5. Icons
 
-- Replace MUI icon components with SAP Fiori icons referenced **by name** on the
-  component. The icon set ships transitively via `@reltio/design` — do **not** add
-  `@ui5/*` to the app's dependencies.
-- Register each icon by importing its **name** from
-  `@reltio/design/icons/sap/<kebab-name>` and passing the binding to the `icon`
-  prop: `import saveIcon from "@reltio/design/icons/sap/save";` →
-  `<Button icon={saveIcon} />`. The import both registers the icon and returns its
-  name string. Because `@reltio/design` is `sideEffects: false`, a bare
-  `import "@reltio/design/icons/sap/save"` is dropped by the bundler — always
-  import the name (or the PascalCase component) and use it. Reltio custom glyphs
-  come from `@reltio/design/icons/reltio/<kebab-name>`. Never reach into `@ui5/*`
-  for icons, components, hooks, or utils.
+The icon set ships transitively via `@reltio/design` — do **not** add `@ui5/*`
+to the app's dependencies. Each icon module exports two things: a **PascalCase
+component** (named export, e.g. `Save`) and the icon's **registry name** (default
+export, a string). Because `@reltio/design` is `sideEffects: false`, a bare
+`import "@reltio/design/icons/sap/save"` is dropped by the bundler — always
+import one of these bindings and use it, so the icon registration is retained.
+
+- **Standalone icon → prefer the PascalCase component.** Replace a MUI icon
+  element (`<SaveIcon />`) with the matching icon component:
+  `import { Save } from "@reltio/design/icons/sap/save";` → `<Save />`. It renders
+  the SAP Fiori glyph and forwards `Icon` props (`design`, `accessibleName`,
+  `mode`, …). This is the recommended default for rendering an icon on its own.
+- **A component's `icon` prop → import the name.** When a component takes an icon
+  by name (e.g. `Button`), import the **default** binding and pass it:
+  `import saveIcon from "@reltio/design/icons/sap/save";` →
+  `<Button icon={saveIcon} />`. The default export is the icon's name string and
+  keeps the registration side effect.
+- Reltio custom glyphs come from `@reltio/design/icons/reltio/<kebab-name>` (same
+  two exports, e.g. `import { ReltioDataQuality } from ".../data-quality"`). Never
+  reach into `@ui5/*` for icons, components, hooks, or utils.
 - **Discover which icon names exist** (offline, version-matched to the installed
   package) by listing the icon modules:
   `ls node_modules/@reltio/design/icons/sap` and
