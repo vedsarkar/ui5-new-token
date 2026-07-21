@@ -19,8 +19,16 @@ export default defineMain({
 		// mirrors (e.g. `packages/app/dist/app-template/app/page.stories.tsx`)
 		// are never indexed — they would clash with the `app-template` sources
 		// and abort the build with duplicate story ids.
-		"../!(packages)/**/*.story.mdx",
-		"../!(packages)/**/*.stories.@(ts|tsx)",
+		//
+		// The `!(packages)` extglob is wrapped in `@(…)` so the resulting pattern
+		// does NOT start with a literal `!`. Storybook's indexer treats both forms
+		// identically, but `@storybook/addon-vitest` matches story files with
+		// `micromatch.match()`, which reads a leading `!` as a NEGATION filter
+		// rather than an extglob — so a bare `!(packages)/**` matched nothing and
+		// every story reported "No test suite found in file". `@(!(packages))`
+		// keeps the exclusion while staying a positive pattern for micromatch.
+		"../@(!(packages))/**/*.story.mdx",
+		"../@(!(packages))/**/*.stories.@(ts|tsx)",
 		"../packages/*/*.story.mdx",
 		"../packages/app/app-template/**/*.story.mdx",
 		"../packages/app/app-template/**/*.stories.@(ts|tsx)",
