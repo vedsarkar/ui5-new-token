@@ -90,6 +90,14 @@ Set `accessibleMode="Edit"` (the default is `Display`) so the rendered ARIA
 semantics match the content. Use `Display` for read-only summaries whose items are
 plain `Text`, and `Edit` for forms whose items are editable fields like `Input`.
 
+### Native form identity and ARIA
+
+Pass `id`, `className`, and standard `aria-*` attributes (`aria-label`,
+`aria-labelledby`, `aria-describedby`, …) to name or style the **outer native
+`<form>`** — the element that owns submission and receives the forwarded `ref`.
+These are not forwarded to the inner UI5 Form. UI5 accessibility props such as
+`accessibleMode` and `headerText` still apply only to the layout floorplan.
+
 ### See also
 
 - [UI5 Form reference](https://ui5.github.io/webcomponents/components/Form/) — layout grid, label spans, slots

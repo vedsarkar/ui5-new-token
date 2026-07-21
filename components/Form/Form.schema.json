@@ -24,7 +24,7 @@
 			"x-typescriptType": "string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Array<ReactNode>"
 		},
 		"className": {
-			"description": "CSS Class Name which will be appended to the most outer element of a component.\nUse this prop carefully, overwriting CSS rules might break the component.",
+			"description": "CSS class names merged onto the outer native `<form>` wrapper.",
 			"x-typescriptType": "string",
 			"type": "string"
 		},
@@ -45,6 +45,11 @@
 		},
 		"headerText": {
 			"description": "Defines the header text of the component.\n\n**Note:** The property gets overridden by the `header` slot.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"id": {
+			"description": "Native form element id. Applied to the outer `<form>`, not the UI5 Form.",
 			"x-typescriptType": "string",
 			"type": "string"
 		},

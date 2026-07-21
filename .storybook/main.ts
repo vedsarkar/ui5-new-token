@@ -11,8 +11,19 @@ export default defineMain({
 		"../Components.story.mdx",
 		"../guides/**/*.story.mdx",
 		"../openApi/**/*.story.mdx",
-		"../**/*.story.mdx",
-		"../**/*.stories.@(ts|tsx)",
+		// Broad catch-all for every top-level source folder EXCEPT `packages`.
+		// Storybook globs each entry independently and unions the results, so a
+		// standalone `!…/dist/**` negation entry does NOT subtract from other
+		// entries — the only reliable way to skip a folder is to not match it.
+		// `packages` is therefore handled explicitly below so the built `dist/`
+		// mirrors (e.g. `packages/app/dist/app-template/app/page.stories.tsx`)
+		// are never indexed — they would clash with the `app-template` sources
+		// and abort the build with duplicate story ids.
+		"../!(packages)/**/*.story.mdx",
+		"../!(packages)/**/*.stories.@(ts|tsx)",
+		"../packages/*/*.story.mdx",
+		"../packages/app/app-template/**/*.story.mdx",
+		"../packages/app/app-template/**/*.stories.@(ts|tsx)",
 	],
 
 	addons: [
