@@ -2,7 +2,7 @@
 
 import { Form as Ui5Form } from "@ui5/webcomponents-react/Form";
 import type React from "react";
-import { type FormEvent, forwardRef } from "react";
+import { type AriaAttributes, type FormEvent, forwardRef } from "react";
 import { classNames } from "@/utils/classNames";
 import styles from "./Form.module.css";
 import type { FormProps, FormValues } from "./Form.types";
@@ -19,6 +19,23 @@ function formDataToObject(formData: FormData): FormValues {
 	return values;
 }
 
+/** Split native form a11y attrs from props meant for the inner UI5 Form. */
+function partitionFormProps(rest: Record<string, unknown>): {
+	formAria: AriaAttributes;
+	ui5Props: Record<string, unknown>;
+} {
+	const formAria: Record<string, unknown> = {};
+	const ui5Props: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(rest)) {
+		if (key.startsWith("aria-")) {
+			formAria[key] = value;
+		} else {
+			ui5Props[key] = value;
+		}
+	}
+	return { formAria: formAria as AriaAttributes, ui5Props };
+}
+
 /** SAP Fiori Form floorplan wrapped in a native `<form>` so its UI5 fields serialize into a JSON object on submit via the `onSubmit` callback. */
 export const Form: React.ForwardRefExoticComponent<
 	FormProps & React.RefAttributes<HTMLFormElement>
@@ -33,10 +50,16 @@ export const Form: React.ForwardRefExoticComponent<
 			// product forms. Consumers opt into denser layouts explicitly.
 			layout = "S1 M1 L1 XL1",
 			labelSpan = "S12 M12 L12 XL12",
+			id,
+			className,
 			...rest
 		},
 		ref,
 	) => {
+		const { formAria, ui5Props } = partitionFormProps(
+			rest as Record<string, unknown>,
+		);
+
 		const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 			// Stop the native full-page submit; consumers own the network call.
 			event.preventDefault();
@@ -46,10 +69,12 @@ export const Form: React.ForwardRefExoticComponent<
 		return (
 			<form
 				ref={ref}
-				className={classNames(styles.root)}
+				id={id}
+				className={classNames(styles.root, className)}
 				onSubmit={handleSubmit}
+				{...formAria}
 			>
-				<Ui5Form layout={layout} labelSpan={labelSpan} {...rest}>
+				<Ui5Form layout={layout} labelSpan={labelSpan} {...ui5Props}>
 					{children}
 				</Ui5Form>
 			</form>

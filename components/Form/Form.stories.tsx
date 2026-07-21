@@ -67,6 +67,37 @@ export const Default = meta.story({
 	),
 });
 
+/** `id` and `aria-*` apply to the outer native `<form>`, not the UI5 Form. */
+export const WithAriaLabel = meta.story({
+	args: {
+		id: "contact-form",
+		"aria-label": "Contact details",
+		headerText: undefined,
+	},
+	render: (args) => (
+		<Form {...args}>
+			<FormItem labelContent={<Label>First name</Label>}>
+				<Input value={person.firstName} />
+			</FormItem>
+			<FormItem labelContent={<Label>Last name</Label>}>
+				<Input value={person.lastName} />
+			</FormItem>
+			<FormItem labelContent={<Label>Email</Label>}>
+				<Input value={person.email} />
+			</FormItem>
+		</Form>
+	),
+	play: async ({ canvasElement }) => {
+		const root =
+			(canvasElement.querySelector("[data-theme]") as HTMLElement) ??
+			canvasElement;
+		const form = root.querySelector("form#contact-form");
+		await expect(form).not.toBeNull();
+		await expect(form?.getAttribute("aria-label")).toBe("Contact details");
+		await expect(form?.querySelector("ui5-form")).not.toBeNull();
+	},
+});
+
 export const MultiColumn = meta.story({
 	args: {
 		layout: "S1 M2 L2 XL2",
