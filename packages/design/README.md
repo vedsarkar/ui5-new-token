@@ -119,7 +119,7 @@ See the [UI Architecture](https://reltio.design/?path=/docs/guides-ui-architectu
 
 ### Icons
 
-The package is `sideEffects: false`, so import each icon's **name** (the `default` export) — the import registers the icon and returns its registry-name string. Bare side-effect imports (`import "@reltio/design/icons/sap/save"`) are dropped by the bundler.
+JS modules are tree-shakable (`sideEffects` lists only `./variables.css` and `./fonts.css`), so import each icon's **name** (the `default` export) — the import registers the icon and returns its registry-name string. Bare side-effect imports (`import "@reltio/design/icons/sap/save"`) are dropped by the bundler.
 
 SAP Fiori icons: `import saveIcon from "@reltio/design/icons/sap/<kebab-name>"` (`saveIcon === "<kebab-name>"`).
 
