@@ -13,9 +13,8 @@ type Ui5SideNavigationItemProps = ComponentPropsWithoutRef<
  * children for a second level.
  *
  * Only the props below are public. Deep-customization UI5 props
- * (`accessibilityAttributes`) and the low-level UI5 `onClick` custom-event
- * handler are intentionally hidden and will be re-exposed as dedicated Reltio
- * props on demand.
+ * (`accessibilityAttributes`) are intentionally hidden and will be re-exposed
+ * as dedicated Reltio props on demand.
  */
 export type SideNavigationItemProps = Pick<
 	Ui5SideNavigationItemProps,
@@ -32,4 +31,5 @@ export type SideNavigationItemProps = Pick<
 	| "children"
 	| "className"
 	| "style"
+	| "onClick"
 >;

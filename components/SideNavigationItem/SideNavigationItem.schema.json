@@ -40,6 +40,11 @@
 			"x-typescriptType": "string",
 			"type": "string"
 		},
+		"onClick": {
+			"description": "Fired when the component is activated either with a click/tap or by using the [Enter] or [Space] keys.\n\n**Note:** Call `event.preventDefault()` inside the handler of this event to prevent its default action/s.\n\n| cancelable | bubbles |\n| :--------: | :-----: |\n| ✅|✅|",
+			"x-typescriptType": "(event: Ui5CustomEvent<SideNavigationItemDomRef, SideNavigationItemClickEventDetail>) => void",
+			"x-functionSignature": "(event: Ui5CustomEvent<SideNavigationItemDomRef, SideNavigationItemClickEventDetail>) => void"
+		},
 		"selected": {
 			"description": "Defines whether the item is selected.\n\n**Note:** Items that have a set `href` and `target` set to `_blank` should not be selectable.",
 			"default": false,
