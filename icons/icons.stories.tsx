@@ -11,6 +11,8 @@ import preview from "../.storybook/preview";
 import ReltioAcoName from "./reltio/aco";
 import ReltioAcoLabelName from "./reltio/aco-label";
 import ReltioActivityLogName from "./reltio/activity-log";
+import ReltioAgentflowFilledName from "./reltio/agentflow-filled";
+import ReltioAgentflowOutlinedName from "./reltio/agentflow-outlined";
 import ReltioAllRequestName from "./reltio/all-request";
 import ReltioAnalyzeMatchRulesName from "./reltio/analyze-match-rules";
 import ReltioAnomalyName from "./reltio/anomaly";
@@ -18,6 +20,7 @@ import ReltioAreaName from "./reltio/area";
 import ReltioAreaLocationName from "./reltio/area-location";
 import ReltioBarChartName from "./reltio/bar-chart";
 import ReltioBubbleChartName from "./reltio/bubble-chart";
+import ReltioBulkmatchName from "./reltio/bulkmatch";
 import ReltioCartName from "./reltio/cart";
 import ReltioChartName from "./reltio/chart";
 import ReltioChemicalSubstanceName from "./reltio/chemical-substance";
@@ -96,10 +99,12 @@ import ReltioProteinSubstanceName from "./reltio/protein-substance";
 import ReltioQueuesName from "./reltio/queues";
 import ReltioRelationshipsName from "./reltio/relationships";
 import ReltioReltioInsightsName from "./reltio/reltio-insights";
+import ReltioReturnToEntityName from "./reltio/return-to-entity";
 import ReltioRiaName from "./reltio/ria";
 import ReltioRoductGroupName from "./reltio/roduct-group";
 import ReltioSearchResultName from "./reltio/search-result";
 import ReltioSecurityConfigurationName from "./reltio/security-configuration";
+import ReltioSegmentationName from "./reltio/segmentation";
 import ReltioSentName from "./reltio/sent";
 import ReltioShieldEncryptionName from "./reltio/shield-encryption";
 import ReltioSkillName from "./reltio/skill";
@@ -200,6 +205,16 @@ export const ReltioActivityLog = meta.story({
 	render: showcase(ReltioActivityLogName),
 });
 
+export const ReltioAgentflowFilled = meta.story({
+	name: "agentflow-filled",
+	render: showcase(ReltioAgentflowFilledName),
+});
+
+export const ReltioAgentflowOutlined = meta.story({
+	name: "agentflow-outlined",
+	render: showcase(ReltioAgentflowOutlinedName),
+});
+
 export const ReltioAllRequest = meta.story({
 	name: "all-request",
 	render: showcase(ReltioAllRequestName),
@@ -233,6 +248,11 @@ export const ReltioBarChart = meta.story({
 export const ReltioBubbleChart = meta.story({
 	name: "bubble-chart",
 	render: showcase(ReltioBubbleChartName),
+});
+
+export const ReltioBulkmatch = meta.story({
+	name: "bulkmatch",
+	render: showcase(ReltioBulkmatchName),
 });
 
 export const ReltioCart = meta.story({
@@ -625,6 +645,11 @@ export const ReltioReltioInsights = meta.story({
 	render: showcase(ReltioReltioInsightsName),
 });
 
+export const ReltioReturnToEntity = meta.story({
+	name: "return-to-entity",
+	render: showcase(ReltioReturnToEntityName),
+});
+
 export const ReltioRia = meta.story({
 	name: "ria",
 	render: showcase(ReltioRiaName),
@@ -643,6 +668,11 @@ export const ReltioSearchResult = meta.story({
 export const ReltioSecurityConfiguration = meta.story({
 	name: "security-configuration",
 	render: showcase(ReltioSecurityConfigurationName),
+});
+
+export const ReltioSegmentation = meta.story({
+	name: "segmentation",
+	render: showcase(ReltioSegmentationName),
 });
 
 export const ReltioSent = meta.story({
