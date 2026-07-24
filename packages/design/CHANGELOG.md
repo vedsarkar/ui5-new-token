@@ -1,5 +1,22 @@
 # @reltio/design
 
+## 1.14.0
+
+### Minor Changes
+
+- 50921cf: Expose the `onClick` prop on `SideNavigationItem` for item-level click handlers.
+- bba53c1: Add Reltio icons: `return-to-entity`, `agentflow-filled`, `agentflow-outlined`, `bulkmatch`, and `segmentation`.
+
+  - Import from `@reltio/design/icons/reltio/<name>`
+  - Also available from `@reltio/design/icons/reltio` as `returnToEntity`, `agentflowFilled`, `agentflowOutlined`, `bulkmatch`, and `segmentation`
+
+### Patch Changes
+
+- c801ae3: Preserve bare CSS imports (`variables.css`, `fonts.css`) under bundler tree-shaking.
+
+  - `sideEffects` is now `["./variables.css", "./fonts.css"]` instead of `false`, so `import "@reltio/design/variables.css"` is no longer dropped
+  - JS modules stay tree-shakable; icon bare imports are still dropped unless the name/default export is used
+
 ## 1.13.0
 
 ### Minor Changes
