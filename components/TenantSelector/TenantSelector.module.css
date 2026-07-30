@@ -17,6 +17,17 @@
 	height: 80vh;
 }
 
+/* Make the dialog body a bounded flex column so the Table can fill it and
+ * scroll internally. Required by UI5's TableVirtualizer (overflowMode="Scroll"
+ * needs a defined height); also keeps the sticky TableHeaderRow visible while
+ * the rows scroll. */
+.dialog::part(content) {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	overflow: hidden;
+}
+
 .dialogTitle {
 	color: var(--sapPageHeader_TextColor);
 	font-size: 16px;
@@ -29,6 +40,11 @@
 
 .table {
 	width: 100%;
+	/* Fill the flex column parent so overflowMode="Scroll" scrolls inside the
+	 * Table (and TableVirtualizer sees a real viewport height), instead of
+	 * growing the dialog and letting the whole dialog body scroll. */
+	height: 100%;
+	min-height: 0;
 }
 
 /* UI5's table collapses a header cell to its content height on a sort

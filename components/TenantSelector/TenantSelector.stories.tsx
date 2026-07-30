@@ -153,17 +153,33 @@ export const DuplicateTenantAcrossEnvironments = meta.story({
 					`expected 3 rows with tenant-acme-01, got ${idCells.length}`,
 				);
 			}
-			const selectedRows = [
-				...dialog.querySelectorAll("ui5-table-row"),
-			].filter((row) =>
-				[...row.classList].some((className) =>
-					className.includes("selectedRow"),
-				),
+			const selectedRows = [...dialog.querySelectorAll("ui5-table-row")].filter(
+				(row) =>
+					[...row.classList].some((className) =>
+						className.includes("selectedRow"),
+					),
 			);
 			if (selectedRows.length !== 1) {
 				throw new Error(
 					`expected exactly 1 selected row, got ${selectedRows.length}`,
 				);
+			}
+		});
+	},
+});
+
+/** 1000 tenants — exercises the virtualized rendering path (kicks in above ~50
+ * visible rows). The rendered DOM should contain only the rows currently in the
+ * viewport plus overscan, not all 1000 `ui5-table-row` elements. */
+export const LargeList = meta.story({
+	args: {
+		tenants: Array.from({ length: 1000 }, makeTenant),
+	},
+	play: async ({ canvasElement }) => {
+		const dialog = await openFirstDialog(canvasElement);
+		await waitFor(() => {
+			if (!dialog.querySelector("ui5-table-virtualizer")) {
+				throw new Error("TableVirtualizer not rendered for large tenant list");
 			}
 		});
 	},

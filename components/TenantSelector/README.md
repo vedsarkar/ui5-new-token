@@ -87,6 +87,15 @@ active search and filter match nothing the dialog keeps the controls available a
 shows the `NoData` illustration titled `"No tenants match your search"` in place of
 the rows.
 
+### Large tenant lists
+
+The dialog switches to SAP UI5 `TableVirtualizer` once the filtered/sorted list
+exceeds an internal threshold (currently 50 rows). Above the threshold, only the
+rows within the current viewport are present in the DOM; scrolling swaps rows in
+and out. Below the threshold the dialog renders every row as before. Consumers do
+not need to configure anything — the component switches paths internally, and the
+public API is unchanged.
+
 ### See also
 
 - [UI5 Table reference](https://ui5.github.io/webcomponents/components/Table/) — row rendering, sticky header, keyboard model
