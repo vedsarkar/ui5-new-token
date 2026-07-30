@@ -1,5 +1,22 @@
 # @reltio/design
 
+## 1.15.0
+
+### Minor Changes
+
+- 093b0e8: Split `TenantSelector` environment into display name and machine id, with backward-compatible fallbacks.
+
+  - `TenantEntry` gains optional `environmentName` (column, filters, search, trigger) and `environmentId` (row key / selection match), aligned with `customerName` / `tenantName`
+  - Deprecated `TenantEntry.environment` is kept: when the new fields are omitted, it is used for both display and identity
+  - `selectedEnvironmentId` is preferred; deprecated `selectedEnvironment` is still accepted as a fallback
+  - App template `useTenants` returns `TenantEntry[]` with both new fields; the separate `TenantOption` enrichment wrapper is removed
+
+  **Migration (recommended):** set `environmentName` and `environmentId` instead of `environment`, and rename `selectedEnvironment` to `selectedEnvironmentId`. Legacy callers that only pass `environment` / `selectedEnvironment` keep working without changes.
+
+### Patch Changes
+
+- a983474: `TenantSelector`: use SAP UI5 `TableVirtualizer` for the dialog table above 50 filtered rows. Below the threshold rendering is unchanged. Public API is untouched — consumers benefit automatically on upgrade.
+
 ## 1.14.0
 
 ### Minor Changes
