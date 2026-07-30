@@ -7,6 +7,11 @@
  * request to a Web `Request`, runs the core router, and writes the
  * resulting Web `Response` back to Express.
  *
+ * When `config.proxy` is set, a `/proxy` route is mounted for every HTTP
+ * method. It is the only route that forwards the request body upstream, so it
+ * is the only one that requires the router to be mounted before any
+ * body-parser middleware.
+ *
  * The core `createAuth` is invoked once at setup. The optional
  * `config.ssoRedirect` callback uses the same Web-API signature as the
  * Next.js adapter (`(ctx) => Response`).
@@ -50,14 +55,27 @@ export function createExpressAuth(config: AuthConfig): ExpressAuthRouter {
 	const auth = createAuth(config);
 	const router = express.Router() as ExpressAuthRouter;
 
-	const handle = async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			const webResponse = await auth.handle(expressToWebRequest(req));
-			await applyWebResponseToExpressRes(webResponse, res, next);
-		} catch (error) {
-			next(error);
-		}
-	};
+	/**
+	 * `streamBody` decides whether the raw Node request stream is handed to the
+	 * core. Only `/proxy` forwards a body upstream; the five auth endpoints read
+	 * nothing but headers, cookies, and the query string, so they leave the
+	 * stream untouched and keep working at any position in the middleware chain
+	 * — including behind `express.json()`.
+	 */
+	const createHandler =
+		({ streamBody }: { streamBody: boolean }) =>
+		async (req: Request, res: Response, next: NextFunction) => {
+			try {
+				const webResponse = await auth.handle(
+					expressToWebRequest(req, { streamBody }),
+				);
+				await applyWebResponseToExpressRes(webResponse, res, next);
+			} catch (error) {
+				next(error);
+			}
+		};
+
+	const handle = createHandler({ streamBody: false });
 
 	router.get("/login", handle);
 	router.get("/logout", handle);
@@ -66,7 +84,7 @@ export function createExpressAuth(config: AuthConfig): ExpressAuthRouter {
 	router.post("/checkToken", handle);
 
 	if (config.proxy) {
-		router.all("/proxy", handle);
+		router.all("/proxy", createHandler({ streamBody: true }));
 	}
 
 	router.resolveAuthPath = auth.resolveAuthPath;

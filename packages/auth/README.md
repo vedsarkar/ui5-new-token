@@ -278,7 +278,7 @@ await fetch("/auth/proxy", {
 });
 ```
 
-Request and response bodies are streamed through with constant memory, so large uploads/downloads and streaming responses (Server-Sent Events, chunked transfer) work with no size cap. On Express, mount `createExpressAuth()` **before** any body-parser middleware — the proxy forwards the raw request stream.
+Request and response bodies are streamed through with constant memory, so large uploads/downloads and streaming responses (Server-Sent Events, chunked transfer) work with no size cap. On Express, an app that enables `proxy` must mount `createExpressAuth()` **before** any body-parser middleware — `/proxy` forwards the raw request stream, and a parser that already consumed it leaves nothing to forward. The five auth endpoints never read a request body, so they work at any position in the middleware chain.
 
 The full contract — allowlist DSL (`*` vs `**`), header rewriting rules, error envelope, streaming passthrough, migration from a custom proxy — is documented in the [Proxy guide](?path=/docs/guides-auth-proxy--docs).
 

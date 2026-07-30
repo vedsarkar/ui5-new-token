@@ -50,7 +50,7 @@ app.use(
 
 The router auto-mounts `/proxy` for every method when `proxy` is set.
 
-> **⚠️ Mount before any body parser.** The proxy streams the raw request body, so `createExpressAuth()` must run **before** `express.json()` / `express.urlencoded()` / `express.raw()`. A parser that has already consumed the stream leaves nothing to forward.
+> **⚠️ Mount before any body parser.** The proxy streams the raw request body, so `createExpressAuth()` must run **before** `express.json()` / `express.urlencoded()` / `express.raw()`. A parser that has already consumed the stream leaves nothing to forward, and the request fails with a 500 rather than silently reaching upstream with an empty body. This applies only when `proxy` is configured — the five auth endpoints (`/login`, `/logout`, `/callback`, `/refreshToken`, `/checkToken`) never read a request body and work at any position in the middleware chain.
 
 Patterns in `allowedTargets` are compiled once at startup — an invalid pattern throws `TypeError` immediately, so the app fails to boot rather than failing on the first request.
 

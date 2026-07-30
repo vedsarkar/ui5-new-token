@@ -13,15 +13,21 @@ import type {
 type StreamingRequestInit = RequestInit & { duplex?: "half" };
 
 /**
- * Builds a Web `Request` from an Express `Request`, streaming the raw request
- * body through without buffering. The URL origin is a fixed placeholder
- * (`http://internal.invalid`) — handlers read only `.pathname`/`.searchParams`.
+ * Builds a Web `Request` from an Express `Request`. The URL origin is a fixed
+ * placeholder (`http://internal.invalid`) — handlers read only
+ * `.pathname`/`.searchParams`.
  *
- * The body is taken straight from the raw Node stream, so `createExpressAuth`
- * MUST be mounted BEFORE any body-parser middleware (`express.json()`, …): a
- * parser that has already consumed the stream leaves nothing to forward.
+ * The body is omitted by default: none of the five auth endpoints reads one,
+ * and touching the raw Node stream would force the router to be mounted before
+ * every body-parser middleware. Pass `streamBody: true` for `/proxy`, the one
+ * route that forwards the body upstream — a parser that has already consumed
+ * the stream leaves nothing to forward, so a proxying app MUST mount
+ * `createExpressAuth` BEFORE `express.json()` and friends.
  */
-export function expressToWebRequest(req: ExpressRequest): Request {
+export function expressToWebRequest(
+	req: ExpressRequest,
+	options: { streamBody?: boolean } = {},
+): Request {
 	const url = `http://internal.invalid${req.originalUrl}`;
 
 	const headers = new Headers();
@@ -36,7 +42,7 @@ export function expressToWebRequest(req: ExpressRequest): Request {
 	}
 
 	const init: StreamingRequestInit = { method: req.method, headers };
-	if (req.method !== "GET" && req.method !== "HEAD") {
+	if (options.streamBody && req.method !== "GET" && req.method !== "HEAD") {
 		init.body = Readable.toWeb(req) as unknown as ReadableStream<Uint8Array>;
 		init.duplex = "half";
 	}

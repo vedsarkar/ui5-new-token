@@ -136,6 +136,14 @@ export type CreateTestAppOptions = {
 	 * routing.
 	 */
 	mountPath?: string;
+	/**
+	 * Mount `express.json()` and `express.urlencoded()` BEFORE the auth router,
+	 * reproducing the middleware order most consumer apps use. By the time the
+	 * router runs, the parsers have already drained the raw request stream — the
+	 * five auth endpoints must keep working regardless, because they never read
+	 * a request body.
+	 */
+	bodyParserFirst?: boolean;
 };
 
 /**
@@ -144,9 +152,18 @@ export type CreateTestAppOptions = {
  * as JSON responses to the client.
  */
 export function createTestApp(options: CreateTestAppOptions = {}): Agent {
-	const { config, ssoRedirect, mountPath = "/api/auth" } = options;
+	const {
+		config,
+		ssoRedirect,
+		mountPath = "/api/auth",
+		bodyParserFirst = false,
+	} = options;
 
 	const app = express();
+	if (bodyParserFirst) {
+		app.use(express.json());
+		app.use(express.urlencoded({ extended: true }));
+	}
 	app.use(
 		mountPath,
 		createExpressAuth({
