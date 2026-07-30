@@ -106,14 +106,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 	const selectedCustomer = searchParams.get("customer") ?? undefined;
 
 	const handleSelectTenant = (tenant: TenantEntry): void => {
-		// `tenant.environment` is the human label shown in the picker; the URL
-		// needs the environment's machine `name`, so resolve it from the option
-		// list (which carries both) by tenant id.
-		const environmentName =
-			tenants.find((option) => option.tenantId === tenant.tenantId)
-				?.environmentName ?? tenant.environment;
 		const params = new URLSearchParams(searchParams);
-		params.set("env", environmentName);
+		params.set("env", tenant.environmentId ?? tenant.environment ?? "");
 		params.set("tenant", tenant.tenantId);
 		params.set("customer", tenant.customerName);
 		router.push(`${pathname}?${params.toString()}`);
@@ -179,6 +173,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 						<TenantSelector
 							tenants={tenants}
 							selectedTenantId={selectedTenantId}
+							selectedEnvironmentId={selectedEnv}
 							onSelect={handleSelectTenant}
 							loading={tenantsLoading}
 						/>
@@ -224,6 +219,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 						<TenantSelector
 							tenants={tenants}
 							selectedTenantId={selectedTenantId}
+							selectedEnvironmentId={selectedEnv}
 							onSelect={handleSelectTenant}
 							loading={tenantsLoading}
 							trigger={<Button design="Emphasized">Select tenant</Button>}

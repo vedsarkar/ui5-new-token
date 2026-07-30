@@ -8,20 +8,22 @@ import type { TenantEntry } from "./TenantSelector.types";
 faker.seed(42);
 
 const ENVIRONMENTS = [
-	"EUS102-DEVELOP",
-	"EUS105-PRODUCTION",
-	"WUS201-STAGING",
-	"EUC301-PRODUCTION",
-	"TST01-TEST",
-];
+	{ id: "EUS102-DEVELOP", label: "Develop (EUS102)" },
+	{ id: "EUS105-PRODUCTION", label: "Production (EUS105)" },
+	{ id: "WUS201-STAGING", label: "Staging (WUS201)" },
+	{ id: "EUC301-PRODUCTION", label: "Production (EUC301)" },
+	{ id: "TST01-TEST", label: "Test (TST01)" },
+] as const;
 
 const makeTenant = (): TenantEntry => {
 	const slug = faker.helpers.slugify(faker.commerce.department()).toLowerCase();
+	const environment = faker.helpers.arrayElement(ENVIRONMENTS);
 	return {
 		customerName: faker.company.name(),
 		tenantName: `${slug}-${faker.string.alpha({ length: 3, casing: "lower" })}`,
 		tenantId: faker.string.alphanumeric(12),
-		environment: faker.helpers.arrayElement(ENVIRONMENTS),
+		environmentId: environment.id,
+		environmentName: environment.label,
 	};
 };
 
@@ -73,7 +75,8 @@ export const LongLabel = meta.story({
 				customerName: `${faker.company.name()} ${faker.company.buzzNoun()} Multi-Region Worldwide`,
 				tenantName: `${faker.commerce.department().toLowerCase()}-internal`,
 				tenantId: faker.string.alphanumeric(16),
-				environment: "EUS102-DEVELOP",
+				environmentId: "EUS102-DEVELOP",
+				environmentName: "Develop (EUS102)",
 			},
 		],
 	},
@@ -123,6 +126,68 @@ export const DuplicateTenantAcrossEnvironments = meta.story({
 				customerName: "Acme Corp",
 				tenantName: "acme-prod",
 				tenantId: "tenant-acme-01",
+				environmentId: "EUS105-PRODUCTION",
+				environmentName: "Production (EUS105)",
+			},
+			{
+				customerName: "Acme Corp",
+				tenantName: "acme-prod",
+				tenantId: "tenant-acme-01",
+				environmentId: "EUS102-DEVELOP",
+				environmentName: "Develop (EUS102)",
+			},
+			{
+				customerName: "Acme Corp",
+				tenantName: "acme-prod",
+				tenantId: "tenant-acme-01",
+				environmentId: "WUS201-STAGING",
+				environmentName: "Staging (WUS201)",
+			},
+			...tenants.slice(0, 3),
+		],
+		selectedTenantId: "tenant-acme-01",
+		selectedEnvironmentId: "EUS105-PRODUCTION",
+	},
+	play: async ({ canvasElement }) => {
+		const dialog = await openFirstDialog(canvasElement);
+		await waitFor(() => {
+			const idCells = [...dialog.querySelectorAll("ui5-table-cell")].filter(
+				(cell) => cell.textContent === "tenant-acme-01",
+			);
+			if (idCells.length !== 3) {
+				throw new Error(
+					`expected 3 rows with tenant-acme-01, got ${idCells.length}`,
+				);
+			}
+			const selectedRows = [...dialog.querySelectorAll("ui5-table-row")].filter(
+				(row) =>
+					[...row.classList].some((className) =>
+						className.includes("selectedRow"),
+					),
+			);
+			if (selectedRows.length !== 1) {
+				throw new Error(
+					`expected exactly 1 selected row, got ${selectedRows.length}`,
+				);
+			}
+		});
+	},
+});
+
+/**
+ * Backward-compat check for deprecated props: `TenantEntry.environment` and
+ * `selectedEnvironment`. Prefer `environmentName` / `environmentId` and
+ * `selectedEnvironmentId` in new code — this story only verifies the fallback
+ * path still resolves the trigger label and the highlighted row.
+ */
+export const DeprecatedEnvironmentProps = meta.story({
+	name: "With deprecated props: environment / selectedEnvironment",
+	args: {
+		tenants: [
+			{
+				customerName: "Acme Corp",
+				tenantName: "acme-prod",
+				tenantId: "tenant-acme-01",
 				environment: "EUS105-PRODUCTION",
 			},
 			{
@@ -137,7 +202,12 @@ export const DuplicateTenantAcrossEnvironments = meta.story({
 				tenantId: "tenant-acme-01",
 				environment: "WUS201-STAGING",
 			},
-			...tenants.slice(0, 3),
+			...tenants.slice(0, 3).map((tenant) => ({
+				customerName: tenant.customerName,
+				tenantName: tenant.tenantName,
+				tenantId: tenant.tenantId,
+				environment: tenant.environmentId,
+			})),
 		],
 		selectedTenantId: "tenant-acme-01",
 		selectedEnvironment: "EUS105-PRODUCTION",
@@ -162,6 +232,13 @@ export const DuplicateTenantAcrossEnvironments = meta.story({
 			if (selectedRows.length !== 1) {
 				throw new Error(
 					`expected exactly 1 selected row, got ${selectedRows.length}`,
+				);
+			}
+			const trigger = canvasElement.querySelector("ui5-button");
+			const label = trigger?.textContent ?? "";
+			if (!label.includes("EUS105-PRODUCTION")) {
+				throw new Error(
+					`expected trigger to fall back to deprecated environment, got "${label}"`,
 				);
 			}
 		});

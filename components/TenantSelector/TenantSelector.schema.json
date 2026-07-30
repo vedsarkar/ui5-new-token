@@ -5,7 +5,7 @@
 	"type": "object",
 	"properties": {
 		"onSelect": {
-			"description": "Fired when the user picks a row. Receives the chosen `TenantEntry`. The component\ncloses the dialog after invoking it. The trigger label format is fixed to\n`\"${customerName} - ${tenantName} - ${environment}\"` once a tenant is selected.",
+			"description": "Fired when the user picks a row. Receives the chosen `TenantEntry`. The component\ncloses the dialog after invoking it. The trigger label format is fixed to\n`\"${customerName} - ${tenantName} - ${environmentName}\"` once a tenant is selected\n(`environmentName` falls back to `environment` when unset).",
 			"x-typescriptType": "(tenant: TenantEntry) => void",
 			"x-functionSignature": "(tenant: TenantEntry) => void"
 		},
@@ -20,12 +20,18 @@
 			"type": "boolean"
 		},
 		"selectedEnvironment": {
-			"description": "`environment` of the currently selected tenant. Disambiguates rows that share\nthe same `tenantId` across environments. When omitted, the first matching\n`tenantId` wins (legacy behaviour). Prefer always passing it when the\ntenant list can contain the same id in more than one environment.",
+			"deprecated": true,
+			"x-deprecationReason": "Prefer `selectedEnvironmentId`. Used when `selectedEnvironmentId`\nis omitted.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"selectedEnvironmentId": {
+			"description": "`environmentId` of the currently selected tenant. Disambiguates rows that\nshare the same `tenantId` across environments. When omitted, falls back to\n`selectedEnvironment`, then the first matching `tenantId` wins (legacy\nbehaviour). Prefer always passing it when the tenant list can contain the\nsame id in more than one environment.",
 			"x-typescriptType": "string",
 			"type": "string"
 		},
 		"selectedTenantId": {
-			"description": "`tenantId` of the currently selected tenant. Together with\n`selectedEnvironment`, drives the trigger label and the highlighted row.\nWhen omitted (or when it matches no entry), the trigger renders the\nplaceholder `\"Select tenant\"` with a dropdown caret. The component holds no\nshadow selection state — these props are the single source of truth.",
+			"description": "`tenantId` of the currently selected tenant. Together with\n`selectedEnvironmentId` (or deprecated `selectedEnvironment`), drives the\ntrigger label and the highlighted row. When omitted (or when it matches no\nentry), the trigger renders the placeholder `\"Select tenant\"` with a\ndropdown caret. The component holds no shadow selection state — these props\nare the single source of truth.",
 			"x-typescriptType": "string",
 			"type": "string"
 		},

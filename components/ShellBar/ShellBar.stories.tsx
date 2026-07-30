@@ -199,16 +199,20 @@ export const WithAppNavigation = meta.story({
 	),
 });
 
-const shellBarTenants: TenantEntry[] = Array.from({ length: 4 }, () => ({
-	customerName: faker.company.name(),
-	tenantName: `${faker.commerce.department().toLowerCase()}-${faker.string.alpha({ length: 3, casing: "lower" })}`,
-	tenantId: faker.string.alphanumeric(12),
-	environment: faker.helpers.arrayElement([
-		"EUS102-DEVELOP",
-		"EUS105-PRODUCTION",
-		"WUS201-STAGING",
-	]),
-}));
+const shellBarTenants: TenantEntry[] = Array.from({ length: 4 }, () => {
+	const environment = faker.helpers.arrayElement([
+		{ id: "EUS102-DEVELOP", label: "Develop (EUS102)" },
+		{ id: "EUS105-PRODUCTION", label: "Production (EUS105)" },
+		{ id: "WUS201-STAGING", label: "Staging (WUS201)" },
+	]);
+	return {
+		customerName: faker.company.name(),
+		tenantName: `${faker.commerce.department().toLowerCase()}-${faker.string.alpha({ length: 3, casing: "lower" })}`,
+		tenantId: faker.string.alphanumeric(12),
+		environmentId: environment.id,
+		environmentName: environment.label,
+	};
+});
 
 export const WithTenantSelector = meta.story({
 	args: {

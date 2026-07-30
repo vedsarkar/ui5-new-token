@@ -14,12 +14,27 @@ The `TenantSelector` component SHALL be exported from `@reltio/design/components
 
 ### Requirement: Controlled selection state
 
-The component SHALL accept `selectedTenantId?: string` and `onSelect: (tenant: TenantEntry) => void`. The component SHALL NOT hold a local "current tenant" shadow state. The trigger's label and the selected row in the dialog SHALL be derived solely from the value of `selectedTenantId` against the `tenants` array.
+The component SHALL accept `selectedTenantId?: string`, optional `selectedEnvironmentId?: string` (preferred) or deprecated `selectedEnvironment?: string`, and `onSelect: (tenant: TenantEntry) => void`. The component SHALL NOT hold a local "current tenant" shadow state. The trigger's label and the selected row in the dialog SHALL be derived by matching `selectedTenantId` (and, when provided, the resolved selected environment — `selectedEnvironmentId` falling back to `selectedEnvironment`) against the `tenants` array. Row identity uses `environmentId` when set, otherwise the deprecated `environment` field. When neither selection environment prop is provided, the first matching `tenantId` wins.
 
 #### Scenario: Trigger reflects the selected tenant
 
-- **WHEN** the component is rendered with `tenants=[{customerName: "AnyCloud", tenantName: "autoAnyCloud-INTERNAL", tenantId: "autoAnyCloud", environment: "EUS102-DEVELOP"}, …]` AND `selectedTenantId="autoAnyCloud"`
+- **WHEN** the component is rendered with `tenants=[{customerName: "AnyCloud", tenantName: "autoAnyCloud-INTERNAL", tenantId: "autoAnyCloud", environmentId: "EUS102-DEVELOP", environmentName: "EUS102-DEVELOP"}, …]` AND `selectedTenantId="autoAnyCloud"`
 - **THEN** the trigger displays the text `"AnyCloud - autoAnyCloud-INTERNAL - EUS102-DEVELOP"`
+
+#### Scenario: Legacy environment field still drives the trigger
+
+- **WHEN** the component is rendered with `tenants=[{customerName: "AnyCloud", tenantName: "autoAnyCloud-INTERNAL", tenantId: "autoAnyCloud", environment: "EUS102-DEVELOP"}, …]` (no `environmentName` / `environmentId`) AND `selectedTenantId="autoAnyCloud"`
+- **THEN** the trigger displays the text `"AnyCloud - autoAnyCloud-INTERNAL - EUS102-DEVELOP"`
+
+#### Scenario: selectedEnvironmentId disambiguates duplicate tenantIds
+
+- **WHEN** the component is rendered with two rows that share `tenantId="autoAnyCloud"` but have different `environmentId` values AND `selectedTenantId="autoAnyCloud"` AND `selectedEnvironmentId` equals one of those environment ids
+- **THEN** the trigger label and the highlighted row reflect that environment's entry only
+
+#### Scenario: Deprecated selectedEnvironment still disambiguates
+
+- **WHEN** the component is rendered with duplicate `tenantId` rows that set only deprecated `environment` (no `environmentId`) AND `selectedTenantId` matches AND `selectedEnvironment` equals one of those environment values (no `selectedEnvironmentId`)
+- **THEN** the trigger label and the highlighted row reflect that environment's entry only
 
 #### Scenario: Trigger shows placeholder without selection
 
@@ -33,22 +48,22 @@ The component SHALL accept `selectedTenantId?: string` and `onSelect: (tenant: T
 
 #### Scenario: Selection updates trigger after onSelect
 
-- **WHEN** the dialog is open, the user clicks a row, the component invokes `onSelect(clickedTenant)`, AND the consumer updates `selectedTenantId` to `clickedTenant.tenantId` on the next render
+- **WHEN** the dialog is open, the user clicks a row, the component invokes `onSelect(clickedTenant)`, AND the consumer updates `selectedTenantId` (and `selectedEnvironmentId` when needed) from the clicked entry on the next render
 - **THEN** the trigger label updates to reflect the newly selected tenant on the next render
 
 ### Requirement: Trigger label format
 
-When a tenant is selected, the trigger label SHALL be exactly `"${customerName} - ${tenantName} - ${environment}"` (with literal " - " separators). Long labels SHALL truncate visually with CSS ellipsis; the untruncated string SHALL be exposed via the trigger's `title` attribute so a browser tooltip shows the full text on hover.
+When a tenant is selected, the trigger label SHALL be exactly `"${customerName} - ${tenantName} - ${resolvedEnvironmentName}"` (with literal " - " separators), where `resolvedEnvironmentName` is `environmentName` when set, otherwise the deprecated `environment` field. Long labels SHALL truncate visually with CSS ellipsis; the untruncated string SHALL be passed to the default trigger's UI5 `tooltip` prop so a hover tooltip shows the full text.
 
 #### Scenario: Full label rendered
 
-- **WHEN** the trigger renders for a tenant `{customerName: "A", tenantName: "T", tenantId: "id", environment: "E"}`
-- **THEN** the visible text is `"A - T - E"` AND the `title` attribute equals `"A - T - E"`
+- **WHEN** the trigger renders for a tenant `{customerName: "A", tenantName: "T", tenantId: "id", environmentId: "E", environmentName: "E"}`
+- **THEN** the visible text is `"A - T - E"` AND the default trigger's `tooltip` equals `"A - T - E"`
 
 #### Scenario: Long label truncates with tooltip
 
 - **WHEN** the trigger renders for a tenant whose formatted label exceeds the trigger's allocated width
-- **THEN** the visible text is truncated with `text-overflow: ellipsis` from the right AND the full untruncated string is exposed via the `title` attribute
+- **THEN** the visible text is truncated with `text-overflow: ellipsis` from the right AND the full untruncated string is exposed via the default trigger's `tooltip` prop
 
 ### Requirement: Internal dialog open/close
 
@@ -141,12 +156,17 @@ The dialog header SHALL contain a collapsing search affordance: when collapsed i
 
 #### Scenario: Search matches any of the four fields
 
-- **WHEN** the dialog contains tenants where one has `environment="TST01"` and the user types `"TST"` into the search input
-- **THEN** the row with `environment="TST01"` is rendered (matched by the environment field), even if no other field contains `"TST"`
+- **WHEN** the dialog contains tenants where one has `environmentName="TST01"` and the user types `"TST"` into the search input
+- **THEN** the row with `environmentName="TST01"` is rendered (matched by the environment name field), even if no other field contains `"TST"`
+
+#### Scenario: Legacy environment is used for search and filter when new fields are omitted
+
+- **WHEN** the dialog contains tenants that set only deprecated `environment="TST01"` (no `environmentName`) and the user types `"TST"` into the search input
+- **THEN** the matching row is rendered
 
 ### Requirement: Customer and environment filter menu
 
-The dialog header SHALL contain a filter affordance: a filter icon button that opens a popover with a `Customer` dropdown and an `Environment` dropdown. Each dropdown SHALL be populated from the distinct values present in the `tenants` array (sorted ascending) plus a leading sentinel option (`All customers` / `All environments`) that clears that filter. Selecting a concrete value SHALL narrow the table to rows whose `customerName` (respectively `environment`) exactly equals the selected value. The search query and the two filters SHALL combine: a row is shown only when it satisfies the search AND both active filters. The popover SHALL also contain a ghost (transparent) `Clear filter` button that resets both the customer and environment filters to their `All …` defaults in a single action. Whenever at least one filter is applied, the header filter button SHALL display a UI5 `ButtonBadge` (`InlineText`) showing the number of active filters as a standard indicator so the user is reminded that filtering is active; the badge SHALL disappear when no filter is applied. The `InlineText` design is used (rather than the overlay `AttentionDot`/`OverlayText`) because the surrounding UI5 `Bar` clips overlay badges via `overflow: hidden`.
+The dialog header SHALL contain a filter affordance: a filter icon button that opens a popover with a `Customer` dropdown and an `Environment` dropdown. The `Customer` dropdown SHALL be populated from the distinct `customerName` values present in the `tenants` array (sorted ascending); the `Environment` dropdown SHALL be populated from the distinct resolved environment names (`environmentName` falling back to deprecated `environment`, sorted ascending). Each dropdown SHALL include a leading sentinel option (`All customers` / `All environments`) that clears that filter. Selecting a concrete value SHALL narrow the table to rows whose `customerName` (respectively resolved environment name) exactly equals the selected value. The search query and the two filters SHALL combine: a row is shown only when it satisfies the search AND both active filters. The popover SHALL also contain a ghost (transparent) `Clear filter` button that resets both the customer and environment filters to their `All …` defaults in a single action. Whenever at least one filter is applied, the header filter button SHALL display a UI5 `ButtonBadge` (`InlineText`) showing the number of active filters as a standard indicator so the user is reminded that filtering is active; the badge SHALL disappear when no filter is applied. The `InlineText` design is used (rather than the overlay `AttentionDot`/`OverlayText`) because the surrounding UI5 `Bar` clips overlay badges via `overflow: hidden`.
 
 #### Scenario: Customer filter narrows rows
 
@@ -156,7 +176,7 @@ The dialog header SHALL contain a filter affordance: a filter icon button that o
 #### Scenario: Environment filter narrows rows
 
 - **WHEN** the dialog is open and the user selects a concrete environment in the filter popover's `Environment` dropdown
-- **THEN** only rows whose `environment` equals the selected environment are rendered
+- **THEN** only rows whose resolved environment label equals the selected environment are rendered
 
 #### Scenario: Sentinel option clears a filter
 

@@ -15,21 +15,27 @@ column sorting, and the close-on-select behavior.
 ### Controlled selection
 
 The component is fully controlled. The consumer owns `selectedTenantId` (and
-preferably `selectedEnvironment`) and reacts to `onSelect`. There is no shadow
+preferably `selectedEnvironmentId`) and reacts to `onSelect`. There is no shadow
 selection state inside the component: the trigger label and the highlighted row
 are derived from matching those props against the `tenants` array. The same
-`tenantId` can appear in more than one environment — pass `selectedEnvironment`
+`tenantId` can appear in more than one environment — pass `selectedEnvironmentId`
 so only the matching row is highlighted. After the user picks a row,
 `onSelect(tenant)` fires and the dialog closes — the consumer is responsible for
 updating both selection props (from its URL, store, etc.) on the next render.
 
+Legacy entries that only set `environment` (and the deprecated
+`selectedEnvironment` prop) still work: when `environmentName` /
+`environmentId` / `selectedEnvironmentId` are omitted, the component falls back
+to `environment` / `selectedEnvironment`.
+
 ### Trigger label format
 
 Once a tenant is selected the trigger reads
-`"${customerName} - ${tenantName} - ${environment}"`. With no selection (or a
+`"${customerName} - ${tenantName} - ${environmentName}"` (falling back to
+`environment` when `environmentName` is unset). With no selection (or a
 `selectedTenantId` that matches no entry) it reads `"Select tenant"` with a
 dropdown caret. Long labels truncate with an ellipsis; the full untruncated string
-is always available via the trigger's `title` attribute for a hover tooltip.
+is always available via the default trigger's UI5 `tooltip` prop for a hover tooltip.
 
 ### Custom trigger
 
@@ -56,8 +62,10 @@ is no close button — the expanded search input collapses back to the icon on b
 when it is empty, and stays open while it holds a query.
 
 - **Search** filters rows by case-insensitive substring match across **all four**
-  fields (customer name, tenant name, tenant ID, environment).
-- **Filter** narrows rows to an exact `customerName` and/or `environment`; the
+  fields (customer name, tenant name, tenant ID, environment name — falling back
+  to deprecated `environment` when `environmentName` is unset).
+- **Filter** narrows rows to an exact `customerName` and/or resolved environment
+  name; the
   dropdowns are populated from the distinct values present in `tenants`, with an
   `All customers` / `All environments` sentinel that clears each filter. A ghost
   `Clear filter` button in the popover resets both filters at once. While any filter

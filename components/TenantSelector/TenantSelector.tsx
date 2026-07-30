@@ -36,26 +36,34 @@ import type { TenantEntry, TenantSelectorProps } from "./TenantSelector.types";
 import "@ui5/webcomponents-fiori/dist/illustrations/NoData.js";
 import "@ui5/webcomponents-fiori/dist/illustrations/NoEntries.js";
 
-type ColumnKey = keyof TenantEntry;
+type ColumnKey = "customerName" | "tenantName" | "tenantId" | "environmentName";
 type SortDirection = "Ascending" | "Descending";
 
 const COLUMNS: { key: ColumnKey; label: string }[] = [
 	{ key: "customerName", label: "Customer name" },
 	{ key: "tenantName", label: "Tenant name" },
 	{ key: "tenantId", label: "Tenant ID" },
-	{ key: "environment", label: "Environment" },
+	{ key: "environmentName", label: "Environment" },
 ];
 
 const ALL_CUSTOMERS = "All customers";
 const ALL_ENVIRONMENTS = "All environments";
 
-/** Collision-safe row id — plain concatenation of tenantId+environment can collide
+/** Display label — prefers `environmentName`, falls back to deprecated `environment`. */
+const resolveEnvironmentName = (tenant: TenantEntry): string =>
+	tenant.environmentName ?? tenant.environment ?? "";
+
+/** Row / selection identity — prefers `environmentId`, falls back to deprecated `environment`. */
+const resolveEnvironmentId = (tenant: TenantEntry): string =>
+	tenant.environmentId ?? tenant.environment ?? "";
+
+const tenantField = (tenant: TenantEntry, key: ColumnKey): string =>
+	key === "environmentName" ? resolveEnvironmentName(tenant) : tenant[key];
+
+/** Collision-safe row id — plain concatenation of tenantId+environmentId can collide
  * (e.g. "ab"+"cdef" vs "abc"+"def"). */
-const tenantRowKey = ({
-	tenantId,
-	environment,
-}: Pick<TenantEntry, "tenantId" | "environment">) =>
-	JSON.stringify([tenantId, environment]);
+const tenantRowKey = (tenant: TenantEntry) =>
+	JSON.stringify([tenant.tenantId, resolveEnvironmentId(tenant)]);
 
 // Above this filtered-row count the dialog swaps to a virtualized render;
 // at or below it, everything is rendered up front (cheaper for small lists).
@@ -80,6 +88,7 @@ const DEFAULT_INITIAL_VISIBLE_ROWS = 20;
 export const TenantSelector = ({
 	tenants,
 	selectedTenantId,
+	selectedEnvironmentId,
 	selectedEnvironment,
 	onSelect,
 	trigger,
@@ -116,6 +125,9 @@ export const TenantSelector = ({
 		}
 	}, [searchExpanded]);
 
+	const resolvedSelectedEnvironmentId =
+		selectedEnvironmentId ?? selectedEnvironment;
+
 	// Scroll the virtualized viewport back to the top. Called imperatively
 	// wherever the underlying dataset changes shape (sort, filter, search,
 	// close). The explicit `setRange` is a safety net for the frame where the
@@ -129,11 +141,11 @@ export const TenantSelector = ({
 	const selectedTenant = tenants.find(
 		(tenant) =>
 			tenant.tenantId === selectedTenantId &&
-			(selectedEnvironment == null ||
-				tenant.environment === selectedEnvironment),
+			(resolvedSelectedEnvironmentId == null ||
+				resolveEnvironmentId(tenant) === resolvedSelectedEnvironmentId),
 	);
 	const triggerLabel = selectedTenant
-		? `${selectedTenant.customerName} - ${selectedTenant.tenantName} - ${selectedTenant.environment}`
+		? `${selectedTenant.customerName} - ${selectedTenant.tenantName} - ${resolveEnvironmentName(selectedTenant)}`
 		: "Select tenant";
 
 	const customers = useMemo(
@@ -145,9 +157,9 @@ export const TenantSelector = ({
 	);
 	const environments = useMemo(
 		() =>
-			Array.from(new Set(tenants.map((tenant) => tenant.environment))).sort(
-				(a, b) => a.localeCompare(b),
-			),
+			Array.from(
+				new Set(tenants.map((tenant) => resolveEnvironmentName(tenant))),
+			).sort((a, b) => a.localeCompare(b)),
 		[tenants],
 	);
 
@@ -157,20 +169,25 @@ export const TenantSelector = ({
 			const matchesQuery =
 				!normalizedQuery ||
 				COLUMNS.some((column) =>
-					tenant[column.key].toLowerCase().includes(normalizedQuery),
+					tenantField(tenant, column.key)
+						.toLowerCase()
+						.includes(normalizedQuery),
 				);
 			const matchesCustomer =
 				!customerFilter || tenant.customerName === customerFilter;
 			const matchesEnvironment =
-				!environmentFilter || tenant.environment === environmentFilter;
+				!environmentFilter ||
+				resolveEnvironmentName(tenant) === environmentFilter;
 			return matchesQuery && matchesCustomer && matchesEnvironment;
 		});
 		const direction = sortDirection === "Ascending" ? 1 : -1;
 		return [...filtered].sort(
 			(a, b) =>
-				a[sortColumn].localeCompare(b[sortColumn], undefined, {
-					sensitivity: "base",
-				}) * direction,
+				tenantField(a, sortColumn).localeCompare(
+					tenantField(b, sortColumn),
+					undefined,
+					{ sensitivity: "base" },
+				) * direction,
 		);
 	}, [
 		tenants,
@@ -323,14 +340,15 @@ export const TenantSelector = ({
 						className={classNames(
 							selectedTenant != null &&
 								tenant.tenantId === selectedTenant.tenantId &&
-								tenant.environment === selectedTenant.environment &&
+								resolveEnvironmentId(tenant) ===
+									resolveEnvironmentId(selectedTenant) &&
 								styles.selectedRow,
 						)}
 					>
 						<TableCell>{tenant.customerName}</TableCell>
 						<TableCell>{tenant.tenantName}</TableCell>
 						<TableCell>{tenant.tenantId}</TableCell>
-						<TableCell>{tenant.environment}</TableCell>
+						<TableCell>{resolveEnvironmentName(tenant)}</TableCell>
 					</TableRow>
 				))}
 			</Table>

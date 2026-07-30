@@ -47,19 +47,10 @@ type TenantsResult = {
 const toMessage = (error: unknown): string =>
 	error instanceof Error ? error.message : String(error);
 
-// A `TenantEntry` (what `TenantSelector` renders) enriched with the environment's
-// machine `name`. The selector shows `environment` (the human `label`), while
-// callers that build URLs or query params need the `name` — e.g. the console
-// deep-links and the `env` query param expect the identifier, not the label.
-export type TenantOption = TenantEntry & {
-	/** Machine identifier of the environment (e.g. `"EUS102-DEVELOP"`). */
-	environmentName: string;
-};
-
 /**
  * Fetches the tenants available to the signed-in user across **every**
  * configured environment via `{apiPath}/enhancedTenants` and returns them as a
- * single flat `TenantOption[]` ready to feed straight into `TenantSelector`.
+ * single flat `TenantEntry[]` ready to feed straight into `TenantSelector`.
  *
  * All environments are queried **in parallel** (one BFF proxy call each), and
  * results stream in **as each response arrives** — a slow environment never
@@ -67,17 +58,18 @@ export type TenantOption = TenantEntry & {
  * `data` list; `isLoading` stays `true` until every environment has settled.
  *
  * The `enhancedTenants` payload has no environment field, so each tenant is
- * stamped with its source environment's `label` (the picker's "Environment"
- * column) and its machine `name` (`environmentName`, for URLs/query params).
- * Tenant ids are globally unique in Reltio, but we still de-dupe defensively so
- * the selector never sees a duplicate row key.
+ * stamped with its source environment's `label` (`environmentName`, the
+ * picker's "Environment" column) and its machine `name` (`environmentId`, for
+ * URLs/query params). The same `tenantId` may appear in more than one
+ * environment, so rows are keyed by `(tenantId, environmentId)` — matching
+ * `TenantSelector`'s row identity — and de-duped only when that pair repeats.
  *
  * The environment list itself comes from the shared `adminToolsConfig` in the
  * config service (only its `environments` field is projected), so the requests
  * only start once that config has loaded.
  */
 export function useTenants(): {
-	data: TenantOption[];
+	data: TenantEntry[];
 	isLoading: boolean;
 } {
 	const { data: config } = useConfig<AdminToolsConfig>({
@@ -148,22 +140,24 @@ export function useTenants(): {
 		((environments?.length ?? 0) > 0 && results.length === 0) ||
 		results.some((result) => result.isLoading);
 
-	const data = useMemo<TenantOption[]>(() => {
-		const byId = new Map<string, TenantOption>();
+	const data = useMemo<TenantEntry[]>(() => {
+		const byRowKey = new Map<string, TenantEntry>();
 		for (const result of results) {
 			for (const tenant of result.tenants ?? []) {
-				if (!byId.has(tenant.tenantId)) {
-					byId.set(tenant.tenantId, {
+				const environmentId = result.environment.name;
+				const rowKey = JSON.stringify([tenant.tenantId, environmentId]);
+				if (!byRowKey.has(rowKey)) {
+					byRowKey.set(rowKey, {
 						customerName: tenant.customerName,
 						tenantName: tenant.tenantName,
 						tenantId: tenant.tenantId,
-						environment: result.environment.label,
-						environmentName: result.environment.name,
+						environmentName: result.environment.label,
+						environmentId,
 					});
 				}
 			}
 		}
-		return [...byId.values()];
+		return [...byRowKey.values()];
 	}, [results]);
 
 	return { data, isLoading };
