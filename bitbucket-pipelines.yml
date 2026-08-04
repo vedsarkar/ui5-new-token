@@ -17,6 +17,11 @@ image: node:22
 #    publishes the new versions to npm + creates annotated git tags.
 # 4. For preview / per-PR builds, the custom pipeline `snapshot @reltio
 #    packages` publishes a one-off snapshot under a `pr-<id>` dist-tag.
+# 5. When `release-packages` publishes new versions, it also posts a
+#    single summary message to Slack via the `SLACK_WEBHOOK_URL` repository
+#    variable (Repo settings → Pipelines → Repository variables). Only
+#    tags created during this run are included — a no-op release (or a
+#    rerun of an already-published commit) posts nothing.
 # ──────────────────────────────────────────────────────────────────────────
 
 definitions:
@@ -137,7 +142,37 @@ definitions:
           - npm run build --workspace=@reltio/auth
           - npm run build --workspace=@reltio/skills
           - npm run build --workspace=@reltio/app
+          # Snapshot tags on HEAD *before* publishing, so a rerun on the
+          # same commit (retry, manual re-trigger) doesn't re-notify for
+          # tags that already existed from an earlier successful run.
+          - git tag --points-at HEAD > /tmp/tags-before.txt
           - npm run release
+          # ── Slack release notification ──────────────────────────────
+          # Only posts for tags that are new since /tmp/tags-before.txt —
+          # i.e. actually created by `npm run release` in *this* run.
+          # A rerun where release-packages was already published (no-op)
+          # posts nothing.
+          - |
+            MSG=""
+            for pkg in design auth skills app; do
+              if [ -f "packages/$pkg/package.json" ]; then
+                VERSION=$(node -p "require('./packages/$pkg/package.json').version")
+                TAG="@reltio/$pkg@$VERSION"
+                if git tag --points-at HEAD | grep -qx "$TAG" && ! grep -qx "$TAG" /tmp/tags-before.txt; then
+                  MSG="$MSG\n• *$TAG*"
+                fi
+              fi
+            done
+            if [ -n "$MSG" ] && [ -n "$SLACK_WEBHOOK_URL" ]; then
+              if ! curl -sf --show-error --connect-timeout 5 --max-time 15 \
+                -X POST -H 'Content-type: application/json' \
+                --data "{\"text\":\"📦 *New reltio-design release(s) published:*${MSG}\n<https://bitbucket.org/reltio-ondemand/reltio-design/branch/main|View repo>\"}" \
+                "$SLACK_WEBHOOK_URL"; then
+                echo "WARNING: Slack notification failed to send (webhook unreachable or rejected). Not failing the release step for this." >&2
+              fi
+            else
+              echo "No newly published package tags (or SLACK_WEBHOOK_URL not set) — skipping Slack notification."
+            fi
     - step: &snapshot-packages
         name: Publish snapshot for current branch
         caches:
