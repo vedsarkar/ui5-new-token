@@ -11,6 +11,8 @@ import preview from "../.storybook/preview";
 import ReltioAcoName from "./reltio/aco";
 import ReltioAcoLabelName from "./reltio/aco-label";
 import ReltioActivityLogName from "./reltio/activity-log";
+import ReltioAddChildName from "./reltio/add-child";
+import ReltioAddParentName from "./reltio/add-parent";
 import ReltioAgentflowFilledName from "./reltio/agentflow-filled";
 import ReltioAgentflowOutlinedName from "./reltio/agentflow-outlined";
 import ReltioAllRequestName from "./reltio/all-request";
@@ -203,6 +205,16 @@ export const ReltioAco = meta.story({
 export const ReltioActivityLog = meta.story({
 	name: "activity-log",
 	render: showcase(ReltioActivityLogName),
+});
+
+export const ReltioAddChild = meta.story({
+	name: "add-child",
+	render: showcase(ReltioAddChildName),
+});
+
+export const ReltioAddParent = meta.story({
+	name: "add-parent",
+	render: showcase(ReltioAddParentName),
 });
 
 export const ReltioAgentflowFilled = meta.story({

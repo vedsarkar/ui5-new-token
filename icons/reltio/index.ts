@@ -12,6 +12,8 @@
 export { default as aco } from "./aco";
 export { default as acoLabel } from "./aco-label";
 export { default as activityLog } from "./activity-log";
+export { default as addChild } from "./add-child";
+export { default as addParent } from "./add-parent";
 export { default as agentflowFilled } from "./agentflow-filled";
 export { default as agentflowOutlined } from "./agentflow-outlined";
 export { default as allRequest } from "./all-request";
