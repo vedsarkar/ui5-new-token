@@ -1,24 +1,19 @@
-import type { Button } from "@ui5/webcomponents-react/Button";
+import type { ShellBarItem } from "@ui5/webcomponents-react";
 import type { ComponentPropsWithoutRef } from "react";
 
-type Ui5ButtonProps = ComponentPropsWithoutRef<typeof Button>;
+import type { AppEntry } from "../AppSelectorPopover";
 
-export type AppEntry = {
-	/** Application display name. Apps without a name are ignored. */
-	name?: string;
-	/** URL opened in a new tab on click. Apps without a URI are ignored. */
-	uri?: string;
-	/** Absolute URL to the application icon (SVG). Falls back to a generic link icon. */
-	icon?: string;
-	/** Application category for grouping in navigation.
-	 * @default "Applications"
-	 */
-	category?: string;
-};
+// The `AppEntry` type used to live in this file and was reachable via
+// `@reltio/design/components` (top level) and its deep path. It now lives
+// alongside `<AppSelectorPopover>` — re-exported here so both paths keep
+// resolving for existing consumers.
+export type { AppEntry };
+
+type Ui5ShellBarItemProps = ComponentPropsWithoutRef<typeof ShellBarItem>;
 
 export type AppSelectorProps = Omit<
-	Ui5ButtonProps,
-	"design" | "icon" | "children" | "onClick" | "id" | "accessibleName"
+	Ui5ShellBarItemProps,
+	"icon" | "text" | "id" | "onClick"
 > & {
 	/** List of apps to display, grouped by category.
 	 * Apps missing `name` or `uri` are silently ignored.
@@ -30,8 +25,11 @@ export type AppSelectorProps = Omit<
 	env?: string;
 	/** Tenant identifier substituted into URI templates (`${tenant}`). */
 	tenant?: string;
-	/** Text label displayed next to the trigger icon.
-	 * When omitted, the trigger renders as an icon-only button.
+	/** Text used as the trigger's accessible name, its hover tooltip, and its
+	 * label inside the ShellBar's "…" overflow menu. It does **not** render as
+	 * visible text next to the icon in the main bar — per UI5's `ShellBarItem`
+	 * template the item is icon-only in its primary position. Omit to fall
+	 * back to `"Applications"`.
 	 */
 	label?: string;
 	/** CSS `position-area`-style value controlling popover placement relative to the trigger.

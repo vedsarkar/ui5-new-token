@@ -110,6 +110,33 @@ export const Collapsable = meta.story({
 	),
 });
 
+export const CollapsedByDefault = meta.story({
+	args: {
+		collapsable: true,
+		defaultCollapsed: true,
+	},
+	render: (args) => (
+		<SideNavigation {...args}>
+			<SideNavigationItem text="Home" icon={homeIcon} tooltip="Home" selected />
+			<SideNavigationItem
+				text="Entities"
+				icon={businessObjectsExperienceIcon}
+				tooltip="Entities"
+			/>
+			<SideNavigationItem
+				text="Relationships"
+				icon={orgChartIcon}
+				tooltip="Relationships"
+			/>
+			<SideNavigationItem
+				text="Activity"
+				icon={activityItemsIcon}
+				tooltip="Activity"
+			/>
+		</SideNavigation>
+	),
+});
+
 export const ItemStates = meta.story({
 	render: (args) => (
 		<SideNavigation {...args}>

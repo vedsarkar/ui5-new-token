@@ -39,6 +39,8 @@ The most common placement is the [`ShellBar`](/?path=/docs/components-shellbar--
 
 Set `collapsable` to render a collapse / expand toggle pinned at the bottom of the menu. The component owns its expanded/collapsed state internally — clicking the toggle switches the menu to an icon-only rail and clicking again restores the full menu. Always provide a `tooltip` on each item so entries stay discoverable while the menu is collapsed.
 
+Set `defaultCollapsed` to start the menu collapsed on mount; the built-in toggle owns state from that point on. It only has effect together with `collapsable` — a non-collapsable menu has no way to change state and always renders expanded, so `defaultCollapsed` is ignored.
+
 ### Accessibility
 
 Set `accessibleName` to announce the menu's purpose so screen readers can tell it apart from other navigation regions on the page (e.g. `"Main navigation"`). The internal navigation landmark lives inside the component's Shadow DOM, so a plain `aria-label` on the host does not reach it — `accessibleName` is the supported way to name the menu. Provide a `tooltip` on icon-only / collapsed items and on any item whose text may truncate.

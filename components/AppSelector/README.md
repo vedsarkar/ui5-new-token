@@ -12,17 +12,13 @@ Each `app.uri` may contain `${environment}` and `${tenant}` placeholders. The co
 
 ### Trigger and ShellBar placement
 
-The inline element is a transparent UI5 `Button`; the popover is portaled to
-`document.body`. This keeps the trigger as the only direct child when
-`AppSelector` is passed through `ShellBar`'s `appSelector` prop, allowing UI5 to
-assign it an individual default slot automatically. Button props such as
-`className`, `style`, `slot`, `tooltip`, and `data-*` attributes are forwarded
-to the trigger. The component owns its `id`, icon, design, accessible name, and
-click handler.
+The inline element is a UI5 `ShellBarItem` (a grid-icon button); the popover is portaled to `document.body`. Passing `AppSelector` through `ShellBar`'s `appSelector` prop places the trigger into UI5's default children slot — that slot is typed `DefaultSlot<ShellBarItem>`, so using `ShellBarItem` as the trigger is the intended contract.
 
-When `label` is omitted, the trigger is icon-only and uses `"Applications"` as
-its accessible name. When provided, `label` is both the visible text and the
-accessible name.
+Per UI5's `ShellBarItem` template, the item is rendered icon-only in the main bar; the `text` value shows up as the button's accessible name, as the hover tooltip, and as the label inside the "…" overflow menu when the bar narrows. `ShellBarItem` intentionally does not expose visible label text in its primary position.
+
+`className`, `style`, `slot`, `tooltip`, and `data-*` attributes are forwarded to the trigger. The component owns its `id`, `icon`, `text` (from `label`), and click handler — passing those directly via props is a no-op because the type omits them.
+
+When `label` is omitted, the trigger uses `"Applications"` as its accessible name and overflow-menu label.
 
 ### Optional fields
 

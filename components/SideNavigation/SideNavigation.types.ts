@@ -32,5 +32,13 @@ export type SideNavigationProps = HtmlProps<
 		 * @default false
 		 */
 		collapsable?: boolean;
+		/**
+		 * Initial collapsed state of the menu on mount. Only has effect when
+		 * `collapsable` is `true` — the built-in toggle button then owns the
+		 * state from that point on. Ignored otherwise, because a non-collapsable
+		 * menu has no way to change its state and always renders expanded.
+		 * @default false
+		 */
+		defaultCollapsed?: boolean;
 	}
 >;

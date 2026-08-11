@@ -189,10 +189,10 @@ export const WithAppNavigation = meta.story({
 				<p>
 					Two views of the same app catalog: the left drawer (open it from the
 					top-left hamburger) is built by <code>AppNavigation</code> as a
-					persistent grouped menu, while the{" "}
-					<code>appSelector</code> prop renders <code>AppSelector</code> in the
-					right actions sequence after <code>userMenu</code> for quick
-					switching. Both are fed by the same Config Service data.
+					persistent grouped menu, while the <code>appSelector</code> prop
+					renders <code>AppSelector</code> in the right actions sequence after{" "}
+					<code>userMenu</code> for quick switching. Both are fed by the same
+					Config Service data.
 				</p>
 			</div>
 		</>
@@ -255,4 +255,58 @@ export const WithUserMenu = meta.story({
 			<UserMenu onSignOut={fn()} user={shellBarUser} appVersion="2.21.3" />
 		),
 	},
+});
+
+export const WithApps = meta.story({
+	args: {
+		primaryTitle: "Console",
+		userMenu: (
+			<UserMenu onSignOut={fn()} user={shellBarUser} appVersion="2.21.3" />
+		),
+		apps: appSelectorApps,
+		env: "us-prod",
+		tenant: "acme-corp",
+	},
+	play: async ({ canvasElement }) => {
+		// UI5's product-switch button lives in the ShellBar's shadow DOM and is
+		// selectable by its stable data attribute.
+		const shellBar = canvasElement.querySelector("ui5-shellbar");
+		const productSwitch = shellBar?.shadowRoot?.querySelector<HTMLElement>(
+			'[data-ui5-stable="product-switch"]',
+		);
+		await waitFor(() => {
+			expect(productSwitch).toBeTruthy();
+		});
+		await userEvent.click(productSwitch as HTMLElement);
+		await waitFor(() => {
+			const popover = document.querySelector("ui5-popover");
+			expect(popover && (popover as unknown as { open: boolean }).open).toBe(
+				true,
+			);
+		});
+	},
+	render: (args) => (
+		<>
+			<ShellBar {...args} />
+			<div style={{ padding: "24px 32px" }}>
+				<h2 style={{ margin: 0 }}>Console</h2>
+				<p>
+					When <code>apps</code> is passed, <code>ShellBar</code> enables the
+					native UI5 product-switch button (grid icon) in the right actions
+					cluster and mounts the app-catalog popover anchored to it. The button
+					is protected — UI5's overflow algorithm never hides it — so the
+					app-switcher stays reachable at any viewport width.
+				</p>
+				<p>
+					Because <code>uri</code> templates use{" "}
+					{/* biome-ignore lint/suspicious/noTemplateCurlyInString: URI template placeholders */}
+					<code>{"${environment}"}</code> and{" "}
+					{/* biome-ignore lint/suspicious/noTemplateCurlyInString: URI template placeholders */}
+					<code>{"${tenant}"}</code> placeholders, <code>env</code> and{" "}
+					<code>tenant</code> must be passed alongside <code>apps</code>. Click
+					the grid icon to see the popover.
+				</p>
+			</div>
+		</>
+	),
 });

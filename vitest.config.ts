@@ -50,6 +50,23 @@ export default defineConfig({
 			// the package itself (packages/auth/vitest.config.ts) so it can also
 			// be used by `npm test --workspace=@reltio/auth`.
 			"./packages/auth/vitest.config.ts",
+			// Node-mode unit tests for design components' pure utilities. The
+			// storybook project runs stories in a browser; that's the right tool
+			// for interaction/visual coverage but overkill for framework-free
+			// helpers like `orderApps` or `buildTargetSrc`. This project keeps
+			// their tests fast and isolated.
+			{
+				extends: true,
+				test: {
+					name: "components-node",
+					environment: "node",
+					include: [`${ROOT_DIR}components/**/*.test.ts`],
+					exclude: ["**/node_modules/**"],
+				},
+				resolve: {
+					conditions: ["node", "import", "module", "default"],
+				},
+			},
 		],
 		coverage: {
 			exclude: [

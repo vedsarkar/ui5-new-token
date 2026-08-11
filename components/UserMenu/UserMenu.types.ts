@@ -39,4 +39,27 @@ export type UserMenuProps = Omit<
 	 * the built-in About item.
 	 */
 	onItemClick?: Ui5UserMenuProps["onItemClick"];
+	/**
+	 * Controlled open state of the popover. When provided (`true` or `false`),
+	 * `UserMenu` switches to **controlled mode**: the avatar renders as a
+	 * non-interactive image and the popover open/close state is driven
+	 * entirely by this prop through `onOpenChange`. When omitted, `UserMenu`
+	 * is **uncontrolled** — the avatar is interactive and clicking it toggles
+	 * the popover internally.
+	 *
+	 * Used by `<ShellBar>` when it routes `userMenu` into UI5's native
+	 * `profile` slot. UI5 wraps the profile-slot content in its own
+	 * `<Button>` with a built-in click handler; putting an interactive avatar
+	 * inside that wrapping button produces nested buttons, two competing
+	 * accessible names, and dead keyboard activation. In controlled mode the
+	 * avatar becomes a picture and the wrapping button owns interaction.
+	 */
+	open?: boolean;
+	/**
+	 * Called when the popover wants its `open` state to flip — clicking
+	 * outside, pressing Escape, selecting a menu item, or clicking Sign Out.
+	 * Wire this to the state that drives `open`. Ignored in uncontrolled
+	 * mode.
+	 */
+	onOpenChange?: (open: boolean) => void;
 };

@@ -1,16 +1,9 @@
-import { Avatar } from "@ui5/webcomponents-react/Avatar";
-import { Button } from "@ui5/webcomponents-react/Button";
-import { Popover } from "@ui5/webcomponents-react/Popover";
-import { ProductSwitch } from "@ui5/webcomponents-react/ProductSwitch";
-import { ProductSwitchItem } from "@ui5/webcomponents-react/ProductSwitchItem";
-import { useId, useState } from "react";
+import { ShellBarItem } from "@ui5/webcomponents-react";
+import { useId, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import gridIcon from "@/icons/sap/grid";
-import internetBrowserIcon from "@/icons/sap/internet-browser";
-import type { AppEntry, AppSelectorProps } from "./AppSelector.types";
-
-const DEFAULT_CATEGORY = "Applications";
-const FALLBACK_ICON = internetBrowserIcon;
+import { AppSelectorPopover } from "../AppSelectorPopover";
+import type { AppSelectorProps } from "./AppSelector.types";
 
 type Placement = "Top" | "Bottom" | "Start" | "End";
 
@@ -28,88 +21,42 @@ export const AppSelector = ({
 	const triggerId = `reltio-app-selector-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
 	const [open, setOpen] = useState(false);
 
-	const orderedApps = groupAndOrderApps(apps);
-	const placement = mapPositionAreaToPlacement(positionArea);
-	const accessibleName = label || "Applications";
+	const placement = useMemo(() => {
+		return mapPositionAreaToPlacement(positionArea);
+	}, [positionArea]);
 
 	// The popover is rendered through a portal so it never becomes a slotted
 	// light-DOM child of a host like ShellBar — only the trigger button stays
 	// inline. Otherwise the host would reserve a layout slot for the closed
 	// overlay, producing phantom gaps.
 	const popover = (
-		<Popover
-			opener={triggerId}
+		<AppSelectorPopover
 			open={open}
+			opener={triggerId}
+			apps={apps}
+			env={env}
+			tenant={tenant}
 			placement={placement}
 			onClose={() => setOpen(false)}
-		>
-			<ProductSwitch>
-				{orderedApps.map((app) => (
-					<ProductSwitchItem
-						key={app.name}
-						titleText={app.name}
-						subtitleText={app.category || DEFAULT_CATEGORY}
-						targetSrc={resolveUri(app.uri, env, tenant)}
-						target="_blank"
-						icon={app.icon ? undefined : FALLBACK_ICON}
-						image={
-							app.icon ? (
-								<Avatar size="S" shape="Square" colorScheme="Transparent">
-									<img src={app.icon} alt="" />
-								</Avatar>
-							) : undefined
-						}
-					/>
-				))}
-			</ProductSwitch>
-		</Popover>
+		/>
 	);
 
 	return (
 		<>
-			<Button
+			<ShellBarItem
 				{...rest}
 				id={triggerId}
 				className={className}
-				design="Transparent"
 				icon={gridIcon}
-				accessibleName={accessibleName}
+				text={label ?? "Applications"}
 				onClick={() => setOpen((value) => !value)}
-			>
-				{label}
-			</Button>
+			/>
 			{typeof document === "undefined"
 				? popover
 				: createPortal(popover, document.body)}
 		</>
 	);
 };
-
-/** Filter out incomplete entries and sort so that apps sharing a category
- * stay adjacent in the flat `ProductSwitch` grid. Categories appear in the
- * order they are first seen in the input; apps within a category preserve
- * their relative input order. */
-const groupAndOrderApps = (apps: AppEntry[]): AppEntry[] => {
-	const validApps = apps.filter((app) => app.name && app.uri);
-	const groups = Object.groupBy(
-		validApps,
-		({ category }) => category || DEFAULT_CATEGORY,
-	);
-	return Object.values(groups)
-		.flat()
-		.filter((app): app is AppEntry => app !== undefined);
-};
-
-const resolveUri = (
-	uri: string | undefined,
-	env: string | undefined,
-	tenant: string | undefined,
-): string | undefined =>
-	uri
-		// biome-ignore lint/suspicious/noTemplateCurlyInString: intentional URI template placeholders
-		?.replaceAll("${environment}", String(env))
-		// biome-ignore lint/suspicious/noTemplateCurlyInString: intentional URI template placeholders
-		.replaceAll("${tenant}", String(tenant));
 
 /** Map a CSS `position-area`-style string to the UI5 `Popover` placement enum. */
 const mapPositionAreaToPlacement = (positionArea: string): Placement => {

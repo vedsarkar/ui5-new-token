@@ -1,5 +1,7 @@
 import type { ShellBar as Ui5ShellBar } from "@ui5/webcomponents-react/ShellBar";
 import type { ComponentPropsWithoutRef, ReactElement } from "react";
+import type { AppEntry } from "../AppSelector";
+import type { UserMenuProps } from "../UserMenu";
 
 type Ui5ShellBarProps = ComponentPropsWithoutRef<typeof Ui5ShellBar>;
 
@@ -13,18 +15,22 @@ type Ui5ShellBarProps = ComponentPropsWithoutRef<typeof Ui5ShellBar>;
  *   `[data-theme]` ancestor
  * - `logo` override prop (the recommended customization path) for sub-apps
  *   that want their own mark
- * - `tenantSelector`, `userMenu`, and `appSelector` Reltio composition props
- *   (see below)
- * - `notificationsUrl` prop that renders a bell icon linking to a
- *   notifications page (see below)
+ * - `tenantSelector` composition prop rendered into UI5's `content` slot
+ * - `userMenu` composition prop mapped onto UI5's native `profile` slot
+ * - `notificationsUrl` prop that enables UI5's native notifications button
+ *   and opens the given URL on click
+ * - `apps`/`env`/`tenant` props that enable UI5's native product-switch
+ *   button and render the app-catalog popover anchored to it
+ * - `sideNavigation` composition prop that renders a hamburger-toggled
+ *   left drawer with an Escape/backdrop close
  * - `data-test-id` forwarding to the rendered light-DOM host
  *
  * The wrapper deliberately exposes a minimal surface. The remaining UI5
  * pass-through props are `primaryTitle`, `secondaryTitle`, `logo`,
  * `onLogoClick`, `content`, `children`, `className`, and `style`. All
- * deep-customization UI5 props (experimental slots, search, notifications,
- * product switch, menu items, profile, …) are intentionally omitted to keep
- * the component focused; dedicated Reltio props will be added when needed.
+ * remaining deep-customization UI5 props (experimental slots, search,
+ * menu items, …) are intentionally omitted to keep the component focused;
+ * dedicated Reltio props will be added when needed.
  *
  * The UI5 `startButton` slot is also not exposed: when a `sideNavigation`
  * element is supplied, `ShellBar` renders the hamburger toggle automatically
@@ -79,33 +85,75 @@ export type ShellBarProps = Omit<
 	 */
 	tenantSelector?: ReactElement;
 	/**
-	 * User menu rendered in the UI5 ShellBar's right actions sequence. Intended
-	 * to host a `<UserMenu>` element whose avatar remains a direct ShellBar child
-	 * while its popover and About modal are portaled to `document.body`. UI5
-	 * assigns the avatar an individual default slot automatically. The element is
-	 * appended after explicit `children` and notifications, and before
-	 * `appSelector`.
+	 * User menu rendered into the UI5 ShellBar's native `profile` slot at the
+	 * far right of the actions cluster. Intended to host a `<UserMenu>` element
+	 * whose avatar becomes the profile-slot trigger while its popover and About
+	 * modal are portaled to `document.body`. The profile slot is protected —
+	 * UI5's overflow algorithm never hides it — so the avatar is always visible
+	 * regardless of the viewport width.
 	 *
-	 * The type is the generic `ReactElement`; the wrapper does not enforce the
-	 * runtime element type. The UI5 `profile` prop is intentionally not exposed.
+	 * **Profile-slot a11y contract**: UI5 wraps the profile-slot content in its
+	 * own `<Button data-profile-btn>` with a built-in click handler. To avoid
+	 * nested-button and dual-focus, `<ShellBar>` clones the supplied element
+	 * with `open` and `onOpenChange` props so the inner Avatar can render
+	 * non-interactive and popover open/close flows through the outer UI5
+	 * button. Any wrapper you place here **must forward `open` and
+	 * `onOpenChange` down to the underlying `<UserMenu>`** — the prop type
+	 * enforces that those keys exist in the element's props type, but
+	 * forwarding is your responsibility. `<UserMenu>` used directly is the
+	 * default and simplest way to satisfy the contract.
+	 *
+	 * The UI5 `profile` prop is intentionally not exposed directly.
 	 */
-	userMenu?: ReactElement;
+	userMenu?: ReactElement<Pick<UserMenuProps, "open" | "onOpenChange">>;
 	/**
-	 * URL of the notifications page. When provided, `ShellBar` renders a bell
-	 * icon in the right actions cluster; clicking it opens the given URL in a
-	 * new browser tab. When omitted, no bell icon is shown.
+	 * URL of the notifications page. When provided, `ShellBar` enables UI5's
+	 * native notifications button (bell icon) in the right actions cluster;
+	 * clicking it opens the given URL in a new browser tab. When omitted, no
+	 * bell icon is shown.
 	 */
 	notificationsUrl?: string;
 	/**
-	 * Application selector rendered in the UI5 ShellBar's right actions cluster.
-	 * Intended to host an `<AppSelector>` element whose trigger button remains
-	 * inline while its popover is portaled outside the ShellBar, preventing an
-	 * extra layout slot. The element is appended after explicit `children`,
-	 * notifications, and `userMenu` in the ShellBar's light DOM. UI5 assigns the
-	 * trigger an individual default slot automatically.
+	 * Application catalog rendered inside the app-catalog popover anchored to
+	 * UI5's native product-switch button (grid icon) in the right actions
+	 * cluster. When provided, `ShellBar` enables the product-switch button and
+	 * owns the popover's open/close state — clicking the button toggles the
+	 * popover, and selecting an application closes it.
 	 *
-	 * The type is the generic `ReactElement`; the wrapper does not enforce the
-	 * runtime element type.
+	 * **Requires** `env` and `tenant` to resolve `${environment}` and `${tenant}`
+	 * placeholders inside each app's `uri`. When `apps` is provided without
+	 * `env`/`tenant`, the placeholders are replaced with the literal string
+	 * `"undefined"`, which almost certainly breaks the target URL.
+	 */
+	apps?: AppEntry[];
+	/**
+	 * Environment identifier substituted into each app's `uri` template
+	 * (`${environment}` placeholder). Must be provided whenever `apps` is set;
+	 * ignored otherwise.
+	 */
+	env?: string;
+	/**
+	 * Tenant identifier substituted into each app's `uri` template (`${tenant}`
+	 * placeholder). Must be provided whenever `apps` is set; ignored otherwise.
+	 */
+	tenant?: string;
+	/**
+	 * Legacy application-selector element rendered as a UI5 ShellBar default
+	 * slot child alongside `userMenu`. Kept for backwards compatibility with
+	 * existing consumers. When both `appSelector` and `apps` are supplied,
+	 * `apps` wins and `appSelector` is ignored.
+	 *
+	 * @deprecated Redundant with the ShellBar API — the same affordance can be
+	 * produced either by passing a `<ShellBarItem>` directly as a child of
+	 * `<ShellBar>`, or by using the new `apps` / `env` / `tenant` props for
+	 * the fully managed product-switch integration. **RP-194777
+	 * (overflow-loop) is not fixed on this path**: to preserve the current
+	 * visual order, the deprecated
+	 * branch keeps `<UserMenu>` in UI5's default children slot, and
+	 * `<ui5-avatar>` is not a `ShellBarItem` so UI5's overflow algorithm
+	 * still loops on it at narrow viewports. Migrate to `apps` / `env` /
+	 * `tenant` to receive the fix. The `appSelector` prop itself is scheduled
+	 * for removal in the next major.
 	 */
 	appSelector?: ReactElement;
 };

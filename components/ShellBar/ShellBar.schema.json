@@ -4,8 +4,15 @@
 	"x-component": "ShellBar",
 	"type": "object",
 	"properties": {
+		"apps": {
+			"description": "Application catalog rendered inside the app-catalog popover anchored to\nUI5's native product-switch button (grid icon) in the right actions\ncluster. When provided, `ShellBar` enables the product-switch button and\nowns the popover's open/close state — clicking the button toggles the\npopover, and selecting an application closes it.\n\n**Requires** `env` and `tenant` to resolve `${environment}` and `${tenant}`\nplaceholders inside each app's `uri`. When `apps` is provided without\n`env`/`tenant`, the placeholders are replaced with the literal string\n`\"undefined\"`, which almost certainly breaks the target URL.",
+			"x-typescriptType": "Array<AppEntry>",
+			"type": "array"
+		},
 		"appSelector": {
-			"description": "Application selector rendered in the UI5 ShellBar's right actions cluster.\nIntended to host an `<AppSelector>` element whose trigger button remains\ninline while its popover is portaled outside the ShellBar, preventing an\nextra layout slot. The element is appended after explicit `children`,\nnotifications, and `userMenu` in the ShellBar's light DOM. UI5 assigns the\ntrigger an individual default slot automatically.\n\nThe type is the generic `ReactElement`; the wrapper does not enforce the\nruntime element type.",
+			"description": "Legacy application-selector element rendered as a UI5 ShellBar default\nslot child alongside `userMenu`. Kept for backwards compatibility with\nexisting consumers. When both `appSelector` and `apps` are supplied,\n`apps` wins and `appSelector` is ignored.",
+			"deprecated": true,
+			"x-deprecationReason": "Redundant with the ShellBar API — the same affordance can be\nproduced either by passing a `<ShellBarItem>` directly as a child of\n`<ShellBar>`, or by using the new `apps` / `env` / `tenant` props for\nthe fully managed product-switch integration. **RP-194777\n(overflow-loop) is not fixed on this path**: to preserve the current\nvisual order, the deprecated\nbranch keeps `<UserMenu>` in UI5's default children slot, and\n`<ui5-avatar>` is not a `ShellBarItem` so UI5's overflow algorithm\nstill loops on it at narrow viewports. Migrate to `apps` / `env` /\n`tenant` to receive the fix. The `appSelector` prop itself is scheduled\nfor removal in the next major.",
 			"x-typescriptType": "ReactElement<any, string | JSXElementConstructor<any>>"
 		},
 		"children": {
@@ -21,12 +28,17 @@
 			"description": "Define the items displayed in the content area.\n\nUse the `data-hide-order` attribute with numeric value to specify the order of the items to be hidden when the space is not enough.\nLower values will be hidden first.\n\n**Note:** The `content` slot is in an experimental state and is a subject to change.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"content\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n**Note:** Available since [v2.7.0](https://github.com/UI5/webcomponents/releases/tag/v2.7.0) of **@ui5/webcomponents-fiori**.\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
 			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
 		},
+		"env": {
+			"description": "Environment identifier substituted into each app's `uri` template\n(`${environment}` placeholder). Must be provided whenever `apps` is set;\nignored otherwise.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
 		"logo": {
 			"description": "Defines the logo of the `ShellBar`.\nFor example, you can use `ui5-avatar` or `img` elements as logo.\n\n__Note:__ The content of the prop will be rendered into a [&lt;slot&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) by assigning the respective [slot](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot) attribute (`slot=\"logo\"`).\nSince you can't change the DOM order of slots when declaring them within a prop, it might prove beneficial to manually mount them as part of the component's children, especially when facing problems with the reading order of screen readers.\n\n__Note:__ When passing a custom React component to this prop, you have to make sure your component reads the `slot` prop and appends it to the most outer element of your component.\nLearn more about it [here](https://ui5.github.io/webcomponents-react/v2/?path=/docs/knowledge-base-handling-slots--docs).\n\n__Supported Node Type/s:__ `Array<HTMLElement>`",
 			"x-typescriptType": "false | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReducedReactNode> | ReactElement<any, string | JSXElementConstructor<any>> | Array<InternalUI5WCSlotsNode>"
 		},
 		"notificationsUrl": {
-			"description": "URL of the notifications page. When provided, `ShellBar` renders a bell\nicon in the right actions cluster; clicking it opens the given URL in a\nnew browser tab. When omitted, no bell icon is shown.",
+			"description": "URL of the notifications page. When provided, `ShellBar` enables UI5's\nnative notifications button (bell icon) in the right actions cluster;\nclicking it opens the given URL in a new browser tab. When omitted, no\nbell icon is shown.",
 			"x-typescriptType": "string",
 			"type": "string"
 		},
@@ -53,13 +65,18 @@
 			"description": "Element style which will be appended to the most outer element of a component.\nUse this prop carefully, some css properties might break the component.",
 			"x-typescriptType": "CSSProperties"
 		},
+		"tenant": {
+			"description": "Tenant identifier substituted into each app's `uri` template (`${tenant}`\nplaceholder). Must be provided whenever `apps` is set; ignored otherwise.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
 		"tenantSelector": {
 			"description": "Tenant picker rendered into the UI5 ShellBar `content` slot, so it sits in\nthe content area just after the branding/title (left cluster) rather than\nin the right actions cluster. Intended to host a `<TenantSelector>`\nelement; the type is the generic `ReactElement` and the wrapper does not\nenforce the runtime element type. Composed with a directly-supplied\n`content` prop (the tenant selector renders first, then `content`) rather\nthan replacing it.",
 			"x-typescriptType": "ReactElement<any, string | JSXElementConstructor<any>>"
 		},
 		"userMenu": {
-			"description": "User menu rendered in the UI5 ShellBar's right actions sequence. Intended\nto host a `<UserMenu>` element whose avatar remains a direct ShellBar child\nwhile its popover and About modal are portaled to `document.body`. UI5\nassigns the avatar an individual default slot automatically. The element is\nappended after explicit `children` and notifications, and before\n`appSelector`.\n\nThe type is the generic `ReactElement`; the wrapper does not enforce the\nruntime element type. The UI5 `profile` prop is intentionally not exposed.",
-			"x-typescriptType": "ReactElement<any, string | JSXElementConstructor<any>>"
+			"description": "User menu rendered into the UI5 ShellBar's native `profile` slot at the\nfar right of the actions cluster. Intended to host a `<UserMenu>` element\nwhose avatar becomes the profile-slot trigger while its popover and About\nmodal are portaled to `document.body`. The profile slot is protected —\nUI5's overflow algorithm never hides it — so the avatar is always visible\nregardless of the viewport width.\n\n**Profile-slot a11y contract**: UI5 wraps the profile-slot content in its\nown `<Button data-profile-btn>` with a built-in click handler. To avoid\nnested-button and dual-focus, `<ShellBar>` clones the supplied element\nwith `open` and `onOpenChange` props so the inner Avatar can render\nnon-interactive and popover open/close flows through the outer UI5\nbutton. Any wrapper you place here **must forward `open` and\n`onOpenChange` down to the underlying `<UserMenu>`** — the prop type\nenforces that those keys exist in the element's props type, but\nforwarding is your responsibility. `<UserMenu>` used directly is the\ndefault and simplest way to satisfy the contract.\n\nThe UI5 `profile` prop is intentionally not exposed directly.",
+			"x-typescriptType": "ReactElement<Pick<UserMenuProps, 'open' | 'onOpenChange'>, string | JSXElementConstructor<any>>"
 		}
 	}
 }

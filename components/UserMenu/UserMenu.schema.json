@@ -76,6 +76,16 @@
 			"x-typescriptType": "(event: Ui5CustomEvent<UserMenuDomRef, UserMenuItemClickEventDetail>) => void",
 			"x-functionSignature": "(event: Ui5CustomEvent<UserMenuDomRef, UserMenuItemClickEventDetail>) => void"
 		},
+		"onOpenChange": {
+			"description": "Called when the popover wants its `open` state to flip — clicking\noutside, pressing Escape, selecting a menu item, or clicking Sign Out.\nWire this to the state that drives `open`. Ignored in uncontrolled\nmode.",
+			"x-typescriptType": "(open: boolean) => void",
+			"x-functionSignature": "(open: boolean) => void"
+		},
+		"open": {
+			"description": "Controlled open state of the popover. When provided (`true` or `false`),\n`UserMenu` switches to **controlled mode**: the avatar renders as a\nnon-interactive image and the popover open/close state is driven\nentirely by this prop through `onOpenChange`. When omitted, `UserMenu`\nis **uncontrolled** — the avatar is interactive and clicking it toggles\nthe popover internally.\n\nUsed by `<ShellBar>` when it routes `userMenu` into UI5's native\n`profile` slot. UI5 wraps the profile-slot content in its own\n`<Button>` with a built-in click handler; putting an interactive avatar\ninside that wrapping button produces nested buttons, two competing\naccessible names, and dead keyboard activation. In controlled mode the\navatar becomes a picture and the wrapping button owns interaction.",
+			"x-typescriptType": "boolean",
+			"type": "boolean"
+		},
 		"shape": {
 			"description": "Defines the shape of the component.",
 			"default": "Circle",

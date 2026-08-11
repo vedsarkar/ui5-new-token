@@ -77,32 +77,6 @@ export const Default = meta.story({
 	},
 });
 
-export const WithLabel = meta.story({
-	args: {
-		label: "Applications",
-		apps: [
-			{
-				name: "Agents",
-				uri: "https://example.com/agent-flow",
-				icon: "https://reltio.design/apps/icons/agentflow.svg",
-				category: "Agentflow",
-			},
-			{
-				name: "Hub",
-				uri: "https://example.com/hub",
-				icon: "https://reltio.design/apps/icons/mdm.svg",
-				category: "Applications",
-			},
-			{
-				name: "Console",
-				uri: "https://example.com/console",
-				icon: "https://reltio.design/apps/icons/console.svg",
-				category: "Applications",
-			},
-		],
-	},
-});
-
 export const UriTemplates = meta.story({
 	args: {
 		env: "us-prod",

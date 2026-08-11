@@ -1,9 +1,12 @@
+import type { ShellBarProductSwitchClickEventDetail } from "@ui5/webcomponents-fiori/dist/ShellBar.js";
+import type { Ui5CustomEvent } from "@ui5/webcomponents-react";
 import { Button } from "@ui5/webcomponents-react/Button";
+import type { ShellBarDomRef } from "@ui5/webcomponents-react/ShellBar";
 import { ShellBar as Ui5ShellBar } from "@ui5/webcomponents-react/ShellBar";
-import { isValidElement, useEffect, useState } from "react";
-import bellIcon from "@/icons/sap/bell";
+import { cloneElement, useCallback, useEffect, useState } from "react";
 import menu2Icon from "@/icons/sap/menu2";
 import { classNames } from "@/utils/classNames";
+import { AppSelectorPopover } from "../AppSelectorPopover";
 import styles from "./ShellBar.module.css";
 import type { ShellBarProps } from "./ShellBar.types";
 
@@ -33,23 +36,80 @@ export const ShellBar = ({
 	userMenu,
 	notificationsUrl,
 	appSelector,
+	apps,
+	env,
+	tenant,
 	...rest
 }: ShellBarProps) => {
-	const hasSideNavigation = isValidElement(sideNavigation);
-	const [navOpen, setNavOpen] = useState(false);
+	const [isAppSelectorOpen, setIsAppSelectorOpen] = useState(false);
+	const [isSideNavigationOpen, setIsSideNavigationOpen] = useState(false);
+	const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+	// UI5 hands us the product-switch button node in the click event detail
+	// (`event.detail.targetRef`). Snapshot it there instead of chasing the
+	// shadow-DOM ref during render or in a mount effect: on click the node is
+	// guaranteed to exist (the user just interacted with it), and a fresh
+	// reference every click closes any hypothetical resync hazard if UI5
+	// were to re-render the shadow DOM between openings.
+	const [productSwitchOpener, setProductSwitchOpener] =
+		useState<HTMLElement | null>(null);
 
-	useEffect(() => {
-		if (!navOpen) {
+	const useLegacyAppSelector = !!appSelector && !apps;
+
+	const onProfileClick = useCallback(() => {
+		setIsUserMenuOpen((prev) => {
+			return !prev;
+		});
+	}, []);
+
+	const onStartButtonClick = useCallback(() => {
+		setIsSideNavigationOpen((prev) => {
+			return !prev;
+		});
+	}, []);
+
+	const onNotificationsClick = useCallback(() => {
+		if (!notificationsUrl) {
 			return;
 		}
+		window.open(notificationsUrl, "_blank", "noopener,noreferrer");
+	}, [notificationsUrl]);
+
+	const onProductSwitchClick = useCallback(
+		(
+			event: Ui5CustomEvent<
+				ShellBarDomRef,
+				ShellBarProductSwitchClickEventDetail
+			>,
+		) => {
+			setProductSwitchOpener(event.detail.targetRef);
+			setIsAppSelectorOpen((prev) => {
+				return !prev;
+			});
+		},
+		[],
+	);
+
+	const onAppSelectorClose = useCallback(() => {
+		setIsAppSelectorOpen(false);
+	}, []);
+
+	useEffect(() => {
+		if (!isSideNavigationOpen) {
+			return;
+		}
+
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if (event.key === "Escape") {
-				setNavOpen(false);
+				setIsSideNavigationOpen(false);
 			}
 		};
+
 		document.addEventListener("keydown", handleKeyDown);
-		return () => document.removeEventListener("keydown", handleKeyDown);
-	}, [navOpen]);
+
+		return () => {
+			document.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [isSideNavigationOpen]);
 
 	return (
 		<>
@@ -63,50 +123,73 @@ export const ShellBar = ({
 				}
 				className={classNames(
 					styles.root,
-					hasSideNavigation && styles.withStartButton,
+					sideNavigation && styles.withStartButton,
 					className,
 				)}
 				startButton={
-					hasSideNavigation ? (
+					sideNavigation ? (
 						<Button
 							icon={menu2Icon}
 							accessibleName="Toggle navigation"
 							tooltip="Toggle navigation"
-							onClick={() => setNavOpen((value) => !value)}
+							onClick={onStartButtonClick}
 						/>
 					) : undefined
 				}
+				profile={
+					userMenu && !useLegacyAppSelector
+						? cloneElement(userMenu, {
+								open: isUserMenuOpen,
+								onOpenChange: setIsUserMenuOpen,
+							})
+						: undefined
+				}
+				onProfileClick={onProfileClick}
+				showNotifications={!!notificationsUrl}
+				onNotificationsClick={onNotificationsClick}
+				showProductSwitch={!!apps}
+				onProductSwitchClick={onProductSwitchClick}
 				{...rest}
 			>
 				{children}
-				{notificationsUrl && (
-					<Button
-						icon={bellIcon}
-						tooltip="Notifications"
-						accessibleName="Notifications"
-						onClick={() =>
-							window.open(notificationsUrl, "_blank", "noopener,noreferrer")
-						}
-					/>
+
+				{useLegacyAppSelector && (
+					<>
+						{userMenu}
+						{appSelector}
+					</>
 				)}
-				{userMenu}
-				{appSelector}
 			</Ui5ShellBar>
-			{hasSideNavigation && (
+
+			{sideNavigation && (
 				<div
-					className={classNames(styles.overlay, navOpen && styles.overlayOpen)}
+					className={classNames(
+						styles.overlay,
+						isSideNavigationOpen && styles.overlayOpen,
+					)}
 				>
 					<button
 						type="button"
 						aria-label="Close navigation"
-						tabIndex={navOpen ? 0 : -1}
+						tabIndex={isSideNavigationOpen ? 0 : -1}
 						className={styles.backdrop}
-						onClick={() => setNavOpen(false)}
+						onClick={onStartButtonClick}
 					/>
-					<aside className={styles.panel} aria-hidden={!navOpen}>
+					<aside className={styles.panel} aria-hidden={!isSideNavigationOpen}>
 						{sideNavigation}
 					</aside>
 				</div>
+			)}
+
+			{apps && (
+				<AppSelectorPopover
+					open={isAppSelectorOpen}
+					opener={productSwitchOpener ?? undefined}
+					apps={apps}
+					env={env}
+					tenant={tenant}
+					onClose={onAppSelectorClose}
+				/>
 			)}
 		</>
 	);

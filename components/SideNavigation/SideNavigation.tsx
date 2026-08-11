@@ -9,10 +9,11 @@ import type { SideNavigationProps } from "./SideNavigation.types";
 export const SideNavigation = ({
 	className,
 	collapsable = false,
+	defaultCollapsed = false,
 	children,
 	...rest
 }: SideNavigationProps) => {
-	const [collapsed, setCollapsed] = useState(false);
+	const [collapsed, setCollapsed] = useState(defaultCollapsed);
 
 	return (
 		<Ui5SideNavigation

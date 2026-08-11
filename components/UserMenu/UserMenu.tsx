@@ -42,11 +42,26 @@ export const UserMenu = ({
 	onItemClick,
 	className,
 	colorScheme = "Accent4",
+	open: controlledOpen,
+	onOpenChange,
 	...rest
 }: UserMenuProps) => {
 	const avatarRef = useRef<ComponentRef<typeof Avatar>>(null);
-	const [open, setOpen] = useState(false);
+	const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
 	const [aboutOpen, setAboutOpen] = useState(false);
+
+	// Controlled when `open` is explicitly set. Used by <ShellBar> in the
+	// profile-slot path; UI5 wraps profile content in its own <Button>, so the
+	// inner avatar must be a static picture and interaction is owned outside.
+	const isControlled = controlledOpen !== undefined;
+	const open = isControlled ? controlledOpen : uncontrolledOpen;
+
+	const setOpen = (next: boolean) => {
+		if (!isControlled) {
+			setUncontrolledOpen(next);
+		}
+		onOpenChange?.(next);
+	};
 
 	const initials = deriveInitials(user.username);
 
@@ -128,13 +143,17 @@ export const UserMenu = ({
 		<>
 			<Avatar
 				ref={avatarRef}
-				mode="Interactive"
 				accessibleName={user.username}
-				accessibilityAttributes={{ hasPopup: "menu" }}
 				colorScheme={colorScheme}
 				initials={user.avatarUrl ? undefined : initials}
 				className={classNames(styles.avatar, className)}
-				onClick={() => setOpen((value) => !value)}
+				{...(isControlled
+					? null
+					: {
+							mode: "Interactive" as const,
+							accessibilityAttributes: { hasPopup: "menu" as const },
+							onClick: () => setOpen(!open),
+						})}
 				{...rest}
 			>
 				{user.avatarUrl ? <img src={user.avatarUrl} alt="" /> : undefined}

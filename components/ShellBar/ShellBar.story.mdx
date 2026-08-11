@@ -29,14 +29,16 @@ When `logo` is omitted, the wrapper renders the default Reltio mark, which adapt
 
 ### Reltio slots
 
-Beyond the curated UI5 pass-through props, the wrapper adds four convenience composition props:
+Beyond the curated UI5 pass-through props, the wrapper adds several convenience composition props:
 
 - `sideNavigation` — hosts a UI5 `<SideNavigation>` (see "Side navigation slot" below).
 - `tenantSelector` — hosts a `<TenantSelector>` in the left content area, composed with (not replacing) any `content` prop.
-- `userMenu` — hosts a `<UserMenu>` in the ShellBar's right actions sequence.
-- `appSelector` — hosts an `<AppSelector>` after `userMenu` in the right actions sequence.
+- `userMenu` — hosts a `<UserMenu>` in UI5's native `profile` slot at the far right (see "User menu slot" below).
+- `notificationsUrl` — enables UI5's native notifications button (bell icon) that opens the given URL on click.
+- `apps` / `env` / `tenant` — enables UI5's native product-switch button and renders the app-catalog popover anchored to it (see "Applications" below).
+- `appSelector` — **deprecated** legacy hook for an `<AppSelector>` element; the same affordance is available either by passing a `<ShellBarItem>` directly as a `<ShellBar>` child, or via the new `apps` / `env` / `tenant` props.
 
-`children`, the notifications button, `userMenu`, and `appSelector` are rendered as direct ShellBar children in that order. UI5 assigns each direct child an individual default slot (`default-1`, `default-2`, and so on), preserving the sequence without requiring consumers to set slot names manually.
+Composition props are wired to UI5's protected slots — `profile`, notifications button, product-switch button, start button — which UI5 never places into the overflow group. Custom `children` still go into UI5's default slot for consumer-defined items.
 
 ### Title and subtitle
 
@@ -84,7 +86,7 @@ Omit it to render only `content`.
 
 ### User menu slot
 
-`userMenu` accepts a [`UserMenu`](/?path=/docs/components-usermenu--docs) element. Its avatar remains a direct ShellBar child and is assigned an individual default slot by UI5. The menu popover and About modal are portaled to `document.body`, so they do not consume additional ShellBar layout slots. The wrapper intentionally does not expose the UI5 `profile` or `onProfileClick` props.
+`userMenu` accepts a [`UserMenu`](/?path=/docs/components-usermenu--docs) element and mounts it into UI5's native `profile` slot at the far right of the actions cluster. The profile slot is protected — UI5's overflow algorithm never hides it — so the avatar is always reachable. The menu popover and About modal are portaled to `document.body`, so they do not consume additional ShellBar layout slots. The wrapper intentionally does not expose the raw UI5 `profile` prop or `onProfileClick` handler.
 
 ```tsx
 <ShellBar
@@ -99,20 +101,30 @@ Omit it to render only `content`.
 />
 ```
 
-### Application selector
+### Applications
 
-`appSelector` accepts an [`AppSelector`](/?path=/docs/components-appselector--docs) element and renders its trigger after `userMenu` in the ShellBar's right actions sequence. The popover is portaled to `document.body`, leaving only the trigger button as a direct ShellBar child.
+Pass `apps`, `env`, and `tenant` together to enable UI5's native product-switch button (grid icon) in the right actions cluster. `ShellBar` mounts an app-catalog popover anchored to the button and owns its open/close state — no separate consumer wiring is needed.
+
+`env` and `tenant` are **required** whenever `apps` is set — each app's `uri` may contain `${environment}` and `${tenant}` template placeholders that are substituted at render time. When either value is missing, the placeholder resolves to the literal string `"undefined"`, which almost certainly breaks the target URL.
 
 ```tsx
 <ShellBar
   primaryTitle="Console"
-  appSelector={<AppSelector apps={apps} positionArea="bottom" />}
+  apps={apps}
+  env="us-prod"
+  tenant="acme-corp"
 />
 ```
 
+For a standalone app grid outside a ShellBar, use [`AppSelector`](/?path=/docs/components-appselector--docs) — it owns both the trigger and the popover.
+
+> **Deprecated**: the `appSelector` prop still accepts an `<AppSelector>` element and renders it as a UI5 default-slot child alongside `userMenu`. It is redundant — the same visual can be produced either by passing a `<ShellBarItem>` directly as a `<ShellBar>` child, or by using `apps` / `env` / `tenant` for the fully managed product-switch integration. The path is kept for backwards compatibility and is scheduled for removal in the next major.
+>
+> **RP-194777 (overflow-loop) is not fixed on this path.** To preserve the current visual order (avatar left of the app selector), the deprecated branch keeps `<UserMenu>` in UI5's default children slot. `<ui5-avatar>` is not a `ShellBarItem` and lacks `stableDomRef`, so UI5's overflow algorithm still loops on it at narrow viewports. Migrate to `apps` / `env` / `tenant` to receive the fix — that path routes `userMenu` into UI5's protected `profile` slot and leaves the default children slot free of non-`ShellBarItem` elements.
+
 ### Notifications
 
-Pass `notificationsUrl` to surface a bell icon in the right actions cluster. Clicking it opens the given URL in a new browser tab (`target="_blank"` with `noopener,noreferrer`). Omit the prop to hide the bell entirely — the wrapper intentionally does not expose the UI5 `showNotifications` / `notificationsCount` / `onNotificationsClick` surface, favoring this single link-based prop.
+Pass `notificationsUrl` to enable UI5's native notifications button (bell icon) in the right actions cluster. Clicking it opens the given URL in a new browser tab (`target="_blank"` with `noopener,noreferrer`). Omit the prop to hide the bell entirely — the wrapper intentionally does not expose the raw UI5 `showNotifications` / `notificationsCount` / `onNotificationsClick` surface, favoring this single link-based prop.
 
 ```tsx
 <ShellBar
