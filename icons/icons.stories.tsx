@@ -12,6 +12,7 @@ import ReltioAcoName from "./reltio/aco";
 import ReltioAcoLabelName from "./reltio/aco-label";
 import ReltioActivityLogName from "./reltio/activity-log";
 import ReltioAddChildName from "./reltio/add-child";
+import ReltioAddDocumentName from "./reltio/add-document";
 import ReltioAddParentName from "./reltio/add-parent";
 import ReltioAgentflowFilledName from "./reltio/agentflow-filled";
 import ReltioAgentflowOutlinedName from "./reltio/agentflow-outlined";
@@ -20,12 +21,14 @@ import ReltioAnalyzeMatchRulesName from "./reltio/analyze-match-rules";
 import ReltioAnomalyName from "./reltio/anomaly";
 import ReltioAreaName from "./reltio/area";
 import ReltioAreaLocationName from "./reltio/area-location";
+import ReltioAuthorDocumentName from "./reltio/author-document";
 import ReltioBarChartName from "./reltio/bar-chart";
 import ReltioBubbleChartName from "./reltio/bubble-chart";
 import ReltioBulkmatchName from "./reltio/bulkmatch";
 import ReltioCartName from "./reltio/cart";
 import ReltioChartName from "./reltio/chart";
 import ReltioChemicalSubstanceName from "./reltio/chemical-substance";
+import ReltioCombineName from "./reltio/combine";
 import ReltioCompareName from "./reltio/compare";
 import ReltioCompareActionName from "./reltio/compare-action";
 import ReltioConsumptionMetricsName from "./reltio/consumption-metrics";
@@ -71,6 +74,7 @@ import ReltioIndivudualName from "./reltio/indivudual";
 import ReltioIntegrationHubName from "./reltio/integration-hub";
 import ReltioInteractionName from "./reltio/interaction";
 import ReltioInteractionTypesName from "./reltio/interaction-types";
+import ReltioJarName from "./reltio/jar";
 import ReltioJobsName from "./reltio/jobs";
 import ReltioLandRightName from "./reltio/land-right";
 import ReltioLineChartName from "./reltio/line-chart";
@@ -212,6 +216,11 @@ export const ReltioAddChild = meta.story({
 	render: showcase(ReltioAddChildName),
 });
 
+export const ReltioAddDocument = meta.story({
+	name: "add-document",
+	render: showcase(ReltioAddDocumentName),
+});
+
 export const ReltioAddParent = meta.story({
 	name: "add-parent",
 	render: showcase(ReltioAddParentName),
@@ -252,6 +261,11 @@ export const ReltioArea = meta.story({
 	render: showcase(ReltioAreaName),
 });
 
+export const ReltioAuthorDocument = meta.story({
+	name: "author-document",
+	render: showcase(ReltioAuthorDocumentName),
+});
+
 export const ReltioBarChart = meta.story({
 	name: "bar-chart",
 	render: showcase(ReltioBarChartName),
@@ -280,6 +294,11 @@ export const ReltioChart = meta.story({
 export const ReltioChemicalSubstance = meta.story({
 	name: "chemical-substance",
 	render: showcase(ReltioChemicalSubstanceName),
+});
+
+export const ReltioCombine = meta.story({
+	name: "combine",
+	render: showcase(ReltioCombineName),
 });
 
 export const ReltioCompareAction = meta.story({
@@ -505,6 +524,11 @@ export const ReltioInteractionTypes = meta.story({
 export const ReltioInteraction = meta.story({
 	name: "interaction",
 	render: showcase(ReltioInteractionName),
+});
+
+export const ReltioJar = meta.story({
+	name: "jar",
+	render: showcase(ReltioJarName),
 });
 
 export const ReltioJobs = meta.story({
