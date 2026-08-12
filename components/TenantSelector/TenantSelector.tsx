@@ -361,6 +361,7 @@ export const TenantSelector = ({
 			<Dialog
 				open={open}
 				className={classNames(styles.dialog)}
+				onOpen={resetViewport}
 				onClose={close}
 				header={
 					<Bar

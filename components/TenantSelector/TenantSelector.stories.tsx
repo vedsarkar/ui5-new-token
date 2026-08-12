@@ -245,12 +245,10 @@ export const DeprecatedEnvironmentProps = meta.story({
 	},
 });
 
-/** 1000 tenants — exercises the virtualized rendering path (kicks in above ~50
- * visible rows). The rendered DOM should contain only the rows currently in the
- * viewport plus overscan, not all 1000 `ui5-table-row` elements. */
+/** 250 tenants — enough to cross the virtualization threshold. */
 export const LargeList = meta.story({
 	args: {
-		tenants: Array.from({ length: 1000 }, makeTenant),
+		tenants: Array.from({ length: 250 }, makeTenant),
 	},
 	play: async ({ canvasElement }) => {
 		const dialog = await openFirstDialog(canvasElement);
@@ -259,5 +257,12 @@ export const LargeList = meta.story({
 				throw new Error("TableVirtualizer not rendered for large tenant list");
 			}
 		});
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		const rowCount = dialog.querySelectorAll("ui5-table-row").length;
+		if (rowCount < 15) {
+			throw new Error(
+				`only ${rowCount} rows rendered on Dialog open — virtualizer did not cover the viewport`,
+			);
+		}
 	},
 });
