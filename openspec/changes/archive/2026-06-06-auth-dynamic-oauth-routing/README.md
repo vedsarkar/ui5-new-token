@@ -1,3 +1,0 @@
-# auth-dynamic-oauth-routing
-
-Route `POST /checkToken` and `POST /refreshToken` per-session to the Auth Server cluster that issued the user's access token, using an HMAC-signed `reltio_aurl` cookie minted at `/callback` time — zero new consumer configuration, fail-closed to `AuthConfig.oauthPath`. Expose the same per-session routing to apps making direct Auth Server calls via `resolveAuthPath`, returned alongside the router from `createExpressAuth(config)` / `createNextAuth(config)` — so the resolver shares the router's once-derived HMAC key instead of deriving its own. Non-breaking minor: the Express adapter attaches the method to the returned `Router` and the Next.js adapter adds it next to `handlers`, so existing mount lines are unchanged.

@@ -66,3 +66,8 @@ packages/app/app-template/package-lock.json
 # @reltio/app — the CLI's dist/ (built by scripts/build.mjs, published from
 # dist/) is already covered by the global `dist/` rule above, along with the
 # app-template payload and LICENSE/NOTICE staged into it at build.
+
+# Excluded from the public GitHub mirror (tracked on Bitbucket)
+openspec/
+apps/ontology-builder/*.docx
+apps/ontology-builder/2026-*.md
