@@ -20,6 +20,33 @@ result changes across most components.
 - **Corner radii.** `sapGroup_BorderCornerRadius` `.75rem` → `1.5rem` and
   `sapPopover_BorderCornerRadius` `.5rem` → `1rem`, in both themes. Panels,
   cards, groups and popovers get noticeably rounder.
+
+**Popup radius remap**
+
+UI5's Horizon theme hardcodes `--_ui5_popup_border_radius: 0.5rem` on the popup
+host, overriding the base theme's `var(--sapElement_BorderCornerRadius)`. Neither
+`sapPopover_BorderCornerRadius` nor `sapElement_BorderCornerRadius` therefore
+reached any popup, and popovers stayed at 8px while the design called for 16px.
+
+`variables.css` now sets the internal variable on the hosts, which is the only
+level that beats a shadow-root `:host` rule — an inherited value from an ancestor
+loses to it:
+
+```css
+ui5-popover,
+ui5-responsive-popover {
+	--_ui5_popup_border_radius: var(--sapPopover_BorderCornerRadius, 1rem);
+}
+
+ui5-dialog {
+	--_ui5_popup_border_radius: var(--sapElement_BorderCornerRadius, 1.5rem);
+}
+```
+
+Popover now renders at 16px and Dialog at 24px, matching Figma. `--_ui5_*` is
+UI5-private, so re-check these two rules on a UI5 upgrade. `ui5-menu` and popups
+nested inside another component's shadow root (a Select's internal popover, say)
+are not covered and keep UI5's 8px.
 - **Critical amber.** `sapCriticalColor`, `sapProgress_Value_Critical*` and
   `sapTab_Critical_*` shift from burnt orange (`#e76500` / `#ee6611`) to amber
   `#f79400`, matching the button `Critical` change.

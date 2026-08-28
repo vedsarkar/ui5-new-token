@@ -248,11 +248,35 @@ function computeVaryingKeys(lightTokens, darkTokens, stockLight) {
  * it on the button hosts confines the pill to buttons; custom properties inherit
  * through Shadow DOM, so the components' internals pick it up. The literal
  * fallback keeps buttons round when no `data-theme` ancestor is present.
+ *
+ * Popups are a second case. `base/PopupsCommon-parameters.css` derives
+ * `--_ui5_popup_border_radius` from `sapElement_BorderCornerRadius`, but
+ * `sap_horizon/PopupsCommon-parameters.css` overrides it with a hardcoded
+ * `0.5rem` on `:host` — so neither `sapPopover_BorderCornerRadius` nor
+ * `sapElement_BorderCornerRadius` reaches any popup. The internal variable has
+ * to be set on the host element itself: a value inherited from an ancestor
+ * loses to the shadow root's own `:host` rule, while a normal declaration from
+ * the outer document beats it. Popover and Dialog carry different radii in the
+ * design, hence two rules.
+ *
+ * `--_ui5_*` is UI5-private, so these two rules are the one place to re-check
+ * on a UI5 upgrade. Popups nested inside another component's shadow root (e.g.
+ * a Select's internal popover) are out of reach of a document-level selector
+ * and keep UI5's default.
  */
 const COMPONENT_REMAPS = [
 	"ui5-button,",
 	"ui5-toggle-button {",
 	"\t--sapButton_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);",
+	"}",
+	"",
+	"ui5-popover,",
+	"ui5-responsive-popover {",
+	"\t--_ui5_popup_border_radius: var(--sapPopover_BorderCornerRadius, 1rem);",
+	"}",
+	"",
+	"ui5-dialog {",
+	"\t--_ui5_popup_border_radius: var(--sapElement_BorderCornerRadius, 1.5rem);",
 	"}",
 ].join("\n");
 
