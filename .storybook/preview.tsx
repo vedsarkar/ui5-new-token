@@ -23,7 +23,14 @@ import { initialize, mswLoader } from "msw-storybook-addon";
 import { DualThemeDecorator } from "./blocks/DualThemeDecorator";
 import reltioTheme from "./reltio-theme";
 
-initialize({ onUnhandledRequest: "bypass" });
+// `serviceWorker.url` defaults to an absolute "/mockServiceWorker.js", which
+// 404s when the build is served from a sub-path (e.g. a GitHub Pages project
+// site). Relative to the preview iframe it resolves under the deployment root
+// either way, and the worker scope follows the script's directory.
+initialize({
+	onUnhandledRequest: "bypass",
+	serviceWorker: { url: "./mockServiceWorker.js" },
+});
 
 export default definePreview({
 	tags: ["autodocs"],
