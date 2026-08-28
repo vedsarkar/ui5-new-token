@@ -9,10 +9,14 @@
   preview's default theme, matching how a real app opts in; the
   DualThemeDecorator overrides it per half, and individual stories can set
   `data-theme="sap-reltio-dark"` on a wrapper element.
+
+  Paths are relative so the build works when served from a sub-path (e.g. a
+  GitHub Pages project site) as well as from a domain root. `iframe.html` sits
+  at the deployment root in both cases, so `./` resolves identically.
 -->
-<link rel="stylesheet" href="/variables.css" />
-<link rel="stylesheet" href="/fonts.css" />
-<link rel="stylesheet" href="/global.css" />
+<link rel="stylesheet" href="./variables.css" />
+<link rel="stylesheet" href="./fonts.css" />
+<link rel="stylesheet" href="./global.css" />
 <script>
   document.documentElement.setAttribute("data-theme", "sap-reltio-light");
 </script>
