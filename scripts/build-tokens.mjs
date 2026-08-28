@@ -273,6 +273,13 @@ const COMPONENT_REMAPS = [
 	"ui5-segmented-button,",
 	"ui5-segmented-button-item {",
 	"\t--sapButton_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);",
+	// The focus ring is a pseudo-element inset 1px with its OWN radius
+	// (`0.375rem` in Horizon). Left alone it stays a small rounded rectangle
+	// inside the pill, so its corners fall outside the button's curve and get
+	// clipped. Both the outer ring and the inner one used by the Emphasized and
+	// pressed states have to follow the pill.
+	"\t--_ui5_button_focused_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);",
+	"\t--_ui5_button_focused_inner_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);",
 	"}",
 	"",
 	"ui5-popover,",
