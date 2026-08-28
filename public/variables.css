@@ -2406,3 +2406,12 @@ ui5-button,
 ui5-toggle-button {
 	--sapButton_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);
 }
+
+ui5-popover,
+ui5-responsive-popover {
+	--_ui5_popup_border_radius: var(--sapPopover_BorderCornerRadius, 1rem);
+}
+
+ui5-dialog {
+	--_ui5_popup_border_radius: var(--sapElement_BorderCornerRadius, 1.5rem);
+}

@@ -20,10 +20,13 @@ colour tokens already matched the Figma values and are unchanged.
 **Wider effect**
 
 `sapElement_BorderCornerRadius` is SAP's shared "single element radius", so this is
-deliberately not scoped to Avatar. Every UI5 component that reads it picks up the
-new value: `Avatar`, `Bar`, `Dialog`, `Menu`, `Panel`, popovers and popups,
-`Slider`, `TimelineItem`, `Toast`, and `Wizard`. Figma's `Dialog` binds the same
-variable at 24px, confirming the system-wide intent.
+deliberately not scoped to Avatar. `Avatar`, `Bar`, `Panel`, `Slider`,
+`TimelineItem`, `Toast` and `Wizard` pick up the new value directly. Figma's
+`Dialog` binds the same variable at 24px, confirming the system-wide intent.
+
+Popups are the exception: UI5's Horizon theme hardcodes
+`--_ui5_popup_border_radius` to `0.5rem`, so `Dialog`, `Menu` and the popovers
+ignore this token. See the popup remap shipped alongside the token sync.
 
 No API change and nothing to migrate — override `--sapElement_BorderCornerRadius`
 on an ancestor to opt a subtree out.
