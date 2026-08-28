@@ -30,6 +30,29 @@ ui5-avatar[mode="Interactive"]:not([disabled]):not(:active):hover {
 	box-shadow: none;
 }
 
+/* Bar — the design draws every bar with no background and no effects. The only
+ * chrome is a single-edge border: a top border on the footer and a coloured
+ * bottom border on the semantic header variants. UI5 instead fills every bar
+ * with sapPageHeader/Footer_Background and adds sapContent_HeaderShadow to the
+ * header plus sapContent_Shadow1 to the floating footer.
+ *
+ * Overriding the tokens the component reads keeps this scoped to bars — the
+ * background and shadow live on `:host` inside the shadow root, which a document
+ * selector cannot reach directly.
+ *
+ * Left alone deliberately: the footer's top border already resolves to #ffffff
+ * via sapPageFooter_BorderColor, and the floating footer's radius already
+ * resolves to 24px via sapElement_BorderCornerRadius — both match the design. */
+ui5-bar {
+	--sapPageHeader_Background: transparent;
+	--sapPageFooter_Background: transparent;
+	--sapContent_HeaderShadow: none;
+}
+
+ui5-bar[design="FloatingFooter"] {
+	--sapContent_Shadow1: none;
+}
+
 /* Storybook MDX documentation table styles */
 #storybook-docs table {
 	width: 100%;
