@@ -265,8 +265,13 @@ function computeVaryingKeys(lightTokens, darkTokens, stockLight) {
  * and keep UI5's default.
  */
 const COMPONENT_REMAPS = [
+	// The design binds the pill radius on the segmented button and its items too
+	// — it ignores its own `sapButton_Segment_BorderCornerRadius` (8px) variable
+	// and uses `_Max`, so follow the component, not the token.
 	"ui5-button,",
-	"ui5-toggle-button {",
+	"ui5-toggle-button,",
+	"ui5-segmented-button,",
+	"ui5-segmented-button-item {",
 	"\t--sapButton_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);",
 	"}",
 	"",
