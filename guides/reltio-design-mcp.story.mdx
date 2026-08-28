@@ -21,31 +21,69 @@ For product teams, Reltio Design MCP is also a live delivery channel. Once a tea
 		<tr>
 			<th>Tool</th>
 			<th>Description</th>
+			<th>Available on</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
 			<td><code>list-all-documentation</code></td>
 			<td>Returns the full index of all documented components, stories, guides, and API references</td>
+			<td>Both endpoints</td>
 		</tr>
 		<tr>
 			<td><code>get-documentation</code></td>
 			<td>Fetches the full documentation page for a specific component or guide</td>
+			<td>Both endpoints</td>
 		</tr>
 		<tr>
 			<td><code>get-documentation-for-story</code></td>
 			<td>Retrieves documentation scoped to a single story variant</td>
+			<td>Both endpoints</td>
+		</tr>
+		<tr>
+			<td><code>get-storybook-story-instructions</code></td>
+			<td>Returns the current conventions for writing and updating Storybook stories</td>
+			<td>Local dev server</td>
 		</tr>
 		<tr>
 			<td><code>preview-stories</code></td>
 			<td>Returns live preview URLs for component stories</td>
+			<td>Local dev server</td>
 		</tr>
 		<tr>
 			<td><code>run-story-tests</code></td>
 			<td>Executes interaction and accessibility tests for stories and streams the results</td>
+			<td>Local dev server</td>
 		</tr>
 	</tbody>
 </table>
+
+> **Important:** The published endpoint serves the three documentation tools. The last three need a live Storybook runtime — a preview iframe and the Vitest runner — so they are only available when an agent is pointed at a local dev server on `http://localhost:6006/mcp`. See [Local Development](#local-development) below.
+
+## Rules for AI Agents
+
+When working on UI components, query this server for component and documentation knowledge **before** answering or writing code.
+
+- **Never invent component props.** Before using any prop — including plausible-sounding ones like `shadow`, `size`, or `variant` — confirm it exists via `get-documentation`. Prop names from other component libraries do not transfer to Reltio components.
+- Call `list-all-documentation` for the catalogue, then `get-documentation` on the specific component to read its documented props and examples.
+- Use only props that are explicitly documented or demonstrated in an example story. If a prop is not documented, ask rather than assume.
+- **A story name is not evidence of a prop name.** Verify every prop against the documentation payload, never against the story title.
+
+**✅ Do:** Confirm the prop, then use it
+
+```tsx
+// get-documentation → Button documents `design`, not `variant`
+<Button design="Emphasized">Save</Button>
+```
+
+**❌ Don't:** Infer a prop from another library's conventions
+
+```tsx
+// `variant` is a React-Bootstrap/MUI habit — it is not a UI5 Button prop
+<Button variant="primary">Save</Button>
+```
+
+Copy these rules into your agent's instruction file (`AGENTS.md`, `CLAUDE.md`, or `.cursor/rules/`) so they apply to every session.
 
 ## Setup
 

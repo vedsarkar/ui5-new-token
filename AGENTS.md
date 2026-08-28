@@ -448,19 +448,32 @@ openspec validate [item] --strict # Validate changes
 
 ## MCP Servers
 
-AI agents in this project have access to MCP servers configured in `.mcp.json` and `.claude/settings.json`:
+AI agents in this project have access to MCP servers configured in `.mcp.json` (Claude Code) and `.cursor/mcp.json` (Cursor):
 
 | Server | Source | What it provides |
 |--------|--------|-----------------|
-| **reltio-design** (Reltio Design MCP, powered by Storybook MCP) | `http://localhost:6006/mcp` | Existing components, documentation, stories, API references |
+| **reltio-design-local** (Reltio Design MCP, powered by Storybook MCP) | `http://localhost:6006/mcp` | Existing components, documentation, stories, API references, story-authoring conventions, story tests |
 | **Atlassian MCP** | `https://mcp.atlassian.com/v1/mcp/authv2` | Jira and Confluence access |
 | **Figma MCP** (plugin) | `https://mcp.figma.com/mcp` | Design context, screenshots, variables, design system search |
 
-**Reltio Design MCP** is served by the local Storybook dev server, so it requires `npm run dev` to be running BEFORE starting the Claude Code session. MCP servers are connected at session startup — if Storybook is not running, the server will show "Failed to connect" and its tools will be unavailable for the entire session. Tools: `list-all-documentation`, `get-documentation`, `get-documentation-for-story`, `preview-stories`, `run-story-tests`.
+**Reltio Design MCP** is served by the Storybook dev server, so it requires `npm run dev` to be running BEFORE starting the agent session. MCP servers are connected at session startup — if Storybook is not running, the server will show "Failed to connect" and its tools will be unavailable for the entire session.
+
+The local dev server and the published endpoint (`https://reltio.design/mcp`, which consumer repos connect to as `reltio-design`) do **not** expose the same tools. Both serve the three documentation tools — `list-all-documentation`, `get-documentation`, `get-documentation-for-story`. Only the dev server adds `get-storybook-story-instructions`, `preview-stories`, and `run-story-tests`, because those need a live runtime (preview iframe and Vitest runner). Any task that depends on those three must run against `npm run dev`.
 
 **Figma MCP** requires one-time OAuth authorization per developer. Tools: `get_design_context`, `get_screenshot`, `get_variable_defs`, `search_design_system`, `get_metadata`.
 
 **Atlassian MCP** requires OAuth authorization per developer on first use.
+
+### Reltio Design MCP usage rules (MANDATORY)
+
+When working on UI components, query the Reltio Design MCP for Storybook's component and documentation knowledge BEFORE answering or changing code.
+
+- **Never invent component props.** Before using ANY prop on a design-system component — including plausible-sounding ones like `shadow`, `size`, or `variant` — confirm it exists via `get-documentation`. Prop names from other component libraries do not transfer.
+- Call `list-all-documentation` for the component catalogue, then `get-documentation` on the specific component to read its documented props and examples.
+- Use only props that are explicitly documented or demonstrated in an example story. If a prop is not documented, stop and ask the user instead of assuming it exists.
+- **A story name is not evidence of a prop name.** Verify every prop against the documentation payload, never against the story title.
+- Call `get-storybook-story-instructions` before creating or updating stories so you follow the current conventions.
+- Check your work with `run-story-tests`.
 
 ## Agent Skills
 
