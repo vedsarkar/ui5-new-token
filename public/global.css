@@ -11,6 +11,25 @@
 	color: var(--sapTextColor);
 }
 
+/*
+ * Component overrides — where UI5's Horizon CSS draws something differently
+ * from the Hybrid Design System and no --sap* token controls it.
+ *
+ * These target the component host from the outer document, which beats the
+ * shadow root's own `:host` rules for normal declarations. Re-check them on a
+ * UI5 upgrade.
+ */
+
+/* Avatar — the design replaces the 1px edge on hover (stroke, align INSIDE),
+ * so the avatar stays its nominal size. UI5 instead adds a 1px ring outside via
+ * box-shadow, which reads 2px larger and leaves the fill-coloured border showing
+ * underneath. Same colour either way (--sapAvatar_Hover_BorderColor). */
+ui5-avatar[interactive]:not([disabled]):not(:active):hover,
+ui5-avatar[mode="Interactive"]:not([disabled]):not(:active):hover {
+	border-color: var(--sapAvatar_Hover_BorderColor);
+	box-shadow: none;
+}
+
 /* Storybook MDX documentation table styles */
 #storybook-docs table {
 	width: 100%;
