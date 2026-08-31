@@ -114,6 +114,15 @@ ui5-breadcrumbs {
 	 * is a link (sapLinkColor), a separator, or the current item, and the design
 	 * wants the latter two at label colour. */
 	--sapTextColor: var(--sapContent_LabelColor);
+	/* The design's row is 16px tall; UI5's is 24px because Breadcrumbs.css adds
+	 * `padding-top/bottom: .25rem` to the link via `::part(root)` inside its own
+	 * shadow root — a hit area Figma does not model, and unreachable from here
+	 * (the part is not re-exported, so `::part()` from the document does nothing).
+	 * Pulling the block margins in by that padding makes the component occupy the
+	 * design's 16px in layout while keeping the larger click target. The text is
+	 * centred in the 24px box, so it lands exactly on the 16px footprint and the
+	 * 4px overhangs carry no background or border. */
+	margin-block: -0.25rem;
 }
 
 /* Storybook MDX documentation table styles */
