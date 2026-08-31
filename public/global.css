@@ -157,3 +157,17 @@ ui5-breadcrumbs {
 ui5-calendar {
 	--sapList_Background: #fcfeff80;
 }
+
+/* Card header — the design pads the header 16px on all four sides (its 80px
+ * cozy height is 16 + a 48px avatar + 16). UI5's *base* theme agrees at a
+ * uniform 1rem, but the sap_horizon theme overrides the shorthand to
+ * `1rem 1rem 0.75rem 1rem`, shaving the bottom to 12px and sitting the header
+ * content 4px high in its box. Restoring the base value is enough — unlike the
+ * breadcrumb and day-picker cases, ui5-card-header is a light-DOM child, so a
+ * document selector reaches it directly.
+ *
+ * The rest of the card already matches: 16px radius, #fcfeff surface and no
+ * border. */
+ui5-card-header {
+	--_ui5_card_header_padding: 1rem;
+}
