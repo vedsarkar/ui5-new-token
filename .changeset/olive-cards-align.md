@@ -17,10 +17,17 @@ radio buttons, and whether those follow is a design-system decision. It reaches
 the other-month cells too, since DayPicker derives their background from the
 same token.
 
-**Card header** — the design pads the header 16px on all four sides. UI5's base
-theme agrees at a uniform `1rem`, but `sap_horizon` overrides the shorthand to
-`1rem 1rem 0.75rem 1rem`, shaving the bottom to 12px and sitting the content 4px
-high in its box. Restoring the base value fixes it.
+**Card header** — two corrections. The design pads the header 16px on all four
+sides; UI5's base theme agrees at a uniform `1rem`, but `sap_horizon` overrides
+the shorthand to `1rem 1rem 0.75rem 1rem`, shaving the bottom to 12px and sitting
+the content 4px high in its box. Restoring the base value fixes it.
+
+The counter is also a step darker in the design — `sapContent_LabelColor`
+(`#566189`) against the subtitle's `sapTile_TextColor` (`#646e97`). UI5 gives
+both the same token, so a remap would move the subtitle too, and it already
+matches. The counter's element sits in the shadow root but UI5 exposes it as the
+`additional-text` part, so a document rule reaches it. This is the CSS Part
+fallback rather than a preference: the token layer cannot separate the two.
 
 **Known remaining gap**
 

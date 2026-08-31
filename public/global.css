@@ -171,3 +171,14 @@ ui5-calendar {
 ui5-card-header {
 	--_ui5_card_header_padding: 1rem;
 }
+
+/* Card header counter — the design colours it sapContent_LabelColor (#566189),
+ * one step darker than the subtitle. UI5 gives the counter and the subtitle the
+ * same sapTile_TextColor (#646e97), so remapping the token would move both and
+ * the subtitle already matches. The counter's own element is inside the shadow
+ * root, but UI5 exposes it as the `additional-text` part, which a document rule
+ * reaches — the token layer cannot separate these two, so this is the CSS Part
+ * fallback rather than a preference. */
+ui5-card-header::part(additional-text) {
+	color: var(--sapContent_LabelColor);
+}
