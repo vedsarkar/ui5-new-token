@@ -72,6 +72,22 @@ ui5-bar[design="Footer"] {
 	box-sizing: border-box;
 }
 
+/* End content must sit against the right edge, as it does in the design. UI5's
+ * end container is `min-width: calc(30% - 40px)` with `justify-content: normal`,
+ * so once the bar is wider than about 3x the content the container is stretched
+ * by min-width and its children pack to its left — leaving a large gap before
+ * the right edge (121px at a 928px bar). The container is in the shadow root and
+ * exposes no variable, but the slotted children are light DOM, so an auto inline
+ * start margin on the first one pushes the whole group right. Later siblings keep
+ * the 4px that Bar.css gives every slotted child. */
+ui5-bar [slot="endContent"] {
+	margin-inline-start: auto;
+}
+
+ui5-bar [slot="endContent"] ~ [slot="endContent"] {
+	margin-inline-start: 0.25rem;
+}
+
 /* Bar header title — the design binds the title colour to sapPageHeader_TextColor
  * (#111727), but ui5-title always reads sapGroup_TitleTextColor (#172133). Size
  * and weight already agree: Title defaults to sapFontHeader5Size (16px) and the
