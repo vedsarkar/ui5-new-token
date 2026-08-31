@@ -292,7 +292,7 @@
 	--sapAvatar_10_TextColor: #646e97;
 	--sapAvatar_10_Hover_Background: #f5f5fa;
 	--sapAvatar_Hover_BorderColor: rgba(85,107,129,0.25);
-	--sapButton_Background: #fcfeff80;
+	--sapButton_Background: #fcfeff;
 	--sapButton_BorderColor: #d1d4df;
 	--sapButton_BorderCornerRadius_Max: 2rem;
 	--sapButton_TextColor: #4563ed;
@@ -300,7 +300,7 @@
 	--sapButton_Hover_BorderColor: #d1d4df;
 	--sapButton_Hover_TextColor: #4563ed;
 	--sapButton_IconColor: #4563ed;
-	--sapButton_Active_Background: #fcfeff80;
+	--sapButton_Active_Background: #fcfeff;
 	--sapButton_Active_BorderColor: #4563ed;
 	--sapButton_Active_TextColor: #4563ed;
 	--sapButton_Emphasized_Background: #00c;
@@ -348,7 +348,7 @@
 	--sapButton_Selected_Background: #f5f5fa;
 	--sapButton_Selected_BorderColor: #4563ed;
 	--sapButton_Selected_TextColor: #4563ed;
-	--sapButton_Selected_Hover_Background: #dee8f9;
+	--sapButton_Selected_Hover_Background: #dee9fb;
 	--sapButton_Selected_Hover_BorderColor: #4563ed;
 	--sapButton_Attention_Background: #fff3b7;
 	--sapButton_Attention_BorderColor: #ffeb8f;
