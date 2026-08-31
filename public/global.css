@@ -134,3 +134,26 @@ ui5-breadcrumbs {
 	 * 4px overhangs carry no background or border. */
 	margin-block: -0.25rem;
 }
+
+/* Calendar — the design's card and its other-month cells are the translucent
+ * #fcfeff80, but both render opaque white here. This is an unmapped pair rather
+ * than a stale token: the design binds `sapList_Background_Light`, which has no
+ * counterpart in UI5's theming contract, while UI5 reads `sapList_Background`,
+ * which has no counterpart in the Figma collection. Pointing the one at the
+ * other's value is scoped to the calendar deliberately — `sapList_Background`
+ * also backs lists, tables and radio buttons, and whether those should follow is
+ * a design-system decision, not something to infer from this component.
+ *
+ * Reaches the other-month cells too: DayPicker derives
+ * `--_ui5_daypicker_item_othermonth_background_color` from the same token, and
+ * inherits it because its own :host does not redeclare it.
+ *
+ * Everything else already matches: 36x46 cells, #111727 days on #fcfeff80,
+ * #eef1f4 weekends, #566189 labels at 12px, and the #8809c7 current-date ring.
+ * Two gaps are NOT fixable from here — UI5 gives every cell a 2px margin (grid
+ * 8x38 vs the design's flush 8x36) and a 32px weekday row against 46. Both live
+ * on the nested ui5-daypicker's :host, which no document selector reaches, and
+ * they are why the card is 320x392 rather than 304x382. */
+ui5-calendar {
+	--sapList_Background: #fcfeff80;
+}
