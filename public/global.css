@@ -53,6 +53,25 @@ ui5-bar[design="FloatingFooter"] {
 	--sapContent_Shadow1: none;
 }
 
+/* Bar content inset — the design puts 16px between the bar edge and the first or
+ * last action, with 8px between actions. UI5's start/end containers already pad
+ * 16px, but Bar.css also gives every slotted child `margin: 0 0.25rem`, so the
+ * outer edge lands at 20px while the 8px between items is two 4px margins
+ * meeting. Dropping the container padding to 12px restores a true 16px edge and
+ * leaves the 8px gap intact. The margin applies to all slotted content (Title,
+ * Label, Button all measure 0 4px), so this is uniform rather than button-only. */
+ui5-bar {
+	--_ui5_bar-start-container-padding-start: 0.75rem;
+	--_ui5_bar-end-container-padding-end: 0.75rem;
+}
+
+/* The footer's top border sits outside UI5's 44px content box, making it 45px
+ * tall. The design's 44px already contains the border (stroke aligned INSIDE),
+ * so the border has to be counted in. */
+ui5-bar[design="Footer"] {
+	box-sizing: border-box;
+}
+
 /* Bar header title — the design binds the title colour to sapPageHeader_TextColor
  * (#111727), but ui5-title always reads sapGroup_TitleTextColor (#172133). Size
  * and weight already agree: Title defaults to sapFontHeader5Size (16px) and the
