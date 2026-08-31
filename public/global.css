@@ -53,6 +53,15 @@ ui5-bar[design="FloatingFooter"] {
 	--sapContent_Shadow1: none;
 }
 
+/* Bar header title — the design binds the title colour to sapPageHeader_TextColor
+ * (#111727), but ui5-title always reads sapGroup_TitleTextColor (#172133). Size
+ * and weight already agree: Title defaults to sapFontHeader5Size (16px) and the
+ * 72-Bold face, matching the design's H5/Bold. Light-only in effect — both tokens
+ * resolve to #f5f6f7 in dark. */
+ui5-bar ui5-title {
+	--sapGroup_TitleTextColor: var(--sapPageHeader_TextColor);
+}
+
 /* Storybook MDX documentation table styles */
 #storybook-docs table {
 	width: 100%;
