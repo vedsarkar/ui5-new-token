@@ -5,7 +5,8 @@
 	"license": "Apache-2.0",
 	"sideEffects": [
 		"./variables.css",
-		"./fonts.css"
+		"./fonts.css",
+		"./global.css"
 	],
 	"homepage": "https://reltio.design",
 	"bugs": {
@@ -40,7 +41,7 @@
 	},
 	"scripts": {
 		"build": "tsc && tsc-alias",
-		"postbuild": "cp package.json dist/ && cp README.md dist/ && cp ../../LICENSE dist/ && cp ../../NOTICE dist/ && cp ../../public/variables.css dist/ && cp ../../public/fonts.css dist/ && node ../../scripts/bundle-design-assets.mjs"
+		"postbuild": "cp package.json dist/ && cp README.md dist/ && cp ../../LICENSE dist/ && cp ../../NOTICE dist/ && cp ../../public/variables.css dist/ && cp ../../public/fonts.css dist/ && cp ../../public/global.css dist/ && node ../../scripts/bundle-design-assets.mjs"
 	},
 	"devDependencies": {
 		"tsc-alias": "^1.8.10",

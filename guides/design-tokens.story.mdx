@@ -41,7 +41,7 @@ The same token surface powers both **Reltio components** (CSS Modules under `com
 
 ## Usage
 
-Load `variables.css` and `fonts.css`, then set `data-theme` on any ancestor element. There are two equivalent ways to load the CSS — both ship the exact same files.
+Load `variables.css`, `fonts.css` and `global.css` — in that order — then set `data-theme` on any ancestor element. `global.css` comes last because it corrects components on top of the token layer. There are two equivalent ways to load the CSS — both ship the exact same files.
 
 ### Option 1 — CDN (`<link>`)
 
@@ -50,6 +50,7 @@ The simplest setup: link the files straight from `https://reltio.design/`.
 ```html
 <link rel="stylesheet" href="https://reltio.design/variables.css" />
 <link rel="stylesheet" href="https://reltio.design/fonts.css" />
+<link rel="stylesheet" href="https://reltio.design/global.css" />
 
 <div data-theme="sap-reltio-light">
   <!-- UI5 components and Reltio components both render in light theme -->
@@ -65,6 +66,7 @@ The simplest setup: link the files straight from `https://reltio.design/`.
 ```ts
 import "@reltio/design/variables.css";
 import "@reltio/design/fonts.css";
+import "@reltio/design/global.css";
 ```
 
 > **⚠️ Fonts still load from the CDN.** The package ships `fonts.css`, but **not** the `.woff2` binaries. Every `@font-face` rule inside `fonts.css` points its `src` at `https://reltio.design/fonts/*.woff2`, so the font files are always fetched from the CDN — regardless of which option you choose. `variables.css`, by contrast, is fully self-contained (only `--sap*` declarations, no external references).

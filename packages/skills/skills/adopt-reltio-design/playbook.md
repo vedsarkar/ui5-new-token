@@ -66,8 +66,10 @@ Do **not** port `sx`, `styled`, `makeStyles`, or theme objects verbatim.
   on an ancestor element (the legacy `horizon-light` / `horizon-dark` values still
   resolve to the same tokens but are deprecated — prefer the `sap-reltio-*` names).
   UI5 components and token-based CSS re-theme together.
-- The consumer must load `variables.css` + `fonts.css` from `reltio.design`
-  (or self-host). If theming looks broken after migration, verify these are loaded.
+- The consumer must load `variables.css` + `fonts.css` + `global.css` from
+  `reltio.design` (or self-host), in that order — `global.css` carries the
+  component corrections that the tokens alone cannot express, so it comes last.
+  If theming looks broken after migration, verify all three are loaded.
 
 ## 5. Icons
 
