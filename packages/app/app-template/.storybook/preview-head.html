@@ -1,12 +1,14 @@
 <!--
   App Storybook preview head.
 
-  SAP Reltio design tokens and fonts are loaded from the reltio.design CDN,
-  same as the app's root layout. data-theme is required for the Reltio token
-  overrides to take effect.
+  SAP Reltio design tokens, fonts and component corrections are loaded from the
+  reltio.design CDN, same as the app's root layout. data-theme is required for
+  the Reltio token overrides to take effect. global.css comes last — it corrects
+  the UI5 components whose defaults the tokens alone cannot reach.
 -->
 <link rel="stylesheet" href="https://reltio.design/variables.css" />
 <link rel="stylesheet" href="https://reltio.design/fonts.css" />
+<link rel="stylesheet" href="https://reltio.design/global.css" />
 <script>
   document.documentElement.setAttribute("data-theme", "sap-reltio-light");
 </script>

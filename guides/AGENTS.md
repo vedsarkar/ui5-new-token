@@ -473,6 +473,7 @@ Check that you've loaded the design tokens stylesheet and set the active theme o
 \`\`\`html
 <link rel="stylesheet" href="https://reltio.design/variables.css" />
 <link rel="stylesheet" href="https://reltio.design/fonts.css" />
+<link rel="stylesheet" href="https://reltio.design/global.css" />
 
 <div data-theme="sap-reltio-light">
   <!-- Your app -->
@@ -481,7 +482,7 @@ Check that you've loaded the design tokens stylesheet and set the active theme o
 
 ### "Styles are missing"
 
-Ensure both \`variables.css\` and \`fonts.css\` are loaded in \`<head>\` from \`https://reltio.design/\` (or your own self-hosted origin).
+Ensure \`variables.css\`, \`fonts.css\` and \`global.css\` are all loaded in \`<head>\` from \`https://reltio.design/\` (or your own self-hosted origin), in that order.
 ```
 
 ### Good: Sources and References

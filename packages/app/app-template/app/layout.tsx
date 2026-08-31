@@ -32,6 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 			<head>
 				<link rel="stylesheet" href="https://reltio.design/variables.css" />
 				<link rel="stylesheet" href="https://reltio.design/fonts.css" />
+				<link rel="stylesheet" href="https://reltio.design/global.css" />
 			</head>
 			<body>
 				<Suspense fallback={<div style={fullScreen} />}>

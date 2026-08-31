@@ -1,11 +1,13 @@
 <!--
   Reltio Design Platform — Storybook preview head.
 
-  Design tokens (variables.css) and SAP 72 font-face rules (fonts.css) are
-  loaded here. variables.css only carries the Reltio-customized token values —
-  the full SAP Horizon defaults are injected at runtime by the UI5 web
-  components — so `data-theme` is REQUIRED (light is not an attribute-less
-  default). The script below sets `sap-reltio-light` on the document root as the
+  Design tokens (variables.css), SAP 72 font-face rules (fonts.css) and the
+  component corrections (global.css) are loaded here — the same three
+  stylesheets, in the same order, that a real Reltio app loads.
+
+  variables.css only carries the Reltio-customized token values — the full SAP
+  Horizon defaults are injected at runtime by the UI5 web components — so
+  `data-theme` is REQUIRED (light is not an attribute-less default). The script below sets `sap-reltio-light` on the document root as the
   preview's default theme, matching how a real app opts in; the
   DualThemeDecorator overrides it per half, and individual stories can set
   `data-theme="sap-reltio-dark"` on a wrapper element.
@@ -22,6 +24,28 @@
 </script>
 
 <style>
+  /*
+    Storybook-only rules. These used to sit in global.css, but that file is now
+    published as https://reltio.design/global.css for apps to load, so anything
+    that only makes sense inside Storybook belongs here instead.
+  */
+
+  :root {
+    font-family:
+      "72", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      /* biome-ignore lint/complexity/noImportantStyles: Global font reset needs to win over Storybook's own !important rules */
+      sans-serif !important;
+  }
+
+  /* MDX documentation tables. */
+  #storybook-docs table {
+    width: 100%;
+  }
+
+  #storybook-docs th {
+    text-align: left;
+  }
+
   /*
     Story view: strip Storybook's built-in canvas-wrapper padding/margin/
     centering so the DualThemeDecorator (.storybook/blocks/DualThemeDecorator/DualThemeDecorator.tsx)

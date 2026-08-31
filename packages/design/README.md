@@ -105,6 +105,7 @@ Load the SAP Horizon design tokens and SAP 72 fonts as static CSS, then set the 
 ```html
 <link rel="stylesheet" href="https://reltio.design/variables.css" />
 <link rel="stylesheet" href="https://reltio.design/fonts.css" />
+<link rel="stylesheet" href="https://reltio.design/global.css" />
 
 <div data-theme="horizon-light">
   <!-- UI5 components and Reltio components both render in light theme -->
@@ -115,11 +116,13 @@ Switch the active theme by toggling `data-theme="horizon-light"` or `data-theme=
 
 `variables.css` declares all `--sap*` design tokens; `fonts.css` registers the SAP 72 `@font-face` rules and points the document root at the SAP 72 stack. Both UI5 web components and Reltio components consume the same tokens, so set the attribute once and both layers re-theme together.
 
+`global.css` carries the component corrections the tokens alone cannot express — the cases where UI5's Horizon CSS hardcodes a value that diverges from the design, or reads a different token than the design binds. Load it **last**, after the other two: every rule in it either remaps a token for one component or sets a declaration on a component host, so it has to come after the token layer it builds on. It is optional in the sense that components render without it, but they will not match the design system.
+
 See the [UI Architecture](https://reltio.design/?path=/docs/guides-ui-architecture--docs), [Typography](https://reltio.design/?path=/docs/guides-typography--docs), and [Design Tokens](https://reltio.design/?path=/docs/design-tokens--docs) guides in Storybook for the full picture, the monospace stack, the `--sap*` token surface, and self-hosting instructions.
 
 ### Icons
 
-JS modules are tree-shakable (`sideEffects` lists only `./variables.css` and `./fonts.css`), so import each icon's **name** (the `default` export) — the import registers the icon and returns its registry-name string. Bare side-effect imports (`import "@reltio/design/icons/sap/save"`) are dropped by the bundler.
+JS modules are tree-shakable (`sideEffects` lists only `./variables.css`, `./fonts.css` and `./global.css`), so import each icon's **name** (the `default` export) — the import registers the icon and returns its registry-name string. Bare side-effect imports (`import "@reltio/design/icons/sap/save"`) are dropped by the bundler.
 
 SAP Fiori icons: `import saveIcon from "@reltio/design/icons/sap/<kebab-name>"` (`saveIcon === "<kebab-name>"`).
 
