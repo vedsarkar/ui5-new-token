@@ -214,6 +214,26 @@ ui5-carousel {
 	--ui5_carousel_active_dot_border: 1px solid var(--sapTextColor);
 }
 
+/* Dialog elevation — as with the card, the design gives the dialog a Figma
+ * *Glass* effect and no drop shadow, while UI5 applies sapContent_Shadow3 on
+ * :host. A document rule on the host beats that, and it does not touch
+ * sapContent_Shadow3 itself, which other components still use.
+ *
+ * The dialog sits over a block layer that already separates it from the page,
+ * so losing the shadow costs less depth here than it would on a card. The
+ * footer height is corrected alongside this in
+ * utils/applyComponentCorrections.ts. */
+ui5-dialog {
+	box-shadow: none;
+	/* UI5 also shadows the dialog's own header, which draws a 1px #d9d9d9 line
+	 * across its bottom edge plus a soft falloff below — the two halves of
+	 * sapContent_HeaderShadow. The design has no rule between the title and the
+	 * content, so this goes too. Same token already neutralised on ui5-bar above;
+	 * overriding the popup-specific variable keeps it to the header rather than
+	 * anything else in the dialog that might read the shadow. */
+	--_ui5_popup_header_shadow: none;
+}
+
 /* Card header counter — the design colours it sapContent_LabelColor (#566189),
  * one step darker than the subtitle. UI5 gives the counter and the subtitle the
  * same sapTile_TextColor (#646e97), so remapping the token would move both and
