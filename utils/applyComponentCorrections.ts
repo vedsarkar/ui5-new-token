@@ -202,6 +202,30 @@ export const applyComponentCorrections = async (): Promise<void> => {
 }`,
 		),
 
+		// Panel header separator — the design binds the header's bottom border to
+		// `sapGroup_ContentBorderColor` (#ffffff, invisible against the panel's
+		// own fill). UI5 resolves it to `sapGroup_TitleBorderColor` instead, which
+		// after the List-page correction is #8f8fcc, so the panel draws a distinct
+		// purple-grey line the design does not have.
+		//
+		// Overriding only the colour, through three selectors matched to UI5's
+		// own: the collapsed and fixed rules hardcode the token, and the default
+		// rule reads `--_ui5_panel_default_header_border`. Repeating the selectors
+		// is necessary because `:host([collapsed]) .ui5-panel-header` outranks a
+		// bare `.ui5-panel-header`, so a shorter rule would lose despite
+		// addCustomCSS appending after UI5's styles.
+		//
+		// Scoped rather than remapping `sapGroup_TitleBorderColor` on the host,
+		// which would inherit into everything nested inside a panel.
+		addCustomCSS(
+			"ui5-panel",
+			`:host([collapsed]) .ui5-panel-header,
+:host([fixed]:not([collapsed]):not([_has-header])) .ui5-panel-header,
+:host(:not([fixed]):not([collapsed])) .ui5-panel-header {
+	border-bottom-color: var(--sapGroup_ContentBorderColor);
+}`,
+		),
+
 		// Dropdown elevation — same Glass-and-no-shadow treatment as the menu.
 		// UI5 elevates these from Suggestions.css and Select.css, which set
 		// `box-shadow: var(--sapContent_Shadow1)` on the popover's class rather
