@@ -1,0 +1,335 @@
+.workspace {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+	overflow: hidden;
+}
+
+/* Page header — title, entity picker, and the refresh action. */
+.pageHeader {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	height: 52px;
+	padding: 0 16px;
+	box-sizing: border-box;
+	border-bottom: 1px solid var(--sapGroup_TitleBorderColor);
+	background: var(--sapGroup_ContentBackground);
+}
+
+.pageTitle {
+	color: var(--sapTextColor);
+	font-family: var(--sapFontBoldFamily);
+	font-size: 16px;
+}
+
+.headerSpacer {
+	flex: 1;
+}
+
+/* Two columns: the analysis stack, and the attribute list. */
+.columns {
+	display: flex;
+	flex: 1;
+	gap: 16px;
+	padding: 16px;
+	min-height: 0;
+	overflow: hidden;
+}
+
+.analysis {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 16px;
+	min-width: 0;
+	min-height: 0;
+	overflow-y: auto;
+	padding-right: 4px;
+}
+
+.analysisTop {
+	display: flex;
+	gap: 16px;
+	flex: 0 0 auto;
+}
+
+/* Heights come from the design rather than from content, so the stack keeps
+ * its proportions when the sample data changes. */
+.entityCard {
+	flex: 0 0 480px;
+	min-height: 150px;
+}
+
+.mappingCard {
+	flex: 1;
+	min-width: 0;
+	min-height: 150px;
+}
+
+.attributesColumn {
+	display: flex;
+	flex: 0 0 320px;
+	flex-direction: column;
+	min-height: 0;
+}
+
+/* KPI strip inside the entity card. */
+.kpiRow {
+	display: flex;
+	align-items: stretch;
+}
+
+.kpi {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 4px;
+	padding: 8px 16px;
+	min-width: 0;
+}
+
+.kpi + .kpi {
+	border-left: 1px solid var(--sapGroup_ContentBorderColor);
+}
+
+.kpiLabel {
+	color: var(--sapContent_LabelColor);
+	font-size: 12px;
+	white-space: nowrap;
+}
+
+.kpiValue {
+	color: var(--sapTextColor);
+	font-family: var(--sapFontLightFamily);
+	font-size: 24px;
+}
+
+.kpiValueAccent {
+	color: var(--sapLinkColor);
+}
+
+/* RDM mapping bar: a single track split by share. */
+.mappingBar {
+	display: flex;
+	height: 22px;
+	overflow: hidden;
+	border-radius: 4px;
+	background: var(--sapField_Background);
+}
+
+.mappingMapped {
+	background: var(--sapLinkColor);
+}
+
+.mappingUnmapped {
+	background: var(--sapField_Background);
+}
+
+.scaleRow {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 8px;
+	color: var(--sapContent_LabelColor);
+	font-size: 12px;
+}
+
+.legendRow {
+	display: flex;
+	gap: 24px;
+	margin-top: 8px;
+	font-size: 12px;
+}
+
+.legendItem {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--sapContent_LabelColor);
+}
+
+.legendSwatch {
+	width: 8px;
+	height: 8px;
+	flex: 0 0 auto;
+	border-radius: 2px;
+}
+
+.legendValue {
+	color: var(--sapTextColor);
+}
+
+/* Consolidation card body: chart, source legend, source-profile bars. */
+.consolidationBody {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 12px 16px 16px;
+}
+
+.consolidationSplit {
+	display: flex;
+	gap: 24px;
+	align-items: flex-start;
+}
+
+/* Sized to the design's chart area. BarChart fills its container, so the box
+ * is what decides the plot size. */
+.chartBox {
+	flex: 0 0 260px;
+	height: 220px;
+}
+
+.sourceLegend {
+	display: flex;
+	flex: 0 0 150px;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.sourceLegendTitle {
+	color: var(--sapContent_LabelColor);
+	font-size: 12px;
+}
+
+.sourceProfiles {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 8px;
+	min-width: 0;
+}
+
+.sourceProfilesHead {
+	display: flex;
+	justify-content: space-between;
+	color: var(--sapContent_LabelColor);
+	font-size: 12px;
+}
+
+.sourceRow {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.sourceValue {
+	flex: 0 0 64px;
+	color: var(--sapTextColor);
+	font-size: 12px;
+	text-align: right;
+}
+
+/* Flex, not block: the fill is a span, and an inline child ignores height. */
+.sourceTrack {
+	display: flex;
+	flex: 1;
+	height: 6px;
+	overflow: hidden;
+	border-radius: 3px;
+	background: var(--sapList_AlternatingBackground);
+}
+
+.sourceFill {
+	height: 100%;
+	border-radius: 3px;
+	background: var(--sapLinkColor);
+}
+
+.illustrationBox {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 400px;
+	padding: 16px;
+}
+
+/* Attribute rows in the right column. */
+.attrList {
+	display: flex;
+	flex-direction: column;
+}
+
+.attrRow {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 10px 12px;
+}
+
+.attrTop {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.attrType {
+	flex: 0 0 auto;
+	color: var(--sapContent_LabelColor);
+	font-size: 11px;
+	letter-spacing: 0.02em;
+}
+
+.attrName {
+	flex: 1;
+	overflow: hidden;
+	color: var(--sapTextColor);
+	font-size: 14px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.attrBadges {
+	display: flex;
+	flex: 0 0 auto;
+	gap: 4px;
+}
+
+.attrBadge {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 6px;
+	background: var(--sapContent_Selected_Hover_Background);
+	color: var(--sapLinkColor);
+}
+
+/* Completeness: a two-part track, populated against missing. */
+.completeness {
+	display: flex;
+	height: 12px;
+	overflow: hidden;
+	border-radius: 2px;
+}
+
+.completenessFilled {
+	background: var(--sapPositiveElementColor);
+}
+
+.completenessMissing {
+	background: var(--sapCriticalElementColor);
+}
+
+/* A collapsible attribute group and its nested rows. */
+.groupRow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 12px;
+	border-top: 1px solid var(--sapGroup_ContentBorderColor);
+	color: var(--sapTextColor);
+	font-size: 14px;
+}
+
+.groupName {
+	flex: 1;
+}
+
+.groupChildren {
+	padding-left: 16px;
+	border-left: 1px solid var(--sapContent_ForegroundBorderColor);
+	margin-left: 20px;
+}
