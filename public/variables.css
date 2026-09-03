@@ -2411,6 +2411,7 @@ ui5-segmented-button-item {
 	--sapButton_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);
 	--_ui5_button_focused_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
 	--_ui5_button_focused_inner_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--sapButton_Segment_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);
 }
 
 ui5-popover,
