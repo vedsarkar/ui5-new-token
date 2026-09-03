@@ -45,8 +45,8 @@ Read the component's own `.types.ts` rather than UI5's before mapping.
 
 ### Coverage
 
-36 components mapped: Avatar, Breadcrumbs, BusyIndicator, Button, Card, CheckBox, DatePicker, Dialog, Input, Label, Link, List, ListItem, Menu, MenuItem, MessageStrip, MultiComboBox, MultiInput, Panel, Popover, ProgressIndicator, RadioButton, RatingIndicator, Select, ShellBar, Slider, StepInput, Switch, Tab, TabContainer, Table, Tag, TextArea, Toast, Tree, TreeItem.
+48 components mapped: Avatar, Breadcrumbs, BusyIndicator, Button, Calendar, Card, Carousel, CheckBox, DatePicker, DateTimePicker, Dialog, FileUploader, IllustratedMessage, Input, Label, Link, List, ListItem, Menu, MenuItem, MessageStrip, MultiComboBox, MultiInput, NotificationListItem, Panel, Popover, ProgressIndicator, RadioButton, RatingIndicator, SegmentedButton, Select, ShellBar, SideNavigation, SideNavigationItem, Slider, StepInput, Switch, Tab, TabContainer, Table, Tag, TextArea, TimePicker, Toast, Toolbar, Tree, TreeItem, UserMenu.
 
-Not yet mapped, and worth adding as they come up: Calendar, Carousel, ColorPicker, ComboBox, DateTimePicker, FileUploader, Form, IllustratedMessage, Notification, SegmentedButton, SideNavigation, TimePicker, Toolbar, UserMenu, and the Reltio business components.
+Not mapped: `Form` and `ComboBox` (no matching Figma component set was found — Form's page models `FormItem` layouts rather than the Form, and the Combobox page only carries Multi Combobox), `ColorPicker`, and the Reltio business components other than ShellBar, TextArea, TreeItem and UserMenu.
 
-When adding one, take the Figma component's `componentPropertyDefinitions` (its node id goes in the `url=` comment), read the code component's props, and map only the overlap.
+When adding one, take the Figma component's `componentPropertyDefinitions` (its node id goes in the `url=` comment), read the code component's props, and map only the overlap. Verify the property names against Figma rather than guessing them — a wrong `getEnum` key silently yields `undefined`.
