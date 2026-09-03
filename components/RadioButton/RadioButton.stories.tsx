@@ -10,7 +10,6 @@ const meta = preview.meta({
 	},
 	args: {
 		text: "Source priority: SAP wins",
-		name: "source-priority",
 		onChange: fn(),
 	},
 });
