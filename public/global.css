@@ -124,16 +124,13 @@ ui5-breadcrumbs {
 	 * is a link (sapLinkColor), a separator, or the current item, and the design
 	 * wants the latter two at label colour. */
 	--sapTextColor: var(--sapContent_LabelColor);
-	/* The design's row is 16px tall; UI5's is 24px because Breadcrumbs.css adds
-	 * `padding-top/bottom: .25rem` to the link via `::part(root)` inside its own
-	 * shadow root — a hit area Figma does not model, and unreachable from here
-	 * (the part is not re-exported, so `::part()` from the document does nothing).
-	 * Pulling the block margins in by that padding makes the component occupy the
-	 * design's 16px in layout while keeping the larger click target. The text is
-	 * centred in the 24px box, so it lands exactly on the 16px footprint and the
-	 * 4px overhangs carry no background or border. */
-	margin-block: -0.25rem;
 }
+/* The row height is corrected in utils/applyComponentCorrections.ts — the 4px of
+ * vertical link padding that made it 24 lives in a rule inside the Breadcrumbs
+ * shadow root, so it needs addCustomCSS rather than a declaration here. This
+ * used to carry a compensating `margin-block: -0.25rem`, which is now removed:
+ * with the padding actually gone it would pull the footprint below the design's
+ * 16px instead of correcting it. */
 
 /* Calendar — the design's card and its other-month cells are the translucent
  * #fcfeff80, but both render opaque white here. This is an unmapped pair rather
@@ -148,14 +145,18 @@ ui5-breadcrumbs {
  * `--_ui5_daypicker_item_othermonth_background_color` from the same token, and
  * inherits it because its own :host does not redeclare it.
  *
- * Everything else already matches: 36x46 cells, #111727 days on #fcfeff80,
- * #eef1f4 weekends, #566189 labels at 12px, and the #8809c7 current-date ring.
- * Two gaps are NOT fixable from here — UI5 gives every cell a 2px margin (grid
- * 8x38 vs the design's flush 8x36) and a 32px weekday row against 46. Both live
- * on the nested ui5-daypicker's :host, which no document selector reaches, and
- * they are why the card is 320x392 rather than 304x382. */
+ * The card geometry below only works together with the day-picker corrections in
+ * utils/applyComponentCorrections.ts. UI5's default grid is 8x38 (a 2px margin
+ * per cell) against the design's flush 8x36, so forcing the design's 304px card
+ * beforehand pushed the last column past the padding. With the margins gone the
+ * grid is 288 wide and the numbers add up: 8 + 288 + 8 = 304 across, and
+ * 8 + 44 header + 322 picker + 8 = 382 down. */
 ui5-calendar {
 	--sapList_Background: #fcfeff80;
+	--_ui5_calendar_width: 19rem;
+	--_ui5_calendar_height: 23.875rem;
+	--_ui5_calendar_top_bottom_padding: 0.5rem;
+	--_ui5_calendar_header_height: 2.75rem;
 }
 
 /* Card header — the design pads the header 16px on all four sides (its 80px

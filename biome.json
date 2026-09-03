@@ -12,6 +12,7 @@
 			"!public/mockServiceWorker.js",
 			"!.claude",
 			"!public/fonts.css",
+			"!public/variables.css",
 			"!packages/app/app-template",
 			"!packages/app/dist"
 		]
