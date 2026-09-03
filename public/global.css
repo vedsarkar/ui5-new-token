@@ -238,6 +238,34 @@ ui5-side-navigation-group {
 	--_ui5_side_navigation_item_border_radius: 0.5rem;
 }
 
+/* Side Navigation selection indicator — the design's 3px bar at the inline
+ * start of a selected item binds `sapList_HighlightColor`. UI5 already draws
+ * exactly that bar, with the same geometry and the same background-gradient
+ * technique (so it is clipped by the item's corners for free), but reads
+ * `sapHighlightColor` (#0000cc) instead of the design's #3254ec.
+ *
+ * Both shorthands are restated in full rather than remapping
+ * `--sapHighlightColor` on the item, which would inherit into everything
+ * nested inside it. The trade-off is that the geometry is now pinned here, so
+ * re-check these two on a UI5 upgrade. */
+ui5-side-navigation-item,
+ui5-side-navigation-sub-item {
+	--_ui5_side_navigation_collapsed_selected_item_background:
+		0 100% / 0.188rem 100% no-repeat
+		linear-gradient(
+			0deg,
+			var(--sapList_HighlightColor),
+			var(--sapList_HighlightColor)
+		), var(--sapList_SelectionBackgroundColor);
+	--_ui5_side_navigation_collapsed_selected_item_background_hover:
+		0 100% / 0.188rem 100% no-repeat
+		linear-gradient(
+			0deg,
+			var(--sapList_HighlightColor),
+			var(--sapList_HighlightColor)
+		), var(--sapList_Hover_SelectionBackground);
+}
+
 /* Shell Bar bottom edge — the design draws a 1px bottom border in
  * `sapShell_BorderColor` (#e3e3f2). UI5 draws the same inset line but reads
  * `sapPageHeader_BorderColor`, which is #ffffff here, so the bar has no visible

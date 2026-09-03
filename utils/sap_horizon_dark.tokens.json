@@ -627,6 +627,7 @@
 		"sapList_SelectionBackgroundColor": "#1d2d3e",
 		"sapList_SelectionBorderColor": "#4db1ff",
 		"sapList_Hover_SelectionBackground": "#223548",
+		"sapList_HighlightColor": "#4db1ff",
 		"sapList_Background": "#1d232a",
 		"sapList_Hover_Background": "#222b35",
 		"sapList_AlternatingBackground": "#12171c",
