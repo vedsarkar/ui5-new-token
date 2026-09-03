@@ -350,3 +350,29 @@ ui5-dialog {
 ui5-card-header::part(additional-text) {
 	color: var(--sapContent_LabelColor);
 }
+
+/* Tag height — the design's chip is 22px tall (28px at `size="L"`), UI5 renders
+ * 24 and 30. The difference is the border model, not a spacing value: both
+ * agree on 3px vertical padding around a 16px line box, but Figma's 1px stroke
+ * is INSIDE the frame while a CSS `border` adds outside the padding box, so the
+ * same numbers total 22 in Figma and 24 here.
+ *
+ * Trading 1px of internal padding for the correct outer height. The exact
+ * equivalent of Figma's model is an inset box-shadow instead of a border, but
+ * UI5 colours this border through `border-color` in roughly a dozen state rules
+ * (hover, active, four semantic designs, ten indication colours, focus), and
+ * every one would have to be restated as a shadow. Outer height is what
+ * neighbouring content sees; 1px of clearance inside a 22px chip is not.
+ *
+ * No addCustomCSS needed: the variables are declared on the Tag's `:host`, and
+ * a normal declaration from the document tree beats one from the shadow tree on
+ * the same element regardless of specificity. `size="L"` reads its own
+ * variable, hence both. */
+ui5-tag {
+	--_ui5-tag-text-padding: 0.125rem 0.25rem;
+	--_ui5-tag-text_padding_size_l: 0.0625rem 0.25rem;
+	/* `size="L"` text is 22px in the design against UI5's 20px. Independent of
+	 * the height above — the line box is 24px either way, so this only changes
+	 * the glyphs. */
+	--_ui5-tag-font-size_size_l: 1.375rem;
+}
