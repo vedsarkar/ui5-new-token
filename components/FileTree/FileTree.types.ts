@@ -11,10 +11,16 @@ import type { HtmlProps } from "@/utils/types";
 export type FileTreeNode = {
 	/** Identity used for selection and expansion. Must be unique across the whole tree. */
 	id: string;
-	/** Row label. */
-	name: string;
+	/**
+	 * Row label. Usually a string; any `ReactNode` works when the label is
+	 * composite — an attribute's name beside its value, a highlighted search
+	 * match. Long labels truncate with an ellipsis.
+	 */
+	name: ReactNode;
 	/** Leading glyph, rendered in a 16×16 box. Any node works — a UI5 `<Icon>`, an `<img>`, an inline SVG. */
 	icon?: ReactNode;
+	/** Trailing content after the name — a count badge, a status tag, a timestamp. Sits inline, not right-aligned. */
+	endContent?: ReactNode;
 	/** Child rows, in display order. Present for a folder (even when empty), absent for a leaf. */
 	children?: FileTreeNode[];
 };

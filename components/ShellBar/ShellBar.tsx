@@ -36,6 +36,7 @@ export const ShellBar = ({
 	userMenu,
 	notificationsUrl,
 	appSelector,
+	searchField,
 	apps,
 	env,
 	tenant,
@@ -115,6 +116,8 @@ export const ShellBar = ({
 		<>
 			<Ui5ShellBar
 				logo={logo}
+				searchField={searchField}
+				showSearchField={!!searchField}
 				content={
 					<>
 						{tenantSelector}

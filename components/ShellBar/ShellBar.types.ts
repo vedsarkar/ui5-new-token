@@ -32,6 +32,8 @@ type Ui5ShellBarProps = ComponentPropsWithoutRef<typeof Ui5ShellBar>;
  * menu items, …) are intentionally omitted to keep the component focused;
  * dedicated Reltio props will be added when needed.
  *
+ * - `searchField` composition prop mapped onto UI5's native search slot
+ *
  * The UI5 `startButton` slot is also not exposed: when a `sideNavigation`
  * element is supplied, `ShellBar` renders the hamburger toggle automatically
  * and owns the navigation's collapsed state.
@@ -54,7 +56,6 @@ export type ShellBarProps = Omit<
 	| "onSearchFieldClear"
 	| "onSearchFieldToggle"
 	| "profile"
-	| "searchField"
 	| "showNotifications"
 	| "showProductSwitch"
 	| "showSearchField"
@@ -156,4 +157,15 @@ export type ShellBarProps = Omit<
 	 * for removal in the next major.
 	 */
 	appSelector?: ReactElement;
+	/**
+	 * Search field rendered into the UI5 ShellBar's native search slot, between
+	 * the content area and the right actions cluster. Intended to host a UI5
+	 * `<Input>` or `<ShellBarSearch>`; the type is the generic `ReactElement`
+	 * and the wrapper does not enforce the runtime element type.
+	 *
+	 * Supplying it also turns on UI5's search affordance — the wrapper sets
+	 * `showSearchField` for you, so the field is visible rather than collapsed
+	 * behind the magnifier button.
+	 */
+	searchField?: ReactElement;
 };
