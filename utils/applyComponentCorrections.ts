@@ -152,6 +152,29 @@ export const applyComponentCorrections = async (): Promise<void> => {
 			),
 		),
 
+		// Button pill radius, for the buttons a stylesheet cannot reach.
+		//
+		// variables.css remaps `--sapButton_BorderCornerRadius` to the design's
+		// `_Max` (2rem) for `ui5-button` and friends, but that is a document
+		// selector: a button UI5 renders inside another component's shadow root,
+		// such as the Message Strip's close button, never matches it and keeps the
+		// stock 0.5rem — 8px against the design's pill.
+		//
+		// The focus-ring radii come along for the same reason they do in
+		// variables.css: the ring is a pseudo-element inset 1px with its own
+		// radius, so leaving it behind clips its corners outside the pill.
+		//
+		// The document rule stays in place; for top-level buttons it simply wins
+		// over this `:host` declaration, and both resolve to the same value.
+		addCustomCSS(
+			"ui5-button",
+			`:host {
+	--sapButton_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--_ui5_button_focused_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--_ui5_button_focused_inner_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+}`,
+		),
+
 		// Menu elevation — the design gives the menu card a Glass effect and no
 		// drop shadow, the same treatment already applied to the card and the
 		// dialog.
