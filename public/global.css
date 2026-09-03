@@ -230,6 +230,57 @@ ui5-form-item {
 	--ui5-form-item-label-padding: 0 0.25rem 0 0.25rem;
 }
 
+/* Step Input underline — the one field whose bottom bar the design keeps.
+ *
+ * Every field component in Figma carries an `Underline` line element, and on
+ * Input, Multi Input, Multi ComboBox and Select it is hidden. On Step Input it
+ * is visible, which is why the seven `sapField_*BackgroundStyle` tokens were
+ * cleared globally in an earlier pass and the edge is restored here.
+ *
+ * Drawn as a bottom border rather than by restoring those tokens. UI5 applies
+ * the bar tokens to the host only for the read-only and value states — the
+ * regular and hover bars live in Input.css and TextArea.css, which Step Input
+ * does not import — so the token route would cover four states and need
+ * explicit rules for the other three. A border covers all of them uniformly,
+ * follows the 4px radius, and does not compete with the `background`
+ * shorthands those value-state rules set.
+ *
+ * Widths follow the design, which keeps SAP's convention: 2px for invalid,
+ * warning and information, 1px for the rest. The host is `border-box`, so the
+ * 36px height is unchanged. Active is deliberately absent: the design replaces
+ * the underline with a full 2px `sapField_Active_BorderColor` ring, which UI5
+ * already draws on focus.
+ *
+ * UI5's Horizon theme sets `--_ui5_step_input_border_style: none`, so the host
+ * has no border of its own for this to conflict with. */
+ui5-step-input {
+	border-bottom: 0.0625rem solid var(--sapField_BorderColor);
+}
+
+ui5-step-input:not([readonly]):not([disabled]):hover {
+	border-bottom-color: var(--sapField_Hover_BorderColor);
+}
+
+ui5-step-input[readonly] {
+	border-bottom-color: var(--sapField_ReadOnly_BorderColor);
+}
+
+ui5-step-input[value-state="Negative"] {
+	border-bottom: 0.125rem solid var(--sapField_InvalidColor);
+}
+
+ui5-step-input[value-state="Critical"] {
+	border-bottom: 0.125rem solid var(--sapField_WarningColor);
+}
+
+ui5-step-input[value-state="Positive"] {
+	border-bottom: 0.0625rem solid var(--sapField_SuccessColor);
+}
+
+ui5-step-input[value-state="Information"] {
+	border-bottom: 0.125rem solid var(--sapField_InformationColor);
+}
+
 /* Side Navigation item radius — the design rounds items to 8px; UI5's Horizon
  * theme sets `--_ui5_side_navigation_item_border_radius` to 0.375rem (6px). */
 ui5-side-navigation-item,
