@@ -132,18 +132,13 @@ ui5-breadcrumbs {
  * with the padding actually gone it would pull the footprint below the design's
  * 16px instead of correcting it. */
 
-/* Calendar — the design's card and its other-month cells are the translucent
- * #fcfeff80, but both render opaque white here. This is an unmapped pair rather
- * than a stale token: the design binds `sapList_Background_Light`, which has no
- * counterpart in UI5's theming contract, while UI5 reads `sapList_Background`,
- * which has no counterpart in the Figma collection. Pointing the one at the
- * other's value is scoped to the calendar deliberately — `sapList_Background`
- * also backs lists, tables and radio buttons, and whether those should follow is
- * a design-system decision, not something to infer from this component.
- *
- * Reaches the other-month cells too: DayPicker derives
- * `--_ui5_daypicker_item_othermonth_background_color` from the same token, and
- * inherits it because its own :host does not redeclare it.
+/* Calendar — the card background used to be corrected here with a scoped
+ * `--sapList_Background: #fcfeff80`. That is now the token's own light value, so
+ * the override is gone: the design binds `sapList_Background_Light`, and the
+ * List page confirmed lists bind the same variable, which settled the question
+ * this override deliberately left open. The other-month cells follow too, since
+ * DayPicker derives `--_ui5_daypicker_item_othermonth_background_color` from the
+ * same token and its :host does not redeclare it.
  *
  * The card geometry below only works together with the day-picker corrections in
  * utils/applyComponentCorrections.ts. UI5's default grid is 8x38 (a 2px margin
@@ -152,7 +147,6 @@ ui5-breadcrumbs {
  * grid is 288 wide and the numbers add up: 8 + 288 + 8 = 304 across, and
  * 8 + 44 header + 322 picker + 8 = 382 down. */
 ui5-calendar {
-	--sapList_Background: #fcfeff80;
 	--_ui5_calendar_width: 19rem;
 	--_ui5_calendar_height: 23.875rem;
 	--_ui5_calendar_top_bottom_padding: 0.5rem;
