@@ -151,5 +151,32 @@ export const applyComponentCorrections = async (): Promise<void> => {
 }`,
 			),
 		),
+
+		// Menu elevation — the design gives the menu card a Glass effect and no
+		// drop shadow, the same treatment already applied to the card and the
+		// dialog.
+		//
+		// As with the card: Figma's GLASS has no CSS equivalent, and the menu's
+		// resting fill is the opaque sapGroup_ContentBackground, so a
+		// backdrop-filter would render nothing — removing the shadow is the
+		// closest achievable match.
+		//
+		// The shadow does not come from the popover's own
+		// `--_ui5_popover_*_box_shadow` variables; Menu.css sets
+		// `box-shadow: var(--sapContent_Shadow1)` directly on its popover, so the
+		// selector has to be matched to beat it — an attribute-only selector loses
+		// to `.ui5-menu-rp[ui5-responsive-popover]`. addCustomCSS appends after
+		// UI5's own styles, so repeating the selector is enough.
+		//
+		// Scoped to the menu rather than every popover: whether dropdowns should
+		// lose their shadow too is a question for their own design pages. The
+		// menu's radius comes from `--_ui5_menu_popover_border_radius`, which
+		// already resolves to the design's 16px and is left alone.
+		addCustomCSS(
+			"ui5-menu",
+			`.ui5-menu-rp[ui5-responsive-popover] {
+	box-shadow: none;
+}`,
+		),
 	]);
 };
