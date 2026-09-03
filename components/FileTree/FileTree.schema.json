@@ -1,0 +1,44 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "FileTreeProps",
+	"x-component": "FileTree",
+	"type": "object",
+	"properties": {
+		"items": {
+			"description": "Root rows, in display order.",
+			"x-typescriptType": "Array<FileTreeNode>",
+			"type": "array"
+		},
+		"defaultExpandedIds": {
+			"description": "Ids of the folders expanded on first render, when expansion is left uncontrolled.",
+			"x-typescriptType": "Array<string>",
+			"type": "array"
+		},
+		"defaultSelectedId": {
+			"description": "Id of the row selected on first render, when selection is left uncontrolled.",
+			"x-typescriptType": "string",
+			"type": "string"
+		},
+		"expandedIds": {
+			"description": "Ids of the expanded folders. Supply this to control expansion.",
+			"x-typescriptType": "Array<string>",
+			"type": "array"
+		},
+		"onExpandedChange": {
+			"description": "Called with the next expanded-id set whenever a folder opens or closes.",
+			"x-typescriptType": "(expandedIds: string[]) => void",
+			"x-functionSignature": "(expandedIds: string[]) => void"
+		},
+		"onSelect": {
+			"description": "Called with the node whose row was activated, by click or by `Enter`/`Space`.",
+			"x-typescriptType": "(node: FileTreeNode) => void",
+			"x-functionSignature": "(node: FileTreeNode) => void"
+		},
+		"selectedId": {
+			"description": "Id of the selected row. Supply this to control selection; the component then holds no shadow state.",
+			"x-typescriptType": "string",
+			"type": "string"
+		}
+	},
+	"required": ["items"]
+}

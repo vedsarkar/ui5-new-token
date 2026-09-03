@@ -1,0 +1,42 @@
+# FileTree
+
+`FileTree` browses a hierarchy where the *shape* of the hierarchy is part of the information — a repository, a set of generated artefacts, a document collection. It draws connector lines between rows and highlights the run from the root down to the selected row, so a deeply nested selection stays locatable. It is offered **alongside** the endorsed SAP `Tree`, not as a replacement.
+
+### When to use this instead of `Tree`
+
+Reach for `Tree` for the ordinary case: a list that happens to nest, where depth is incidental. `Tree` marks depth by tinting rows from level 2 down and is the right default in a Fiori layout.
+
+Reach for `FileTree` when a reader needs to trace ancestry — to see *which* folder a file sits in without reading indentation, or to keep their bearings while a selection moves around a deep tree. That tracing is the whole reason this component exists; UI5 offers no way to add it to `Tree`, since the connectors are drawn geometry rather than anything a token or CSS Part can reach.
+
+### The connector model
+
+A row at depth *n* renders *n* connector cells of 24px, and each cell's shape is derived — never passed in:
+
+- The **last** cell is a fork (`├`) when the row has a later sibling, and a turn (`└`) when it is the last child.
+- Each **earlier** cell is a straight (`│`) when the ancestor at that depth has a later sibling, and blank otherwise. This is what keeps a run visually continuous past unrelated rows.
+- Root rows render no cells.
+
+Colour traces the selected row's ancestry. A connector's elbow highlights when it leads into the selected row; a vertical highlights when the selected row lies below it inside that run. The one case where those disagree is a selected row that still has later siblings: its vertical carries on to rows that are *not* on the path, so it stays neutral while the elbow highlights. The design names that state Semi-Selected.
+
+### Icons are supplied, not shipped
+
+Each node takes an optional `icon` of any `ReactNode` — a UI5 `<Icon>`, an `<img>`, an inline SVG — rendered in a 16×16 box.
+
+The design enumerates 23 file-type glyphs (CSS, TypeScript, Docker, React, Terraform and so on) and this component ships none of them. Most are third-party marks, and vendoring trademarks into a distributed design-system package is a licensing decision rather than a styling one. Supply your own mapping from file extension to glyph; the component renders whatever it is handed.
+
+### Hierarchy is data, not children
+
+`items` takes a nested `FileTreeNode[]` rather than composed child elements. Connector shape depends on a row's position in the *whole* tree — whether each ancestor has a later sibling, whether the row is a last child, where the selected row sits — which cannot be read off opaque React children. Selection and expansion each work controlled or uncontrolled, so a router or store can drive the tree without the component keeping a competing copy of the state.
+
+A node is a folder when it has a `children` key, and the key's presence rather than its length is what decides: `children: []` is an expandable empty folder, while omitting it makes a leaf.
+
+### Interaction
+
+Activating a row selects it, and additionally toggles it when it is a folder. There is no separate disclosure chevron — the design does not show one, and adding one would push every label 24px off the specified position. Distinguish folders from files with the `icon` prop.
+
+Keyboard support follows the ARIA tree pattern: one tab stop with a roving `tabindex`, arrows to move, `ArrowRight`/`ArrowLeft` to expand and collapse before moving into or out of a folder, `Home`/`End` to jump, and `Enter`/`Space` to activate. Connector cells are hidden from assistive technology because `aria-level` already conveys depth.
+
+### See also
+
+- [`Tree`](/?path=/docs/components-tree--docs) — the endorsed SAP Fiori tree
+- [ARIA Authoring Practices — Tree View](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/) — the interaction pattern this follows
