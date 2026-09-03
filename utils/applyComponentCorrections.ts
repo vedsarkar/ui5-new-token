@@ -92,5 +92,27 @@ export const applyComponentCorrections = async (): Promise<void> => {
 	height: 3.5rem;
 }`,
 		),
+
+		// The date pickers' trailing calendar icon is the interactive blue in the
+		// design (sapButton_IconColor). UI5 binds it to sapField_TextColor, the
+		// near-black used for the field's own text, so it reads as static content
+		// rather than something you can click.
+		//
+		// `--_ui5_input_icon_color` resolves on the picker host, but overriding it
+		// from the document has no effect — measured — and the icon element lives
+		// in the picker's shadow root, out of reach of a document selector. A rule
+		// injected into that shadow root reaches `.inputIcon` directly.
+		//
+		// Scoped to these two tags rather than every `.inputIcon` consumer: Input,
+		// Select, ComboBox and the other pickers share the class, and whether the
+		// design wants the blue on all of them is a question for those pages.
+		...["ui5-date-picker", "ui5-daterange-picker"].map((tag) =>
+			addCustomCSS(
+				tag,
+				`.inputIcon {
+	color: var(--sapButton_IconColor);
+}`,
+			),
+		),
 	]);
 };
