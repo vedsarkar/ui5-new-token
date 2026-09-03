@@ -339,5 +339,21 @@ ui5-segmented-button-item {
 	--_ui5_button_focused_inner_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
 }`,
 		),
+
+		// Toolbar buttons are pills in the design, like buttons everywhere else.
+		// `ui5-toolbar-button` renders its `ui5-button` in its own shadow root, out
+		// of reach of the document-level remap — the third place this pattern has
+		// come up, after the Message Strip close button and the Time Picker.
+		//
+		// The button's fill, border and label already match; only the corners were
+		// stuck at the stock 0.5rem.
+		addCustomCSS(
+			"ui5-toolbar-button",
+			`ui5-button {
+	--sapButton_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--_ui5_button_focused_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--_ui5_button_focused_inner_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+}`,
+		),
 	]);
 };
