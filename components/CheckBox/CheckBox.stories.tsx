@@ -55,6 +55,20 @@ export const ReadOnly = meta.story({
 	},
 });
 
+export const Information = meta.story({
+	args: {
+		valueState: "Information",
+		text: "Include archived sources",
+	},
+});
+
+export const Success = meta.story({
+	args: {
+		valueState: "Positive",
+		text: "Validated against the source system",
+	},
+});
+
 export const Warning = meta.story({
 	args: {
 		valueState: "Critical",
