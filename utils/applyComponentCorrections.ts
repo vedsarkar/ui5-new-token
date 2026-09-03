@@ -143,11 +143,33 @@ export const applyComponentCorrections = async (): Promise<void> => {
 		// Re-declaring the variable on `:host` from inside the popover's own
 		// shadow root covers both cases, nested or not. The document rule stays in
 		// place so the common case still works without this JS.
+		// Popover radius and elevation, for the popovers a stylesheet cannot reach.
+		//
+		// Radius: variables.css already re-points `--_ui5_popup_border_radius` at
+		// the design's token for `ui5-popover` and `ui5-responsive-popover`,
+		// because UI5's Horizon theme hardcodes 0.5rem. That rule is a document
+		// selector, so it only matches popovers in the document — a popover UI5
+		// renders inside another component's shadow root, such as the Date Time
+		// Picker's dropdown, keeps the 8px and renders half the design's 16px
+		// corner. Re-declaring on `:host` covers both cases, nested or not, and
+		// the document rule stays so the common case works without this JS.
+		//
+		// Elevation: the Popover page gives the card a Glass effect and no drop
+		// shadow, matching the card, dialog, menu and dropdowns. UI5 elevates it
+		// with `sapContent_Shadow2` through these two variables, and the arrow's
+		// `::after` reads the same ones, so clearing them flattens both.
+		//
+		// This handles popovers whose shadow still comes from the variables. The
+		// dropdown and menu entries elsewhere in this file are still needed: those
+		// components set `box-shadow` on the popover's class directly, at a
+		// specificity these variables cannot reach.
 		...["ui5-popover", "ui5-responsive-popover"].map((tag) =>
 			addCustomCSS(
 				tag,
 				`:host {
 	--_ui5_popup_border_radius: var(--sapPopover_BorderCornerRadius, 1rem);
+	--_ui5_popover_box_shadow: none;
+	--_ui5_popover_no_arrow_box_shadow: none;
 }`,
 			),
 		),
