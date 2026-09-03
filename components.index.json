@@ -2,7 +2,7 @@
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "ReltioDesignComponentIndex",
 	"generatedBy": "scripts/build-component-index.mjs",
-	"count": 153,
+	"count": 154,
 	"components": [
 		{
 			"name": "ActionSheet",
@@ -248,6 +248,12 @@
 			"name": "ExpandableText",
 			"import": "@reltio/design/components",
 			"description": "ExpandableText is the SAP Fiori expandable text element, re-exported from @ui5/webcomponents-react/ExpandableText as the canonical Reltio entry point.",
+			"hasSchema": true
+		},
+		{
+			"name": "FileTree",
+			"import": "@reltio/design/components",
+			"description": "FileTree browses a hierarchy where the *shape* of the hierarchy is part of the information — a repository, a set of generated artefacts, a document collection.",
 			"hasSchema": true
 		},
 		{

@@ -147,6 +147,10 @@ export * from "./AppSelector";
 export * from "./Chat";
 export * from "./Details";
 export * from "./ErrorBoundary";
+// `FileTree` is a Reltio component with no UI5 counterpart: a connector-drawn
+// file tree in the Joule visual language, offered alongside the endorsed SAP
+// `Tree` rather than replacing it. See `components/FileTree/README.md`.
+export * from "./FileTree";
 // `Form` is a thin Reltio wrapper (not a 1:1 re-export): it renders the UI5
 // Form floorplan inside a native `<form>` and adds an `onSubmit(formData)`
 // callback that serializes the form-associated UI5 fields. `FormGroup` and
