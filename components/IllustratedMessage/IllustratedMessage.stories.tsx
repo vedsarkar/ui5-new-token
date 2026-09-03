@@ -80,6 +80,24 @@ export const SceneSize = meta.story({
 	},
 });
 
+export const DialogSize = meta.story({
+	args: {
+		name: "NoData",
+		titleText: "Dialog empty state",
+		subtitleText: "Use the dialog size inside modal dialogs and side panels.",
+		design: "Dialog",
+	},
+});
+
+export const DotSize = meta.story({
+	args: {
+		name: "NoData",
+		titleText: "Compact empty state",
+		subtitleText: "Use the dot size for inline states in tables and lists.",
+		design: "Dot",
+	},
+});
+
 export const NoTitle = meta.story({
 	args: {
 		name: "NoData",
