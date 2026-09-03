@@ -157,6 +157,12 @@ ui5-calendar {
 	--_ui5_calendar_height: 23.875rem;
 	--_ui5_calendar_top_bottom_padding: 0.5rem;
 	--_ui5_calendar_header_height: 2.75rem;
+	/* The design's header row is 36 arrow, 96 month, 96 year, 36 arrow with 8px
+	 * gaps. UI5's middle button is 6.25rem (100), which squeezes the arrows to 32.
+	 * Narrowing it to the design's 96 lets the freed space fall back to the
+	 * arrows, so this single value corrects both — arrows land on 36 and the gaps
+	 * on 8 without touching the flex basis. */
+	--_ui5_calendar_header_middle_button_width: 6rem;
 }
 
 /* Card header — the design pads the header 16px on all four sides (its 80px
