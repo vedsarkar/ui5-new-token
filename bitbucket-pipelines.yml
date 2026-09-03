@@ -86,6 +86,30 @@ definitions:
         script:
           - npm ci
           - npm run deploy
+    # Publish Figma Code Connect templates — runs on main only, so Figma
+    # always reflects what is merged rather than what is proposed.
+    #
+    # `--exit-on-unreadable-files` is Figma's recommendation for CI: without
+    # it a template that fails to parse is skipped silently and the step
+    # still passes, so a broken mapping would quietly stop updating.
+    #
+    # Needs a `FIGMA_ACCESS_TOKEN` repository variable (mark it secured) with
+    # Code Connect write scope. The step is a no-op for anyone who has not
+    # set one, rather than a hard failure, so a fork or a clone without the
+    # secret still gets a green pipeline.
+    - step: &code-connect
+        name: Publish Figma Code Connect
+        caches:
+          - npm
+          - node
+        script:
+          - npm ci
+          - |
+            if [ -z "$FIGMA_ACCESS_TOKEN" ]; then
+              echo "FIGMA_ACCESS_TOKEN is not set — skipping Code Connect publish."
+              exit 0
+            fi
+          - npx figma connect publish --exit-on-unreadable-files --skip-update-check
     - step: &vercel
         name: Deploy to Vercel
         caches:
@@ -211,6 +235,7 @@ pipelines:
           - step: *chromatic
           - step: *vercel
           - step: *release-packages
+          - step: *code-connect
   pull-requests:
     '**':
       - parallel:
