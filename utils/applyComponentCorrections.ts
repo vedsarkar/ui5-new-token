@@ -201,5 +201,35 @@ export const applyComponentCorrections = async (): Promise<void> => {
 	box-shadow: none;
 }`,
 		),
+
+		// Dropdown elevation — same Glass-and-no-shadow treatment as the menu.
+		// UI5 elevates these from Suggestions.css and Select.css, which set
+		// `box-shadow: var(--sapContent_Shadow1)` on the popover's class rather
+		// than through its `--_ui5_popover_*_box_shadow` variables, so overriding
+		// those variables does nothing and the class has to be named.
+		//
+		// Each host renders its popover in its own shadow root, hence one entry
+		// per tag. `.ui5-suggestions-popover` is genuinely shared — ComboBox and
+		// Input carry the identical class — so this is one surface, not four.
+		//
+		// Confirmed by the Menu and Multi ComboBox design pages. ComboBox, Input,
+		// Multi Input and Select follow because they are the same surface, not
+		// because their own pages were checked; revisit if one of them turns out
+		// to want elevation.
+		...[
+			"ui5-multi-combobox",
+			"ui5-combobox",
+			"ui5-input",
+			"ui5-multi-input",
+			"ui5-select",
+		].map((tag) =>
+			addCustomCSS(
+				tag,
+				`.ui5-suggestions-popover,
+.ui5-select-popover {
+	box-shadow: none;
+}`,
+			),
+		),
 	]);
 };
