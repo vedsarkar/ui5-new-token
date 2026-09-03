@@ -24,7 +24,11 @@
 	color: var(--sapField_InvalidColor);
 }
 
-/* Input container */
+/* Input container.
+ *
+ * The field is drawn as a fill plus a bottom edge only — no box around it. Line
+ * weights carry the urgency: 1px at rest, hover and success, 2px for the states
+ * that need to be noticed. */
 .inputContainer {
 	display: grid;
 	grid-template-columns: 1fr;
@@ -34,48 +38,68 @@
 		"toolbar";
 	box-sizing: border-box;
 	border-radius: var(--sapField_BorderCornerRadius);
-	border: 1px solid var(--sapField_BorderColor);
+	border: none;
+	border-bottom: 1px solid var(--sapField_BorderColor);
 	background: var(--sapField_Background);
 	overflow: clip;
 }
 
-.root:focus-within .inputContainer {
-	border-color: var(--sapField_Focus_BorderColor);
-	outline: 1px solid var(--sapContent_FocusColor);
-	outline-offset: -2px;
+.root:hover:not(.disabled):not(.readOnly) .inputContainer {
+	border-bottom-color: var(--sapField_Hover_BorderColor);
+	background-color: var(--sapField_Hover_Background);
+}
+
+/* Focus swaps the bottom edge for a box, so the whole control reads as active
+ * rather than just its base. The 2px border is the focus indicator on its own —
+ * there is no second inset ring.
+ *
+ * The two `:not()`s match the hover rule's specificity so that source order
+ * decides, and focus — declared later — wins. Without them a field focused by
+ * click would keep the hover fill. */
+.root:focus-within:not(.disabled):not(.readOnly) .inputContainer {
+	border: 2px solid var(--sapField_Active_BorderColor);
+	background-color: var(--sapField_Background);
 }
 
 /* Value State: Error */
 .error .inputContainer {
-	border-color: var(--sapField_InvalidColor);
+	border-bottom: 2px solid var(--sapField_InvalidColor);
 	background-color: var(--sapField_InvalidBackground);
 }
 
 /* Value State: Warning */
 .warning .inputContainer {
-	border-color: var(--sapField_WarningColor);
+	border-bottom: 2px solid var(--sapField_WarningColor);
 	background-color: var(--sapField_WarningBackground);
 }
 
 /* Value State: Success */
 .success .inputContainer {
-	border-color: var(--sapField_SuccessColor);
+	border-bottom: 1px solid var(--sapField_SuccessColor);
 	background-color: var(--sapField_SuccessBackground);
 }
 
 /* Value State: Information */
 .information .inputContainer {
-	border-color: var(--sapField_InformationColor);
+	border-bottom: 2px solid var(--sapField_InformationColor);
 	background-color: var(--sapField_InformationBackground);
 }
 
-/* Read-only */
+/* Read-only — a full box instead of a bottom edge, since there is no text
+ * baseline to anchor. */
 .readOnly .inputContainer {
-	border-style: dashed;
+	border: 1px solid var(--sapField_ReadOnly_BorderColor);
 	background-color: var(--sapField_ReadOnly_Background);
 }
 
-/* Disabled */
+/* A read-only field is still focusable, and the design has no variant for that
+ * combination. Recolouring its existing box keeps a focus indicator without
+ * inventing a second treatment. */
+.readOnly:focus-within .inputContainer {
+	border-color: var(--sapField_Active_BorderColor);
+}
+
+/* Disabled keeps the resting fill and edge, dimmed as a whole. */
 .disabled {
 	opacity: 0.4;
 	cursor: not-allowed;
@@ -83,7 +107,6 @@
 
 .disabled .inputContainer {
 	cursor: not-allowed;
-	background-color: var(--sapField_ReadOnly_Background);
 }
 
 /* Textarea */
