@@ -1,0 +1,9 @@
+{
+	"codeConnect": {
+		"include": ["figma/**/*.figma.ts"],
+		"label": "React",
+		"language": "typescript",
+		"defaultBranch": "main",
+		"interactiveSetupFigmaFileUrl": "https://www.figma.com/design/ZEQYMxTRj16hyKQrxOjkDJ/Fiori-New-Tokens"
+	}
+}
