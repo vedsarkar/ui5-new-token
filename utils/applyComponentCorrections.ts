@@ -143,11 +143,140 @@ export const applyComponentCorrections = async (): Promise<void> => {
 		// Re-declaring the variable on `:host` from inside the popover's own
 		// shadow root covers both cases, nested or not. The document rule stays in
 		// place so the common case still works without this JS.
+		// Popover radius and elevation, for the popovers a stylesheet cannot reach.
+		//
+		// Radius: variables.css already re-points `--_ui5_popup_border_radius` at
+		// the design's token for `ui5-popover` and `ui5-responsive-popover`,
+		// because UI5's Horizon theme hardcodes 0.5rem. That rule is a document
+		// selector, so it only matches popovers in the document — a popover UI5
+		// renders inside another component's shadow root, such as the Date Time
+		// Picker's dropdown, keeps the 8px and renders half the design's 16px
+		// corner. Re-declaring on `:host` covers both cases, nested or not, and
+		// the document rule stays so the common case works without this JS.
+		//
+		// Elevation: the Popover page gives the card a Glass effect and no drop
+		// shadow, matching the card, dialog, menu and dropdowns. UI5 elevates it
+		// with `sapContent_Shadow2` through these two variables, and the arrow's
+		// `::after` reads the same ones, so clearing them flattens both.
+		//
+		// This handles popovers whose shadow still comes from the variables. The
+		// dropdown and menu entries elsewhere in this file are still needed: those
+		// components set `box-shadow` on the popover's class directly, at a
+		// specificity these variables cannot reach.
 		...["ui5-popover", "ui5-responsive-popover"].map((tag) =>
 			addCustomCSS(
 				tag,
 				`:host {
 	--_ui5_popup_border_radius: var(--sapPopover_BorderCornerRadius, 1rem);
+	--_ui5_popover_box_shadow: none;
+	--_ui5_popover_no_arrow_box_shadow: none;
+}`,
+			),
+		),
+
+		// Message Strip close button pill radius.
+		//
+		// variables.css remaps `--sapButton_BorderCornerRadius` to the design's
+		// `_Max` (2rem) for `ui5-button` and friends, but that is a document
+		// selector: a button UI5 renders inside another component's shadow root
+		// never matches it and keeps the stock 0.5rem — 8px against the design's
+		// pill on the Message Strip.
+		//
+		// Scoped to the Message Strip rather than declared on every button's
+		// `:host`. A blanket rule reached buttons whose owning component sets a
+		// deliberately different radius: the Shell Bar's icon buttons resolve
+		// `--_ui5_shellbar_button_border_radius` from this same token and the
+		// design specifies 8px for them, so a global pill made them capsules.
+		//
+		// The focus-ring radii come along for the same reason they do in
+		// variables.css: the ring is a pseudo-element inset 1px with its own
+		// radius, so leaving it behind clips its corners outside the pill.
+		addCustomCSS(
+			"ui5-message-strip",
+			`.ui5-message-strip-close-button {
+	--sapButton_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--_ui5_button_focused_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--_ui5_button_focused_inner_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+}`,
+		),
+
+		// Menu elevation — the design gives the menu card a Glass effect and no
+		// drop shadow, the same treatment already applied to the card and the
+		// dialog.
+		//
+		// As with the card: Figma's GLASS has no CSS equivalent, and the menu's
+		// resting fill is the opaque sapGroup_ContentBackground, so a
+		// backdrop-filter would render nothing — removing the shadow is the
+		// closest achievable match.
+		//
+		// The shadow does not come from the popover's own
+		// `--_ui5_popover_*_box_shadow` variables; Menu.css sets
+		// `box-shadow: var(--sapContent_Shadow1)` directly on its popover, so the
+		// selector has to be matched to beat it — an attribute-only selector loses
+		// to `.ui5-menu-rp[ui5-responsive-popover]`. addCustomCSS appends after
+		// UI5's own styles, so repeating the selector is enough.
+		//
+		// Scoped to the menu rather than every popover: whether dropdowns should
+		// lose their shadow too is a question for their own design pages. The
+		// menu's radius comes from `--_ui5_menu_popover_border_radius`, which
+		// already resolves to the design's 16px and is left alone.
+		addCustomCSS(
+			"ui5-menu",
+			`.ui5-menu-rp[ui5-responsive-popover] {
+	box-shadow: none;
+}`,
+		),
+
+		// Panel header separator — the design binds the header's bottom border to
+		// `sapGroup_ContentBorderColor` (#ffffff, invisible against the panel's
+		// own fill). UI5 resolves it to `sapGroup_TitleBorderColor` instead, which
+		// after the List-page correction is #8f8fcc, so the panel draws a distinct
+		// purple-grey line the design does not have.
+		//
+		// Overriding only the colour, through three selectors matched to UI5's
+		// own: the collapsed and fixed rules hardcode the token, and the default
+		// rule reads `--_ui5_panel_default_header_border`. Repeating the selectors
+		// is necessary because `:host([collapsed]) .ui5-panel-header` outranks a
+		// bare `.ui5-panel-header`, so a shorter rule would lose despite
+		// addCustomCSS appending after UI5's styles.
+		//
+		// Scoped rather than remapping `sapGroup_TitleBorderColor` on the host,
+		// which would inherit into everything nested inside a panel.
+		addCustomCSS(
+			"ui5-panel",
+			`:host([collapsed]) .ui5-panel-header,
+:host([fixed]:not([collapsed]):not([_has-header])) .ui5-panel-header,
+:host(:not([fixed]):not([collapsed])) .ui5-panel-header {
+	border-bottom-color: var(--sapGroup_ContentBorderColor);
+}`,
+		),
+
+		// Dropdown elevation — same Glass-and-no-shadow treatment as the menu.
+		// UI5 elevates these from Suggestions.css and Select.css, which set
+		// `box-shadow: var(--sapContent_Shadow1)` on the popover's class rather
+		// than through its `--_ui5_popover_*_box_shadow` variables, so overriding
+		// those variables does nothing and the class has to be named.
+		//
+		// Each host renders its popover in its own shadow root, hence one entry
+		// per tag. `.ui5-suggestions-popover` is genuinely shared — ComboBox and
+		// Input carry the identical class — so this is one surface, not four.
+		//
+		// Confirmed by the Menu and Multi ComboBox design pages. ComboBox, Input,
+		// Multi Input and Select follow because they are the same surface, not
+		// because their own pages were checked; revisit if one of them turns out
+		// to want elevation.
+		...[
+			"ui5-multi-combobox",
+			"ui5-combobox",
+			"ui5-input",
+			"ui5-multi-input",
+			"ui5-select",
+		].map((tag) =>
+			addCustomCSS(
+				tag,
+				`.ui5-suggestions-popover,
+.ui5-select-popover {
+	box-shadow: none;
 }`,
 			),
 		),

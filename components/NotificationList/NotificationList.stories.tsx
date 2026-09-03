@@ -1,3 +1,5 @@
+import { Avatar } from "@ui5/webcomponents-react/Avatar";
+import { Label } from "@ui5/webcomponents-react/Label";
 import { NotificationList } from "@ui5/webcomponents-react/NotificationList";
 import { NotificationListGroupItem } from "@ui5/webcomponents-react/NotificationListGroupItem";
 import { NotificationListItem } from "@ui5/webcomponents-react/NotificationListItem";
@@ -41,6 +43,27 @@ export const Importance = meta.story({
 				importance="Important"
 			>
 				A required attribute is missing on this entity.
+			</NotificationListItem>
+		</NotificationList>
+	),
+});
+
+export const WithAvatarAndFootnotes = meta.story({
+	render: (args) => (
+		<NotificationList {...args}>
+			<NotificationListItem
+				titleText="Match found"
+				state="Information"
+				avatar={<Avatar initials="RD" size="XS" />}
+				footnotes={
+					<>
+						<Label>Data Stewardship</Label>
+						<Label>Match Review</Label>
+						<Label>11:13</Label>
+					</>
+				}
+			>
+				A new match candidate is ready for review.
 			</NotificationListItem>
 		</NotificationList>
 	),

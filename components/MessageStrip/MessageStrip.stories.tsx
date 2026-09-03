@@ -39,9 +39,9 @@ export const Positive = meta.story({
 	},
 });
 
-export const Warning = meta.story({
+export const Critical = meta.story({
 	args: {
-		design: "Warning",
+		design: "Critical",
 		children:
 			"Source priority differs from the tenant default. Confirm before saving.",
 	},

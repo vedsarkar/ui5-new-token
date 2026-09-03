@@ -32,9 +32,9 @@ export const Default = meta.story({});
 export const WithTokens = meta.story({
 	render: (args) => (
 		<MultiInput {...args}>
-			<Token text="jane.doe@example.com" slot="tokens" />
-			<Token text="john.smith@example.com" slot="tokens" />
-			<Token text="qa-team@example.com" slot="tokens" />
+			<Token text="jane.doe" slot="tokens" />
+			<Token text="john.smith" slot="tokens" />
+			<Token text="qa-team" slot="tokens" />
 		</MultiInput>
 	),
 });
