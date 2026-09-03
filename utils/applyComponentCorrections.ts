@@ -280,5 +280,64 @@ export const applyComponentCorrections = async (): Promise<void> => {
 }`,
 			),
 		),
+
+		// Time Picker clock numbers are Bold in the design. UI5 sets
+		// `--sapFontFamily` on `.ui5-tp-clock-number`, and because the SAP 72
+		// weights ship as separate families rather than weights of one family,
+		// `font-weight` would do nothing here — the family has to be swapped.
+		//
+		// Everything else about these numbers already matches: the 44px circle,
+		// and the hover and selected states, which UI5 draws from
+		// `sapList_Hover_Background` and the `sapButton_Selected_*` trio, exactly
+		// the tokens the design binds.
+		addCustomCSS(
+			"ui5-time-picker-clock",
+			`.ui5-tp-clock-number {
+	font-family: var(--sapFontBoldFamily);
+}`,
+		),
+
+		// Time Picker hour/minute/second toggles and the AM/PM switch are pills in
+		// the design, like buttons everywhere else, but rendered at the stock
+		// 0.5rem.
+		//
+		// Same cause as the Message Strip close button: variables.css remaps
+		// `--sapButton_BorderCornerRadius` to `_Max` for `ui5-button` and friends,
+		// but that is a document selector and these live inside
+		// `ui5-time-selection-clocks`' shadow root, where it cannot match. Setting
+		// it from within that root reaches them.
+		//
+		// Scoped to this one component rather than declared on every button's
+		// `:host`, because a blanket pill is wrong elsewhere — the Shell Bar's icon
+		// buttons resolve their radius from this same token and the design asks for
+		// 8px there.
+		//
+		// The focus radii come along because the ring is a pseudo-element inset 1px
+		// with its own radius; left behind, its corners fall outside the pill and
+		// get clipped.
+		addCustomCSS(
+			"ui5-time-selection-clocks",
+			`ui5-toggle-spin-button,
+ui5-segmented-button,
+ui5-segmented-button-item {
+	--sapButton_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--sapButton_Segment_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--_ui5_button_focused_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--_ui5_button_focused_inner_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+}`,
+		),
+
+		// The Time Picker's own OK and Cancel, same story one shadow root out:
+		// they sit in `ui5-time-picker`'s root rather than the clocks', so the
+		// entry above does not reach them. Their fills and label families already
+		// match the design.
+		addCustomCSS(
+			"ui5-time-picker",
+			`.ui5-time-picker-footer ui5-button {
+	--sapButton_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--_ui5_button_focused_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--_ui5_button_focused_inner_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+}`,
+		),
 	]);
 };

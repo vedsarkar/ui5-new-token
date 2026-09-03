@@ -280,6 +280,15 @@ const COMPONENT_REMAPS = [
 	// pressed states have to follow the pill.
 	"\t--_ui5_button_focused_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);",
 	"\t--_ui5_button_focused_inner_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);",
+	// A segmented item's base radius comes from its own variable, and only the
+	// group's first and last items get `sapButton_BorderCornerRadius` applied to
+	// their OUTER corners. Pilling that token alone therefore left every item
+	// with one squared-off end — 32/8/8/32 on the first, 8px all round in the
+	// middle. The design draws the group as one pill outline with the SELECTED
+	// item as a complete pill inside it, so the base radius has to be the pill
+	// too. Unselected items carry no fill or border, so nothing else changes
+	// visually.
+	"\t--sapButton_Segment_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);",
 	"}",
 	"",
 	"ui5-popover,",
