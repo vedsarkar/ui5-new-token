@@ -388,3 +388,25 @@ ui5-tag {
 	background-color: var(--sapSelectedColor);
 	color: var(--sapContent_ContrastTextColor);
 }
+
+/* Toolbar fill and bottom rule — UI5 reads a different pair of tokens than the
+ * design binds, and both diverge.
+ *
+ * The design uses `sapGroup_TitleBackground` (opaque #fcfeff) and
+ * `sapGroup_TitleBorderColor` (#8f8fcc); UI5's Toolbar.css uses
+ * `sapList_HeaderBackground` (#fcfeff80, translucent) and
+ * `sapGroup_ContentBorderColor` (#ffffff), so the toolbar rendered
+ * see-through with an invisible bottom rule.
+ *
+ * Setting the two properties directly rather than remapping UI5's tokens
+ * inside the toolbar: `sapList_HeaderBackground` means something to a list
+ * header, and a table nested in a toolbar would inherit the remap.
+ *
+ * Note this is the mirror image of the Panel header correction above — there
+ * the design wanted `sapGroup_ContentBorderColor` where UI5 used
+ * `sapGroup_TitleBorderColor`. The two components have the pair swapped, so
+ * neither can be fixed by moving a token value. */
+ui5-toolbar {
+	background-color: var(--sapGroup_TitleBackground);
+	border-bottom-color: var(--sapGroup_TitleBorderColor);
+}
