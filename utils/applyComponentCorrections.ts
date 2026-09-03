@@ -93,24 +93,23 @@ export const applyComponentCorrections = async (): Promise<void> => {
 }`,
 		),
 
-		// The date pickers' trailing calendar icon is the interactive blue in the
-		// design (sapButton_IconColor). UI5 binds it to sapField_TextColor, the
-		// near-black used for the field's own text, so it reads as static content
-		// rather than something you can click.
+		// Popup radius, for the popovers a stylesheet cannot reach.
 		//
-		// `--_ui5_input_icon_color` resolves on the picker host, but overriding it
-		// from the document has no effect — measured — and the icon element lives
-		// in the picker's shadow root, out of reach of a document selector. A rule
-		// injected into that shadow root reaches `.inputIcon` directly.
+		// variables.css already re-points `--_ui5_popup_border_radius` at the
+		// design's token for `ui5-popover` and `ui5-responsive-popover`, because
+		// UI5's Horizon theme hardcodes 0.5rem. That rule is a document selector,
+		// so it only matches popovers in the document — a popover UI5 renders
+		// inside another component's shadow root, such as the Date Time Picker's
+		// dropdown, keeps the 8px and renders half the design's 16px corner.
 		//
-		// Scoped to these two tags rather than every `.inputIcon` consumer: Input,
-		// Select, ComboBox and the other pickers share the class, and whether the
-		// design wants the blue on all of them is a question for those pages.
-		...["ui5-date-picker", "ui5-daterange-picker"].map((tag) =>
+		// Re-declaring the variable on `:host` from inside the popover's own
+		// shadow root covers both cases, nested or not. The document rule stays in
+		// place so the common case still works without this JS.
+		...["ui5-popover", "ui5-responsive-popover"].map((tag) =>
 			addCustomCSS(
 				tag,
-				`.inputIcon {
-	color: var(--sapButton_IconColor);
+				`:host {
+	--_ui5_popup_border_radius: var(--sapPopover_BorderCornerRadius, 1rem);
 }`,
 			),
 		),
