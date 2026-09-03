@@ -39,6 +39,12 @@ export default meta;
 
 export const Default = meta.story({});
 
+export const ArrowsOnNavigation = meta.story({
+	args: {
+		arrowsPlacement: "Navigation",
+	},
+});
+
 export const Cyclic = meta.story({
 	args: {
 		cyclic: true,

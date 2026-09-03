@@ -199,6 +199,21 @@ ui5-card-header {
 	--_ui5_card_header_padding: 1rem;
 }
 
+/* Carousel active dot — the design fills it with sapTextColor (#111727), a
+ * near-black that reads as "you are here". UI5 binds it to
+ * sapContent_Selected_ForegroundColor instead, which renders brand blue
+ * (#0000cc). The inactive dot already agrees at sapContent_ForegroundBorderColor,
+ * and both dots already sit in the design's 16px slots — 8px plus 4px margins
+ * for the active one, 4px plus 6px for the rest.
+ *
+ * The border is set alongside the background because UI5 draws the dot with
+ * border-box sizing and a 1px border from the same token; leaving the border
+ * blue would ring the near-black fill. */
+ui5-carousel {
+	--ui5_carousel_active_dot_background: var(--sapTextColor);
+	--ui5_carousel_active_dot_border: 1px solid var(--sapTextColor);
+}
+
 /* Card header counter — the design colours it sapContent_LabelColor (#566189),
  * one step darker than the subtitle. UI5 gives the counter and the subtitle the
  * same sapTile_TextColor (#646e97), so remapping the token would move both and

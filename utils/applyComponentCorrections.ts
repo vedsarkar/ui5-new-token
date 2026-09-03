@@ -80,5 +80,17 @@ export const applyComponentCorrections = async (): Promise<void> => {
 	font-size: 0;
 }`,
 		),
+
+		// The design's carousel navigation bar is 56px tall; UI5 hardcodes
+		// 2.75rem (44) on the wrapper with no variable behind it, so there is
+		// nothing for a token or a document rule to reach. Everything else on the
+		// bar already agrees — the sapPageFooter_Background fill, the 36px arrow
+		// buttons and the 16px dot slots.
+		addCustomCSS(
+			"ui5-carousel",
+			`.ui5-carousel-navigation-wrapper {
+	height: 3.5rem;
+}`,
+		),
 	]);
 };
