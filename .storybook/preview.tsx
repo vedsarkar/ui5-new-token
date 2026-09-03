@@ -20,6 +20,10 @@ import {
 } from "@storybook/addon-docs/blocks";
 import { definePreview } from "@storybook/react-vite";
 import { initialize, mswLoader } from "msw-storybook-addon";
+// The two corrections that global.css cannot reach, because the value sits on a
+// nested component's :host or in a rule inside a nested shadow root. Applied
+// through UI5's addCustomCSS so the preview matches what a consuming app gets.
+import { applyComponentCorrections } from "@/utils/applyComponentCorrections";
 import { DualThemeDecorator } from "./blocks/DualThemeDecorator";
 import reltioTheme from "./reltio-theme";
 
@@ -31,6 +35,8 @@ initialize({
 	onUnhandledRequest: "bypass",
 	serviceWorker: { url: "./mockServiceWorker.js" },
 });
+
+applyComponentCorrections();
 
 export default definePreview({
 	tags: ["autodocs"],

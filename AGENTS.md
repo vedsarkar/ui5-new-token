@@ -196,7 +196,7 @@ The platform exposes a **single distribution package** to apps — `@reltio/desi
 | You need a UI5 component that's not yet re-exported | Open an issue with the CoE so a documentation-only directory + endorsement is added. Do **not** install `@ui5/webcomponents-react` directly. |
 | You need to compose several UI5 components with Reltio product logic (entity profile, relationship view, source priority, context intelligence workflow, ...) | Build a Reltio **business component** under `components/`. |
 | You need a primitive that UI5 does not provide and that is product-agnostic | Build a Reltio **primitive** under `components/`. |
-| You need to restyle a UI5 component | Use `--sap*` tokens (preferred) or UI5's CSS Parts (`::part()`). Do not wrap just for styling. |
+| You need to restyle a UI5 component | Use `--sap*` tokens (preferred), UI5's CSS Parts (`::part()`), or — only when a document stylesheet demonstrably cannot reach the value — `addCustomCSS` via `utils/applyComponentCorrections.ts`. Do not wrap just for styling. |
 
 ### Theming
 
@@ -320,24 +320,39 @@ Example pattern:
 
 #### UI5 web components
 
-UI5 components live in Shadow DOM, so regular CSS selectors do not reach their internals. Two mechanisms are available:
+UI5 components live in Shadow DOM, so regular CSS selectors do not reach their internals. Three mechanisms are available, in order of preference:
 
 1. **`--sap*` design tokens** — UI5 reads them directly from the document `:root` and the active `[data-theme]` subtree. Changing a token at any level re-themes every UI5 component beneath it. This is the **preferred** way to restyle UI5.
 2. **CSS Parts (`::part()`)** — UI5 components expose a stable set of named parts (e.g. `ui5-button::part(button)`). Use them for fine-grained tweaks that no token covers.
+3. **`addCustomCSS(tag, css)`** — a last resort for values that neither of the above reaches, wired up in `utils/applyComponentCorrections.ts`. See below.
 
 ```css
 /* Preferred — token override scoped to a subtree */
 .toolbar {
-  --sapButton_Background: var(--sapButton_Lite_Background);
+	--sapButton_Background: var(--sapButton_Lite_Background);
 }
 
 /* Fallback — CSS Part for a specific tweak */
 .toolbar ui5-button::part(button) {
-  border-radius: 999px;
+	border-radius: 999px;
 }
 ```
 
 Do NOT wrap a UI5 component in a Reltio component just to restyle it. Wrap only when there is real business logic to add.
+
+##### When a document stylesheet cannot reach the value
+
+Options 1 and 2 both fail when the value lives on a **nested** component — one that UI5 renders inside another component's shadow root, such as `ui5-daypicker` inside `ui5-calendar`. Nothing in the document can select it, so a `:host` declaration in its own shadow stylesheet wins, and `::part()` only works if the part is re-exported (usually it is not).
+
+For those cases UI5 publishes [`addCustomCSS(tag, css)`](https://sap.github.io/ui5-webcomponents/docs/advanced/css-parts/) from `@ui5/webcomponents-base/dist/Theming.js`. It registers CSS against a tag name and UI5 appends it to that component's shadow root after its own styles, so equal-specificity rules win — which is what lets a re-declared `:host` beat the component's own parameters.
+
+Rules for using it:
+
+- **Prove the other two cannot work first.** Inject the override at document level and measure that nothing changes. Most divergences are reachable from `public/global.css`; only put a correction here when it demonstrably is not.
+- **Put every entry in `utils/applyComponentCorrections.ts`**, with a comment naming the divergence it fixes. Apps opt in by calling `applyComponentCorrections()` once at startup; Storybook calls it in `.storybook/preview.tsx`.
+- **Prefer re-declaring UI5's own variables** over targeting internal class names — `:host { --_ui5_daypicker_item_margin: 0; }` is far more durable than a rule against `.ui5-dp-item`.
+- **Treat it as unversioned.** Every entry depends on UI5-private names (`--_ui5_*`, internal class names) that semver does not cover, so re-check the file on a UI5 upgrade.
+- **Never reach into `shadowRoot.adoptedStyleSheets` by hand.** `addCustomCSS` is a published contract; that is not.
 
 ### Global Design Tokens (SAP Reltio themes)
 - The platform ships two SAP-branded themes — **SAP Reltio** (light) and **SAP Reltio Dark** — a Reltio-branded customisation of SAP Horizon. The `data-theme` attribute values are `sap-reltio-light` / `sap-reltio-dark` (brand-explicit); the legacy `horizon-light` / `horizon-dark` values remain a **deprecated alias** that resolves to the same tokens. This is separate from UI5's own `sapSapThemeId` (`sap_horizon` / `sap_horizon_dark`), which UI5 manages internally; official SAP registration of a dedicated Reltio `themeId` is planned.
