@@ -93,6 +93,44 @@ export const applyComponentCorrections = async (): Promise<void> => {
 }`,
 		),
 
+		// The design's dialog is a clean surface: a title, the content slot and the
+		// footer actions, with no rules between them. UI5 draws two separators the
+		// design does not have.
+		//
+		// The footer's `border-top: 1px solid sapPageFooter_BorderColor` also sits
+		// outside its 44px content box and makes the row 45 — the same
+		// off-by-the-border the Bar footer had. It resolves to #ffffff on a #fcfeff
+		// dialog, so dropping it costs nothing visually and lands the row on 44.
+		// (`box-sizing: border-box` does not help: the footer has no declared
+		// height, so its 45 is content plus border rather than a fixed box.)
+		//
+		// The header's separator is a 1px `::before` filled #dedee6, which is
+		// clearly visible. #dedee6 is a real separator colour the design uses
+		// elsewhere — the vertical divider in the Date Time dropdown — so this is
+		// about the dialog specifically, not the colour.
+		//
+		// Both live inside the dialog's shadow root with no variable behind them.
+		addCustomCSS(
+			"ui5-dialog",
+			`.ui5-popup-footer-root {
+	border-top: none;
+}
+
+.ui5-popup-root .ui5-popup-header-root::before {
+	content: none;
+}
+
+/* The design's header and footer carry no fill of their own — they let the
+ * dialog's #fcfeff show through. UI5 gives both a 50%-alpha #fcfeff, which
+ * resolves to the same colour but composites as its own layer, leaving a
+ * visible seam at the header's fractional bottom edge on high-DPI displays.
+ * Dropping the fill matches the design and takes the seam with it. */
+.ui5-popup-header-root,
+.ui5-popup-footer-root {
+	background: transparent;
+}`,
+		),
+
 		// Popup radius, for the popovers a stylesheet cannot reach.
 		//
 		// variables.css already re-points `--_ui5_popup_border_radius` at the
