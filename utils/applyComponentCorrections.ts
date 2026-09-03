@@ -174,23 +174,26 @@ export const applyComponentCorrections = async (): Promise<void> => {
 			),
 		),
 
-		// Button pill radius, for the buttons a stylesheet cannot reach.
+		// Message Strip close button pill radius.
 		//
 		// variables.css remaps `--sapButton_BorderCornerRadius` to the design's
 		// `_Max` (2rem) for `ui5-button` and friends, but that is a document
-		// selector: a button UI5 renders inside another component's shadow root,
-		// such as the Message Strip's close button, never matches it and keeps the
-		// stock 0.5rem — 8px against the design's pill.
+		// selector: a button UI5 renders inside another component's shadow root
+		// never matches it and keeps the stock 0.5rem — 8px against the design's
+		// pill on the Message Strip.
+		//
+		// Scoped to the Message Strip rather than declared on every button's
+		// `:host`. A blanket rule reached buttons whose owning component sets a
+		// deliberately different radius: the Shell Bar's icon buttons resolve
+		// `--_ui5_shellbar_button_border_radius` from this same token and the
+		// design specifies 8px for them, so a global pill made them capsules.
 		//
 		// The focus-ring radii come along for the same reason they do in
 		// variables.css: the ring is a pseudo-element inset 1px with its own
 		// radius, so leaving it behind clips its corners outside the pill.
-		//
-		// The document rule stays in place; for top-level buttons it simply wins
-		// over this `:host` declaration, and both resolve to the same value.
 		addCustomCSS(
-			"ui5-button",
-			`:host {
+			"ui5-message-strip",
+			`.ui5-message-strip-close-button {
 	--sapButton_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);
 	--_ui5_button_focused_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
 	--_ui5_button_focused_inner_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);

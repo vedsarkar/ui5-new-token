@@ -230,6 +230,18 @@ ui5-form-item {
 	--ui5-form-item-label-padding: 0 0.25rem 0 0.25rem;
 }
 
+/* Shell Bar bottom edge — the design draws a 1px bottom border in
+ * `sapShell_BorderColor` (#e3e3f2). UI5 draws the same inset line but reads
+ * `sapPageHeader_BorderColor`, which is #ffffff here, so the bar has no visible
+ * edge against the page.
+ *
+ * Re-declaring the shadow rather than remapping `sapPageHeader_BorderColor`,
+ * which would inherit into any page header rendered below the bar. A document
+ * selector is enough: UI5 sets this on `:host`, which an outer rule outranks. */
+ui5-shellbar {
+	box-shadow: inset 0 -0.0625rem 0 0 var(--sapShell_BorderColor);
+}
+
 ui5-dialog {
 	box-shadow: none;
 	/* UI5 also shadows the dialog's own header, which draws a 1px #d9d9d9 line
