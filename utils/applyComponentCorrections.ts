@@ -340,6 +340,33 @@ ui5-segmented-button-item {
 }`,
 		),
 
+		// User Menu — the account name is Bold in the design, and Sign Out is a
+		// pill.
+		//
+		// UI5 sets the name in `sapFontSemiboldDuplexFamily`; the size is
+		// already right (`sapFontLargeSize`, 16px), so only the family moves.
+		// As with the Time Picker's clock numbers, the SAP 72 weights are
+		// separate families rather than weights of one family, so `font-weight`
+		// would do nothing here.
+		//
+		// Sign Out is the fourth place the nested-button radius has come up. It
+		// is scoped to that one button rather than every button in this root
+		// deliberately: the design pills the footer action but keeps in-content
+		// actions at 8px — "Manage Accounts" and the Other Accounts panel
+		// buttons are all 8px — so a blanket rule would be wrong even here.
+		addCustomCSS(
+			"ui5-user-menu",
+			`.ui5-user-menu-selected-account-title {
+	font-family: var(--sapFontBoldFamily);
+}
+
+.ui5-user-menu-sign-out-btn {
+	--sapButton_BorderCornerRadius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--_ui5_button_focused_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+	--_ui5_button_focused_inner_border_radius: var(--sapButton_BorderCornerRadius_Max, 2rem);
+}`,
+		),
+
 		// Toolbar buttons are pills in the design, like buttons everywhere else.
 		// `ui5-toolbar-button` renders its `ui5-button` in its own shadow root, out
 		// of reach of the document-level remap — the third place this pattern has
