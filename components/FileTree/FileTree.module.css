@@ -120,3 +120,14 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
+
+/* Trailing content sits next to the name rather than at the row's far edge, so
+ * a badge reads as belonging to the label. `flex: 0 0 auto` keeps it whole when
+ * a long name truncates. */
+.endContent {
+	display: flex;
+	flex: 0 0 auto;
+	align-self: center;
+	align-items: center;
+	margin-left: 8px;
+}

@@ -1,0 +1,330 @@
+/* The screen is specified at a fixed 1440×900, so the shell is sized to match
+ * rather than made fluid — this is a fidelity reference, not a responsive
+ * layout. */
+.screen {
+	display: flex;
+	flex-direction: column;
+	width: 1440px;
+	height: 900px;
+	overflow: hidden;
+	background: var(--sapBackgroundColor);
+	font-family: var(--sapFontFamily);
+}
+
+.body {
+	display: flex;
+	flex: 1;
+	min-height: 0;
+}
+
+.main {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.workspace {
+	display: flex;
+	flex: 1;
+	min-height: 0;
+}
+
+.content {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-width: 0;
+	overflow: hidden;
+}
+
+/* Left icon rail — the collapsed product navigation. */
+.iconRail {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 80px;
+	padding: 24px 0;
+	gap: 8px;
+	border-right: 1px solid var(--sapGroup_TitleBorderColor);
+	background: var(--sapShellColor);
+}
+
+.railLogo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	margin-bottom: 24px;
+	color: var(--sapBrandColor);
+}
+
+.railItem {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border: none;
+	border-radius: 8px;
+	background: transparent;
+	color: var(--sapContent_NonInteractiveIconColor);
+	cursor: pointer;
+}
+
+.railItem:hover {
+	background: var(--sapList_Hover_Background);
+}
+
+.railItem:focus-visible {
+	outline: 1px solid var(--sapContent_FocusColor);
+	outline-offset: -2px;
+}
+
+.railItemSelected {
+	background: var(--sapContent_Selected_Hover_Background);
+	color: var(--sapLinkColor);
+}
+
+.railSpacer {
+	flex: 1;
+}
+
+/* Right action rail. */
+.actionRail {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 80px;
+	padding: 16px 0;
+	gap: 8px;
+}
+
+/* Profile banner. */
+.banner {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	height: 80px;
+	padding: 16px;
+	box-sizing: border-box;
+}
+
+.identity {
+	display: flex;
+	flex: 1;
+	gap: 16px;
+	min-width: 0;
+}
+
+.identityText {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+}
+
+.entityName {
+	overflow: hidden;
+	color: var(--sapTextColor);
+	font-family: var(--sapFontBoldFamily);
+	font-size: 16px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.entityMeta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--sapContent_LabelColor);
+	font-size: 12px;
+}
+
+.bannerActions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.searchCount {
+	color: var(--sapLinkColor);
+	font-family: var(--sapFontSemiboldDuplexFamily);
+	font-size: 14px;
+}
+
+/* Card grid — three columns of equal width with the design's 16px gutters. */
+.grid {
+	display: grid;
+	flex: 1;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+	padding: 0 8px 8px;
+	min-height: 0;
+	overflow: hidden;
+}
+
+.column {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	min-height: 0;
+}
+
+.strip {
+	padding: 8px 8px 8px;
+}
+
+/* A content card: rounded surface with a tool header above scrollable body. */
+.card {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	overflow: hidden;
+	border: 1px solid var(--sapObjectHeader_BorderColor);
+	border-radius: 16px;
+	background: var(--sapGroup_ContentBackground);
+}
+
+.cardFlexible {
+	flex: 1;
+}
+
+.cardHeader {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	height: 52px;
+	padding: 0 8px 0 16px;
+	box-sizing: border-box;
+	border-bottom: 1px solid var(--sapGroup_TitleBorderColor);
+}
+
+.cardHeaderIcon {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	color: var(--sapContent_NonInteractiveIconColor);
+}
+
+.cardTitle {
+	flex: 1;
+	overflow: hidden;
+	color: var(--sapGroup_TitleTextColor);
+	font-family: var(--sapFontBoldFamily);
+	font-size: 16px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.cardBody {
+	flex: 1;
+	min-height: 0;
+	padding: 8px;
+	overflow: auto;
+}
+
+.cardBodyFlush {
+	padding: 0;
+}
+
+/* The trees inside the cards are FileTrees without the card chrome, since the
+ * surrounding panel already provides it. */
+.flushTree {
+	border: none;
+	border-radius: 0;
+	padding: 8px;
+	background: transparent;
+}
+
+.filterRow {
+	padding: 8px 8px 0;
+}
+
+/* Count badge trailing a hierarchy row. */
+.countBadge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 20px;
+	height: 20px;
+	padding: 0 6px;
+	box-sizing: border-box;
+	border-radius: 10px;
+	background: var(--sapContent_Selected_Hover_Background);
+	color: var(--sapLinkColor);
+	font-family: var(--sapFontSemiboldDuplexFamily);
+	font-size: 12px;
+}
+
+/* Reporting Hierarchy Path — a numbered list whose nested entries indent. */
+.pathList {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 8px;
+	list-style: none;
+	gap: 2px;
+}
+
+.pathRow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	height: 32px;
+	padding: 0 8px;
+	box-sizing: border-box;
+	border-radius: 4px;
+	color: var(--sapTextColor);
+	font-size: 14px;
+}
+
+.pathIcon {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	color: var(--sapContent_NonInteractiveIconColor);
+}
+
+.pathLink {
+	color: var(--sapLinkColor);
+}
+
+/* Relations rows: a link, a role, and a trailing info affordance. */
+.relationRow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	height: 40px;
+	padding: 0 8px;
+	box-sizing: border-box;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+.relationRow:hover {
+	background: var(--sapList_Hover_Background);
+}
+
+.relationRole {
+	flex: 1;
+	color: var(--sapTextColor);
+}
+
+.relationInfo {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	color: var(--sapLinkColor);
+}
+
+/* Attribute rows pair a muted field name with its value. */
+.attrLabel {
+	color: var(--sapContent_LabelColor);
+}
+
+.attrValue {
+	margin-left: 8px;
+	color: var(--sapTextColor);
+}

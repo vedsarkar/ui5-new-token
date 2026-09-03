@@ -330,6 +330,11 @@ export const FileTree = ({
 									</span>
 								) : null}
 								<span className={classNames(styles.name)}>{node.name}</span>
+								{node.endContent ? (
+									<span className={classNames(styles.endContent)}>
+										{node.endContent}
+									</span>
+								) : null}
 							</div>
 							{open && node.children?.length
 								? renderLevel(
