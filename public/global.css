@@ -223,6 +223,19 @@ ui5-carousel {
  * so losing the shadow costs less depth here than it would on a card. The
  * footer height is corrected alongside this in
  * utils/applyComponentCorrections.ts. */
+/* Form item label — when the label stacks above its field, the design puts it
+ * flush at the top: an 18px label row over a 44px field row, 62 in total. UI5
+ * pads the label `0.625rem 0.25rem 0 0.25rem`, so the 10px above it pushes the
+ * label row to 28 and the item to 72.
+ *
+ * Dropping the vertical padding lands the row on 18 and the item on 62 — the
+ * label's own line box supplies the height. Horizontal layouts are unaffected
+ * because the grid centres the label in its row (`align-items: center`), so it
+ * never depended on this padding for alignment. */
+ui5-form-item {
+	--ui5-form-item-label-padding: 0 0.25rem 0 0.25rem;
+}
+
 ui5-dialog {
 	box-shadow: none;
 	/* UI5 also shadows the dialog's own header, which draws a 1px #d9d9d9 line
