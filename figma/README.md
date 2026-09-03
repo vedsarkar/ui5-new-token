@@ -43,10 +43,19 @@ Several endorsed components are **not** 1:1 UI5 re-exports, and a snippet writte
 
 Read the component's own `.types.ts` rather than UI5's before mapping.
 
+### Mapping data, not children
+
+`FileTree` is the one component whose rows are **data**. Its Figma row maps to a `FileTreeNode` object rather than an element, because connector shape depends on a row's position in the whole tree and cannot be read off children. The container's Figma `SLOT` therefore interpolates into an `items` array instead of between the tags. If another data-driven component turns up, follow that shape.
+
 ### Coverage
 
-48 components mapped: Avatar, Breadcrumbs, BusyIndicator, Button, Calendar, Card, Carousel, CheckBox, DatePicker, DateTimePicker, Dialog, FileUploader, IllustratedMessage, Input, Label, Link, List, ListItem, Menu, MenuItem, MessageStrip, MultiComboBox, MultiInput, NotificationListItem, Panel, Popover, ProgressIndicator, RadioButton, RatingIndicator, SegmentedButton, Select, ShellBar, SideNavigation, SideNavigationItem, Slider, StepInput, Switch, Tab, TabContainer, Table, Tag, TextArea, TimePicker, Toast, Toolbar, Tree, TreeItem, UserMenu.
+50 templates covering: Avatar, Breadcrumbs, BusyIndicator, Button, Calendar, Card, Carousel, CheckBox, DatePicker, DateTimePicker, Dialog, FileTree (container and node), FileUploader, IllustratedMessage, Input, Label, Link, List, ListItem, Menu, MenuItem, MessageStrip, MultiComboBox, MultiInput, NotificationListItem, Panel, Popover, ProgressIndicator, RadioButton, RatingIndicator, SegmentedButton, Select, ShellBar, SideNavigation, SideNavigationItem, Slider, StepInput, Switch, Tab, TabContainer, Table, Tag, TextArea, TimePicker, Toast, Toolbar, Tree, TreeItem, UserMenu.
 
-Not mapped: `Form` and `ComboBox` (no matching Figma component set was found — Form's page models `FormItem` layouts rather than the Form, and the Combobox page only carries Multi Combobox), `ColorPicker`, and the Reltio business components other than ShellBar, TextArea, TreeItem and UserMenu.
+Not mapped, and why:
+
+- **`Form` and `ComboBox`** — no matching Figma component set exists. Form's page models `FormItem` layouts rather than a Form, and the Combobox page carries only Multi ComboBox, which is mapped.
+- **`AppNavigation`, `AppSelector`, `Chat`, `Details`, `TenantSelector`** — Reltio business components with no counterpart on the UI5 library pages. Map them if and when the design system gains one.
+- **`ErrorBoundary`, `Markdown`, `Skeleton`** — code-only primitives with nothing to draw.
+- **`SideNavigationGroup` and `SideNavigationSubItem`** — already covered: the `SideNavigationItem` template branches to all three elements off Figma's `Type` variant.
 
 When adding one, take the Figma component's `componentPropertyDefinitions` (its node id goes in the `url=` comment), read the code component's props, and map only the overlap. Verify the property names against Figma rather than guessing them — a wrong `getEnum` key silently yields `undefined`.
