@@ -376,3 +376,15 @@ ui5-tag {
 	 * the glyphs. */
 	--_ui5-tag-font-size_size_l: 1.375rem;
 }
+
+/* Text selection — the design's Text page specifies a selected-text highlight
+ * (sapSelectedColor behind sapContent_ContrastTextColor), and nothing in the
+ * platform implemented it, so selection fell through to the browser default.
+ *
+ * Both tokens are theme-aware, so light and dark follow without a second rule.
+ * Declared unscoped because selection is a document-wide affordance rather than
+ * a component's: SAP defines these tokens for exactly this purpose. */
+::selection {
+	background-color: var(--sapSelectedColor);
+	color: var(--sapContent_ContrastTextColor);
+}
