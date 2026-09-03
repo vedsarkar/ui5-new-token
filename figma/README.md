@@ -33,8 +33,20 @@ This parses every template and lists what would be published. It stops at the ac
 
 The `Publish Figma Code Connect` step runs on merges to `main` and needs a secured `FIGMA_ACCESS_TOKEN` repository variable with Code Connect write scope. Without one the step logs a skip and passes, so forks and clones are unaffected.
 
+### Watch the curated names
+
+Several endorsed components are **not** 1:1 UI5 re-exports, and a snippet written against UI5's own API will not typecheck:
+
+- `TextArea` is a Reltio component using the platform's `ValueState` union — `Error`/`Warning`/`Success`, where UI5 says `Negative`/`Critical`/`Positive`.
+- `TreeItem` drops UI5's `text` in favour of `content`, collapsing the `TreeItem`/`TreeItemCustom` split.
+- `ListItem` is UI5's `ListItemStandard` under a curated name.
+
+Read the component's own `.types.ts` rather than UI5's before mapping.
+
 ### Coverage
 
-Mapped so far: Button, CheckBox, Input, Label, MessageStrip, RadioButton, ShellBar, Switch, Tag.
+36 components mapped: Avatar, Breadcrumbs, BusyIndicator, Button, Card, CheckBox, DatePicker, Dialog, Input, Label, Link, List, ListItem, Menu, MenuItem, MessageStrip, MultiComboBox, MultiInput, Panel, Popover, ProgressIndicator, RadioButton, RatingIndicator, Select, ShellBar, Slider, StepInput, Switch, Tab, TabContainer, Table, Tag, TextArea, Toast, Tree, TreeItem.
 
-The endorsed surface is much larger. When adding one, take the Figma component's `componentPropertyDefinitions` (the node id goes in the `url=` comment), read the code component's props, and map only the overlap.
+Not yet mapped, and worth adding as they come up: Calendar, Carousel, ColorPicker, ComboBox, DateTimePicker, FileUploader, Form, IllustratedMessage, Notification, SegmentedButton, SideNavigation, TimePicker, Toolbar, UserMenu, and the Reltio business components.
+
+When adding one, take the Figma component's `componentPropertyDefinitions` (its node id goes in the `url=` comment), read the code component's props, and map only the overlap.
