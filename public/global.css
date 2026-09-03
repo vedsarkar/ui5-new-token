@@ -410,3 +410,20 @@ ui5-toolbar {
 	background-color: var(--sapGroup_TitleBackground);
 	border-bottom-color: var(--sapGroup_TitleBorderColor);
 }
+
+/* Disabled list-family items — UI5 dims them to 0.5 through a private
+ * `--_ui5-listitembase_disabled_opacity`, hardcoded in its base theme, where
+ * SAP's own public `sapContent_DisabledOpacity` is 0.4 and every other
+ * component reads it (Avatar, Button, Link, RadioButton all do). So UI5's list
+ * items are the outlier against its own token, and the design agrees with the
+ * token: every disabled variant on the Tree page (6) and the Menu page (2) sits
+ * at 0.4.
+ *
+ * Scoped to the two tags the design actually models. `ListItemBase.css` backs
+ * plain list items too, so `ui5-li` and friends still dim to 0.5 — the List
+ * page has no disabled variant to confirm against, and this is one line to
+ * extend if it gains one. */
+ui5-tree-item,
+ui5-menu-item {
+	--_ui5-listitembase_disabled_opacity: var(--sapContent_DisabledOpacity);
+}
